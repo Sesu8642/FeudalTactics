@@ -29,19 +29,26 @@ public class MapRenderer {
 	private ArrayList<PolygonSprite> polySprites;
 	private HashMap<Vector2, Animation<TextureRegion>> contents;
 	float stateTime; // for keeping animations at the correct pace
+	Pixmap pix;
+	TextureRegion textureRegion;
 
 	public MapRenderer(HexMap hexMap) {
 		this.hexMap = hexMap;
 		contents = new HashMap<Vector2, Animation<TextureRegion>>();
 		polySpriteBatch = new PolygonSpriteBatch();
-		Pixmap pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+		pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		polySprites = new ArrayList<PolygonSprite>();
 		pix.setColor(0x00DE00FF);
 		pix.fill();
 		textureSolid = new Texture(pix);
-		TextureRegion textureRegion = new TextureRegion(textureSolid);
-		
+		textureRegion = new TextureRegion(textureSolid);
+		stateTime = 0F;
+	}
+
+	public void updateMap() {
 		// create tiles
+		contents.clear();
+		polySprites.clear();
 		for (Entry<Vector2, HexTile> hexTileEntry : (hexMap.getTiles()).entrySet()) {
 			pix.setColor(hexTileEntry.getValue().getPlayer().getColor());
 			pix.fill();
@@ -64,9 +71,8 @@ public class MapRenderer {
 				contents.put(new Vector2(mapCoords.x - hexOuterRadius, mapCoords.y - hexOuterRadius), new Animation<TextureRegion>(1F, FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName()), PlayMode.LOOP));
 			}
 		}
-		stateTime = 0F;
 	}
-
+	
 	public void render(OrthographicCamera camera) {
 		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map object
 		stateTime += Gdx.graphics.getDeltaTime();

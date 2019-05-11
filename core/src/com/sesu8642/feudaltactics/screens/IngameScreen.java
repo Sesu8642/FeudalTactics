@@ -21,17 +21,22 @@ public class IngameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private MapRenderer mapRenderer;
 	private HexMap map;
+
 	private Hud hud;
 	private InputMultiplexer multiplexer;
 
 	public IngameScreen(FeudalTactics game) {
-		hud = new Hud();
+		hud = new Hud(this);
 
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(this);
-
 		map = new HexMap();
+		mapRenderer = new MapRenderer(map);
+		generateMap();
+	}
+
+	public void generateMap() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		Player p1 = new Player(new Color(0, 0.5f, 0.8f, 1));
 		Player p2 = new Player(new Color(1F, 0F, 0F, 1));
@@ -47,10 +52,9 @@ public class IngameScreen implements Screen, InputProcessor {
 		players.add(p6);
 		GameState gameState = new GameState(players, 0, map);
 		map.generate(players, 500, 0, null);
-		mapRenderer = new MapRenderer(map);
-
+		mapRenderer.updateMap();
 	}
-
+	
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
@@ -156,4 +160,9 @@ public class IngameScreen implements Screen, InputProcessor {
 		return true;
 	}
 
+	public HexMap getMap() {
+		return map;
+	}
+
+	
 }

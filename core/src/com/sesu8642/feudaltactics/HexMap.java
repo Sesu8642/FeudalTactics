@@ -52,8 +52,6 @@ public class HexMap {
 			// place tile
 			Player player = players.get(random.nextInt(players.size()));
 			HexTile tile = new HexTile(player);
-			// REMOVE NEXT LINE LATER
-			tile.setContent(new MapObject());
 			tiles.put(currentTilePos, tile);
 			landMass--;
 			// add to history
