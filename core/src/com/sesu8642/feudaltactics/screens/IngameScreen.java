@@ -10,10 +10,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.GameState;
-import com.sesu8642.feudaltactics.HexMap;
-import com.sesu8642.feudaltactics.MapRenderer;
-import com.sesu8642.feudaltactics.Player;
+import com.sesu8642.feudaltactics.engine.GameState;
+import com.sesu8642.feudaltactics.engine.HexMap;
+import com.sesu8642.feudaltactics.engine.MapRenderer;
+import com.sesu8642.feudaltactics.engine.Player;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class IngameScreen implements Screen, InputProcessor {

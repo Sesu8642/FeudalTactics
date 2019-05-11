@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics;
+package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ShortArray;
+import com.sesu8642.feudaltactics.FeudalTactics;
 
 public class MapRenderer {
 

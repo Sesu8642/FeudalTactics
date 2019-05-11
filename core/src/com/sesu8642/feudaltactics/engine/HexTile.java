@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics;
+package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.math.Vector2;
 
