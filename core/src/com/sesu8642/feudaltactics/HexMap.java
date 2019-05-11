@@ -39,6 +39,7 @@ public class HexMap {
 	}
 
 	public void generate(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
+		// density between -3 and 3 produces good results
 		tiles = new HashMap<Vector2, HexTile>();
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
@@ -70,7 +71,7 @@ public class HexMap {
 			for (Vector2 candidate : usableCoords) {
 				// factor in density
 				int usableCoordsCountFromCandidate = getUnusedNeighborCoords(candidate).size();
-				float score = (float) Math.pow(usableCoordsCountFromCandidate, density * density);
+				float score = (float) Math.pow(usableCoordsCountFromCandidate, density);
 				scores.add(score);
 				scoreSum += score;
 			}
