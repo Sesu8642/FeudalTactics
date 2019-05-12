@@ -40,6 +40,10 @@ public class HexMap {
 		}
 		return unusedNeighbors;
 	}
+	
+	public HexTile getTileFromCoords(Vector2 coords) {
+		return tiles.get(coords);
+	}
 
 	public HashMap<Vector2, HexTile> getTiles() {
 		return tiles;

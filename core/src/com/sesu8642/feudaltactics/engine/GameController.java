@@ -2,9 +2,11 @@ package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.gamelogic.Kingdom;
 
 public class GameController {
 	// only class supposed to modify the game state
@@ -36,11 +38,17 @@ public class GameController {
 		players.add(p6);
 		gameState.setPlayers(players);
 		gameState.setMap(map);
+		gameState.setKingdoms(new ArrayList<Kingdom>());
 		generateMap(players, 500, 0, null);
 		mapRenderer.updateMap();
 	}
 
 	public void generateMap(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
+		generateTiles(players, landMass, density, mapSeed);
+		createKingdoms();
+	}
+	
+	private void generateTiles(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
 		// density between -3 and 3 produces good results
 		map.getTiles().clear();
 		if (mapSeed == null) {
@@ -88,5 +96,49 @@ public class GameController {
 			nextTilePos = usableCoords.get(index);
 		}
 	}
-
+	
+	private void createKingdoms() {
+		gameState.getKingdoms().clear();
+		for (Entry<Vector2, HexTile> tileEntry : map.getTiles().entrySet()) {
+			HexTile tile = tileEntry.getValue();
+			Vector2 coords = tileEntry.getKey();
+			tile.setKingdom(null);
+			ArrayList<Vector2> neighbors = map.getNeighborCoords(coords);
+			for (Vector2 neighborCoords : neighbors) {
+				HexTile neighborTile = map.getTileFromCoords(neighborCoords);
+				if (neighborTile == null) {
+					// water
+					continue;
+				}
+				if (neighborTile.getPlayer() != tile.getPlayer()) {
+					continue;
+				}
+				// two neighboring tiles belong to the same player
+				if (tile.getKingdom() == null && neighborTile.getKingdom() == null) {
+					// none of the tiles already belong to a kingdom --> create a new one
+					Kingdom newKingdom = new Kingdom(tile.getPlayer());
+					newKingdom.getTiles().add(tile);
+					newKingdom.getTiles().add(neighborTile);
+					tile.setKingdom(newKingdom);
+					neighborTile.setKingdom(newKingdom);
+				} else if (tile.getKingdom() != null && neighborTile.getKingdom() == null) {
+					// tile belongs to a kingdom but neighbor does not -> add neighbor to existing
+					// kingdom
+					tile.getKingdom().getTiles().add(neighborTile);
+					neighborTile.setKingdom(tile.getKingdom());
+				} else if (tile.getKingdom() == null && neighborTile.getKingdom() != null) {
+					// neighbor belongs to a kingdom but tile does not -> add tile to existing
+					// kingdom
+					neighborTile.getKingdom().getTiles().add(tile);
+					tile.setKingdom(neighborTile.getKingdom());
+				} else if (tile.getKingdom() != null && neighborTile.getKingdom() != null
+						&& tile.getKingdom() != neighborTile.getKingdom()) {
+					// tile and neighbor belong to different kingdoms --> merge kingdoms
+					for (HexTile neighborKingdomTile : neighborTile.getKingdom().getTiles()) {
+						neighborKingdomTile.setKingdom(tile.getKingdom());
+					}
+				}
+			}
+		}
+	}
 }
