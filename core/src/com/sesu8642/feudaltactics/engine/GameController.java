@@ -105,7 +105,7 @@ public class GameController {
 			tile.setKingdom(null);
 			ArrayList<Vector2> neighbors = map.getNeighborCoords(coords);
 			for (Vector2 neighborCoords : neighbors) {
-				HexTile neighborTile = map.getTileFromCoords(neighborCoords);
+				HexTile neighborTile = map.getTiles().get((neighborCoords));
 				if (neighborTile == null) {
 					// water
 					continue;
