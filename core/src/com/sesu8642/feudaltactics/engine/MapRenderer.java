@@ -21,9 +21,8 @@ import com.sesu8642.feudaltactics.FeudalTactics;
 
 public class MapRenderer {
 
-	private final float hexOuterRadius = 5;
-	float width = hexOuterRadius * 2;
-	float height = hexOuterRadius * (float) Math.sqrt(3);
+	float width = HexMap.HEX_OUTER_RADIUS * 2;
+	float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 	private HexMap hexMap;
 	private PolygonSpriteBatch polySpriteBatch;
 	private Texture textureSolid;
@@ -69,13 +68,16 @@ public class MapRenderer {
 			// create content (units etc)
 			MapObject tileContent = hexTileEntry.getValue().getContent();
 			if (tileContent != null) {
-				contents.put(new Vector2(mapCoords.x - hexOuterRadius, mapCoords.y - hexOuterRadius), new Animation<TextureRegion>(1F, FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName()), PlayMode.LOOP));
+				contents.put(new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+						new Animation<TextureRegion>(1F,
+								FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName()), PlayMode.LOOP));
 			}
 		}
 	}
-	
+
 	public void render(OrthographicCamera camera) {
-		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map object
+		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map
+																						// object
 		stateTime += Gdx.graphics.getDeltaTime();
 		polySpriteBatch.setProjectionMatrix(camera.combined);
 		for (Entry<Vector2, Animation<TextureRegion>> content : contents.entrySet()) {
@@ -88,14 +90,15 @@ public class MapRenderer {
 		}
 		// draw all the contents
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-			polySpriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x, currentFrame.getKey().y, 2 * hexOuterRadius, 2 * hexOuterRadius);
+			polySpriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x, currentFrame.getKey().y,
+					2 * hexMap.HEX_OUTER_RADIUS, 2 * hexMap.HEX_OUTER_RADIUS);
 		}
 		polySpriteBatch.end();
 	}
 
 	public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
 		float x = 0.75F * width * hexCoords.x;
-		float y = (float) (hexOuterRadius
+		float y = (float) (hexMap.HEX_OUTER_RADIUS
 				* (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
 		return new Vector2(x, y);
 	}

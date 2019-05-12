@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.HexMap;
@@ -122,7 +123,9 @@ public class IngameScreen implements Screen, GestureListener, InputProcessor {
 
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-		System.out.println("tap!!!");
+		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
+		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
+		gameController.printTileInfo(worldCoords);
 		return false;
 	}
 

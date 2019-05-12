@@ -1,11 +1,9 @@
 package com.sesu8642.feudaltactics.engine;
 
-import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamelogic.Kingdom;
 
 public class HexTile {
 	
-	private Vector2 coordinates;
 	private Player player;
 	private MapObject content;
 	private Kingdom kingdom;
@@ -26,9 +24,6 @@ public class HexTile {
 		this.content = content;
 	}
 	
-	public Vector2 getCoordinates() {
-		return coordinates;
-	}
 
 	public Kingdom getKingdom() {
 		return kingdom;
@@ -38,4 +33,10 @@ public class HexTile {
 		this.kingdom = kingdom;
 	}
 	
+	@Override
+	public String toString() {
+		String kingdomStr;
+		kingdomStr = kingdom == null ? "null": kingdom.toString();
+		return "Color: " + player.getColor().toString() + ", Kingdom: " + kingdomStr;
+	}
 }

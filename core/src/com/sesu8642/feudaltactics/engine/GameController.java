@@ -47,7 +47,7 @@ public class GameController {
 		generateTiles(players, landMass, density, mapSeed);
 		createKingdoms();
 	}
-	
+
 	private void generateTiles(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
 		// density between -3 and 3 produces good results
 		map.getTiles().clear();
@@ -96,7 +96,7 @@ public class GameController {
 			nextTilePos = usableCoords.get(index);
 		}
 	}
-	
+
 	private void createKingdoms() {
 		gameState.getKingdoms().clear();
 		for (Entry<Vector2, HexTile> tileEntry : map.getTiles().entrySet()) {
@@ -141,4 +141,11 @@ public class GameController {
 			}
 		}
 	}
+
+	public void printTileInfo(Vector2 worldCoords) {
+		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
+		System.out.println("clicked tile position " + hexCoords);
+		System.out.println(map.getTiles().get(hexCoords));
+	}
+
 }
