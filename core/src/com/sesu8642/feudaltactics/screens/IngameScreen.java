@@ -1,19 +1,15 @@
 package com.sesu8642.feudaltactics.screens;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.engine.GameState;
+import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.HexMap;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
-import com.sesu8642.feudaltactics.engine.Player;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class IngameScreen implements Screen, InputProcessor {
@@ -21,40 +17,21 @@ public class IngameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private MapRenderer mapRenderer;
 	private HexMap map;
+	private GameController gameController;
 
 	private Hud hud;
 	private InputMultiplexer multiplexer;
 
 	public IngameScreen(FeudalTactics game) {
-		hud = new Hud(this);
-
+		map = new HexMap();
+		mapRenderer = new MapRenderer(map);
+		gameController = new GameController(map, mapRenderer);
+		hud = new Hud(gameController);
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(this);
-		map = new HexMap();
-		mapRenderer = new MapRenderer(map);
-		generateMap();
 	}
 
-	public void generateMap() {
-		ArrayList<Player> players = new ArrayList<Player>();
-		Player p1 = new Player(new Color(0, 0.5f, 0.8f, 1));
-		Player p2 = new Player(new Color(1F, 0F, 0F, 1));
-		Player p3 = new Player(new Color(0F, 1F, 0F, 1));
-		Player p4 = new Player(new Color(1F, 1F, 0F, 1));
-		Player p5 = new Player(new Color(1F, 1F, 1F, 1));
-		Player p6 = new Player(new Color(0F, 1F, 1F, 1));
-		players.add(p1);
-		players.add(p2);
-		players.add(p3);
-		players.add(p4);
-		players.add(p5);
-		players.add(p6);
-		GameState gameState = new GameState(players, 0, map);
-		map.generate(players, 500, 0, null);
-		mapRenderer.updateMap();
-	}
-	
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
@@ -164,5 +141,4 @@ public class IngameScreen implements Screen, InputProcessor {
 		return map;
 	}
 
-	
 }

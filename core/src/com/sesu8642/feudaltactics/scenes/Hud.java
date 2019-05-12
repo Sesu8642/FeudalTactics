@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.screens.IngameScreen;
+import com.sesu8642.feudaltactics.engine.GameController;
 
 public class Hud {
 	private Stage stage;
@@ -24,7 +23,7 @@ public class Hud {
 	
 	private Label infoText;
 	
-	public Hud(final IngameScreen gameScreen) {
+	public Hud(final GameController gameController) {
 		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
@@ -37,7 +36,7 @@ public class Hud {
 	        @Override
 	        public void changed (ChangeEvent event, Actor actor) {
 	            System.out.println("Button Pressed");
-	            gameScreen.generateMap();
+	            gameController.generateDummyMap();
 	        }
 	    });
 	    Image handImage = new Image(new Sprite(FeudalTactics.textureAtlas.createSprite("hand")));
