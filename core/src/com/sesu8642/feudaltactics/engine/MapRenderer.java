@@ -21,6 +21,8 @@ import com.sesu8642.feudaltactics.FeudalTactics;
 
 public class MapRenderer {
 
+	final float SPRITE_SIZE_MULTIPLIER = 1.5F;
+
 	float width = HexMap.HEX_OUTER_RADIUS * 2;
 	float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 	private HexMap hexMap;
@@ -89,9 +91,11 @@ public class MapRenderer {
 			polySprite.draw(polySpriteBatch);
 		}
 		// draw all the contents
+		float objectSize = SPRITE_SIZE_MULTIPLIER * hexMap.HEX_OUTER_RADIUS;
+		float offset = (hexMap.HEX_OUTER_RADIUS-objectSize) / 2;
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-			polySpriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x, currentFrame.getKey().y,
-					2 * hexMap.HEX_OUTER_RADIUS, 2 * hexMap.HEX_OUTER_RADIUS);
+			polySpriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - offset,
+					currentFrame.getKey().y - offset, objectSize, objectSize);
 		}
 		polySpriteBatch.end();
 	}
