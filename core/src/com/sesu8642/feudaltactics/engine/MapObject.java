@@ -2,13 +2,10 @@ package com.sesu8642.feudaltactics.engine;
 
 abstract public class MapObject {
 
-	private final String spriteName = "";
 	private final int strength = 0;
 	private HexTile tile;
 	
-	public String getSpriteName() {
-		return spriteName;
-	}
+	public abstract String getSpriteName();
 	
 	public int getStrength() {
 		return strength;
@@ -17,4 +14,5 @@ abstract public class MapObject {
 	public HexTile getTile() {
 		return tile;
 	}
+	
 }

@@ -6,7 +6,7 @@ public class Unit extends MapObject{
 
 	private boolean canAct;
 	private int strength;
-	private final String[] spriteNames = {"peasant, knight, baron"};
+	private final String[] spriteNames = {"sprite_peasant", "sprite_knight", "sprite_baron"};
 	
 	public Unit(int strength) {
 		this.strength = strength;
