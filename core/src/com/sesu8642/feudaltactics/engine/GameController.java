@@ -6,7 +6,9 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.gamelogic.Capital;
 import com.sesu8642.feudaltactics.gamelogic.Kingdom;
+import com.sesu8642.feudaltactics.gamelogic.Unit;
 
 public class GameController {
 	// only class supposed to modify the game state
@@ -14,7 +16,8 @@ public class GameController {
 	private HexMap map;
 	private MapRenderer mapRenderer;
 	private GameState gameState;
-
+	private Random random;
+	
 	public GameController(HexMap map, MapRenderer mapRenderer) {
 		this.map = map;
 		this.mapRenderer = mapRenderer;
@@ -40,12 +43,13 @@ public class GameController {
 		gameState.setMap(map);
 		gameState.setKingdoms(new ArrayList<Kingdom>());
 		generateMap(players, 500, 0, null);
-		mapRenderer.updateMap();
 	}
 
 	public void generateMap(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
 		generateTiles(players, landMass, density, mapSeed);
 		createKingdoms();
+		createCapitals();
+		mapRenderer.updateMap();
 	}
 
 	private void generateTiles(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
@@ -54,7 +58,7 @@ public class GameController {
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
 		}
-		Random random = new Random(mapSeed);
+		random = new Random(mapSeed);
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
 		ArrayList<Vector2> positionHistory = new ArrayList<Vector2>(); // for backtracking
@@ -117,6 +121,7 @@ public class GameController {
 				if (tile.getKingdom() == null && neighborTile.getKingdom() == null) {
 					// none of the tiles already belong to a kingdom --> create a new one
 					Kingdom newKingdom = new Kingdom(tile.getPlayer());
+					gameState.getKingdoms().add(newKingdom);
 					newKingdom.getTiles().add(tile);
 					newKingdom.getTiles().add(neighborTile);
 					tile.setKingdom(newKingdom);
@@ -142,10 +147,20 @@ public class GameController {
 		}
 	}
 
+	private void createCapitals() {
+		for (Kingdom kingdom : gameState.getKingdoms()) {
+			ArrayList<HexTile> tiles = kingdom.getTiles();
+			Capital capital = new Capital();
+			tiles.get(random.nextInt(tiles.size())).setContent(new Capital());
+		}
+	}
+
 	public void printTileInfo(Vector2 worldCoords) {
 		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
 		System.out.println("clicked tile position " + hexCoords);
 		System.out.println(map.getTiles().get(hexCoords));
+		map.getTiles().get(hexCoords).setContent(new Unit(1));
+		mapRenderer.updateMap();
 	}
 
 }

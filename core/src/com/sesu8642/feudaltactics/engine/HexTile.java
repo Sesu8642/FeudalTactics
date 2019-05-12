@@ -35,8 +35,8 @@ public class HexTile {
 	
 	@Override
 	public String toString() {
-		String kingdomStr;
-		kingdomStr = kingdom == null ? "null": kingdom.toString();
-		return "Color: " + player.getColor().toString() + ", Kingdom: " + kingdomStr;
+		String kingdomStr = kingdom == null ? "null": kingdom.toString();
+		String contentStr = content == null ? "null": content.toString();
+		return "Color: " + player.getColor().toString() + ", Kingdom: " + kingdomStr + ", Content: " + contentStr;
 	}
 }
