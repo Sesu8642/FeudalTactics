@@ -139,8 +139,10 @@ public class GameController {
 				} else if (tile.getKingdom() != null && neighborTile.getKingdom() != null
 						&& tile.getKingdom() != neighborTile.getKingdom()) {
 					// tile and neighbor belong to different kingdoms --> merge kingdoms
+					gameState.getKingdoms().remove(neighborTile.getKingdom());
 					for (HexTile neighborKingdomTile : neighborTile.getKingdom().getTiles()) {
 						neighborKingdomTile.setKingdom(tile.getKingdom());
+						tile.getKingdom().getTiles().add(neighborKingdomTile);
 					}
 				}
 			}
