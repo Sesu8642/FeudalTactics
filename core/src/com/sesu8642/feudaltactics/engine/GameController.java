@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamelogic.Capital;
 import com.sesu8642.feudaltactics.gamelogic.Kingdom;
 import com.sesu8642.feudaltactics.gamelogic.Unit;
+import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class GameController {
 	// only class supposed to modify the game state
@@ -17,7 +18,8 @@ public class GameController {
 	private MapRenderer mapRenderer;
 	private GameState gameState;
 	private Random random;
-	
+	private Hud hud;
+
 	public GameController(HexMap map, MapRenderer mapRenderer) {
 		this.map = map;
 		this.mapRenderer = mapRenderer;
@@ -153,17 +155,46 @@ public class GameController {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			ArrayList<HexTile> tiles = kingdom.getTiles();
 			Capital capital = new Capital();
-			capital.setMoney(kingdom.getTiles().size()*5);
+			kingdom.setSavings(kingdom.getIncome() * 5);
 			tiles.get(random.nextInt(tiles.size())).setContent(new Capital());
 		}
 	}
 
 	public void printTileInfo(Vector2 worldCoords) {
 		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
+		updateInfoText(worldCoords);
 		System.out.println("clicked tile position " + hexCoords);
 		System.out.println(map.getTiles().get(hexCoords));
 		map.getTiles().get(hexCoords).setContent(new Unit(1));
 		mapRenderer.updateMap();
+	}
+
+	public void updateInfoText(Vector2 worldCoords) {
+		if (hud == null) {
+			return;
+		}
+		HexTile tile = map.getTiles().get(map.worldCoordsToHexCoords(worldCoords));
+		if (tile == null) {
+			return;
+		}
+		Kingdom kingdom = tile.getKingdom();
+		if (kingdom == null) {
+			return;
+		}
+		int income = kingdom.getIncome();
+		int salaries = kingdom.getSalaries();
+		int result = income - salaries;
+		int savings = kingdom.getSavings();
+		String infoText = "";
+		infoText += "Income: " + income;
+		infoText += "\nSalaries: " + salaries;
+		infoText += "\nResult: " + result;
+		infoText += "\nSavings: " + savings;
+		hud.setInfoText(infoText);
+	}
+
+	public void setHud(Hud hud) {
+		this.hud = hud;
 	}
 
 }

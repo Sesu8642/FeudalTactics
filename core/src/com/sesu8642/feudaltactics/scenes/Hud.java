@@ -21,7 +21,7 @@ public class Hud {
 	private Table table;
 	private Viewport viewport;
 	
-	private Label infoText;
+	private Label infoTextLabel;
 	
 	public Hud(final GameController gameController) {
 		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
@@ -40,7 +40,7 @@ public class Hud {
 	        }
 	    });
 	    Image handImage = new Image(new Sprite(FeudalTactics.textureAtlas.createSprite("hand")));
-	    infoText = new Label("This is some important info.\nlike money\nand stuff", FeudalTactics.skin);
+	    infoTextLabel = new Label("", FeudalTactics.skin);
 		viewport = new ScreenViewport(new OrthographicCamera());
 		stage = new Stage(viewport);
 	    
@@ -51,7 +51,7 @@ public class Hud {
 	    table.defaults().uniformY().expandY().minSize(0);
 	    table.columnDefaults(0).expandX().pad(10);
 	    table.columnDefaults(1).width(Value.percentHeight(1F)).fillY();
-	    table.add(infoText).left().top();
+	    table.add(infoTextLabel).left().top();
 	    table.add(undoButton);
 	    table.row();
 	    table.add(new Image());
@@ -73,7 +73,7 @@ public class Hud {
 	}
 	
 	public void resize(int width, int height) {	
-		infoText.setFontScale(height/800F);
+		infoTextLabel.setFontScale(height/800F);
 		viewport.update(width, height, true);
 		viewport.apply();
 		table.pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup and going fullscreen etc.; took me hours to find out
@@ -81,6 +81,10 @@ public class Hud {
 	
 	public void dispose() {
 		stage.dispose();
+	}
+	
+	public void setInfoText(String newText) {
+		infoTextLabel.setText(newText);
 	}
 	
 	public Stage getStage() {

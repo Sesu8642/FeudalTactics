@@ -31,6 +31,7 @@ public class IngameScreen implements Screen, GestureListener, InputProcessor {
 		mapRenderer = new MapRenderer(map);
 		gameController = new GameController(map, mapRenderer);
 		hud = new Hud(gameController);
+		gameController.setHud(hud);
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(new GestureDetector((GestureListener) this));
