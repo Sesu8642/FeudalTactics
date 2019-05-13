@@ -162,7 +162,6 @@ public class GameController {
 
 	public void printTileInfo(Vector2 worldCoords) {
 		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
-		updateInfoText(worldCoords);
 		System.out.println("clicked tile position " + hexCoords);
 		System.out.println(map.getTiles().get(hexCoords));
 		map.getTiles().get(hexCoords).setContent(new Unit(1));

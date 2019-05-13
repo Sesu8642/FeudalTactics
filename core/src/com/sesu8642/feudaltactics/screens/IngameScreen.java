@@ -127,6 +127,7 @@ public class IngameScreen implements Screen, GestureListener, InputProcessor {
 		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
 		gameController.printTileInfo(worldCoords);
+		gameController.updateInfoText(worldCoords);
 		return false;
 	}
 
