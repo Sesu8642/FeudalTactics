@@ -153,6 +153,7 @@ public class GameController {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			ArrayList<HexTile> tiles = kingdom.getTiles();
 			Capital capital = new Capital();
+			capital.setMoney(kingdom.getTiles().size()*5);
 			tiles.get(random.nextInt(tiles.size())).setContent(new Capital());
 		}
 	}
