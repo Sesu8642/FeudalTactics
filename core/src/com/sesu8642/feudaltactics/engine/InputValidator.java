@@ -25,11 +25,14 @@ public class InputValidator {
 		gameController.printTileInfo(hexCoords);
 		Player player = gameState.getActivePlayer();
 		HexTile tile = map.getTiles().get(hexCoords);
-		Kingdom kingdom = tile.getKingdom();
+		// do nothing if tile is water
+		if (checkIfWater(tile)) {
+			return;
+		}
 		// determine action
-		if (gameState.getHeldObject() == null && kingdom != null && gameState.getActiveKingdom() != kingdom) {
+		if (gameState.getHeldObject() == null && tile.getKingdom() != null && gameState.getActiveKingdom() != tile.getKingdom()) {
 			// activate kingdom
-			gameController.activateKingdom(kingdom);
+			gameController.activateKingdom(tile.getKingdom());
 		} else if (gameState.getHeldObject() == null && tile.getContent() != null) {
 			// pick up object
 			if (checkPickupObject(player, tile)) {
@@ -38,6 +41,10 @@ public class InputValidator {
 		}
 	}
 
+	public boolean checkIfWater(HexTile tile) {
+		return (tile == null);
+	}
+	
 	public boolean checkActivateKingdom(Player player, HexTile tile) {
 		if (player != gameState.getActivePlayer()) {
 			return false;
