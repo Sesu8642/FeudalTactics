@@ -10,6 +10,7 @@ import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.HexMap;
+import com.sesu8642.feudaltactics.engine.InputValidator;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
@@ -26,7 +27,8 @@ public class IngameScreen implements Screen {
 		GameController gameController = new GameController(map, mapRenderer);
 		hud = new Hud(gameController);
 		gameController.setHud(hud);
-		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(this);
+		camera = new OrthographicCamera();
+		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(new InputValidator(gameController), camera);
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(new GestureDetector(inputProcessor));
@@ -36,8 +38,6 @@ public class IngameScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
-
-		camera = new OrthographicCamera();
 		camera.position.set(camera.viewportWidth, camera.viewportHeight, 0);
 		camera.update();
 		camera.zoom = 10;

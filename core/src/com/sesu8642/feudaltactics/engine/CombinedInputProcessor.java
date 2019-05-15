@@ -1,23 +1,25 @@
 package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.sesu8642.feudaltactics.screens.IngameScreen;
 
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
-	private IngameScreen ingameScreen;
+	private OrthographicCamera camera;
+	private InputValidator validator;
 
-	public CombinedInputProcessor(IngameScreen ingameScreen) {
-		this.ingameScreen = ingameScreen;
+	public CombinedInputProcessor(InputValidator validator, OrthographicCamera camera) {
+		this.validator = validator;
+		this.camera = camera;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		if (ingameScreen.getCamera().zoom + amount > 0 && ingameScreen.getCamera().zoom + amount < 50) {
-			ingameScreen.getCamera().zoom += amount;
+		if (camera.zoom + amount > 0 && camera.zoom + amount < 50) {
+			camera.zoom += amount;
 		}
 		return true;
 	}
@@ -26,7 +28,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
 		// not very good and dependent on resolution; refactor later
 		final int DRAG_MULTIPLIER = 50; // 50 seems to work pretty well; no idea why
-		ingameScreen.getCamera().translate(-deltaX * ingameScreen.getCamera().zoom / DRAG_MULTIPLIER, deltaY * ingameScreen.getCamera().zoom / DRAG_MULTIPLIER);
+		camera.translate(-deltaX * camera.zoom / DRAG_MULTIPLIER, deltaY * camera.zoom / DRAG_MULTIPLIER);
 		return true;
 	}
 
@@ -34,8 +36,8 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	public boolean zoom(float initialDistance, float distance) {
 		// kind of works... good enough for now
 		float amount = (initialDistance - distance) / 2500;
-		if (ingameScreen.getCamera().zoom + amount > 0 && ingameScreen.getCamera().zoom + amount < 50) {
-			ingameScreen.getCamera().zoom += amount;
+		if (camera.zoom + amount > 0 && camera.zoom + amount < 50) {
+			camera.zoom += amount;
 		}
 		return true;
 	}
@@ -52,10 +54,9 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-		Vector3 fullWorldCoords = ingameScreen.getCamera().unproject(new Vector3(x, y, 0));
+		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
-		//gameController.printTileInfo(worldCoords);
-		//gameController.updateInfoText(worldCoords);
+		validator.tap(worldCoords);
 		return false;
 	}
 
