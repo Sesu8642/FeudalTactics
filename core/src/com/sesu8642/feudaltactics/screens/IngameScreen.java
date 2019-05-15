@@ -2,14 +2,10 @@ package com.sesu8642.feudaltactics.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.input.GestureDetector.GestureListener;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
@@ -21,20 +17,16 @@ public class IngameScreen implements Screen {
 
 	private OrthographicCamera camera;
 	private MapRenderer mapRenderer;
-	private HexMap map;
-	private GameController gameController;
-
 	private Hud hud;
-	private CombinedInputProcessor inputProcessor;
 	private InputMultiplexer multiplexer;
 
 	public IngameScreen(FeudalTactics game) {
-		map = new HexMap();
+		HexMap map = new HexMap();
 		mapRenderer = new MapRenderer(map);
-		gameController = new GameController(map, mapRenderer);
+		GameController gameController = new GameController(map, mapRenderer);
 		hud = new Hud(gameController);
 		gameController.setHud(hud);
-		inputProcessor = new CombinedInputProcessor(this);
+		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(this);
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(new GestureDetector(inputProcessor));

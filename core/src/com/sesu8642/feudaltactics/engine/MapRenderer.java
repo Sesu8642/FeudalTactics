@@ -23,16 +23,16 @@ public class MapRenderer {
 
 	final float SPRITE_SIZE_MULTIPLIER = 1.5F;
 
-	float width = HexMap.HEX_OUTER_RADIUS * 2;
-	float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
+	private float width = HexMap.HEX_OUTER_RADIUS * 2;
+	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 	private HexMap hexMap;
 	private PolygonSpriteBatch polySpriteBatch;
 	private Texture textureSolid;
 	private ArrayList<PolygonSprite> polySprites;
 	private HashMap<Vector2, Animation<TextureRegion>> contents;
-	float stateTime; // for keeping animations at the correct pace
-	Pixmap pix;
-	TextureRegion textureRegion;
+	private float stateTime; // for keeping animations at the correct pace
+	private Pixmap pix;
+	private TextureRegion textureRegion;
 
 	public MapRenderer(HexMap hexMap) {
 		this.hexMap = hexMap;
