@@ -160,23 +160,16 @@ public class GameController {
 		}
 	}
 
-	public void printTileInfo(Vector2 worldCoords) {
-		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
+	public void printTileInfo(Vector2 hexCoords) {
 		System.out.println("clicked tile position " + hexCoords);
 		System.out.println(map.getTiles().get(hexCoords));
-		map.getTiles().get(hexCoords).setContent(new Unit(1));
-		mapRenderer.updateMap();
 	}
 
-	public void updateInfoText(Vector2 worldCoords) {
+	public void updateInfoText() {
 		if (hud == null) {
 			return;
 		}
-		HexTile tile = map.getTiles().get(map.worldCoordsToHexCoords(worldCoords));
-		if (tile == null) {
-			return;
-		}
-		Kingdom kingdom = tile.getKingdom();
+		Kingdom kingdom = gameState.getActiveKingdom();
 		if (kingdom == null) {
 			return;
 		}
@@ -192,8 +185,23 @@ public class GameController {
 		hud.setInfoText(infoText);
 	}
 
+	public void activateKingdom(Kingdom kingdom) {
+		gameState.setActiveKingdom(kingdom);
+		updateInfoText();
+	}
+
+	public void pickupObject(HexTile tile) {
+		gameState.setHeldObject(tile.getContent());
+		tile.setContent(null);
+		activateKingdom(tile.getKingdom());
+	}
+	
 	public void setHud(Hud hud) {
 		this.hud = hud;
+	}
+
+	public GameState getGameState() {
+		return gameState;
 	}
 
 }
