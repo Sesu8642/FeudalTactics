@@ -1,6 +1,6 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.gamestate;
 
-import com.sesu8642.feudaltactics.gamelogic.Kingdom;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Kingdom;
 
 public class HexTile {
 	

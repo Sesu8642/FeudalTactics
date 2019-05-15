@@ -1,8 +1,8 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
 
-import com.sesu8642.feudaltactics.gamelogic.Kingdom;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Kingdom;
 
 public class GameState {
 
@@ -16,23 +16,23 @@ public class GameState {
 		return players;
 	}
 
-	void setPlayers(ArrayList<Player> players) {
+	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
 	}
 
-	int getPlayerTurn() {
+	public int getPlayerTurn() {
 		return playerTurn;
 	}
 
-	void setPlayerTurn(int playerTurn) {
+	public void setPlayerTurn(int playerTurn) {
 		this.playerTurn = playerTurn;
 	}
 
-	HexMap getMap() {
+	public HexMap getMap() {
 		return map;
 	}
 
-	void setMap(HexMap map) {
+	public void setMap(HexMap map) {
 		this.map = map;
 	}
 

@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.gamestate;
 
 import com.badlogic.gdx.graphics.Color;
 

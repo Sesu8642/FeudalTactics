@@ -6,9 +6,13 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.gamelogic.Capital;
-import com.sesu8642.feudaltactics.gamelogic.Kingdom;
-import com.sesu8642.feudaltactics.gamelogic.Unit;
+import com.sesu8642.feudaltactics.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamestate.Player;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Kingdom;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class GameController {

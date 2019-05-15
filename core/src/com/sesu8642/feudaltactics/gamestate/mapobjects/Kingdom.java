@@ -1,9 +1,9 @@
-package com.sesu8642.feudaltactics.gamelogic;
+package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
 import java.util.ArrayList;
 
-import com.sesu8642.feudaltactics.engine.HexTile;
-import com.sesu8642.feudaltactics.engine.Player;
+import com.sesu8642.feudaltactics.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamestate.Player;
 
 public class Kingdom {
 

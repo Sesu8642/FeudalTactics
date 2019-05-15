@@ -9,9 +9,9 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
-import com.sesu8642.feudaltactics.engine.HexMap;
 import com.sesu8642.feudaltactics.engine.InputValidator;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
+import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class IngameScreen implements Screen {

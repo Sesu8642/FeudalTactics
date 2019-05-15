@@ -1,8 +1,12 @@
 package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.gamelogic.Kingdom;
-import com.sesu8642.feudaltactics.gamelogic.Unit;
+import com.sesu8642.feudaltactics.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamestate.Player;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Kingdom;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class InputValidator {
 

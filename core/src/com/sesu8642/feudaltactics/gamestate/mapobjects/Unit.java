@@ -1,6 +1,6 @@
-package com.sesu8642.feudaltactics.gamelogic;
+package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-import com.sesu8642.feudaltactics.engine.MapObject;
+import com.sesu8642.feudaltactics.gamestate.MapObject;
 
 public class Unit extends MapObject{
 
