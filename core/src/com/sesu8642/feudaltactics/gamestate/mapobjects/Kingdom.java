@@ -31,7 +31,7 @@ public class Kingdom {
 		int salaries = 0;
 		for (HexTile tile : tiles) {
 			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
-				salaries += ((Unit) tile.getContent()).getSalary();
+				salaries += ((Unit) tile.getContent()).getUnitType().salary();
 			}
 		}
 		return salaries;

@@ -2,23 +2,50 @@ package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
 import com.sesu8642.feudaltactics.gamestate.MapObject;
 
-public class Unit extends MapObject{
+public class Unit extends MapObject {
 
 	private boolean canAct;
-	private int strength;
-	private final String[] spriteNames = {"sprite_peasant", "sprite_spearman", "sprite_knight", "sprite_baron"};
-	private final int[] salaries = {2, 6, 18, 54};
-	
-	public Unit(int strength) {
-		this.strength = strength;
+
+	public enum UnitTypes {
+		PEASANT(1, 2, "sprite_peasant"), SPEARMAN(2, 6, "sprite_spearman"), KNIGHT(3, 18, "sprite_knight"),
+		BARON(4, 54, "sprite_baron");
+
+		private int strength;
+		private int salary;
+		private String spriteName;
+
+		UnitTypes(int strength, int salary, String spriteName) {
+			this.strength = strength;
+			this.salary = salary;
+			this.spriteName = spriteName;
+		}
+
+		public int strength() {
+			return strength;
+		}
+
+		public int salary() {
+			return salary;
+		}
+
+		public String spriteName() {
+			return spriteName;
+		}
 	}
-	
-	public int getSalary() {
-		return salaries[strength-1];
+
+	private UnitTypes unitType;
+
+	public Unit(UnitTypes unitType) {
+		this.unitType = unitType;
 	}
-	
+
 	@Override
 	public String getSpriteName() {
-		return spriteNames[strength-1];
+		return unitType.spriteName;
 	}
+
+	public UnitTypes getUnitType() {
+		return unitType;
+	}
+
 }
