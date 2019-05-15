@@ -29,12 +29,12 @@ public class GameController {
 
 	public void generateDummyMap() {
 		ArrayList<Player> players = new ArrayList<Player>();
-		Player p1 = new Player(new Color(0, 0.5f, 0.8f, 1));
-		Player p2 = new Player(new Color(1F, 0F, 0F, 1));
-		Player p3 = new Player(new Color(0F, 1F, 0F, 1));
-		Player p4 = new Player(new Color(1F, 1F, 0F, 1));
-		Player p5 = new Player(new Color(1F, 1F, 1F, 1));
-		Player p6 = new Player(new Color(0F, 1F, 1F, 1));
+		Player p1 = new Player(new Color(0, 0.5f, 0.8f, 1), Player.Type.LOCAL_PLAYER);
+		Player p2 = new Player(new Color(1F, 0F, 0F, 1), Player.Type.LOCAL_PLAYER);
+		Player p3 = new Player(new Color(0F, 1F, 0F, 1), Player.Type.LOCAL_PLAYER);
+		Player p4 = new Player(new Color(1F, 1F, 0F, 1), Player.Type.LOCAL_PLAYER);
+		Player p5 = new Player(new Color(1F, 1F, 1F, 1), Player.Type.LOCAL_PLAYER);
+		Player p6 = new Player(new Color(0F, 1F, 1F, 1), Player.Type.LOCAL_PLAYER);
 		players.add(p1);
 		players.add(p2);
 		players.add(p3);
