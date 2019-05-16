@@ -1,9 +1,10 @@
-package com.sesu8642.feudaltactics.gamestate.mapobjects;
+package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
 
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Player;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class Kingdom {
 

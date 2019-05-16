@@ -25,10 +25,11 @@ public class IngameScreen implements Screen {
 		HexMap map = new HexMap();
 		mapRenderer = new MapRenderer(map);
 		GameController gameController = new GameController(map, mapRenderer);
-		hud = new Hud(gameController);
+		InputValidator inputValidator = new InputValidator(gameController);
+		hud = new Hud(inputValidator);
 		gameController.setHud(hud);
 		camera = new OrthographicCamera();
-		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(new InputValidator(gameController), camera);
+		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(inputValidator, camera);
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(new GestureDetector(inputProcessor));

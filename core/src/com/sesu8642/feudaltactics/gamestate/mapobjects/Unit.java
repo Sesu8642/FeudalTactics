@@ -1,6 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-import com.sesu8642.feudaltactics.gamestate.MapObject;
+import com.sesu8642.feudaltactics.gamestate.Kingdom;
 
 public class Unit extends MapObject {
 
@@ -35,7 +35,8 @@ public class Unit extends MapObject {
 
 	private UnitTypes unitType;
 
-	public Unit(UnitTypes unitType) {
+	public Unit(Kingdom kingdom, UnitTypes unitType) {
+		super(kingdom);
 		this.unitType = unitType;
 	}
 
@@ -46,6 +47,11 @@ public class Unit extends MapObject {
 
 	public UnitTypes getUnitType() {
 		return unitType;
+	}
+
+	@Override
+	public int getStrength() {
+		return unitType.strength;
 	}
 
 }

@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.ShortArray;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.MapObject;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 public class MapRenderer {
 

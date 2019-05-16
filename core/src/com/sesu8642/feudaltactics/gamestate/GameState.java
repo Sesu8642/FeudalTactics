@@ -2,7 +2,7 @@ package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
 
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Kingdom;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 public class GameState {
 
@@ -12,7 +12,8 @@ public class GameState {
 	private ArrayList<Kingdom> kingdoms;
 	private Kingdom activeKingdom;
 	private MapObject heldObject;
-	ArrayList<Player> getPlayers() {
+
+	public ArrayList<Player> getPlayers() {
 		return players;
 	}
 
@@ -63,5 +64,5 @@ public class GameState {
 	public Player getActivePlayer() {
 		return players.get(playerTurn);
 	}
-	
+
 }

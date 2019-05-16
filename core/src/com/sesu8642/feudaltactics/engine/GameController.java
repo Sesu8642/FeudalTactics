@@ -6,13 +6,15 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class GameController {
@@ -158,9 +160,8 @@ public class GameController {
 	private void createCapitals() {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			ArrayList<HexTile> tiles = kingdom.getTiles();
-			Capital capital = new Capital();
+			tiles.get(random.nextInt(tiles.size())).setContent(new Capital(kingdom));
 			kingdom.setSavings(kingdom.getIncome() * 5);
-			tiles.get(random.nextInt(tiles.size())).setContent(new Capital());
 		}
 	}
 
@@ -197,9 +198,28 @@ public class GameController {
 	public void pickupObject(HexTile tile) {
 		gameState.setHeldObject(tile.getContent());
 		tile.setContent(null);
-		activateKingdom(tile.getKingdom());
+		mapRenderer.updateMap();
 	}
-	
+
+	public void placeObject(HexTile tile) {
+		tile.setContent(gameState.getHeldObject());
+		gameState.setHeldObject(null);
+		mapRenderer.updateMap();
+	}
+
+	public void endTurn() {
+		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
+		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
+			gameState.setPlayerTurn(0);
+		}
+
+	}
+
+	public void buyPeasant() {
+		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - FeudalTactics.UNIT_COST);
+		gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+	}
+
 	public void setHud(Hud hud) {
 		this.hud = hud;
 	}

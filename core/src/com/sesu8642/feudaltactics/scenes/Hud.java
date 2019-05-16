@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.GameController;
+import com.sesu8642.feudaltactics.engine.InputValidator;
 
 public class Hud {
 	private Stage stage;
@@ -23,7 +24,7 @@ public class Hud {
 	
 	private Label infoTextLabel;
 	
-	public Hud(final GameController gameController) {
+	public Hud(final InputValidator inputValidator) {
 		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
@@ -31,12 +32,16 @@ public class Hud {
 		undoButton.getImageCell().expand().fill();
 		endTurnButton.getImageCell().expand().fill();
 		buyPeasantButton.getImageCell().expand().fill();
+		buyPeasantButton.addListener(new ChangeListener() {
+	        @Override
+	        public void changed (ChangeEvent event, Actor actor) {
+	        	inputValidator.inputBuyPeasant();
+	        }
+	    });
 		buyCastleButton.getImageCell().expand().fill();
 		undoButton.addListener(new ChangeListener() {
 	        @Override
 	        public void changed (ChangeEvent event, Actor actor) {
-	            System.out.println("Button Pressed");
-	            gameController.generateDummyMap();
 	        }
 	    });
 	    Image handImage = new Image(new Sprite(FeudalTactics.textureAtlas.createSprite("hand")));
