@@ -1,7 +1,5 @@
 package com.sesu8642.feudaltactics.engine;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.GameState;
@@ -165,9 +163,7 @@ public class InputValidator {
 			}
 			boolean isNextoToOwnKingdom = false;
 			boolean isProtected = false;
-			ArrayList<Vector2> neighborTiles = gameState.getMap().getNeighborCoords(hexCoords);
-			for (Vector2 neighborCoord : neighborTiles) {
-				HexTile neighborTile = gameState.getMap().getTiles().get(neighborCoord);
+			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(hexCoords)) {
 				if (isWater(neighborTile)) {
 					// skip water
 					continue;

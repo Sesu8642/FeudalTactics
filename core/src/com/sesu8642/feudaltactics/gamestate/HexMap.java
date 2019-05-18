@@ -1,10 +1,9 @@
 package com.sesu8642.feudaltactics.gamestate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 public class HexMap {
 
@@ -16,11 +15,6 @@ public class HexMap {
 		this.tiles = new HashMap<Vector2, HexTile>();
 	}
 	
-	public int getDistance(Vector3 coordinate1, Vector3 coordinate2) {
-		return (int) ((Math.abs(coordinate1.x - coordinate2.x) + Math.abs(coordinate1.y - coordinate2.y)
-				+ Math.abs(coordinate1.z - coordinate2.z)) / 2);
-	}
-
 	public Vector2 worldCoordsToHexCoords(Vector2 worldCoords) {
 		float hexX = (2F/3 * worldCoords.x) / HEX_OUTER_RADIUS;
 		float hexY = (float) ((-1F/3 * worldCoords.x  +  Math.sqrt(3)/3 * worldCoords.y) / HEX_OUTER_RADIUS);
@@ -48,8 +42,8 @@ public class HexMap {
 		return new Vector2(x, z);
 	}
 	
-	public ArrayList<Vector2> getNeighborCoords(Vector2 tileCoords) {
-		ArrayList<Vector2> neighbors = new ArrayList<Vector2>();
+	public HashSet<Vector2> getNeighborCoords(Vector2 tileCoords) {
+		HashSet<Vector2> neighbors = new HashSet<Vector2>();
 		neighbors.add(new Vector2(tileCoords.x - 1, tileCoords.y));
 		neighbors.add(new Vector2(tileCoords.x, tileCoords.y - 1));
 		neighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 1));
@@ -58,10 +52,19 @@ public class HexMap {
 		neighbors.add(new Vector2(tileCoords.x - 1, tileCoords.y + 1));
 		return neighbors;
 	}
+	
+	public HashSet<HexTile> getNeighborTiles(Vector2 tileCoords){
+		HashSet<Vector2> neighborCoords = getNeighborCoords(tileCoords);
+		HashSet<HexTile> neighborTiles = new HashSet<HexTile>();
+		for(Vector2 coord : neighborCoords) {
+			neighborTiles.add(tiles.get(coord));
+		}
+		return neighborTiles;
+	}
 
-	public ArrayList<Vector2> getUnusedNeighborCoords(Vector2 tileCoords) {
-		ArrayList<Vector2> neighbors = getNeighborCoords(tileCoords);
-		ArrayList<Vector2> unusedNeighbors = new ArrayList();
+	public HashSet<Vector2> getUnusedNeighborCoords(Vector2 tileCoords) {
+		HashSet<Vector2> neighbors = getNeighborCoords(tileCoords);
+		HashSet<Vector2> unusedNeighbors = new HashSet<Vector2>();
 		for (Vector2 neighbor : neighbors) {
 			if (!tiles.containsKey(neighbor)) {
 				unusedNeighbors.add(neighbor);

@@ -1,6 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
@@ -8,14 +8,14 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class Kingdom {
 
-	private ArrayList<HexTile> tiles;
+	private HashSet<HexTile> tiles;
 	private Capital capital;
 	private Player player;
 	private int savings = 0;
 
 	public Kingdom(Player player) {
 		this.player = player;
-		this.tiles = new ArrayList<HexTile>();
+		this.tiles = new HashSet<HexTile>();
 	}
 
 	public int getIncome() {
@@ -38,7 +38,7 @@ public class Kingdom {
 		return salaries;
 	}
 
-	public ArrayList<HexTile> getTiles() {
+	public HashSet<HexTile> getTiles() {
 		return tiles;
 	}
 

@@ -74,18 +74,18 @@ public class GameController {
 			Vector2 currentTilePos = nextTilePos;
 			// place tile
 			Player player = players.get(random.nextInt(players.size()));
-			HexTile tile = new HexTile(player);
+			HexTile tile = new HexTile(player, currentTilePos);
 			map.getTiles().put(currentTilePos, tile);
 			landMass--;
 			// add to history
 			positionHistory.add(currentTilePos);
 			// get next tile with usable neighboring tiles
-			ArrayList<Vector2> usableCoords = map.getUnusedNeighborCoords(currentTilePos);
+			ArrayList<Vector2> usableCoords = new ArrayList<Vector2>(map.getUnusedNeighborCoords(currentTilePos));
 			while (usableCoords.isEmpty()) {
 				// backtrack until able to place a tile again
 				positionHistory.remove(positionHistory.size() - 1);
 				currentTilePos = positionHistory.get(positionHistory.size() - 1);
-				usableCoords = map.getUnusedNeighborCoords(currentTilePos);
+				usableCoords = new ArrayList<Vector2>(map.getUnusedNeighborCoords(currentTilePos));
 			}
 			// calculate a score for each neighboring tile for choosing the next one
 			ArrayList<Float> scores = new ArrayList<Float>();
@@ -115,9 +115,7 @@ public class GameController {
 			HexTile tile = tileEntry.getValue();
 			Vector2 coords = tileEntry.getKey();
 			tile.setKingdom(null);
-			ArrayList<Vector2> neighbors = map.getNeighborCoords(coords);
-			for (Vector2 neighborCoords : neighbors) {
-				HexTile neighborTile = map.getTiles().get((neighborCoords));
+			for (HexTile neighborTile : map.getNeighborTiles(coords)) {
 				if (neighborTile == null) {
 					// water
 					continue;
@@ -159,7 +157,7 @@ public class GameController {
 
 	private void createCapitals() {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
-			ArrayList<HexTile> tiles = kingdom.getTiles();
+			ArrayList<HexTile> tiles = new ArrayList<HexTile>(kingdom.getTiles());
 			tiles.get(random.nextInt(tiles.size())).setContent(new Capital(kingdom));
 			kingdom.setSavings(kingdom.getIncome() * 5);
 		}
