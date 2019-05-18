@@ -7,8 +7,6 @@ import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
@@ -139,7 +137,7 @@ public class InputValidator {
 		if (gameState.getHeldObject() == null) {
 			return false;
 		}
-		if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == player) {
+		if (tile.getKingdom() != null && tile.getPlayer() == player) {
 			// own kingdom
 			if (gameState.getHeldObject().getKingdom() != tile.getKingdom()) {
 				// own kingdom but not the one the unit belongs to
@@ -155,8 +153,8 @@ public class InputValidator {
 				// object on object except unit on tree and combining units
 				return false;
 			}
-		} else if (tile.getKingdom() != null && tile.getKingdom().getPlayer() != player) {
-			// kingdom owned by another player
+		} else if (tile.getPlayer() != player) {
+			// tile owned by another player
 			if (!gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
 				// not a unit
 				return false;
