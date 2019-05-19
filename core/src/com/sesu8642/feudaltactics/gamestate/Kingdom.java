@@ -42,6 +42,10 @@ public class Kingdom {
 		return tiles;
 	}
 
+	public void setTiles(HashSet<HexTile> tiles) {
+		this.tiles = tiles;
+	}
+
 	public Capital getCapital() {
 		return capital;
 	}

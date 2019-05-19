@@ -1,6 +1,9 @@
 package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Random;
 import java.util.Map.Entry;
 
@@ -13,6 +16,7 @@ import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.scenes.Hud;
@@ -55,8 +59,8 @@ public class GameController {
 
 	public void generateMap(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
 		generateTiles(players, landMass, density, mapSeed);
-		createKingdoms();
-		createCapitals();
+		createInitialKingdoms();
+		createCapitalsAndMoney();
 		mapRenderer.updateMap();
 	}
 
@@ -109,7 +113,7 @@ public class GameController {
 		}
 	}
 
-	private void createKingdoms() {
+	private void createInitialKingdoms() {
 		gameState.getKingdoms().clear();
 		for (Entry<Vector2, HexTile> tileEntry : map.getTiles().entrySet()) {
 			HexTile tile = tileEntry.getValue();
@@ -155,12 +159,20 @@ public class GameController {
 		}
 	}
 
-	private void createCapitals() {
+	private void createCapitalsAndMoney() {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
-			ArrayList<HexTile> tiles = new ArrayList<HexTile>(kingdom.getTiles());
-			tiles.get(random.nextInt(tiles.size())).setContent(new Capital(kingdom));
-			kingdom.setSavings(kingdom.getIncome() * 5);
+			createCapital(kingdom);
+			createInitialSavings(kingdom);
 		}
+	}
+
+	private void createCapital(Kingdom kingdom) {
+		ArrayList<HexTile> tiles = new ArrayList<HexTile>(kingdom.getTiles());
+		tiles.get(random.nextInt(tiles.size())).setContent(new Capital(kingdom));
+	}
+
+	private void createInitialSavings(Kingdom kingdom) {
+		kingdom.setSavings(kingdom.getIncome() * 50);
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
@@ -200,9 +212,172 @@ public class GameController {
 	}
 
 	public void placeObject(HexTile tile) {
+		// BUG: beim aufsplitten entstehen nicht 2 neue kingdoms
+		if (tile.getContent() != null) {
+			// if combining units, place resulting unit as held object
+			if (tile.getPlayer() == gameState.getActivePlayer()
+					&& tile.getContent().getClass().isAssignableFrom(Unit.class)
+					&& gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+				// the unit that is not the peasant will be upgraded
+				Unit oldUnit;
+				if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
+					oldUnit = (Unit) gameState.getHeldObject();
+				} else {
+					oldUnit = (Unit) tile.getContent();
+				}
+				UnitTypes newUnitType = null;
+				switch (oldUnit.getUnitType()) {
+				case PEASANT:
+					newUnitType = UnitTypes.SPEARMAN;
+					System.out.println("creating spearman");
+					break;
+				case SPEARMAN:
+					newUnitType = UnitTypes.KNIGHT;
+					break;
+				case KNIGHT:
+					newUnitType = UnitTypes.BARON;
+					break;
+				default:
+					break;
+				}
+				gameState.setHeldObject(new Unit(tile.getKingdom(), newUnitType));
+			}
+
+			// place new capital if old one is going to be destroyed
+			if (tile.getContent().getClass().isAssignableFrom(Capital.class)) {
+				tile.getKingdom().setSavings(0);
+				HashSet<HexTile> neighborTiles = map.getNeighborTiles(tile.getPosition());
+				ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
+				// find potential tiles for new capital
+				for (HexTile neighborTile : neighborTiles) {
+					if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()) {
+						capitalCandidates.add(neighborTile);
+					}
+				}
+				// place new capital on random tile next to the old one
+				capitalCandidates.get(random.nextInt(capitalCandidates.size()))
+						.setContent(new Capital(tile.getKingdom()));
+			}
+		}
+		// update kingdoms
+		if (tile.getPlayer() != gameState.getActivePlayer()) {
+			// tile is conquered
+			if (tile.getKingdom() != null) {
+				tile.getKingdom().getTiles().remove(tile);
+			}
+			tile.setKingdom(gameState.getHeldObject().getKingdom());
+			tile.getKingdom().getTiles().add(tile);
+			HashSet<Kingdom> affectedKingdoms = new HashSet<Kingdom>();
+			for (HexTile neighborTile : map.getNeighborTiles(tile.getPosition())) {
+				if (neighborTile == null) {
+					// water
+					continue;
+				}
+				if (neighborTile.getKingdom() == null) {
+					if (neighborTile.getPlayer() == tile.getPlayer()) {
+						// connect tile without kingdom to kingdom
+						neighborTile.setKingdom(tile.getKingdom());
+						tile.getKingdom().getTiles().add(neighborTile);
+					}
+				} else {
+					// handle kingdom
+					if (neighborTile.getPlayer() == tile.getPlayer()
+							&& !(neighborTile.getKingdom() == tile.getKingdom())) {
+						// combine kingdoms if owned by the same player
+						combineKingdoms(tile.getKingdom(), neighborTile.getKingdom());
+
+					} else {
+						// find other affected kingdoms (that might have been split apart)
+						affectedKingdoms.add(neighborTile.getKingdom());
+					}
+				}
+			}
+			// handle potentially split kingdoms
+			for (Kingdom kingdom : affectedKingdoms) {
+				updateSplitKingdom(kingdom.getTiles());
+			}
+		}
+		// finally place new object
 		tile.setContent(gameState.getHeldObject());
 		gameState.setHeldObject(null);
 		mapRenderer.updateMap();
+	}
+
+	private void combineKingdoms(Kingdom masterKingdom, Kingdom slaveKingdom) {
+		// master kingdom will determine the new capital and money
+		masterKingdom.getTiles().addAll(slaveKingdom.getTiles());
+		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
+			slaveKingdomTile.setKingdom(masterKingdom);
+			MapObject content = slaveKingdomTile.getContent();
+			if (content != null) {
+				content.setKingdom(masterKingdom);
+				if (content.getClass().isAssignableFrom(Capital.class)) {
+					// deltete slave capital
+					slaveKingdomTile.setContent(null);
+				}
+			}
+		}
+		gameState.getKingdoms().remove(slaveKingdom);
+	}
+
+	private void updateSplitKingdom(HashSet<HexTile> tiles) {
+		if (tiles.size() == 0) {
+			return;
+		}
+		// try to find a capital
+		HexTile capitalTile = null;
+		for (HexTile kingdomTile : tiles) {
+			if (kingdomTile.getContent() != null
+					&& kingdomTile.getContent().getClass().isAssignableFrom(Capital.class)) {
+				capitalTile = kingdomTile;
+				break;
+			}
+		}
+		HexTile startTile;
+		Kingdom newKingdom = null;
+		if (capitalTile != null) {
+			// capital exists --> keep it's kingdom
+			startTile = capitalTile;
+			newKingdom = startTile.getKingdom();
+			newKingdom.setTiles(new HashSet<HexTile>());
+		} else {
+			// no capital exists --> create new kingdom
+			// start from some other tile
+			startTile = (HexTile) tiles.toArray()[0];
+			newKingdom = new Kingdom(startTile.getPlayer());
+			gameState.getKingdoms().add(newKingdom);
+		}
+		// expand outwards from startTile to find connected tiles
+		LinkedList<HexTile> todoTiles = new LinkedList<HexTile>();
+		HashSet<HexTile> doneTiles = new HashSet<HexTile>();
+		todoTiles.add(startTile);
+		while (todoTiles.size() > 0) {
+			HexTile currentTile = todoTiles.removeFirst();
+			newKingdom.getTiles().add(currentTile);
+			currentTile.setKingdom(newKingdom);
+			doneTiles.add(currentTile);
+			for (HexTile expandTile : map.getNeighborTiles(currentTile.getPosition())) {
+				if (!doneTiles.contains(expandTile) && tiles.contains(expandTile)) {
+					todoTiles.add(expandTile);
+				}
+			}
+		}
+		tiles.removeAll(newKingdom.getTiles());
+
+		if (newKingdom.getTiles().size() < 2) {
+			// delete capital and kingdom if too small
+			if (capitalTile != null) {
+				capitalTile.setContent(null);
+			}
+			startTile.setKingdom(null);
+			gameState.getKingdoms().remove(newKingdom);
+		} else if (capitalTile == null) {
+			// create capital if necessary
+			createCapital(newKingdom);
+		}
+		// recursive call with the tiles that are not connected
+		updateSplitKingdom(tiles);
+		return;
 	}
 
 	public void endTurn() {
@@ -210,12 +385,12 @@ public class GameController {
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
 			gameState.setPlayerTurn(0);
 		}
-
 	}
 
 	public void buyPeasant() {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - FeudalTactics.UNIT_COST);
 		gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+		updateInfoText();
 	}
 
 	public void setHud(Hud hud) {
