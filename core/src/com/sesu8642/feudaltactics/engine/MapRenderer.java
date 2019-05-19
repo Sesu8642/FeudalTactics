@@ -13,14 +13,18 @@ import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ShortArray;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class MapRenderer {
 
@@ -28,7 +32,7 @@ public class MapRenderer {
 
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
-	private HexMap hexMap;
+	private GameController gameController;
 	private PolygonSpriteBatch polySpriteBatch;
 	private Texture textureSolid;
 	private ArrayList<PolygonSprite> polySprites;
@@ -37,8 +41,8 @@ public class MapRenderer {
 	private Pixmap pix;
 	private TextureRegion textureRegion;
 
-	public MapRenderer(HexMap hexMap) {
-		this.hexMap = hexMap;
+	public MapRenderer(GameController gameController) {
+		this.gameController = gameController;
 		contents = new HashMap<Vector2, Animation<TextureRegion>>();
 		polySpriteBatch = new PolygonSpriteBatch();
 		pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -54,7 +58,7 @@ public class MapRenderer {
 		// create tiles
 		contents.clear();
 		polySprites.clear();
-		for (Entry<Vector2, HexTile> hexTileEntry : (hexMap.getTiles()).entrySet()) {
+		for (Entry<Vector2, HexTile> hexTileEntry : (gameController.getGameState().getMap().getTiles()).entrySet()) {
 			pix.setColor(hexTileEntry.getValue().getPlayer().getColor());
 			pix.fill();
 			textureSolid = new Texture(pix);
@@ -73,9 +77,24 @@ public class MapRenderer {
 			// create content (units etc)
 			MapObject tileContent = hexTileEntry.getValue().getContent();
 			if (tileContent != null) {
+				boolean animate = false;
+				if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
+					// animate units that can act
+					animate = true;
+				} else if (tileContent.getClass().isAssignableFrom(Capital.class)
+						&& gameController.getGameState().getActivePlayer() == tileContent.getKingdom().getPlayer() && tileContent.getKingdom().getSavings() > Unit.COST ) {
+					// animate capitals if they can buy something
+					animate = true;
+				}
+				Array<AtlasRegion> atlasregions;
+				if (animate) {
+					atlasregions = FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName());
+				} else {
+					atlasregions = new Array<AtlasRegion>();
+					atlasregions.add(FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName()).first());
+				}
 				contents.put(new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
-						new Animation<TextureRegion>(1F,
-								FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName()), PlayMode.LOOP));
+						new Animation<TextureRegion>(1F, atlasregions));
 			}
 		}
 	}
@@ -94,8 +113,8 @@ public class MapRenderer {
 			polySprite.draw(polySpriteBatch);
 		}
 		// draw all the contents
-		float objectSize = SPRITE_SIZE_MULTIPLIER * hexMap.HEX_OUTER_RADIUS;
-		float offset = (hexMap.HEX_OUTER_RADIUS-objectSize) / 2;
+		float objectSize = SPRITE_SIZE_MULTIPLIER * HexMap.HEX_OUTER_RADIUS;
+		float offset = (HexMap.HEX_OUTER_RADIUS - objectSize) / 2;
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
 			polySpriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - offset,
 					currentFrame.getKey().y - offset, objectSize, objectSize);
@@ -105,7 +124,7 @@ public class MapRenderer {
 
 	public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
 		float x = 0.75F * width * hexCoords.x;
-		float y = (float) (hexMap.HEX_OUTER_RADIUS
+		float y = (float) (HexMap.HEX_OUTER_RADIUS
 				* (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
 		return new Vector2(x, y);
 	}

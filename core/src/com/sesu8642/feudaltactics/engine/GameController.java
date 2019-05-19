@@ -29,11 +29,9 @@ public class GameController {
 	private Random random;
 	private Hud hud;
 
-	public GameController(HexMap map, MapRenderer mapRenderer) {
-		this.map = map;
-		this.mapRenderer = mapRenderer;
+	public GameController() {
+		this.map = new HexMap();
 		this.gameState = new GameState();
-		generateDummyMap();
 	}
 
 	public void generateDummyMap() {
@@ -212,6 +210,11 @@ public class GameController {
 	}
 
 	public void placeObject(HexTile tile) {
+		// units can only conquer one per turn
+		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)
+				&& tile.getPlayer() != gameState.getHeldObject().getKingdom().getPlayer()) {
+			((Unit) gameState.getHeldObject()).setCanAct(false);
+		}
 		if (tile.getContent() != null) {
 			// if combining units, place resulting unit as held object
 			if (tile.getPlayer() == gameState.getActivePlayer()
@@ -241,7 +244,6 @@ public class GameController {
 				}
 				gameState.setHeldObject(new Unit(tile.getKingdom(), newUnitType));
 			}
-
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent().getClass().isAssignableFrom(Capital.class)) {
 				tile.getKingdom().setSavings(0);
@@ -404,6 +406,12 @@ public class GameController {
 					}
 				} else {
 					kingdom.setSavings(kingdom.getSavings() - kingdom.getSalaries());
+					// all units can act again
+					for (HexTile tile : kingdom.getTiles()) {
+						if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+							((Unit) tile.getContent()).setCanAct(true);
+						}
+					}
 				}
 			}
 		}
@@ -423,6 +431,14 @@ public class GameController {
 
 	public void setHud(Hud hud) {
 		this.hud = hud;
+	}
+
+	public MapRenderer getMapRenderer() {
+		return mapRenderer;
+	}
+
+	public void setMapRenderer(MapRenderer mapRenderer) {
+		this.mapRenderer = mapRenderer;
 	}
 
 	public GameState getGameState() {

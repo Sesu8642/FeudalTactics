@@ -22,9 +22,9 @@ public class IngameScreen implements Screen {
 	private InputMultiplexer multiplexer;
 
 	public IngameScreen(FeudalTactics game) {
-		HexMap map = new HexMap();
-		mapRenderer = new MapRenderer(map);
-		GameController gameController = new GameController(map, mapRenderer);
+		GameController gameController = new GameController();
+		mapRenderer = new MapRenderer(gameController);
+		gameController.setMapRenderer(mapRenderer);
 		InputValidator inputValidator = new InputValidator(gameController);
 		hud = new Hud(inputValidator);
 		gameController.setHud(hud);
@@ -34,6 +34,7 @@ public class IngameScreen implements Screen {
 		multiplexer.addProcessor(hud.getStage());
 		multiplexer.addProcessor(new GestureDetector(inputProcessor));
 		multiplexer.addProcessor(inputProcessor);
+		gameController.generateDummyMap();
 	}
 
 	@Override

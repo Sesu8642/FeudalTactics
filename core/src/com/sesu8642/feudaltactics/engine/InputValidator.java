@@ -130,6 +130,9 @@ public class InputValidator {
 		if (!tile.getContent().getClass().isAssignableFrom(Unit.class)) {
 			return false;
 		}
+		if (!((Unit) tile.getContent()).isCanAct()) {
+			return false;
+		}
 		return true;
 	}
 
