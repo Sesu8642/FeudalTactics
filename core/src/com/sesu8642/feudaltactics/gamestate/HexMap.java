@@ -39,7 +39,7 @@ public class HexMap {
 	    }else if (diffY < diffZ) {
 	    	z=-x-y;
 	    }
-		return new Vector2(x, z);
+		return new Vector2(x + 0.0F, z + 0.0F);
 	}
 	
 	public HashSet<Vector2> getNeighborCoords(Vector2 tileCoords) {
