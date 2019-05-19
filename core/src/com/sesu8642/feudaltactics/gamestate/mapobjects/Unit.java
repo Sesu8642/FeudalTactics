@@ -4,6 +4,8 @@ import com.sesu8642.feudaltactics.gamestate.Kingdom;
 
 public class Unit extends MapObject {
 
+	static public final int COST = 10;
+	
 	private boolean canAct;
 
 	public enum UnitTypes {

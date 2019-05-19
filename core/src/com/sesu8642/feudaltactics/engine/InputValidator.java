@@ -1,12 +1,12 @@
 package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
@@ -69,8 +69,18 @@ public class InputValidator {
 			// don't accept inputs if its not the human player's turn
 			return;
 		}
-		if (checkBuyPeasant()) {
+		if (checkBuyObject(Unit.COST)) {
 			gameController.buyPeasant();
+		}
+	}
+
+	public void inputBuyCastle() {
+		if (!isActivePlayerLocalHuman()) {
+			// don't accept inputs if its not the human player's turn
+			return;
+		}
+		if (checkBuyObject(Castle.COST)) {
+			gameController.buyCastle();
 		}
 	}
 
@@ -89,20 +99,13 @@ public class InputValidator {
 		if (player != tile.getPlayer()) {
 			return false;
 		}
-		if (gameState.getActiveKingdom() == tile.getKingdom()) {
+		if (gameState.getHeldObject() != null) {
 			return false;
 		}
 		if (tile.getKingdom() == null) {
 			return false;
 		}
-		return true;
-	}
-
-	public boolean checkActivateKingdom(Player player, HexTile tile) {
-		if (isWater(tile)) {
-			return false;
-		}
-		if (player != tile.getPlayer()) {
+		if (gameState.getActiveKingdom() == tile.getKingdom()) {
 			return false;
 		}
 		return true;
@@ -198,12 +201,12 @@ public class InputValidator {
 		return (gameState.getHeldObject() == null);
 	}
 
-	public boolean checkBuyPeasant() {
+	public boolean checkBuyObject(int cost) {
 		Kingdom activeKingdom = gameState.getActiveKingdom();
 		if (activeKingdom == null) {
 			return false;
 		}
-		if (activeKingdom.getSavings() < FeudalTactics.UNIT_COST) {
+		if (activeKingdom.getSavings() < cost) {
 			return false;
 		}
 		if (gameState.getHeldObject() != null) {
@@ -211,4 +214,5 @@ public class InputValidator {
 		}
 		return true;
 	}
+
 }

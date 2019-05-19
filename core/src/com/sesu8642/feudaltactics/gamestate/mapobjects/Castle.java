@@ -4,6 +4,8 @@ import com.sesu8642.feudaltactics.gamestate.Kingdom;
 
 public class Castle extends MapObject {
 
+	static public final int COST = 15;
+	
 	private final String spriteName = "sprite_castle";
 	private final int strength = 2;
 

@@ -1,7 +1,6 @@
 package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
@@ -9,13 +8,13 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
@@ -172,7 +171,7 @@ public class GameController {
 	}
 
 	private void createInitialSavings(Kingdom kingdom) {
-		kingdom.setSavings(kingdom.getIncome() * 50);
+		kingdom.setSavings(kingdom.getIncome() * 5);
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
@@ -186,6 +185,7 @@ public class GameController {
 		}
 		Kingdom kingdom = gameState.getActiveKingdom();
 		if (kingdom == null) {
+			hud.setInfoText("");
 			return;
 		}
 		int income = kingdom.getIncome();
@@ -212,7 +212,6 @@ public class GameController {
 	}
 
 	public void placeObject(HexTile tile) {
-		// BUG: beim aufsplitten entstehen nicht 2 neue kingdoms
 		if (tile.getContent() != null) {
 			// if combining units, place resulting unit as held object
 			if (tile.getPlayer() == gameState.getActivePlayer()
@@ -301,6 +300,7 @@ public class GameController {
 		tile.setContent(gameState.getHeldObject());
 		gameState.setHeldObject(null);
 		mapRenderer.updateMap();
+		updateInfoText();
 	}
 
 	private void combineKingdoms(Kingdom masterKingdom, Kingdom slaveKingdom) {
@@ -381,15 +381,43 @@ public class GameController {
 	}
 
 	public void endTurn() {
+		// update active player
 		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
 			gameState.setPlayerTurn(0);
 		}
+		// reset active kingdom
+		gameState.setActiveKingdom(null);
+		// reset info text
+		updateInfoText();
+		// update savings
+		for (Kingdom kingdom : gameState.getKingdoms()) {
+			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
+				kingdom.setSavings(kingdom.getSavings() + kingdom.getIncome());
+				if (kingdom.getSavings() < kingdom.getSalaries()) {
+					// destroy all units if they cannot get paid
+					for (HexTile tile : kingdom.getTiles()) {
+						if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+							tile.setContent(null);
+						}
+						mapRenderer.updateMap();
+					}
+				} else {
+					kingdom.setSavings(kingdom.getSavings() - kingdom.getSalaries());
+				}
+			}
+		}
 	}
 
 	public void buyPeasant() {
-		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - FeudalTactics.UNIT_COST);
+		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Unit.COST);
 		gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+		updateInfoText();
+	}
+
+	public void buyCastle() {
+		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Castle.COST);
+		gameState.setHeldObject(new Castle(gameState.getActiveKingdom()));
 		updateInfoText();
 	}
 

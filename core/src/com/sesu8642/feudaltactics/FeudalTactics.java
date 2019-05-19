@@ -11,7 +11,7 @@ public class FeudalTactics extends Game {
 
 	static public Skin skin;
 	static public TextureAtlas textureAtlas;
-	static public final int UNIT_COST = 10;
+
 	@Override
 	public void create() {
 		textureAtlas = new TextureAtlas(Gdx.files.internal("textures.atlas"));

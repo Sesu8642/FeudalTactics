@@ -30,7 +30,18 @@ public class Hud {
 		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton buyCastleButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		undoButton.getImageCell().expand().fill();
+		undoButton.addListener(new ChangeListener() {
+	        @Override
+	        public void changed (ChangeEvent event, Actor actor) {
+	        }
+	    });
 		endTurnButton.getImageCell().expand().fill();
+		endTurnButton.addListener(new ChangeListener() {
+	        @Override
+	        public void changed (ChangeEvent event, Actor actor) {
+	        	inputValidator.inputEndTurn();
+	        }
+	    });
 		buyPeasantButton.getImageCell().expand().fill();
 		buyPeasantButton.addListener(new ChangeListener() {
 	        @Override
@@ -39,9 +50,10 @@ public class Hud {
 	        }
 	    });
 		buyCastleButton.getImageCell().expand().fill();
-		undoButton.addListener(new ChangeListener() {
+		buyCastleButton.addListener(new ChangeListener() {
 	        @Override
 	        public void changed (ChangeEvent event, Actor actor) {
+	        	inputValidator.inputBuyCastle();
 	        }
 	    });
 	    Image handImage = new Image(new Sprite(FeudalTactics.textureAtlas.createSprite("hand")));
