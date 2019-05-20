@@ -286,7 +286,7 @@ public class GameController {
 					if (neighborTile.getPlayer() == tile.getPlayer()
 							&& !(neighborTile.getKingdom() == tile.getKingdom())) {
 						// combine kingdoms if owned by the same player
-						combineKingdoms(tile.getKingdom(), neighborTile.getKingdom());
+						combineKingdoms(neighborTile.getKingdom(), tile.getKingdom());
 
 					} else {
 						// find other affected kingdoms (that might have been split apart)
@@ -307,8 +307,9 @@ public class GameController {
 	}
 
 	private void combineKingdoms(Kingdom masterKingdom, Kingdom slaveKingdom) {
-		// master kingdom will determine the new capital and money
+		// master kingdom will determine the new capital
 		masterKingdom.getTiles().addAll(slaveKingdom.getTiles());
+		masterKingdom.setSavings(masterKingdom.getSavings() + slaveKingdom.getSavings());
 		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
 			slaveKingdomTile.setKingdom(masterKingdom);
 			MapObject content = slaveKingdomTile.getContent();
