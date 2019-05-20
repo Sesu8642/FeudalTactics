@@ -231,7 +231,6 @@ public class GameController {
 				switch (oldUnit.getUnitType()) {
 				case PEASANT:
 					newUnitType = UnitTypes.SPEARMAN;
-					System.out.println("creating spearman");
 					break;
 				case SPEARMAN:
 					newUnitType = UnitTypes.KNIGHT;
@@ -242,7 +241,9 @@ public class GameController {
 				default:
 					break;
 				}
-				gameState.setHeldObject(new Unit(tile.getKingdom(), newUnitType));
+				Unit newUnit = new Unit(tile.getKingdom(), newUnitType);
+				newUnit.setCanAct(((Unit) tile.getContent()).isCanAct());
+				gameState.setHeldObject(newUnit);
 			}
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent().getClass().isAssignableFrom(Capital.class)) {
