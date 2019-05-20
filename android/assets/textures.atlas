@@ -1,110 +1,124 @@
 
 textures.png
-size: 512,256
+size: 512,512
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 buy
   rotate: false
-  xy: 2, 134
+  xy: 2, 68
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 buy_castle
   rotate: false
-  xy: 2, 32
+  xy: 369, 387
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 end_turn
   rotate: false
-  xy: 104, 134
+  xy: 104, 68
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 hand
   rotate: false
-  xy: 206, 134
+  xy: 206, 68
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 sprite_baron
   rotate: false
-  xy: 206, 2
+  xy: 200, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 sprite_baron
   rotate: false
-  xy: 272, 68
+  xy: 308, 104
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 sprite_capital
   rotate: false
-  xy: 272, 2
+  xy: 266, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sprite_castle
   rotate: false
-  xy: 338, 104
+  xy: 435, 219
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+sprite_endTurn
+  rotate: false
+  xy: 374, 87
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sprite_knight
   rotate: false
-  xy: 338, 38
+  xy: 374, 153
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 sprite_knight
   rotate: false
-  xy: 404, 104
+  xy: 440, 153
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 sprite_peasant
   rotate: false
-  xy: 374, 170
+  xy: 68, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 sprite_peasant
   rotate: false
-  xy: 440, 170
+  xy: 134, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 sprite_spearman
   rotate: false
-  xy: 206, 68
+  xy: 2, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 1
 sprite_spearman
   rotate: false
-  xy: 308, 170
+  xy: 369, 219
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
+tile_bw
+  rotate: false
+  xy: 2, 170
+  size: 365, 317
+  orig: 365, 317
+  offset: 0, 0
+  index: -1
 undo
   rotate: false
-  xy: 104, 32
+  xy: 369, 285
   size: 100, 100
   orig: 100, 100
   offset: 0, 0

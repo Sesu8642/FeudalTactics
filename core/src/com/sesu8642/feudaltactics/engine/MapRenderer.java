@@ -1,24 +1,17 @@
 package com.sesu8642.feudaltactics.engine;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
-import com.badlogic.gdx.graphics.g2d.PolygonRegion;
-import com.badlogic.gdx.graphics.g2d.PolygonSprite;
-import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ShortArray;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
@@ -33,47 +26,30 @@ public class MapRenderer {
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 	private GameController gameController;
-	private PolygonSpriteBatch polySpriteBatch;
-	private Texture textureSolid;
-	private ArrayList<PolygonSprite> polySprites;
+	private HashMap<Vector2, Color> tiles;
 	private HashMap<Vector2, Animation<TextureRegion>> contents;
 	private float stateTime; // for keeping animations at the correct pace
-	private Pixmap pix;
-	private TextureRegion textureRegion;
+	private SpriteBatch batch;
+	private AtlasRegion tileRegion;
 
 	public MapRenderer(GameController gameController) {
 		this.gameController = gameController;
+		tiles = new HashMap<Vector2, Color>();
 		contents = new HashMap<Vector2, Animation<TextureRegion>>();
-		polySpriteBatch = new PolygonSpriteBatch();
-		pix = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-		polySprites = new ArrayList<PolygonSprite>();
-		pix.setColor(0x00DE00FF);
-		pix.fill();
-		textureSolid = new Texture(pix);
-		textureRegion = new TextureRegion(textureSolid);
+		tileRegion = FeudalTactics.textureAtlas.findRegion("tile_bw");
+		batch = new SpriteBatch();
 		stateTime = 0F;
 	}
 
 	public void updateMap() {
 		// create tiles
+		tiles.clear();
 		contents.clear();
-		polySprites.clear();
 		for (Entry<Vector2, HexTile> hexTileEntry : (gameController.getGameState().getMap().getTiles()).entrySet()) {
-			pix.setColor(hexTileEntry.getValue().getPlayer().getColor());
-			pix.fill();
-			textureSolid = new Texture(pix);
-			textureRegion = new TextureRegion(textureSolid);
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
-			// X --> , Y |^
-			float[] vertices = { mapCoords.x - 0.5F * width, mapCoords.y, mapCoords.x - 0.25F * width,
-					mapCoords.y + 0.5F * height, mapCoords.x + 0.25F * width, mapCoords.y + 0.5F * height,
-					mapCoords.x + 0.5F * width, mapCoords.y, mapCoords.x + 0.25F * width, mapCoords.y - 0.5F * height,
-					mapCoords.x - 0.25F * width, mapCoords.y - 0.5F * height };
-			EarClippingTriangulator triangulator = new EarClippingTriangulator();
-			ShortArray triangleIndices = triangulator.computeTriangles(vertices);
-			PolygonRegion polyReg = new PolygonRegion(textureRegion, vertices, triangleIndices.toArray());
-			polySprites.add(new PolygonSprite(polyReg));
+			// create tiles
+			tiles.put(mapCoords, hexTileEntry.getValue().getPlayer().getColor());
 			// create content (units etc)
 			MapObject tileContent = hexTileEntry.getValue().getContent();
 			if (tileContent != null) {
@@ -82,7 +58,8 @@ public class MapRenderer {
 					// animate units that can act
 					animate = true;
 				} else if (tileContent.getClass().isAssignableFrom(Capital.class)
-						&& gameController.getGameState().getActivePlayer() == tileContent.getKingdom().getPlayer() && tileContent.getKingdom().getSavings() > Unit.COST ) {
+						&& gameController.getGameState().getActivePlayer() == tileContent.getKingdom().getPlayer()
+						&& tileContent.getKingdom().getSavings() > Unit.COST) {
 					// animate capitals if they can buy something
 					animate = true;
 				}
@@ -101,25 +78,29 @@ public class MapRenderer {
 
 	public void render(OrthographicCamera camera) {
 		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map
-																						// object
+		batch.setProjectionMatrix(camera.combined); // object
 		stateTime += Gdx.graphics.getDeltaTime();
-		polySpriteBatch.setProjectionMatrix(camera.combined);
+		// get the correct frames
 		for (Entry<Vector2, Animation<TextureRegion>> content : contents.entrySet()) {
 			frames.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
 		}
-		polySpriteBatch.begin();
-		// draw all the tiles
-		for (PolygonSprite polySprite : polySprites) {
-			polySprite.draw(polySpriteBatch);
-		}
-		// draw all the contents
 		float objectSize = SPRITE_SIZE_MULTIPLIER * HexMap.HEX_OUTER_RADIUS;
 		float offset = (HexMap.HEX_OUTER_RADIUS - objectSize) / 2;
-		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-			polySpriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - offset,
-					currentFrame.getKey().y - offset, objectSize, objectSize);
+		float tileWidth = HexMap.HEX_OUTER_RADIUS * 2;
+		float tileHeight = (float) (HexMap.HEX_OUTER_RADIUS * Math.sqrt(3));
+		batch.begin();
+		// draw all the tiles
+		for (Entry<Vector2, Color> tile : tiles.entrySet()) {
+			batch.setColor(tile.getValue());
+			batch.draw(tileRegion, tile.getKey().x - tileWidth/2, tile.getKey().y - tileHeight/2, tileWidth, tileHeight);
 		}
-		polySpriteBatch.end();
+		batch.setColor(1,1,1,1);
+		// draw all the contents
+		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
+			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - offset, currentFrame.getKey().y - offset,
+					objectSize, objectSize);
+		}
+		batch.end();
 	}
 
 	public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
@@ -130,10 +111,10 @@ public class MapRenderer {
 	}
 
 	public void dispose() {
-		polySpriteBatch.dispose();
+		batch.dispose();
 	}
 
 	public void resize() {
-		polySpriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+		batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
 	}
 }
