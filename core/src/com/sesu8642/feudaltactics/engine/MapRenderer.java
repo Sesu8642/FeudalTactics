@@ -8,10 +8,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
@@ -27,24 +25,31 @@ public class MapRenderer {
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 	private GameController gameController;
 	private HashMap<Vector2, Color> tiles;
-	private HashMap<Vector2, Animation<TextureRegion>> contents;
+	private HashMap<String, TextureRegion> textureRegions;
+	private HashMap<String, Animation<TextureRegion>> animations;
+	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
+	private HashMap<Vector2, Animation<TextureRegion>> animatedContents;
 	private float stateTime; // for keeping animations at the correct pace
 	private SpriteBatch batch;
-	private AtlasRegion tileRegion;
+	private TextureRegion tileRegion;
 
 	public MapRenderer(GameController gameController) {
 		this.gameController = gameController;
 		tiles = new HashMap<Vector2, Color>();
-		contents = new HashMap<Vector2, Animation<TextureRegion>>();
+		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
+		nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
 		tileRegion = FeudalTactics.textureAtlas.findRegion("tile_bw");
 		batch = new SpriteBatch();
+		textureRegions = new HashMap<String, TextureRegion>();
+		animations = new HashMap<String, Animation<TextureRegion>>();
 		stateTime = 0F;
 	}
 
 	public void updateMap() {
 		// create tiles
 		tiles.clear();
-		contents.clear();
+		nonAnimatedContents.clear();
+		animatedContents.clear();
 		for (Entry<Vector2, HexTile> hexTileEntry : (gameController.getGameState().getMap().getTiles()).entrySet()) {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
@@ -63,17 +68,36 @@ public class MapRenderer {
 					// animate capitals if they can buy something
 					animate = true;
 				}
-				Array<AtlasRegion> atlasregions;
 				if (animate) {
-					atlasregions = FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName());
+					animatedContents.put(
+							new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+							getAnimationFromName(tileContent.getSpriteName()));
 				} else {
-					atlasregions = new Array<AtlasRegion>();
-					atlasregions.add(FeudalTactics.textureAtlas.findRegions(tileContent.getSpriteName()).first());
+					nonAnimatedContents.put(
+							new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+							getTextureRegionFromName(tileContent.getSpriteName()));
 				}
-				contents.put(new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
-						new Animation<TextureRegion>(1F, atlasregions));
+
 			}
 		}
+	}
+
+	private TextureRegion getTextureRegionFromName(String name) {
+		TextureRegion textureRegion = textureRegions.get(name);
+		if (textureRegion == null) {
+			textureRegion = FeudalTactics.textureAtlas.findRegion(name);
+			textureRegions.put(name, textureRegion);
+		}
+		return textureRegion;
+	}
+
+	private Animation<TextureRegion> getAnimationFromName(String name) {
+		Animation<TextureRegion> animation = animations.get(name);
+		if (animation == null) {
+			animation = new Animation<TextureRegion>(1F, FeudalTactics.textureAtlas.findRegions(name));
+			animations.put(name, animation);
+		}
+		return animation;
 	}
 
 	public void render(OrthographicCamera camera) {
@@ -81,24 +105,27 @@ public class MapRenderer {
 		batch.setProjectionMatrix(camera.combined); // object
 		stateTime += Gdx.graphics.getDeltaTime();
 		// get the correct frames
-		for (Entry<Vector2, Animation<TextureRegion>> content : contents.entrySet()) {
-			frames.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
+		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
+			frames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
 		float objectSize = SPRITE_SIZE_MULTIPLIER * HexMap.HEX_OUTER_RADIUS;
 		float offset = (HexMap.HEX_OUTER_RADIUS - objectSize) / 2;
-		float tileWidth = HexMap.HEX_OUTER_RADIUS * 2;
-		float tileHeight = (float) (HexMap.HEX_OUTER_RADIUS * Math.sqrt(3));
 		batch.begin();
 		// draw all the tiles
 		for (Entry<Vector2, Color> tile : tiles.entrySet()) {
 			batch.setColor(tile.getValue());
-			batch.draw(tileRegion, tile.getKey().x - tileWidth/2, tile.getKey().y - tileHeight/2, tileWidth, tileHeight);
+			batch.draw(tileRegion, tile.getKey().x - width / 2, tile.getKey().y - height / 2, width, height);
 		}
-		batch.setColor(1,1,1,1);
-		// draw all the contents
+		batch.setColor(1, 1, 1, 1);
+		// draw all the animated contents
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
 			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - offset, currentFrame.getKey().y - offset,
 					objectSize, objectSize);
+		}
+		// draw all the non-animated contents
+		for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {
+			batch.draw(content.getValue(), content.getKey().x - offset, content.getKey().y - offset, objectSize,
+					objectSize);
 		}
 		batch.end();
 	}
