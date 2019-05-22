@@ -73,14 +73,16 @@ public class MapRenderer {
 			MapObject tileContent = tile.getContent();
 			if (tileContent != null) {
 				boolean animate = false;
-				if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
-					// animate units that can act
-					animate = true;
-				} else if (tileContent.getClass().isAssignableFrom(Capital.class)
-						&& gameController.getGameState().getActivePlayer() == tileContent.getKingdom().getPlayer()
-						&& tileContent.getKingdom().getSavings() > Unit.COST) {
-					// animate capitals if they can buy something
-					animate = true;
+				if (tileContent.getKingdom().getPlayer() == gameController.getGameState().getActivePlayer()) {
+					if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
+						// animate units that can act
+						animate = true;
+					} else if (tileContent.getClass().isAssignableFrom(Capital.class)
+							&& gameController.getGameState().getActivePlayer() == tileContent.getKingdom().getPlayer()
+							&& tileContent.getKingdom().getSavings() > Unit.COST) {
+						// animate capitals if they can buy something
+						animate = true;
+					}
 				}
 				if (animate) {
 					animatedContents.put(
@@ -118,13 +120,17 @@ public class MapRenderer {
 							break;
 						case 2:
 							// top right
-							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION, mapCoords.y + height / 2 + LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION, mapCoords.y - LINE_EXTENSION));
+							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION,
+									mapCoords.y + height / 2 + LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION,
+									mapCoords.y - LINE_EXTENSION));
 							break;
 						case 3:
 							// bottom right
-							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION, mapCoords.y - height / 2 - LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION, mapCoords.y + LINE_EXTENSION));
+							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION,
+									mapCoords.y - height / 2 - LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION,
+									mapCoords.y + LINE_EXTENSION));
 							break;
 						case 4:
 							// bottom
@@ -135,8 +141,10 @@ public class MapRenderer {
 							break;
 						case 5:
 							// bottom left
-							whitelineStartPoints.add(new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION, mapCoords.y - height / 2 - LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION, mapCoords.y + LINE_EXTENSION));
+							whitelineStartPoints.add(new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION,
+									mapCoords.y - height / 2 - LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION,
+									mapCoords.y + LINE_EXTENSION));
 							break;
 						}
 					}
