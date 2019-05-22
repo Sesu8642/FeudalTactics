@@ -293,7 +293,9 @@ public class GameController {
 
 					} else {
 						// find other affected kingdoms (that might have been split apart)
-						affectedKingdoms.add(neighborTile.getKingdom());
+						if (neighborTile.getKingdom() != tile.getKingdom()) {
+							affectedKingdoms.add(neighborTile.getKingdom());
+						}
 					}
 				}
 			}
