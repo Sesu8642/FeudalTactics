@@ -211,7 +211,7 @@ public class GameController {
 	}
 
 	public void placeObject(HexTile tile) {
-		// units can only conquer one per turn
+		// units can only conquer once per turn
 		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)
 				&& tile.getPlayer() != gameState.getHeldObject().getKingdom().getPlayer()) {
 			((Unit) gameState.getHeldObject()).setCanAct(false);
