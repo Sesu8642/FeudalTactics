@@ -16,12 +16,15 @@ import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class GameController {
 	// only class supposed to modify the game state
+
+	private final float TREE_SPREAD_RATE = 0.5F;
 
 	private HexMap map;
 	private MapRenderer mapRenderer;
@@ -51,13 +54,15 @@ public class GameController {
 		gameState.setPlayers(players);
 		gameState.setMap(map);
 		gameState.setKingdoms(new ArrayList<Kingdom>());
-		generateMap(players, 500, 0, null);
+		generateMap(players, 500, 0, 0.1F, null);
 	}
 
-	public void generateMap(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
+	public void generateMap(ArrayList<Player> players, float landMass, float density, float vegetationDensity,
+			Long mapSeed) {
 		generateTiles(players, landMass, density, mapSeed);
 		createInitialKingdoms();
 		createCapitalsAndMoney();
+		createTrees(vegetationDensity);
 		mapRenderer.updateMap();
 	}
 
@@ -163,6 +168,14 @@ public class GameController {
 		}
 	}
 
+	private void createTrees(float vegetationDensity) {
+		for (HexTile tile : map.getTiles().values()) {
+			if (tile.getContent() == null && random.nextFloat() <= vegetationDensity) {
+				tile.setContent(new Tree(tile.getKingdom()));
+			}
+		}
+	}
+
 	private void createCapital(Kingdom kingdom) {
 		ArrayList<HexTile> tiles = new ArrayList<HexTile>(kingdom.getTiles());
 		tiles.get(random.nextInt(tiles.size())).setContent(new Capital(kingdom));
@@ -212,9 +225,13 @@ public class GameController {
 
 	public void placeObject(HexTile tile) {
 		// units can only conquer once per turn
-		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)
-				&& tile.getPlayer() != gameState.getHeldObject().getKingdom().getPlayer()) {
-			((Unit) gameState.getHeldObject()).setCanAct(false);
+		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			if (tile.getPlayer() != gameState.getHeldObject().getKingdom().getPlayer()) {
+				((Unit) gameState.getHeldObject()).setCanAct(false);
+			}
+			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+				((Unit) gameState.getHeldObject()).setCanAct(false);
+			}
 		}
 		if (tile.getContent() != null) {
 			// if combining units, place resulting unit as held object
@@ -394,6 +411,7 @@ public class GameController {
 		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
 			gameState.setPlayerTurn(0);
+			spreadTrees();
 		}
 		// reset active kingdom
 		gameState.setActiveKingdom(null);
@@ -422,6 +440,30 @@ public class GameController {
 			}
 		}
 		mapRenderer.updateMap();
+	}
+
+	private void spreadTrees() {
+		// spread trees
+		HashSet<HexTile> newTreeTiles = new HashSet<HexTile>();
+		for (HexTile tile : map.getTiles().values()) {
+			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+				if (random.nextFloat() <= TREE_SPREAD_RATE) {
+					ArrayList<HexTile> candidates = new ArrayList<HexTile>();
+					for (HexTile neighbor : map.getNeighborTiles(tile.getPosition())) {
+						if (neighbor != null && neighbor.getContent() == null) {
+							candidates.add(neighbor);
+						}
+					}
+					if (candidates.size() > 0) {
+						newTreeTiles.add(candidates.get(random.nextInt(candidates.size())));
+						candidates.clear();
+					}
+				}
+			}
+		}
+		for (HexTile tile : newTreeTiles) {
+			tile.setContent(new Tree(tile.getKingdom()));
+		}
 	}
 
 	public void buyPeasant() {

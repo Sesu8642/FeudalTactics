@@ -38,31 +38,24 @@ sprite_baron
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
-  index: 1
-sprite_baron
-  rotate: false
-  xy: 308, 104
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
   index: 2
 sprite_capital
   rotate: false
-  xy: 266, 2
+  xy: 308, 104
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sprite_castle
   rotate: false
-  xy: 435, 219
+  xy: 266, 2
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 sprite_endTurn
   rotate: false
-  xy: 374, 87
+  xy: 435, 219
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -109,6 +102,13 @@ sprite_spearman
   orig: 64, 64
   offset: 0, 0
   index: 2
+sprite_tree
+  rotate: false
+  xy: 374, 87
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 tile_bw
   rotate: false
   xy: 2, 170

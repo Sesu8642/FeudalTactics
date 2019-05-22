@@ -73,7 +73,7 @@ public class MapRenderer {
 			MapObject tileContent = tile.getContent();
 			if (tileContent != null) {
 				boolean animate = false;
-				if (tileContent.getKingdom().getPlayer() == gameController.getGameState().getActivePlayer()) {
+				if (tileContent.getKingdom() != null && tileContent.getKingdom().getPlayer() == gameController.getGameState().getActivePlayer()) {
 					if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
 						// animate units that can act
 						animate = true;
