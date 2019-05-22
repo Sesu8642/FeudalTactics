@@ -288,6 +288,7 @@ public class GameController {
 							&& !(neighborTile.getKingdom() == tile.getKingdom())) {
 						// combine kingdoms if owned by the same player
 						combineKingdoms(neighborTile.getKingdom(), tile.getKingdom());
+						gameState.getHeldObject().setKingdom(neighborTile.getKingdom());
 						gameState.setActiveKingdom(neighborTile.getKingdom());
 
 					} else {
