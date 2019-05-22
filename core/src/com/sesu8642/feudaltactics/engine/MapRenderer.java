@@ -1,5 +1,6 @@
 package com.sesu8642.feudaltactics.engine;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -9,17 +10,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
 public class MapRenderer {
 
 	final float SPRITE_SIZE_MULTIPLIER = 1.5F;
+	final float LINE_EXTENSION = 0.14F;
 
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
@@ -29,12 +34,16 @@ public class MapRenderer {
 	private HashMap<String, Animation<TextureRegion>> animations;
 	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
 	private HashMap<Vector2, Animation<TextureRegion>> animatedContents;
+	private ArrayList<Vector2> whitelineStartPoints;
+	private ArrayList<Vector2> whitelineEndPoints;
 	private float stateTime; // for keeping animations at the correct pace
 	private SpriteBatch batch;
 	private TextureRegion tileRegion;
+	private ShapeRenderer shapeRenderer;
 
 	public MapRenderer(GameController gameController) {
 		this.gameController = gameController;
+		shapeRenderer = new ShapeRenderer();
 		tiles = new HashMap<Vector2, Color>();
 		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
 		nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
@@ -42,6 +51,8 @@ public class MapRenderer {
 		batch = new SpriteBatch();
 		textureRegions = new HashMap<String, TextureRegion>();
 		animations = new HashMap<String, Animation<TextureRegion>>();
+		whitelineStartPoints = new ArrayList<Vector2>();
+		whitelineEndPoints = new ArrayList<Vector2>();
 		stateTime = 0F;
 	}
 
@@ -50,13 +61,16 @@ public class MapRenderer {
 		tiles.clear();
 		nonAnimatedContents.clear();
 		animatedContents.clear();
+		whitelineStartPoints.clear();
+		whitelineEndPoints.clear();
 		for (Entry<Vector2, HexTile> hexTileEntry : (gameController.getGameState().getMap().getTiles()).entrySet()) {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
+			HexTile tile = hexTileEntry.getValue();
 			// create tiles
-			tiles.put(mapCoords, hexTileEntry.getValue().getPlayer().getColor());
+			tiles.put(mapCoords, tile.getPlayer().getColor());
 			// create content (units etc)
-			MapObject tileContent = hexTileEntry.getValue().getContent();
+			MapObject tileContent = tile.getContent();
 			if (tileContent != null) {
 				boolean animate = false;
 				if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
@@ -78,6 +92,56 @@ public class MapRenderer {
 							getTextureRegionFromName(tileContent.getSpriteName()));
 				}
 
+			}
+			// create lines for highlighting active kingdom
+			if (gameController.getGameState().getActiveKingdom() != null && tile.getKingdom() != null
+					&& tile.getKingdom() == gameController.getGameState().getActiveKingdom()) {
+				int index = 0;
+				for (HexTile neighborTile : gameController.getGameState().getMap().getNeighborTiles(hexCoords)) {
+					if (neighborTile == null || neighborTile.getKingdom() == null
+							|| neighborTile.getKingdom() != tile.getKingdom()) {
+						// index contains the information where the neighbor tile is positioned
+						switch (index) {
+						case 0:
+							// top left
+							whitelineStartPoints.add(new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION,
+									mapCoords.y + height / 2 + LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION,
+									mapCoords.y - LINE_EXTENSION));
+							break;
+						case 1:
+							// top
+							whitelineStartPoints.add(
+									new Vector2(mapCoords.x - width / 4 - LINE_EXTENSION, mapCoords.y + height / 2));
+							whitelineEndPoints.add(
+									new Vector2(mapCoords.x + width / 4 + LINE_EXTENSION, mapCoords.y + height / 2));
+							break;
+						case 2:
+							// top right
+							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION, mapCoords.y + height / 2 + LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION, mapCoords.y - LINE_EXTENSION));
+							break;
+						case 3:
+							// bottom right
+							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION, mapCoords.y - height / 2 - LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION, mapCoords.y + LINE_EXTENSION));
+							break;
+						case 4:
+							// bottom
+							whitelineStartPoints.add(
+									new Vector2(mapCoords.x - width / 4 - LINE_EXTENSION, mapCoords.y - height / 2));
+							whitelineEndPoints.add(
+									new Vector2(mapCoords.x + width / 4 + LINE_EXTENSION, mapCoords.y - height / 2));
+							break;
+						case 5:
+							// bottom left
+							whitelineStartPoints.add(new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION, mapCoords.y - height / 2 - LINE_EXTENSION));
+							whitelineEndPoints.add(new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION, mapCoords.y + LINE_EXTENSION));
+							break;
+						}
+					}
+					index++;
+				}
 			}
 		}
 	}
@@ -128,6 +192,14 @@ public class MapRenderer {
 					objectSize);
 		}
 		batch.end();
+		// draw all the lines
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		for (int i = 0; i < whitelineStartPoints.size(); i++) {
+			shapeRenderer.rectLine(whitelineStartPoints.get(i).x, whitelineStartPoints.get(i).y,
+					whitelineEndPoints.get(i).x, whitelineEndPoints.get(i).y, 0.6F);
+		}
+		shapeRenderer.end();
 	}
 
 	public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {

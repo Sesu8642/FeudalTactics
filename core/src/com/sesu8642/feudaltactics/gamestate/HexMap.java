@@ -1,7 +1,7 @@
 package com.sesu8642.feudaltactics.gamestate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -42,8 +42,8 @@ public class HexMap {
 		return new Vector2(x + 0.0F, z + 0.0F);
 	}
 	
-	public HashSet<Vector2> getNeighborCoords(Vector2 tileCoords) {
-		HashSet<Vector2> neighbors = new HashSet<Vector2>();
+	public ArrayList<Vector2> getNeighborCoords(Vector2 tileCoords) {
+		ArrayList<Vector2> neighbors = new ArrayList<Vector2>();
 		neighbors.add(new Vector2(tileCoords.x - 1, tileCoords.y));
 		neighbors.add(new Vector2(tileCoords.x, tileCoords.y - 1));
 		neighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 1));
@@ -53,18 +53,18 @@ public class HexMap {
 		return neighbors;
 	}
 	
-	public HashSet<HexTile> getNeighborTiles(Vector2 tileCoords){
-		HashSet<Vector2> neighborCoords = getNeighborCoords(tileCoords);
-		HashSet<HexTile> neighborTiles = new HashSet<HexTile>();
+	public ArrayList<HexTile> getNeighborTiles(Vector2 tileCoords){
+		ArrayList<Vector2> neighborCoords = getNeighborCoords(tileCoords);
+		ArrayList<HexTile> neighborTiles = new ArrayList<HexTile>();
 		for(Vector2 coord : neighborCoords) {
 			neighborTiles.add(tiles.get(coord));
 		}
 		return neighborTiles;
 	}
 
-	public HashSet<Vector2> getUnusedNeighborCoords(Vector2 tileCoords) {
-		HashSet<Vector2> neighbors = getNeighborCoords(tileCoords);
-		HashSet<Vector2> unusedNeighbors = new HashSet<Vector2>();
+	public ArrayList<Vector2> getUnusedNeighborCoords(Vector2 tileCoords) {
+		ArrayList<Vector2> neighbors = getNeighborCoords(tileCoords);
+		ArrayList<Vector2> unusedNeighbors = new ArrayList<Vector2>();
 		for (Vector2 neighbor : neighbors) {
 			if (!tiles.containsKey(neighbor)) {
 				unusedNeighbors.add(neighbor);

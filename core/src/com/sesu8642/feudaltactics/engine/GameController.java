@@ -81,7 +81,7 @@ public class GameController {
 			// add to history
 			positionHistory.add(currentTilePos);
 			// get next tile with usable neighboring tiles
-			ArrayList<Vector2> usableCoords = new ArrayList<Vector2>(map.getUnusedNeighborCoords(currentTilePos));
+			ArrayList<Vector2> usableCoords = map.getUnusedNeighborCoords(currentTilePos);
 			while (usableCoords.isEmpty()) {
 				// backtrack until able to place a tile again
 				positionHistory.remove(positionHistory.size() - 1);
@@ -201,6 +201,7 @@ public class GameController {
 	public void activateKingdom(Kingdom kingdom) {
 		gameState.setActiveKingdom(kingdom);
 		updateInfoText();
+		mapRenderer.updateMap();
 	}
 
 	public void pickupObject(HexTile tile) {
@@ -248,7 +249,7 @@ public class GameController {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent().getClass().isAssignableFrom(Capital.class)) {
 				tile.getKingdom().setSavings(0);
-				HashSet<HexTile> neighborTiles = map.getNeighborTiles(tile.getPosition());
+				ArrayList<HexTile> neighborTiles = map.getNeighborTiles(tile.getPosition());
 				ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
 				// find potential tiles for new capital
 				for (HexTile neighborTile : neighborTiles) {
