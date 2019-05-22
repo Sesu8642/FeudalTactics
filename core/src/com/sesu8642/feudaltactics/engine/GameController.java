@@ -406,7 +406,6 @@ public class GameController {
 						if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
 							tile.setContent(null);
 						}
-						mapRenderer.updateMap();
 					}
 				} else {
 					kingdom.setSavings(kingdom.getSavings() - kingdom.getSalaries());
@@ -419,6 +418,7 @@ public class GameController {
 				}
 			}
 		}
+		mapRenderer.updateMap();
 	}
 
 	public void buyPeasant() {
