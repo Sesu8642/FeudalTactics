@@ -143,10 +143,10 @@ public class InputValidator {
 		if (gameState.getHeldObject() == null) {
 			return false;
 		}
-		if (tile.getKingdom() != null && tile.getPlayer() == player) {
-			// own kingdom
-			if (gameState.getHeldObject().getKingdom() != tile.getKingdom()) {
-				// own kingdom but not the one the unit belongs to
+		if (tile.getPlayer() == player) {
+			// own tile
+			if (gameState.getHeldObject().getKingdom() != tile.getKingdom() || tile.getKingdom() == null) {
+				// own tile but not the one the kingdom the unit belongs to
 				return false;
 			}
 			if (tile.getContent() != null
