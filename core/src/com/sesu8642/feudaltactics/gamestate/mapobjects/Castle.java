@@ -23,4 +23,9 @@ public class Castle extends MapObject {
 		return strength;
 	}
 
+	@Override
+	public MapObject getCopy(Kingdom newKingdom) {
+		return new Castle(newKingdom);
+	}
+
 }

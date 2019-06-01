@@ -19,7 +19,6 @@ import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
 public class MapRenderer {
 
@@ -73,7 +72,8 @@ public class MapRenderer {
 			MapObject tileContent = tile.getContent();
 			if (tileContent != null) {
 				boolean animate = false;
-				if (tileContent.getKingdom() != null && tileContent.getKingdom().getPlayer() == gameController.getGameState().getActivePlayer()) {
+				if (tileContent.getKingdom() != null
+						&& tileContent.getKingdom().getPlayer() == gameController.getGameState().getActivePlayer()) {
 					if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
 						// animate units that can act
 						animate = true;

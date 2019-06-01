@@ -20,5 +20,10 @@ public class Tree extends MapObject{
 	public int getStrength() {
 		return strength;
 	}
+
+	@Override
+	public MapObject getCopy(Kingdom newKingdom) {
+		return new Tree(newKingdom);
+	}
 	
 }

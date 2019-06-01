@@ -26,15 +26,15 @@ public class GameController {
 
 	private final float TREE_SPREAD_RATE = 0.5F;
 
-	private HexMap map;
 	private MapRenderer mapRenderer;
 	private GameState gameState;
 	private Random random;
 	private Hud hud;
+	private LinkedList<GameState> undoStates;
 
 	public GameController() {
-		this.map = new HexMap();
 		this.gameState = new GameState();
+		this.undoStates = new LinkedList<GameState>();
 	}
 
 	public void generateDummyMap() {
@@ -52,7 +52,7 @@ public class GameController {
 		players.add(p5);
 		players.add(p6);
 		gameState.setPlayers(players);
-		gameState.setMap(map);
+		gameState.setMap(new HexMap());
 		gameState.setKingdoms(new ArrayList<Kingdom>());
 		generateMap(players, 500, 0, 0.1F, null);
 	}
@@ -68,7 +68,7 @@ public class GameController {
 
 	private void generateTiles(ArrayList<Player> players, float landMass, float density, Long mapSeed) {
 		// density between -3 and 3 produces good results
-		map.getTiles().clear();
+		gameState.getMap().getTiles().clear();
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
 		}
@@ -81,24 +81,24 @@ public class GameController {
 			// place tile
 			Player player = players.get(random.nextInt(players.size()));
 			HexTile tile = new HexTile(player, currentTilePos);
-			map.getTiles().put(currentTilePos, tile);
+			gameState.getMap().getTiles().put(currentTilePos, tile);
 			landMass--;
 			// add to history
 			positionHistory.add(currentTilePos);
 			// get next tile with usable neighboring tiles
-			ArrayList<Vector2> usableCoords = map.getUnusedNeighborCoords(currentTilePos);
+			ArrayList<Vector2> usableCoords = gameState.getMap().getUnusedNeighborCoords(currentTilePos);
 			while (usableCoords.isEmpty()) {
 				// backtrack until able to place a tile again
 				positionHistory.remove(positionHistory.size() - 1);
 				currentTilePos = positionHistory.get(positionHistory.size() - 1);
-				usableCoords = new ArrayList<Vector2>(map.getUnusedNeighborCoords(currentTilePos));
+				usableCoords = new ArrayList<Vector2>(gameState.getMap().getUnusedNeighborCoords(currentTilePos));
 			}
 			// calculate a score for each neighboring tile for choosing the next one
 			ArrayList<Float> scores = new ArrayList<Float>();
 			float scoreSum = 0;
 			for (Vector2 candidate : usableCoords) {
 				// factor in density
-				int usableCoordsCountFromCandidate = map.getUnusedNeighborCoords(candidate).size();
+				int usableCoordsCountFromCandidate = gameState.getMap().getUnusedNeighborCoords(candidate).size();
 				float score = (float) Math.pow(usableCoordsCountFromCandidate, density);
 				scores.add(score);
 				scoreSum += score;
@@ -117,11 +117,11 @@ public class GameController {
 
 	private void createInitialKingdoms() {
 		gameState.getKingdoms().clear();
-		for (Entry<Vector2, HexTile> tileEntry : map.getTiles().entrySet()) {
+		for (Entry<Vector2, HexTile> tileEntry : gameState.getMap().getTiles().entrySet()) {
 			HexTile tile = tileEntry.getValue();
 			Vector2 coords = tileEntry.getKey();
 			tile.setKingdom(null);
-			for (HexTile neighborTile : map.getNeighborTiles(coords)) {
+			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(coords)) {
 				if (neighborTile == null) {
 					// water
 					continue;
@@ -169,7 +169,7 @@ public class GameController {
 	}
 
 	private void createTrees(float vegetationDensity) {
-		for (HexTile tile : map.getTiles().values()) {
+		for (HexTile tile : gameState.getMap().getTiles().values()) {
 			if (tile.getContent() == null && random.nextFloat() <= vegetationDensity) {
 				tile.setContent(new Tree(tile.getKingdom()));
 			}
@@ -187,7 +187,7 @@ public class GameController {
 
 	public void printTileInfo(Vector2 hexCoords) {
 		System.out.println("clicked tile position " + hexCoords);
-		System.out.println(map.getTiles().get(hexCoords));
+		System.out.println(gameState.getMap().getTiles().get(hexCoords));
 	}
 
 	public void updateInfoText() {
@@ -218,12 +218,14 @@ public class GameController {
 	}
 
 	public void pickupObject(HexTile tile) {
+		undoStates.add(new GameState(this.gameState));
 		gameState.setHeldObject(tile.getContent());
 		tile.setContent(null);
 		mapRenderer.updateMap();
 	}
 
 	public void placeObject(HexTile tile) {
+		undoStates.add(new GameState(this.gameState));
 		// units can only conquer once per turn
 		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
 			if (tile.getPlayer() != gameState.getHeldObject().getKingdom().getPlayer()) {
@@ -266,7 +268,7 @@ public class GameController {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent().getClass().isAssignableFrom(Capital.class)) {
 				tile.getKingdom().setSavings(0);
-				ArrayList<HexTile> neighborTiles = map.getNeighborTiles(tile.getPosition());
+				ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile.getPosition());
 				ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
 				// find potential tiles for new capital
 				for (HexTile neighborTile : neighborTiles) {
@@ -288,7 +290,7 @@ public class GameController {
 			tile.setKingdom(gameState.getHeldObject().getKingdom());
 			tile.getKingdom().getTiles().add(tile);
 			HashSet<Kingdom> affectedKingdoms = new HashSet<Kingdom>();
-			for (HexTile neighborTile : map.getNeighborTiles(tile.getPosition())) {
+			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile.getPosition())) {
 				if (neighborTile == null) {
 					// water
 					continue;
@@ -382,7 +384,7 @@ public class GameController {
 			newKingdom.getTiles().add(currentTile);
 			currentTile.setKingdom(newKingdom);
 			doneTiles.add(currentTile);
-			for (HexTile expandTile : map.getNeighborTiles(currentTile.getPosition())) {
+			for (HexTile expandTile : gameState.getMap().getNeighborTiles(currentTile.getPosition())) {
 				if (!doneTiles.contains(expandTile) && tiles.contains(expandTile)) {
 					todoTiles.add(expandTile);
 				}
@@ -407,11 +409,14 @@ public class GameController {
 	}
 
 	public void endTurn() {
+		// clear undo states
+		undoStates.clear();
 		// update active player
 		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
 			gameState.setPlayerTurn(0);
 			spreadTrees();
+			undoStates = new LinkedList<GameState>();
 		}
 		// reset active kingdom
 		gameState.setActiveKingdom(null);
@@ -445,11 +450,11 @@ public class GameController {
 	private void spreadTrees() {
 		// spread trees
 		HashSet<HexTile> newTreeTiles = new HashSet<HexTile>();
-		for (HexTile tile : map.getTiles().values()) {
+		for (HexTile tile : gameState.getMap().getTiles().values()) {
 			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
 				if (random.nextFloat() <= TREE_SPREAD_RATE) {
 					ArrayList<HexTile> candidates = new ArrayList<HexTile>();
-					for (HexTile neighbor : map.getNeighborTiles(tile.getPosition())) {
+					for (HexTile neighbor : gameState.getMap().getNeighborTiles(tile.getPosition())) {
 						if (neighbor != null && neighbor.getContent() == null) {
 							candidates.add(neighbor);
 						}
@@ -467,14 +472,22 @@ public class GameController {
 	}
 
 	public void buyPeasant() {
+		undoStates.add(new GameState(this.gameState));
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Unit.COST);
 		gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
 		updateInfoText();
 	}
 
 	public void buyCastle() {
+		undoStates.add(new GameState(this.gameState));
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Castle.COST);
 		gameState.setHeldObject(new Castle(gameState.getActiveKingdom()));
+		updateInfoText();
+	}
+
+	public void undoLastAction() {
+		this.gameState = undoStates.removeLast();
+		mapRenderer.updateMap();
 		updateInfoText();
 	}
 
@@ -492,6 +505,10 @@ public class GameController {
 
 	public GameState getGameState() {
 		return gameState;
+	}
+
+	public LinkedList<GameState> getUndoStates() {
+		return undoStates;
 	}
 
 }

@@ -21,4 +21,9 @@ public class Capital extends MapObject {
 		return strength;
 	}
 
+	@Override
+	public MapObject getCopy(Kingdom newKingdom) {
+		return new Capital(newKingdom);
+	}
+
 }

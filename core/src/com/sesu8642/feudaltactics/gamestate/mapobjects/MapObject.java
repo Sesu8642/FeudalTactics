@@ -22,4 +22,6 @@ abstract public class MapObject {
 
 	public abstract int getStrength();
 
+	public abstract MapObject getCopy(Kingdom kingdom);
+
 }

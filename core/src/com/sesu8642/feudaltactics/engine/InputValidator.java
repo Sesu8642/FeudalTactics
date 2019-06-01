@@ -18,30 +18,28 @@ public class InputValidator {
 	// turn before calling check*
 
 	private GameController gameController;
-	private GameState gameState;
 
 	public InputValidator(GameController gameController) {
 		this.gameController = gameController;
-		this.gameState = gameController.getGameState();
 	}
 
 	public void tap(Vector2 worldCoords) {
 		// print info
-		HexMap map = gameState.getMap();
+		HexMap map = gameController.getGameState().getMap();
 		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
 		gameController.printTileInfo(hexCoords);
 		if (!isActivePlayerLocalHuman()) {
 			// don't accept inputs if its not the human player's turn
 			return;
 		}
-		Player player = gameState.getActivePlayer();
+		Player player = gameController.getGameState().getActivePlayer();
 		HexTile tile = map.getTiles().get(hexCoords);
 		// determine action
 		if (checkChangeActiveKingdom(player, tile)) {
 			// activate kingdom
 			gameController.activateKingdom(tile.getKingdom());
 		}
-		if (gameState.getHeldObject() == null) {
+		if (gameController.getGameState().getHeldObject() == null) {
 			// pick up object
 			if (checkPickupObject(player, tile)) {
 				gameController.pickupObject(tile);
@@ -84,12 +82,22 @@ public class InputValidator {
 		}
 	}
 
+	public void inputUndo() {
+		if (!isActivePlayerLocalHuman()) {
+			// don't accept inputs if its not the human player's turn
+			return;
+		}
+		if (checkUndoAction()) {
+			gameController.undoLastAction();
+		}
+	}
+
 	public boolean isWater(HexTile tile) {
 		return (tile == null);
 	}
 
 	public boolean isActivePlayerLocalHuman() {
-		return (gameState.getActivePlayer().getType() == Player.Type.LOCAL_PLAYER);
+		return (gameController.getGameState().getActivePlayer().getType() == Player.Type.LOCAL_PLAYER);
 	}
 
 	public boolean checkChangeActiveKingdom(Player player, HexTile tile) {
@@ -99,13 +107,13 @@ public class InputValidator {
 		if (player != tile.getPlayer()) {
 			return false;
 		}
-		if (gameState.getHeldObject() != null) {
+		if (gameController.getGameState().getHeldObject() != null) {
 			return false;
 		}
 		if (tile.getKingdom() == null) {
 			return false;
 		}
-		if (gameState.getActiveKingdom() == tile.getKingdom()) {
+		if (gameController.getGameState().getActiveKingdom() == tile.getKingdom()) {
 			return false;
 		}
 		return true;
@@ -118,7 +126,7 @@ public class InputValidator {
 		if (player != tile.getPlayer()) {
 			return false;
 		}
-		if (gameState.getHeldObject() != null) {
+		if (gameController.getGameState().getHeldObject() != null) {
 			return false;
 		}
 		if (tile.getContent() == null) {
@@ -140,46 +148,46 @@ public class InputValidator {
 		if (isWater(tile)) {
 			return false;
 		}
-		if (gameState.getHeldObject() == null) {
+		if (gameController.getGameState().getHeldObject() == null) {
 			return false;
 		}
 		if (tile.getPlayer() == player) {
 			// own tile
-			if (gameState.getHeldObject().getKingdom() != tile.getKingdom() || tile.getKingdom() == null) {
+			if (gameController.getGameState().getHeldObject().getKingdom() != tile.getKingdom() || tile.getKingdom() == null) {
 				// own tile but not the one the kingdom the unit belongs to
 				return false;
 			}
 			if (tile.getContent() != null
 					&& !(tile.getContent().getClass().isAssignableFrom(Tree.class)
-							&& gameState.getHeldObject().getClass().isAssignableFrom(Unit.class))
+							&& gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class))
 					&& !(tile.getContent().getClass().isAssignableFrom(Unit.class)
-							&& gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)
+							&& gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)
 							&& (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT
-									|| ((Unit) gameState.getHeldObject()).getUnitType() == UnitTypes.PEASANT))) {
+									|| ((Unit) gameController.getGameState().getHeldObject()).getUnitType() == UnitTypes.PEASANT))) {
 				// object on object except unit on tree and combining units
 				return false;
 			}
 		} else if (tile.getPlayer() != player) {
 			// tile owned by another player
-			if (!gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			if (!gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)) {
 				// not a unit
 				return false;
 			}
 			boolean isNextoToOwnKingdom = false;
 			boolean isProtected = false;
-			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(hexCoords)) {
+			for (HexTile neighborTile : gameController.getGameState().getMap().getNeighborTiles(hexCoords)) {
 				if (isWater(neighborTile)) {
 					// skip water
 					continue;
 				}
 				// check if tile is next to own kingdom
-				if (neighborTile.getKingdom() == gameState.getHeldObject().getKingdom()) {
+				if (neighborTile.getKingdom() == gameController.getGameState().getHeldObject().getKingdom()) {
 					isNextoToOwnKingdom = true;
 				}
 				MapObject neighborContent = neighborTile.getContent();
 				// check if there is no stronger object next to it protecting it
 				if (neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
-						&& neighborContent.getStrength() >= gameState.getHeldObject().getStrength()) {
+						&& neighborContent.getStrength() >= gameController.getGameState().getHeldObject().getStrength()) {
 					isProtected = true;
 				}
 			}
@@ -192,7 +200,7 @@ public class InputValidator {
 				return false;
 			}
 			if (tile.getContent() != null
-					&& tile.getContent().getStrength() >= gameState.getHeldObject().getStrength()) {
+					&& tile.getContent().getStrength() >= gameController.getGameState().getHeldObject().getStrength()) {
 				// stronger object on the tile
 				return false;
 			}
@@ -201,21 +209,25 @@ public class InputValidator {
 	}
 
 	public boolean checkEndTurn() {
-		return (gameState.getHeldObject() == null);
+		return (gameController.getGameState().getHeldObject() == null);
 	}
 
 	public boolean checkBuyObject(int cost) {
-		Kingdom activeKingdom = gameState.getActiveKingdom();
+		Kingdom activeKingdom = gameController.getGameState().getActiveKingdom();
 		if (activeKingdom == null) {
 			return false;
 		}
 		if (activeKingdom.getSavings() < cost) {
 			return false;
 		}
-		if (gameState.getHeldObject() != null) {
+		if (gameController.getGameState().getHeldObject() != null) {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean checkUndoAction() {
+		return (gameController.getUndoStates().size() > 0);
 	}
 
 }

@@ -64,4 +64,11 @@ public class Unit extends MapObject {
 		this.canAct = canAct;
 	}
 
+	@Override
+	public MapObject getCopy(Kingdom newKingdom) {
+		Unit newUnit = new Unit(newKingdom, this.getUnitType());
+		newUnit.setCanAct(this.canAct);
+		return newUnit;
+	}
+	
 }

@@ -33,6 +33,7 @@ public class Hud {
 		undoButton.addListener(new ChangeListener() {
 	        @Override
 	        public void changed (ChangeEvent event, Actor actor) {
+	        	inputValidator.inputUndo();
 	        }
 	    });
 		endTurnButton.getImageCell().expand().fill();
