@@ -56,7 +56,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	public boolean tap(float x, float y, int count, int button) {
 		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
-		validator.tap(worldCoords);
+		validator.inputTap(worldCoords);
 		return false;
 	}
 

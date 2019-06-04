@@ -224,63 +224,64 @@ public class GameController {
 		mapRenderer.updateMap();
 	}
 
-	public void placeObject(HexTile tile) {
+	public void placeOwn(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
-		// units can only conquer once per turn
-		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
-			if (tile.getPlayer() != gameState.getHeldObject().getKingdom().getPlayer()) {
-				((Unit) gameState.getHeldObject()).setCanAct(false);
-			}
-			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
-				((Unit) gameState.getHeldObject()).setCanAct(false);
-			}
+		// units can't act after removing trees
+		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+			((Unit) gameState.getHeldObject()).setCanAct(false);
 		}
-		if (tile.getContent() != null) {
-			// if combining units, place resulting unit as held object
-			if (tile.getPlayer() == gameState.getActivePlayer()
-					&& tile.getContent().getClass().isAssignableFrom(Unit.class)
-					&& gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
-				// the unit that is not the peasant will be upgraded
-				Unit oldUnit;
-				if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
-					oldUnit = (Unit) gameState.getHeldObject();
-				} else {
-					oldUnit = (Unit) tile.getContent();
-				}
-				UnitTypes newUnitType = null;
-				switch (oldUnit.getUnitType()) {
-				case PEASANT:
-					newUnitType = UnitTypes.SPEARMAN;
-					break;
-				case SPEARMAN:
-					newUnitType = UnitTypes.KNIGHT;
-					break;
-				case KNIGHT:
-					newUnitType = UnitTypes.BARON;
-					break;
-				default:
-					break;
-				}
-				Unit newUnit = new Unit(tile.getKingdom(), newUnitType);
-				newUnit.setCanAct(((Unit) tile.getContent()).isCanAct());
-				gameState.setHeldObject(newUnit);
-			}
-			// place new capital if old one is going to be destroyed
-			if (tile.getContent().getClass().isAssignableFrom(Capital.class)) {
-				tile.getKingdom().setSavings(0);
-				ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile.getPosition());
-				ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
-				// find potential tiles for new capital
-				for (HexTile neighborTile : neighborTiles) {
-					if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()) {
-						capitalCandidates.add(neighborTile);
-					}
-				}
-				// place new capital on random tile next to the old one
-				capitalCandidates.get(random.nextInt(capitalCandidates.size()))
-						.setContent(new Capital(tile.getKingdom()));
-			}
+		placeObject(tile);
+	}
+
+	public void combineUnits(HexTile tile) {
+		undoStates.add(new GameState(this.gameState));
+		// place resulting unit as held object
+		// the unit that is not the peasant will be upgraded
+		Unit oldUnit;
+		if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
+			oldUnit = (Unit) gameState.getHeldObject();
+		} else {
+			oldUnit = (Unit) tile.getContent();
 		}
+		UnitTypes newUnitType = null;
+		switch (oldUnit.getUnitType()) {
+		case PEASANT:
+			newUnitType = UnitTypes.SPEARMAN;
+			break;
+		case SPEARMAN:
+			newUnitType = UnitTypes.KNIGHT;
+			break;
+		case KNIGHT:
+			newUnitType = UnitTypes.BARON;
+			break;
+		default:
+			break;
+		}
+		Unit newUnit = new Unit(tile.getKingdom(), newUnitType);
+		newUnit.setCanAct(((Unit) tile.getContent()).isCanAct());
+		gameState.setHeldObject(newUnit);
+		placeObject(tile);
+	}
+
+	public void conquer(HexTile tile) {
+		undoStates.add(new GameState(this.gameState));
+		// units can't act after conquering
+		((Unit) gameState.getHeldObject()).setCanAct(false);
+		// place new capital if old one is going to be destroyed
+		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Capital.class)) {
+			tile.getKingdom().setSavings(0);
+			ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile.getPosition());
+			ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
+			// find potential tiles for new capital
+			for (HexTile neighborTile : neighborTiles) {
+				if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()) {
+					capitalCandidates.add(neighborTile);
+				}
+			}
+			// place new capital on random tile next to the old one
+			capitalCandidates.get(random.nextInt(capitalCandidates.size())).setContent(new Capital(tile.getKingdom()));
+		}
+
 		// update kingdoms
 		if (tile.getPlayer() != gameState.getActivePlayer()) {
 			// tile is conquered
@@ -323,7 +324,10 @@ public class GameController {
 				updateSplitKingdom(kingdom.getTiles());
 			}
 		}
-		// finally place new object
+		placeObject(tile);
+	}
+
+	private void placeObject(HexTile tile) {
 		tile.setContent(gameState.getHeldObject());
 		gameState.setHeldObject(null);
 		mapRenderer.updateMap();

@@ -1,7 +1,6 @@
 package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
@@ -17,37 +16,75 @@ public class InputValidator {
 	// TODO: when validating multiplayer inputs, make sure that it's the player's
 	// turn before calling check*
 
+	public enum TapAction {
+		NONE, PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER
+	}
+
 	private GameController gameController;
 
 	public InputValidator(GameController gameController) {
 		this.gameController = gameController;
 	}
 
-	public void tap(Vector2 worldCoords) {
-		// print info
-		HexMap map = gameController.getGameState().getMap();
-		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
-		gameController.printTileInfo(hexCoords);
+	public void inputTap(Vector2 worldCoords) {
 		if (!isActivePlayerLocalHuman()) {
 			// don't accept inputs if its not the human player's turn
 			return;
 		}
+		HexMap map = gameController.getGameState().getMap();
+		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
 		Player player = gameController.getGameState().getActivePlayer();
 		HexTile tile = map.getTiles().get(hexCoords);
-		// determine action
+		// print info
+		gameController.printTileInfo(hexCoords);
 		if (checkChangeActiveKingdom(player, tile)) {
 			// activate kingdom
 			gameController.activateKingdom(tile.getKingdom());
 		}
-		if (gameController.getGameState().getHeldObject() == null) {
-			// pick up object
+		TapAction action = determineTapAction(player, tile);
+		switch (action) {
+		case PICK_UP:
 			if (checkPickupObject(player, tile)) {
 				gameController.pickupObject(tile);
 			}
+			break;
+		case PLACE_OWN:
+			if (checkPlaceOwn(player, tile)) {
+				gameController.placeOwn(tile);
+			}
+			break;
+		case COMBINE_UNITS:
+			if (checkCombineUnits(player, tile)) {
+				gameController.combineUnits(tile);
+			}
+		case CONQUER:
+			if (checkConquer(player, tile)) {
+				gameController.conquer(tile);
+			}
+			break;
+		case NONE:
+			break;
+		}
+	}
+
+	public TapAction determineTapAction(Player player, HexTile tile) {
+		// determine action
+		if (tile == null) {
+			return TapAction.NONE;
+		}
+		if (gameController.getGameState().getHeldObject() == null) {
+			// pick up object
+			return TapAction.PICK_UP;
 		} else {
 			// place object
-			if (checkPlaceObject(player, tile, hexCoords)) {
-				gameController.placeObject(tile);
+			if (tile.getPlayer() != null && tile.getPlayer() == player) {
+				if (tile.getContent() == null || tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+					return TapAction.PLACE_OWN;
+				} else {
+					return TapAction.COMBINE_UNITS;
+				}
+			} else {
+				return TapAction.CONQUER;
 			}
 		}
 	}
@@ -92,11 +129,11 @@ public class InputValidator {
 		}
 	}
 
-	public boolean isWater(HexTile tile) {
+	private boolean isWater(HexTile tile) {
 		return (tile == null);
 	}
 
-	public boolean isActivePlayerLocalHuman() {
+	private boolean isActivePlayerLocalHuman() {
 		return (gameController.getGameState().getActivePlayer().getType() == Player.Type.LOCAL_PLAYER);
 	}
 
@@ -141,10 +178,70 @@ public class InputValidator {
 		if (!((Unit) tile.getContent()).isCanAct()) {
 			return false;
 		}
+
 		return true;
 	}
 
-	public boolean checkPlaceObject(Player player, HexTile tile, Vector2 hexCoords) {
+	public boolean checkPlaceOwn(Player player, HexTile tile) {
+		if (isWater(tile)) {
+			return false;
+		}
+		if (gameController.getGameState().getHeldObject() == null) {
+			return false;
+		}
+		if (player != tile.getPlayer()) {
+			return false;
+		}
+		if (tile.getKingdom() == null) {
+			return false;
+		}
+		if (gameController.getGameState().getHeldObject().getKingdom() != tile.getKingdom()) {
+			return false;
+		}
+		if (tile.getContent() != null && !tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+			// not empty or a tree
+			return false;
+		}
+		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)
+				&& !gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			// non-unit on tree
+			return false;
+		}
+		return true;
+	}
+
+	public boolean checkCombineUnits(Player player, HexTile tile) {
+		if (isWater(tile)) {
+			return false;
+		}
+		if (gameController.getGameState().getHeldObject() == null) {
+			return false;
+		}
+		if (player != tile.getPlayer()) {
+			return false;
+		}
+		if (tile.getKingdom() == null) {
+			return false;
+		}
+		if (gameController.getGameState().getHeldObject().getKingdom() != tile.getKingdom()) {
+			return false;
+		}
+		if (!gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			return false;
+		}
+		if (!tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+			return false;
+		}
+		if (((Unit) gameController.getGameState().getHeldObject()).getUnitType() != UnitTypes.PEASANT
+				&& ((Unit) tile.getContent()).getUnitType() != UnitTypes.PEASANT) {
+			// not at least one peasant
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean checkConquer(Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
 		}
@@ -152,58 +249,37 @@ public class InputValidator {
 			return false;
 		}
 		if (tile.getPlayer() == player) {
-			// own tile
-			if (gameController.getGameState().getHeldObject().getKingdom() != tile.getKingdom() || tile.getKingdom() == null) {
-				// own tile but not the one the kingdom the unit belongs to
+			return false;
+		}
+		if (!gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			// not a unit
+			return false;
+		}
+		if (tile.getContent() != null
+				&& tile.getContent().getStrength() >= gameController.getGameState().getHeldObject().getStrength()) {
+			// too strong object on the tile
+			return false;
+		}
+		boolean isNextoToOwnKingdom = false;
+		for (HexTile neighborTile : gameController.getGameState().getMap().getNeighborTiles(tile.getPosition())) {
+			if (isWater(neighborTile)) {
+				// skip water
+				continue;
+			}
+			// check if tile is next to own kingdom
+			if (neighborTile.getKingdom() == gameController.getGameState().getHeldObject().getKingdom()) {
+				isNextoToOwnKingdom = true;
+			}
+			MapObject neighborContent = neighborTile.getContent();
+			// check if there is no stronger object next to it protecting it
+			if (neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
+					&& neighborContent.getStrength() >= gameController.getGameState().getHeldObject().getStrength()) {
 				return false;
 			}
-			if (tile.getContent() != null
-					&& !(tile.getContent().getClass().isAssignableFrom(Tree.class)
-							&& gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class))
-					&& !(tile.getContent().getClass().isAssignableFrom(Unit.class)
-							&& gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)
-							&& (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT
-									|| ((Unit) gameController.getGameState().getHeldObject()).getUnitType() == UnitTypes.PEASANT))) {
-				// object on object except unit on tree and combining units
-				return false;
-			}
-		} else if (tile.getPlayer() != player) {
-			// tile owned by another player
-			if (!gameController.getGameState().getHeldObject().getClass().isAssignableFrom(Unit.class)) {
-				// not a unit
-				return false;
-			}
-			boolean isNextoToOwnKingdom = false;
-			boolean isProtected = false;
-			for (HexTile neighborTile : gameController.getGameState().getMap().getNeighborTiles(hexCoords)) {
-				if (isWater(neighborTile)) {
-					// skip water
-					continue;
-				}
-				// check if tile is next to own kingdom
-				if (neighborTile.getKingdom() == gameController.getGameState().getHeldObject().getKingdom()) {
-					isNextoToOwnKingdom = true;
-				}
-				MapObject neighborContent = neighborTile.getContent();
-				// check if there is no stronger object next to it protecting it
-				if (neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
-						&& neighborContent.getStrength() >= gameController.getGameState().getHeldObject().getStrength()) {
-					isProtected = true;
-				}
-			}
-			if (!isNextoToOwnKingdom) {
-				// not next to the unit's kingdom
-				return false;
-			}
-			if (isProtected) {
-				// protected
-				return false;
-			}
-			if (tile.getContent() != null
-					&& tile.getContent().getStrength() >= gameController.getGameState().getHeldObject().getStrength()) {
-				// stronger object on the tile
-				return false;
-			}
+		}
+		if (!isNextoToOwnKingdom) {
+			// not next to the unit's kingdom
+			return false;
 		}
 		return true;
 	}
