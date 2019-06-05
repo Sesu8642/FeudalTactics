@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
@@ -14,12 +15,15 @@ public class GameState {
 	private ArrayList<Kingdom> kingdoms;
 	private Kingdom activeKingdom;
 	private MapObject heldObject;
+	private Random random;
 
 	public GameState() {
 	}
 
 	public GameState(GameState original) {
 		// create a deep copy of the original
+		// random is not actually copied but that should do
+		this.random = new Random(original.getRandom().nextLong());
 		this.playerTurn = original.playerTurn;
 		this.players = new ArrayList<Player>();
 		this.map = new HexMap();
@@ -52,11 +56,6 @@ public class GameState {
 			this.setHeldObject(original.getHeldObject()
 					.getCopy(this.kingdoms.get(original.getKingdoms().indexOf(original.getHeldObject().getKingdom()))));
 		}
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
 	}
 
 	public ArrayList<Player> getPlayers() {
@@ -110,4 +109,13 @@ public class GameState {
 	public Player getActivePlayer() {
 		return players.get(playerTurn);
 	}
+
+	public Random getRandom() {
+		return random;
+	}
+
+	public void setRandom(Random random) {
+		this.random = random;
+	}
+
 }
