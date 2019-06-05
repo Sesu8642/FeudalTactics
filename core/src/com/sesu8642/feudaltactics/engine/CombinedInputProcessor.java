@@ -9,9 +9,9 @@ import com.badlogic.gdx.math.Vector3;
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	private OrthographicCamera camera;
-	private InputValidator validator;
+	private LocalInputHandler validator;
 
-	public CombinedInputProcessor(InputValidator validator, OrthographicCamera camera) {
+	public CombinedInputProcessor(LocalInputHandler validator, OrthographicCamera camera) {
 		this.validator = validator;
 		this.camera = camera;
 	}

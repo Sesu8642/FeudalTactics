@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.GameController;
-import com.sesu8642.feudaltactics.engine.InputValidator;
+import com.sesu8642.feudaltactics.engine.LocalInputHandler;
 
 public class Hud {
 	private Stage stage;
@@ -24,7 +24,7 @@ public class Hud {
 	
 	private Label infoTextLabel;
 	
-	public Hud(final InputValidator inputValidator) {
+	public Hud(final LocalInputHandler inputValidator) {
 		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
 		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));

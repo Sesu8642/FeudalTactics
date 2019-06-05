@@ -9,7 +9,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
-import com.sesu8642.feudaltactics.engine.InputValidator;
+import com.sesu8642.feudaltactics.engine.LocalInputHandler;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.scenes.Hud;
@@ -25,7 +25,7 @@ public class IngameScreen implements Screen {
 		GameController gameController = new GameController();
 		mapRenderer = new MapRenderer(gameController);
 		gameController.setMapRenderer(mapRenderer);
-		InputValidator inputValidator = new InputValidator(gameController);
+		LocalInputHandler inputValidator = new LocalInputHandler(gameController);
 		hud = new Hud(inputValidator);
 		gameController.setHud(hud);
 		camera = new OrthographicCamera();
