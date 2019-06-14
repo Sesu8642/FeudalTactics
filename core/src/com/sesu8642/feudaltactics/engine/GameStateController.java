@@ -36,8 +36,8 @@ public class GameStateController {
 			float vegetationDensity, Long mapSeed) {
 		generateTiles(gameState, players, landMass, density, mapSeed);
 		createInitialKingdoms(gameState);
-		createCapitalsAndMoney(gameState);
 		createTrees(gameState, vegetationDensity);
+		createCapitalsAndMoney(gameState);
 	}
 
 	private static void generateTiles(GameState gameState, ArrayList<Player> players, float landMass, float density,
@@ -139,13 +139,18 @@ public class GameStateController {
 	private static void createCapitalsAndMoney(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			createCapital(gameState, kingdom);
-			createInitialSavings(kingdom);
+			// first player gets more money as he wont earn money for his first turn
+			int multiplier = 4;
+			if (gameState.getActivePlayer() == kingdom.getPlayer()) {
+				multiplier = 5;
+			}
+			createInitialSavings(kingdom, multiplier);
 		}
 	}
 
 	private static void createTrees(GameState gameState, float vegetationDensity) {
 		for (HexTile tile : gameState.getMap().getTiles().values()) {
-			if (tile.getContent() == null && gameState.getRandom().nextFloat() <= vegetationDensity) {
+			if (gameState.getRandom().nextFloat() <= vegetationDensity) {
 				tile.setContent(new Tree(tile.getKingdom()));
 			}
 		}
@@ -156,8 +161,8 @@ public class GameStateController {
 		tiles.get(gameState.getRandom().nextInt(tiles.size())).setContent(new Capital(kingdom));
 	}
 
-	private static void createInitialSavings(Kingdom kingdom) {
-		kingdom.setSavings(kingdom.getIncome() * 5);
+	private static void createInitialSavings(Kingdom kingdom, int multiplier) {
+		kingdom.setSavings(kingdom.getIncome() * multiplier);
 	}
 
 	public static void activateKingdom(GameState gameState, Kingdom kingdom) {
