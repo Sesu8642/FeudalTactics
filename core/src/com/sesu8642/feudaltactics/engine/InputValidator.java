@@ -11,7 +11,6 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
 public class InputValidator {
 
-
 	public static boolean checkChangeActiveKingdom(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
@@ -112,7 +111,11 @@ public class InputValidator {
 			// not at least one peasant
 			return false;
 		}
-
+		if (((Unit) gameState.getHeldObject()).getUnitType() == UnitTypes.BARON
+				|| ((Unit) tile.getContent()).getUnitType() == UnitTypes.BARON) {
+			// cannot upgrade a baron
+			return false;
+		}
 		return true;
 	}
 
@@ -130,8 +133,7 @@ public class InputValidator {
 			// not a unit
 			return false;
 		}
-		if (tile.getContent() != null
-				&& tile.getContent().getStrength() >= gameState.getHeldObject().getStrength()) {
+		if (tile.getContent() != null && tile.getContent().getStrength() >= gameState.getHeldObject().getStrength()) {
 			// too strong object on the tile
 			return false;
 		}
@@ -180,9 +182,9 @@ public class InputValidator {
 	public static boolean checkUndoAction(GameController gameController) {
 		return (gameController.getUndoStates().size() > 0);
 	}
-	
+
 	private static boolean isWater(HexTile tile) {
 		return (tile == null);
 	}
-	
+
 }
