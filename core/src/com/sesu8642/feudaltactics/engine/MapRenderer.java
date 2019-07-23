@@ -22,7 +22,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class MapRenderer {
 
-	final float SPRITE_SIZE_MULTIPLIER = 1.5F;
+	final float SPRITE_SIZE_MULTIPLIER = 1.05F;
 	final float LINE_EXTENSION = 0.14F;
 
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
@@ -180,8 +180,9 @@ public class MapRenderer {
 		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
 			frames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
-		float objectSize = SPRITE_SIZE_MULTIPLIER * HexMap.HEX_OUTER_RADIUS;
-		float offset = (HexMap.HEX_OUTER_RADIUS - objectSize) / 2;
+		//float objectSize = height * SPRITE_SIZE_MULTIPLIER;
+		float itemOffsetX = width * 0.0F;
+		float itemOffsetY = height * -0.075F;
 		batch.begin();
 		// draw all the tiles
 		for (Entry<Vector2, Color> tile : tiles.entrySet()) {
@@ -191,13 +192,13 @@ public class MapRenderer {
 		batch.setColor(1, 1, 1, 1);
 		// draw all the animated contents
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - offset, currentFrame.getKey().y - offset,
-					objectSize, objectSize);
+			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX, currentFrame.getKey().y - itemOffsetY,
+					width, height);
 		}
 		// draw all the non-animated contents
 		for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {
-			batch.draw(content.getValue(), content.getKey().x - offset, content.getKey().y - offset, objectSize,
-					objectSize);
+			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY, width,
+					height);
 		}
 		batch.end();
 		// draw all the lines

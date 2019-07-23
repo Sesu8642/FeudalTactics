@@ -6,7 +6,7 @@ public class Castle extends MapObject {
 
 	static public final int COST = 15;
 	
-	private final String spriteName = "sprite_castle";
+	private final String spriteName = "castle";
 	private final int strength = 2;
 
 	public Castle(Kingdom kingdom) {

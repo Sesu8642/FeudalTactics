@@ -4,7 +4,7 @@ import com.sesu8642.feudaltactics.gamestate.Kingdom;
 
 public class Capital extends MapObject {
 
-	private final String spriteName = "sprite_capital";
+	private final String spriteName = "capital";
 	private final int strength = 1;
 
 	public Capital(Kingdom kingdom) {

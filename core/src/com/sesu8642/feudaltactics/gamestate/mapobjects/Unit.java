@@ -9,8 +9,8 @@ public class Unit extends MapObject {
 	private boolean canAct = true;
 
 	public enum UnitTypes {
-		PEASANT(1, 2, "sprite_peasant"), SPEARMAN(2, 6, "sprite_spearman"), KNIGHT(3, 18, "sprite_knight"),
-		BARON(4, 54, "sprite_baron");
+		PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"),
+		BARON(4, 54, "baron");
 
 		private int strength;
 		private int salary;

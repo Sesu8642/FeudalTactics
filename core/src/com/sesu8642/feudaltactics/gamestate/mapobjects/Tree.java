@@ -4,7 +4,7 @@ import com.sesu8642.feudaltactics.gamestate.Kingdom;
 
 public class Tree extends MapObject{
 
-	private final String spriteName = "sprite_tree";
+	private final String spriteName = "tree";
 	private final int strength = 0;
 	
 	public Tree(Kingdom kingdom) {

@@ -1,124 +1,124 @@
 
 textures.png
-size: 512,512
+size: 1024,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+baron
+  rotate: false
+  xy: 512, 2
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 2
+baron
+  rotate: false
+  xy: 578, 11
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 1
 buy
   rotate: false
-  xy: 2, 68
+  xy: 2, 23
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 buy_castle
   rotate: false
-  xy: 369, 387
+  xy: 104, 23
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
+capital
+  rotate: false
+  xy: 644, 11
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
+castle
+  rotate: false
+  xy: 710, 11
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 end_turn
   rotate: false
-  xy: 104, 68
+  xy: 206, 23
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
 hand
   rotate: false
-  xy: 206, 68
+  xy: 410, 23
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
   index: -1
-sprite_baron
+knight
   rotate: false
-  xy: 200, 2
-  size: 64, 64
-  orig: 64, 64
+  xy: 578, 68
+  size: 64, 55
+  orig: 64, 55
   offset: 0, 0
   index: 2
-sprite_capital
+knight
   rotate: false
-  xy: 308, 104
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-sprite_castle
-  rotate: false
-  xy: 266, 2
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-sprite_endTurn
-  rotate: false
-  xy: 435, 219
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-sprite_knight
-  rotate: false
-  xy: 374, 153
-  size: 64, 64
-  orig: 64, 64
+  xy: 776, 11
+  size: 64, 55
+  orig: 64, 55
   offset: 0, 0
   index: 1
-sprite_knight
+peasant
   rotate: false
-  xy: 440, 153
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-sprite_peasant
-  rotate: false
-  xy: 68, 2
-  size: 64, 64
-  orig: 64, 64
+  xy: 644, 68
+  size: 64, 55
+  orig: 64, 55
   offset: 0, 0
   index: 1
-sprite_peasant
+peasant
   rotate: false
-  xy: 134, 2
-  size: 64, 64
-  orig: 64, 64
+  xy: 710, 68
+  size: 64, 55
+  orig: 64, 55
   offset: 0, 0
   index: 2
-sprite_spearman
+spearman
   rotate: false
-  xy: 2, 2
-  size: 64, 64
-  orig: 64, 64
+  xy: 776, 68
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 2
+spearman
+  rotate: false
+  xy: 842, 68
+  size: 64, 55
+  orig: 64, 55
   offset: 0, 0
   index: 1
-sprite_spearman
-  rotate: false
-  xy: 369, 219
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: 2
-sprite_tree
-  rotate: false
-  xy: 374, 87
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
 tile_bw
   rotate: false
-  xy: 2, 170
-  size: 365, 317
-  orig: 365, 317
+  xy: 512, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+tree
+  rotate: false
+  xy: 908, 68
+  size: 64, 55
+  orig: 64, 55
   offset: 0, 0
   index: -1
 undo
   rotate: false
-  xy: 369, 285
+  xy: 308, 23
   size: 100, 100
   orig: 100, 100
   offset: 0, 0
