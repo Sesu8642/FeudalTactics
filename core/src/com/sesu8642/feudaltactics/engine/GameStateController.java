@@ -342,9 +342,9 @@ public class GameStateController {
 		tiles.removeAll(newKingdom.getTiles());
 
 		if (newKingdom.getTiles().size() < 2) {
-			// delete capital and kingdom if too small
-			if (capitalTile != null) {
-				capitalTile.setContent(null);
+			// delete capital, units and kingdom if too small
+			for (HexTile tile : newKingdom.getTiles()) {
+				tile.setContent(null);
 			}
 			startTile.setKingdom(null);
 			gameState.getKingdoms().remove(newKingdom);
