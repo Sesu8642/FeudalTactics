@@ -25,10 +25,10 @@ public class Hud {
 	private Label infoTextLabel;
 	
 	public Hud(final LocalInputHandler inputValidator) {
-		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
-		ImageButton endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
-		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
-		ImageButton buyCastleButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("hand")));
+		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo_pressed")));
+		ImageButton endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn_pressed")));
+		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant_pressed")));
+		ImageButton buyCastleButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")), new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle_pressed")));
 		undoButton.getImageCell().expand().fill();
 		undoButton.addListener(new ChangeListener() {
 	        @Override
@@ -67,9 +67,9 @@ public class Hud {
 	    //table.setDebug(true);
 	    
 	    table.defaults().uniformY().expandY().minSize(0);
-	    table.columnDefaults(0).expandX().pad(10);
-	    table.columnDefaults(1).width(Value.percentHeight(1F)).fillY();
-	    table.add(infoTextLabel).left().top();
+	    table.columnDefaults(0).expandX();
+	    table.columnDefaults(1).width(Value.percentHeight(1F)).fillY().pad(15);
+	    table.add(infoTextLabel).left().top().padLeft(10);
 	    table.add(undoButton);
 	    table.row();
 	    table.add(new Image());
