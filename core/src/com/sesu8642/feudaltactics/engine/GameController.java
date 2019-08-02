@@ -87,24 +87,28 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.pickupObject(gameState, tile);
 		mapRenderer.updateMap();
+		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void placeOwn(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.placeOwn(gameState, tile);
 		mapRenderer.updateMap();
+		hud.updateHandContent(null);
 	}
 
 	public void combineUnits(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.combineUnits(gameState, tile);
 		mapRenderer.updateMap();
+		hud.updateHandContent(null);
 	}
 
 	public void conquer(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.conquer(gameState, tile);
 		mapRenderer.updateMap();
+		hud.updateHandContent(null);
 	}
 
 	public void endTurn() {
@@ -120,18 +124,25 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.buyPeasant(gameState);
 		updateInfoText();
+		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void buyCastle() {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.buyCastle(gameState);
 		updateInfoText();
+		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void undoLastAction() {
 		this.gameState = undoStates.removeLast();
 		mapRenderer.updateMap();
 		updateInfoText();
+		if (gameState.getHeldObject() != null) {
+			hud.updateHandContent(gameState.getHeldObject().getSpriteName());
+		}else {
+			hud.updateHandContent(null);
+		}
 	}
 
 	public void setHud(Hud hud) {

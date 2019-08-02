@@ -13,35 +13,35 @@ baron
   index: 2
 baron
   rotate: false
-  xy: 860, 68
+  xy: 926, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 1
 buy_castle
   rotate: false
-  xy: 266, 59
+  xy: 332, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 buy_castle_pressed
   rotate: false
-  xy: 596, 59
+  xy: 662, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 buy_peasant
   rotate: false
-  xy: 464, 59
+  xy: 530, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 buy_peasant_pressed
   rotate: false
-  xy: 200, 59
+  xy: 266, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -55,14 +55,14 @@ capital
   index: -1
 castle
   rotate: false
-  xy: 926, 68
+  xy: 332, 2
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: -1
 end_turn
   rotate: false
-  xy: 332, 59
+  xy: 398, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -76,7 +76,14 @@ end_turn_pressed
   index: -1
 hand
   rotate: false
-  xy: 530, 59
+  xy: 596, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+hand_thumb
+  rotate: false
+  xy: 200, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -90,14 +97,14 @@ knight
   index: 2
 knight
   rotate: false
-  xy: 332, 2
+  xy: 398, 2
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 1
 peasant
   rotate: false
-  xy: 662, 68
+  xy: 728, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -111,7 +118,7 @@ peasant
   index: 2
 spearman
   rotate: false
-  xy: 728, 68
+  xy: 794, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -132,14 +139,14 @@ tile_bw
   index: -1
 tree
   rotate: false
-  xy: 794, 68
+  xy: 860, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: -1
 undo
   rotate: false
-  xy: 398, 59
+  xy: 464, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
