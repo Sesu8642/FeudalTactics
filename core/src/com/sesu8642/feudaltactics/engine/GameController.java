@@ -101,6 +101,7 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.combineUnits(gameState, tile);
 		mapRenderer.updateMap();
+		updateInfoText();
 		hud.updateHandContent(null);
 	}
 
@@ -108,6 +109,7 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.conquer(gameState, tile);
 		mapRenderer.updateMap();
+		updateInfoText();
 		hud.updateHandContent(null);
 	}
 
