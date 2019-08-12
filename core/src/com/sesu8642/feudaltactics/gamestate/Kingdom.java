@@ -1,5 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
@@ -12,6 +13,8 @@ public class Kingdom {
 	private Capital capital;
 	private Player player;
 	private int savings = 0;
+	// only used by ai
+	private boolean doneMoving = false;
 
 	public Kingdom(Player player) {
 		this.player = player;
@@ -60,6 +63,19 @@ public class Kingdom {
 
 	public void setSavings(int savings) {
 		this.savings = savings;
+	}
+
+	public boolean isDoneMoving() {
+		return doneMoving;
+	}
+
+	public void setDoneMoving(boolean doneMoving) {
+		this.doneMoving = doneMoving;
+	}
+
+	@Override
+	public String toString() {
+		return MessageFormat.format("{0}; savings: {1} income: {2}, salaries: {3}, ", super.toString(), getSavings(), getIncome(), getSalaries());
 	}
 
 }

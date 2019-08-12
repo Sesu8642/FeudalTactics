@@ -36,6 +36,7 @@ public class GameState {
 			Kingdom newKingdom = new Kingdom(
 					this.players.get(original.getPlayers().indexOf(originalKingdom.getPlayer())));
 			newKingdom.setSavings(originalKingdom.getSavings());
+			newKingdom.setDoneMoving(originalKingdom.isDoneMoving());
 			this.kingdoms.add(newKingdom);
 		}
 		this.activeKingdom = this.kingdoms.get(original.getKingdoms().indexOf(original.getActiveKingdom()));

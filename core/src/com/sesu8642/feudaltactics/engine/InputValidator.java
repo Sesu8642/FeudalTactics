@@ -18,6 +18,7 @@ public class InputValidator {
 		if (player != tile.getPlayer()) {
 			return false;
 		}
+		System.out.println(gameState.getHeldObject());
 		if (gameState.getHeldObject() != null) {
 			return false;
 		}
@@ -86,6 +87,9 @@ public class InputValidator {
 
 	public static boolean checkCombineUnits(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
+			return false;
+		}
+		if (tile.getContent() == null) {
 			return false;
 		}
 		if (gameState.getHeldObject() == null) {

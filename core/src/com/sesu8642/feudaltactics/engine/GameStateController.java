@@ -7,23 +7,27 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.engine.ai.BotAI;
+import com.sesu8642.feudaltactics.engine.ai.BotAI;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
+import com.sesu8642.feudaltactics.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
+import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class GameStateController {
 	// only class supposed to modify the game state
 
-	private final static float TREE_SPREAD_RATE = 0.5F;
-	
+	private final static float TREE_SPREAD_RATE = 0.3F;
+
 	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
 		gameState.setPlayers(players);
@@ -47,6 +51,7 @@ public class GameStateController {
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
 		}
+		System.out.println("mapSeed: " + mapSeed.toString());
 		gameState.setRandom(new Random(mapSeed));
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
@@ -175,6 +180,9 @@ public class GameStateController {
 	}
 
 	public static void placeOwn(GameState gameState, HexTile tile) {
+		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			((Unit) gameState.getHeldObject()).setHasActed(true);
+		}
 		// units can't act after removing trees
 		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
 			((Unit) gameState.getHeldObject()).setCanAct(false);
@@ -212,6 +220,9 @@ public class GameStateController {
 	}
 
 	public static void conquer(GameState gameState, HexTile tile) {
+		if (gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+			((Unit) gameState.getHeldObject()).setHasActed(true);
+		}
 		// units can't act after conquering
 		((Unit) gameState.getHeldObject()).setCanAct(false);
 		// place new capital if old one is going to be destroyed
@@ -228,7 +239,6 @@ public class GameStateController {
 			// place new capital on random tile next to the old one
 			capitalCandidates.get(gameState.getRandom().nextInt(capitalCandidates.size())).setContent(new Capital(tile.getKingdom()));
 		}
-
 		// update kingdoms
 		if (tile.getPlayer() != gameState.getActivePlayer()) {
 			// tile is conquered
@@ -283,6 +293,9 @@ public class GameStateController {
 		// master kingdom will determine the new capital
 		masterKingdom.getTiles().addAll(slaveKingdom.getTiles());
 		masterKingdom.setSavings(masterKingdom.getSavings() + slaveKingdom.getSavings());
+		if (!slaveKingdom.isDoneMoving()) {
+			masterKingdom.setDoneMoving(false);
+		}
 		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
 			slaveKingdomTile.setKingdom(masterKingdom);
 			MapObject content = slaveKingdomTile.getContent();
@@ -357,7 +370,7 @@ public class GameStateController {
 		return;
 	}
 
-	public static void endTurn(GameState gameState) {
+	public static GameState endTurn(GameState gameState) {
 		// update active player
 		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
@@ -379,15 +392,23 @@ public class GameStateController {
 					}
 				} else {
 					kingdom.setSavings(kingdom.getSavings() - kingdom.getSalaries());
-					// all units can act again
+					// reset canAct and hasActed state
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
 							((Unit) tile.getContent()).setCanAct(true);
+							((Unit) tile.getContent()).setHasActed(false);
 						}
 					}
 				}
 			}
 		}
+		// make bots act
+		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
+			BotAI ai = new BotAI(3);
+			gameState = ai.doTurn(gameState);
+			return endTurn(gameState);
+		}
+		return gameState;
 	}
 
 	private static void spreadTrees(GameState gameState) {
