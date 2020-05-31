@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Player;
@@ -76,7 +77,8 @@ public class LocalInputHandler {
 		} else {
 			// place object
 			if (tile.getPlayer() != null && tile.getPlayer() == player) {
-				if (tile.getContent() == null || tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+				if (tile.getContent() == null
+						|| ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 					return TapAction.PLACE_OWN;
 				} else {
 					return TapAction.COMBINE_UNITS;

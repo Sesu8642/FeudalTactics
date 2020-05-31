@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
@@ -74,10 +75,11 @@ public class MapRenderer {
 				boolean animate = false;
 				if (tileContent.getKingdom() != null
 						&& tileContent.getKingdom().getPlayer() == gameState.getActivePlayer()) {
-					if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
+					if (ClassReflection.isAssignableFrom(tileContent.getClass(), Unit.class)
+							&& ((Unit) tileContent).isCanAct()) {
 						// animate units that can act
 						animate = true;
-					} else if (tileContent.getClass().isAssignableFrom(Capital.class)
+					} else if (ClassReflection.isAssignableFrom(tileContent.getClass(), Capital.class)
 							&& gameState.getActivePlayer() == tileContent.getKingdom().getPlayer()
 							&& tileContent.getKingdom().getSavings() > Unit.COST) {
 						// animate capitals if they can buy something
@@ -180,7 +182,7 @@ public class MapRenderer {
 		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
 			frames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
-		//float objectSize = height * SPRITE_SIZE_MULTIPLIER;
+		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
 		float itemOffsetY = height * -0.075F;
 		batch.begin();
@@ -192,8 +194,8 @@ public class MapRenderer {
 		batch.setColor(1, 1, 1, 1);
 		// draw all the animated contents
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX, currentFrame.getKey().y - itemOffsetY,
-					width, height);
+			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
+					currentFrame.getKey().y - itemOffsetY, width, height);
 		}
 		// draw all the non-animated contents
 		for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {

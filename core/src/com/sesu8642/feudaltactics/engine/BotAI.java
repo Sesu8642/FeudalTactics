@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
@@ -90,7 +91,8 @@ public class BotAI {
 		// pick up all units
 		PickedUpUnits pickedUpUnits = new PickedUpUnits();
 		pickUpAllAvailableUnits(kingdom, pickedUpUnits);
-		// remember the tiles where a castle was placed to reverse the decision later after conquering
+		// remember the tiles where a castle was placed to reverse the decision later
+		// after conquering
 		Set<HexTile> placedCastleTiles = new HashSet<HexTile>();
 		switch (intelligence) {
 		case DUMB:
@@ -119,7 +121,7 @@ public class BotAI {
 
 	private void pickUpAllAvailableUnits(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
 		for (HexTile tile : kingdom.getTiles()) {
-			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)
+			if (tile.getContent() != null && ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)
 					&& ((Unit) tile.getContent()).isCanAct()) {
 				switch (((Unit) tile.getContent()).getStrength()) {
 				case 1:
@@ -142,7 +144,8 @@ public class BotAI {
 
 	private void chopTrees(GameState gameState, PickedUpUnits pickedUpUnits, float chance) {
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+			if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 				if (gameState.getRandom().nextFloat() <= chance) {
 					if (pickedUpUnits.availablePeasants >= 1
 							|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
@@ -480,7 +483,7 @@ public class BotAI {
 			}
 		} else {
 			if (tile.getContent() != null) {
-				if (!tile.getContent().getClass().isAssignableFrom(Capital.class)) {
+				if (!ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)) {
 					// destroying units or castles is better than conquering empty tiles
 					score = tile.getContent().getStrength() + 2;
 				} else {

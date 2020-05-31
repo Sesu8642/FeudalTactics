@@ -9,6 +9,8 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+
 public class InputValidator {
 
 	public static boolean checkChangeActiveKingdom(GameState gameState, Player player, HexTile tile) {
@@ -47,7 +49,7 @@ public class InputValidator {
 		if (tile.getPlayer() != player) {
 			return false;
 		}
-		if (!tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
 			return false;
 		}
 		if (!((Unit) tile.getContent()).isCanAct()) {
@@ -73,12 +75,12 @@ public class InputValidator {
 		if (gameState.getHeldObject().getKingdom() != tile.getKingdom()) {
 			return false;
 		}
-		if (tile.getContent() != null && !tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+		if (tile.getContent() != null && !ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 			// not empty or a tree
 			return false;
 		}
-		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)
-				&& !gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+		if (tile.getContent() != null && ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)
+				&& !ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
 			// non-unit on tree
 			return false;
 		}
@@ -104,10 +106,10 @@ public class InputValidator {
 		if (gameState.getHeldObject().getKingdom() != tile.getKingdom()) {
 			return false;
 		}
-		if (!gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
 			return false;
 		}
-		if (!tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
 			return false;
 		}
 		if (((Unit) gameState.getHeldObject()).getUnitType() != UnitTypes.PEASANT
@@ -133,7 +135,7 @@ public class InputValidator {
 		if (tile.getPlayer() == player) {
 			return false;
 		}
-		if (!gameState.getHeldObject().getClass().isAssignableFrom(Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
 			// not a unit
 			return false;
 		}

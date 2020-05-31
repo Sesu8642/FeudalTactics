@@ -1,8 +1,8 @@
 package com.sesu8642.feudaltactics.gamestate;
 
-import java.text.MessageFormat;
 import java.util.HashSet;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
@@ -22,7 +22,8 @@ public class Kingdom {
 	public int getIncome() {
 		int income = tiles.size();
 		for (HexTile tile : tiles) {
-			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+			if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 				income -= 1;
 			}
 		}
@@ -32,7 +33,8 @@ public class Kingdom {
 	public int getSalaries() {
 		int salaries = 0;
 		for (HexTile tile : tiles) {
-			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+			if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
 				salaries += ((Unit) tile.getContent()).getUnitType().salary();
 			}
 		}
@@ -69,7 +71,8 @@ public class Kingdom {
 
 	@Override
 	public String toString() {
-		return MessageFormat.format("{0}; savings: {1} income: {2}, salaries: {3}, ", super.toString(), getSavings(), getIncome(), getSalaries());
+		return super.toString() + "; savings: " + getSavings() + ", income: " + getIncome() + ", salaries: "
+				+ getSalaries();
 	}
 
 }

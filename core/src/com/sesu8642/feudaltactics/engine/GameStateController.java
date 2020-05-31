@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
@@ -176,7 +177,7 @@ public class GameStateController {
 
 	public static void placeOwn(GameState gameState, HexTile tile) {
 		// units can't act after removing trees
-		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+		if (tile.getContent() != null && ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 			((Unit) gameState.getHeldObject()).setCanAct(false);
 		}
 		placeObject(gameState, tile);
@@ -216,9 +217,10 @@ public class GameStateController {
 		Kingdom oldTileKingdom = tile.getKingdom();
 		// units can't act after conquering
 		((Unit) gameState.getHeldObject()).setCanAct(false);
-		
+
 		// place new capital if old one is going to be destroyed
-		if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Capital.class)) {
+		if (tile.getContent() != null
+				&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)) {
 			tile.getKingdom().setSavings(0);
 			ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
 			// find potential tiles for new capital
@@ -228,7 +230,8 @@ public class GameStateController {
 				}
 			}
 			// place new capital on random tile next to the old one
-			capitalCandidates.get(gameState.getRandom().nextInt(capitalCandidates.size())).setContent(new Capital(tile.getKingdom()));
+			capitalCandidates.get(gameState.getRandom().nextInt(capitalCandidates.size()))
+					.setContent(new Capital(tile.getKingdom()));
 		}
 
 		// update kingdoms
@@ -325,7 +328,7 @@ public class GameStateController {
 			MapObject content = slaveKingdomTile.getContent();
 			if (content != null) {
 				content.setKingdom(masterKingdom);
-				if (content.getClass().isAssignableFrom(Capital.class)) {
+				if (ClassReflection.isAssignableFrom(content.getClass(), Capital.class)) {
 					// delete slave capital
 					slaveKingdomTile.setContent(null);
 				}
@@ -343,7 +346,7 @@ public class GameStateController {
 		HexTile capitalTile = null;
 		for (HexTile kingdomTile : tiles) {
 			if (kingdomTile.getContent() != null
-					&& kingdomTile.getContent().getClass().isAssignableFrom(Capital.class)) {
+					&& ClassReflection.isAssignableFrom(kingdomTile.getContent().getClass(), Capital.class)) {
 				capitalTile = kingdomTile;
 				break;
 			}
@@ -412,7 +415,8 @@ public class GameStateController {
 				if (kingdom.getSavings() < kingdom.getSalaries()) {
 					// destroy all units if they cannot get paid
 					for (HexTile tile : kingdom.getTiles()) {
-						if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+						if (tile.getContent() != null
+								&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
 							tile.setContent(null);
 						}
 					}
@@ -420,7 +424,8 @@ public class GameStateController {
 					kingdom.setSavings(kingdom.getSavings() - kingdom.getSalaries());
 					// reset canAct and hasActed state
 					for (HexTile tile : kingdom.getTiles()) {
-						if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Unit.class)) {
+						if (tile.getContent() != null
+								&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
 							((Unit) tile.getContent()).setCanAct(true);
 						}
 					}
@@ -434,7 +439,8 @@ public class GameStateController {
 		// spread trees
 		HashSet<HexTile> newTreeTiles = new HashSet<HexTile>();
 		for (HexTile tile : gameState.getMap().getTiles().values()) {
-			if (tile.getContent() != null && tile.getContent().getClass().isAssignableFrom(Tree.class)) {
+			if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 				if (gameState.getRandom().nextFloat() <= TREE_SPREAD_RATE) {
 					ArrayList<HexTile> candidates = new ArrayList<HexTile>();
 					for (HexTile neighbor : gameState.getMap().getNeighborTiles(tile)) {
