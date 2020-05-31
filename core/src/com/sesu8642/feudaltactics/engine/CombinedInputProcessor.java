@@ -1,5 +1,6 @@
 package com.sesu8642.feudaltactics.engine;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
@@ -19,7 +20,12 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		if (camera.zoom + amount > 0 && camera.zoom + amount < 50) {
+			Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 			camera.zoom += amount;
+			camera.update();
+			Vector3 newMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+			camera.translate(oldMousePosition.sub(newMousePosition));
+			camera.update();
 		}
 		return true;
 	}
