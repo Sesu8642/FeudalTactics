@@ -46,6 +46,6 @@ public class HexTile {
 	public String toString() {
 		String kingdomStr = kingdom == null ? "null" : kingdom.toString();
 		String contentStr = content == null ? "null" : content.toString();
-		return "Position: " + position.toString() + " Color: " + player.getColor().toString() + ", Kingdom: " + kingdomStr + ", Content: " + contentStr;
+		return "Color: " + player.getColor().toString() + ", Kingdom: " + kingdomStr + ", Content: " + contentStr;
 	}
 }
