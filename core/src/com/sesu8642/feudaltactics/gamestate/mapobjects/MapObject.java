@@ -24,4 +24,8 @@ abstract public class MapObject {
 
 	public abstract MapObject getCopy(Kingdom kingdom);
 
+	@Override
+	public String toString() {
+		return getClass().getName();
+	}
 }

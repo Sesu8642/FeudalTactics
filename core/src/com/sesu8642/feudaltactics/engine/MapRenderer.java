@@ -27,7 +27,7 @@ public class MapRenderer {
 
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
-	private GameController gameController;
+	private OrthographicCamera camera;
 	private HashMap<Vector2, Color> tiles;
 	private HashMap<String, TextureRegion> textureRegions;
 	private HashMap<String, Animation<TextureRegion>> animations;
@@ -40,8 +40,8 @@ public class MapRenderer {
 	private TextureRegion tileRegion;
 	private ShapeRenderer shapeRenderer;
 
-	public MapRenderer(GameController gameController) {
-		this.gameController = gameController;
+	public MapRenderer(OrthographicCamera camera) {
+		this.camera = camera;
 		shapeRenderer = new ShapeRenderer();
 		tiles = new HashMap<Vector2, Color>();
 		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
@@ -55,14 +55,14 @@ public class MapRenderer {
 		stateTime = 0F;
 	}
 
-	public void updateMap() {
+	public void updateMap(GameState gameState) {
 		// create tiles
 		tiles.clear();
 		nonAnimatedContents.clear();
 		animatedContents.clear();
 		whitelineStartPoints.clear();
 		whitelineEndPoints.clear();
-		for (Entry<Vector2, HexTile> hexTileEntry : (gameController.getGameState().getMap().getTiles()).entrySet()) {
+		for (Entry<Vector2, HexTile> hexTileEntry : (gameState.getMap().getTiles()).entrySet()) {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
 			HexTile tile = hexTileEntry.getValue();
@@ -73,12 +73,12 @@ public class MapRenderer {
 			if (tileContent != null) {
 				boolean animate = false;
 				if (tileContent.getKingdom() != null
-						&& tileContent.getKingdom().getPlayer() == gameController.getGameState().getActivePlayer()) {
+						&& tileContent.getKingdom().getPlayer() == gameState.getActivePlayer()) {
 					if (tileContent.getClass().isAssignableFrom(Unit.class) && ((Unit) tileContent).isCanAct()) {
 						// animate units that can act
 						animate = true;
 					} else if (tileContent.getClass().isAssignableFrom(Capital.class)
-							&& gameController.getGameState().getActivePlayer() == tileContent.getKingdom().getPlayer()
+							&& gameState.getActivePlayer() == tileContent.getKingdom().getPlayer()
 							&& tileContent.getKingdom().getSavings() > Unit.COST) {
 						// animate capitals if they can buy something
 						animate = true;
@@ -96,10 +96,10 @@ public class MapRenderer {
 
 			}
 			// create lines for highlighting active kingdom
-			if (gameController.getGameState().getActiveKingdom() != null && tile.getKingdom() != null
-					&& tile.getKingdom() == gameController.getGameState().getActiveKingdom()) {
+			if (gameState.getActiveKingdom() != null && tile.getKingdom() != null
+					&& tile.getKingdom() == gameState.getActiveKingdom()) {
 				int index = 0;
-				for (HexTile neighborTile : gameController.getGameState().getMap().getNeighborTiles(hexCoords)) {
+				for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
 					if (neighborTile == null || neighborTile.getKingdom() == null
 							|| neighborTile.getKingdom() != tile.getKingdom()) {
 						// index contains the information where the neighbor tile is positioned
@@ -172,7 +172,7 @@ public class MapRenderer {
 		return animation;
 	}
 
-	public void render(OrthographicCamera camera) {
+	public void render() {
 		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map
 		batch.setProjectionMatrix(camera.combined); // object
 		stateTime += Gdx.graphics.getDeltaTime();

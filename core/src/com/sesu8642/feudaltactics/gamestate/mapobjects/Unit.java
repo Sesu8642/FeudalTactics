@@ -44,7 +44,7 @@ public class Unit extends MapObject {
 
 	@Override
 	public String getSpriteName() {
-		return unitType.spriteName;
+		return unitType.spriteName();
 	}
 
 	public UnitTypes getUnitType() {
@@ -53,7 +53,7 @@ public class Unit extends MapObject {
 
 	@Override
 	public int getStrength() {
-		return unitType.strength;
+		return unitType.strength();
 	}
 
 	public boolean isCanAct() {
@@ -71,4 +71,10 @@ public class Unit extends MapObject {
 		return newUnit;
 	}
 	
+	@Override
+	public String toString() {
+		String superStr = super.toString();
+		return superStr + ", Type: " + unitType.toString() + ", CanAct: " + canAct;
+	}
+
 }

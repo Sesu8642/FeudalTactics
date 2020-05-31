@@ -18,6 +18,7 @@ public class InputValidator {
 		if (player != tile.getPlayer()) {
 			return false;
 		}
+		System.out.println(gameState.getHeldObject());
 		if (gameState.getHeldObject() != null) {
 			return false;
 		}
@@ -88,6 +89,9 @@ public class InputValidator {
 		if (isWater(tile)) {
 			return false;
 		}
+		if (tile.getContent() == null) {
+			return false;
+		}
 		if (gameState.getHeldObject() == null) {
 			return false;
 		}
@@ -138,7 +142,7 @@ public class InputValidator {
 			return false;
 		}
 		boolean isNextoToOwnKingdom = false;
-		for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile.getPosition())) {
+		for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
 			if (isWater(neighborTile)) {
 				// skip water
 				continue;

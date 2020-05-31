@@ -1,5 +1,7 @@
 package com.sesu8642.feudaltactics.gamestate;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
@@ -9,6 +11,7 @@ public class HexTile {
 	private MapObject content;
 	private Kingdom kingdom;
 	private Vector2 position;
+	private ArrayList<HexTile> cachedNeighborTiles;
 
 	public HexTile(Player player, Vector2 position) {
 		this.player = player;
@@ -42,10 +45,19 @@ public class HexTile {
 		return position;
 	}
 
+	public ArrayList<HexTile> getCachedNeighborTiles() {
+		return cachedNeighborTiles;
+	}
+
+	public void setCachedNeighborTiles(ArrayList<HexTile> neighborTiles) {
+		this.cachedNeighborTiles = neighborTiles;
+	}
+
 	@Override
 	public String toString() {
 		String kingdomStr = kingdom == null ? "null" : kingdom.toString();
 		String contentStr = content == null ? "null" : content.toString();
-		return "Color: " + player.getColor().toString() + ", Kingdom: " + kingdomStr + ", Content: " + contentStr;
+		return "Position: " + position.toString() + " Color: " + player.getColor().toString() + ", Kingdom: "
+				+ kingdomStr + ", Content: " + contentStr;
 	}
 }

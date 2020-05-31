@@ -3,13 +3,11 @@ package com.sesu8642.feudaltactics.engine;
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
+import com.sesu8642.feudaltactics.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
 public class LocalInputHandler {
 
@@ -130,7 +128,7 @@ public class LocalInputHandler {
 	}
 
 	private boolean isActivePlayerLocalHuman() {
-		return (gameController.getGameState().getActivePlayer().getType() == Player.Type.LOCAL_PLAYER);
+		return (gameController.getGameState().getActivePlayer().getType() == Type.LOCAL_PLAYER);
 	}
 
 }

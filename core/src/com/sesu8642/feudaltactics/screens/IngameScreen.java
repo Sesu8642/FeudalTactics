@@ -11,7 +11,6 @@ import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.LocalInputHandler;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
-import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.scenes.Hud;
 
 public class IngameScreen implements Screen {
@@ -23,12 +22,12 @@ public class IngameScreen implements Screen {
 
 	public IngameScreen(FeudalTactics game) {
 		GameController gameController = new GameController();
-		mapRenderer = new MapRenderer(gameController);
-		gameController.setMapRenderer(mapRenderer);
 		LocalInputHandler inputValidator = new LocalInputHandler(gameController);
 		hud = new Hud(inputValidator);
 		gameController.setHud(hud);
 		camera = new OrthographicCamera();
+		mapRenderer = new MapRenderer(camera);
+		gameController.setMapRenderer(mapRenderer);
 		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(inputValidator, camera);
 		multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(hud.getStage());
@@ -50,7 +49,7 @@ public class IngameScreen implements Screen {
 		camera.update();
 		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		mapRenderer.render(camera);
+		mapRenderer.render();
 		hud.render();
 	}
 

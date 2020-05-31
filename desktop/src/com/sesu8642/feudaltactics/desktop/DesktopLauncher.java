@@ -1,6 +1,5 @@
 package com.sesu8642.feudaltactics.desktop;
 
-import java.awt.Toolkit;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.sesu8642.feudaltactics.FeudalTactics;

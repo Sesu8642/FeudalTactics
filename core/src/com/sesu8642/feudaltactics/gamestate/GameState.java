@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.engine.BotAI;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 public class GameState {
@@ -16,6 +17,7 @@ public class GameState {
 	private Kingdom activeKingdom;
 	private MapObject heldObject;
 	private Random random;
+	private BotAI.Intelligence botIntelligence;
 
 	public GameState() {
 	}
@@ -27,15 +29,17 @@ public class GameState {
 		this.playerTurn = original.playerTurn;
 		this.players = new ArrayList<Player>();
 		this.map = new HexMap();
+		this.botIntelligence = original.botIntelligence;
 		this.kingdoms = new ArrayList<Kingdom>();
 		for (Player originalPlayer : original.getPlayers()) {
-			Player newPlayer = new Player(originalPlayer.getColor(), originalPlayer.getType());
+			Player newPlayer = originalPlayer.clone();
 			this.players.add(newPlayer);
 		}
 		for (Kingdom originalKingdom : original.getKingdoms()) {
 			Kingdom newKingdom = new Kingdom(
 					this.players.get(original.getPlayers().indexOf(originalKingdom.getPlayer())));
 			newKingdom.setSavings(originalKingdom.getSavings());
+			newKingdom.setDoneMoving(originalKingdom.isDoneMoving());
 			this.kingdoms.add(newKingdom);
 		}
 		this.activeKingdom = this.kingdoms.get(original.getKingdoms().indexOf(original.getActiveKingdom()));
@@ -116,6 +120,14 @@ public class GameState {
 
 	public void setRandom(Random random) {
 		this.random = random;
+	}
+
+	public BotAI.Intelligence getBotIntelligence() {
+		return botIntelligence;
+	}
+
+	public void setBotIntelligence(BotAI.Intelligence botIntelligence) {
+		this.botIntelligence = botIntelligence;
 	}
 
 }

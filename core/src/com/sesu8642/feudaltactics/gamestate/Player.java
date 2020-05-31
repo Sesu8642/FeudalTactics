@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 public class Player {
 
 	private Color color;
-	private String name;
 
 	public static enum Type {
 		LOCAL_PLAYER, LOCAL_BOT, REMOTE
@@ -24,6 +23,10 @@ public class Player {
 
 	public Type getType() {
 		return type;
+	}
+	
+	public Player clone() {
+		return new Player(color, type);
 	}
 
 }
