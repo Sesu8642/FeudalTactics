@@ -24,6 +24,7 @@ public class GameStateController {
 	// only class supposed to modify the game state
 
 	private final static float TREE_SPREAD_RATE = 0.3F;
+	private final static float TREE_SPAWN_RATE = 0.01F;
 
 	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
@@ -436,7 +437,6 @@ public class GameStateController {
 	}
 
 	private static void spreadTrees(GameState gameState) {
-		// spread trees
 		HashSet<HexTile> newTreeTiles = new HashSet<HexTile>();
 		for (HexTile tile : gameState.getMap().getTiles().values()) {
 			if (tile.getContent() != null
@@ -452,6 +452,10 @@ public class GameStateController {
 						newTreeTiles.add(candidates.get(gameState.getRandom().nextInt(candidates.size())));
 						candidates.clear();
 					}
+				}
+			} else if (tile.getContent() == null) {
+				if (gameState.getRandom().nextFloat() <= TREE_SPAWN_RATE) {
+					newTreeTiles.add(tile);
 				}
 			}
 		}
