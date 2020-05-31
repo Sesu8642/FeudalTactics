@@ -16,7 +16,7 @@ public class GameState {
 	private ArrayList<Kingdom> kingdoms;
 	private Kingdom activeKingdom;
 	private MapObject heldObject;
-	private Random random;
+	private Random random = new Random();
 	private BotAI.Intelligence botIntelligence;
 
 	public GameState() {
@@ -25,7 +25,6 @@ public class GameState {
 	public GameState(GameState original) {
 		// create a deep copy of the original
 		// random is not actually copied but that should do
-		this.random = new Random(original.getRandom().nextLong());
 		this.playerTurn = original.playerTurn;
 		this.players = new ArrayList<Player>();
 		this.map = new HexMap();
@@ -116,10 +115,6 @@ public class GameState {
 
 	public Random getRandom() {
 		return random;
-	}
-
-	public void setRandom(Random random) {
-		this.random = random;
 	}
 
 	public BotAI.Intelligence getBotIntelligence() {

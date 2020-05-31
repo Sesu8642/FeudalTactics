@@ -1,6 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
@@ -8,7 +8,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class Kingdom {
 
-	private HashSet<HexTile> tiles;
+	private LinkedHashSet<HexTile> tiles;
 	private Player player;
 	private int savings = 0;
 	// only used by ai
@@ -16,7 +16,7 @@ public class Kingdom {
 
 	public Kingdom(Player player) {
 		this.player = player;
-		this.tiles = new HashSet<HexTile>();
+		this.tiles = new LinkedHashSet<HexTile>();
 	}
 
 	public int getIncome() {
@@ -41,11 +41,11 @@ public class Kingdom {
 		return salaries;
 	}
 
-	public HashSet<HexTile> getTiles() {
+	public LinkedHashSet<HexTile> getTiles() {
 		return tiles;
 	}
 
-	public void setTiles(HashSet<HexTile> tiles) {
+	public void setTiles(LinkedHashSet<HexTile> tiles) {
 		this.tiles = tiles;
 	}
 

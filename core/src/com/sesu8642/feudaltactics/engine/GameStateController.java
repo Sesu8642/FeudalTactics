@@ -2,9 +2,10 @@ package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Random;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -50,7 +51,7 @@ public class GameStateController {
 			mapSeed = System.currentTimeMillis();
 		}
 		System.out.println("mapSeed: " + mapSeed.toString());
-		gameState.setRandom(new Random(mapSeed));
+		gameState.getRandom().setSeed(mapSeed);
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
 		ArrayList<Vector2> positionHistory = new ArrayList<Vector2>(); // for backtracking
@@ -158,9 +159,50 @@ public class GameStateController {
 		}
 	}
 
+	private static void createCapital(GameState gameState, HexTile oldCapitalTile) {
+		HexTile newCapitalTile;
+			// try to find empty neighbor tile
+			ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(oldCapitalTile);
+			Optional<HexTile> optionalCapitalTile = neighborTiles.stream()
+					.filter((HexTile neighborTile) -> neighborTile != null
+							&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
+							&& neighborTile.getContent() == null)
+					.findFirst();
+			if (optionalCapitalTile.isPresent()) {
+				newCapitalTile = optionalCapitalTile.get();
+			} else {
+				// no empty neighbor tile -> select any empty tile in the kingdom
+				optionalCapitalTile = oldCapitalTile.getKingdom().getTiles().stream()
+						.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
+				if (optionalCapitalTile.isPresent()) {
+					newCapitalTile = optionalCapitalTile.get();
+				} else {
+					// no empty tile --> select any neighbor tile
+					optionalCapitalTile = neighborTiles.stream().filter((HexTile neighborTile) -> neighborTile != null && neighborTile.getKingdom() == oldCapitalTile.getKingdom())
+							.findFirst();
+					if (optionalCapitalTile.isPresent()) {
+						System.out.println(oldCapitalTile.getKingdom().getTiles().size());
+						newCapitalTile = optionalCapitalTile.get();
+					} else {
+						return;
+					}
+				}
+			}
+		newCapitalTile.setContent(new Capital(oldCapitalTile.getKingdom()));
+	}
+	
 	private static void createCapital(GameState gameState, Kingdom kingdom) {
-		ArrayList<HexTile> tiles = new ArrayList<HexTile>(kingdom.getTiles());
-		tiles.get(gameState.getRandom().nextInt(tiles.size())).setContent(new Capital(kingdom));
+		HexTile newCapitalTile;
+		// try to find any empty kingdom tile
+		Optional<HexTile> optionalCapitalTile = kingdom.getTiles().stream()
+				.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
+		if (optionalCapitalTile.isPresent()) {
+			newCapitalTile = optionalCapitalTile.get();
+		} else {
+			// no empty tile -> just select any
+			newCapitalTile = kingdom.getTiles().stream().findFirst().get();
+		}
+		newCapitalTile.setContent(new Capital(kingdom));
 	}
 
 	private static void createInitialSavings(Kingdom kingdom, int multiplier) {
@@ -219,24 +261,14 @@ public class GameStateController {
 		// units can't act after conquering
 		((Unit) gameState.getHeldObject()).setCanAct(false);
 
-		// place new capital if old one is going to be destroyed
-		if (tile.getContent() != null
-				&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)) {
-			tile.getKingdom().setSavings(0);
-			ArrayList<HexTile> capitalCandidates = new ArrayList<HexTile>();
-			// find potential tiles for new capital
-			for (HexTile neighborTile : neighborTiles) {
-				if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()) {
-					capitalCandidates.add(neighborTile);
-				}
-			}
-			// place new capital on random tile next to the old one
-			capitalCandidates.get(gameState.getRandom().nextInt(capitalCandidates.size()))
-					.setContent(new Capital(tile.getKingdom()));
-		}
-
 		// update kingdoms
 		if (tile.getKingdom() != null) {
+			// place new capital if old one is going to be destroyed
+			if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)) {
+				tile.getKingdom().setSavings(0);
+				createCapital(gameState, tile);
+			}
 			tile.getKingdom().getTiles().remove(tile);
 		}
 		tile.setKingdom(gameState.getHeldObject().getKingdom());
@@ -338,7 +370,7 @@ public class GameStateController {
 		gameState.getKingdoms().remove(slaveKingdom);
 	}
 
-	private static void updateSplitKingdom(GameState gameState, HashSet<HexTile> tiles) {
+	private static void updateSplitKingdom(GameState gameState, LinkedHashSet<HexTile> tiles) {
 		if (tiles.size() == 0) {
 			return;
 		}
@@ -358,7 +390,7 @@ public class GameStateController {
 			// capital exists --> keep it's kingdom
 			startTile = capitalTile;
 			newKingdom = startTile.getKingdom();
-			newKingdom.setTiles(new HashSet<HexTile>());
+			newKingdom.setTiles(new LinkedHashSet<HexTile>());
 		} else {
 			// no capital exists --> create new kingdom
 			// start from some other tile

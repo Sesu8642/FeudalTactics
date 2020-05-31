@@ -1,7 +1,8 @@
 package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -9,10 +10,10 @@ public class HexMap {
 
 	public static float HEX_OUTER_RADIUS = 5;
 
-	private HashMap<Vector2, HexTile> tiles;
+	private Map<Vector2, HexTile> tiles;
 
 	public HexMap() {
-		this.tiles = new HashMap<Vector2, HexTile>();
+		this.tiles = new LinkedHashMap<Vector2, HexTile>();
 	}
 
 	public Vector2 worldCoordsToHexCoords(Vector2 worldCoords) {
@@ -112,7 +113,7 @@ public class HexMap {
 		return unusedNeighbors;
 	}
 
-	public HashMap<Vector2, HexTile> getTiles() {
+	public Map<Vector2, HexTile> getTiles() {
 		return tiles;
 	}
 }
