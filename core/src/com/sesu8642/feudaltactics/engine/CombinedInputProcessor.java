@@ -12,6 +12,9 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	private OrthographicCamera camera;
 	private LocalInputHandler validator;
 
+	public static float MIN_ZOOM = 1;
+	public static float MAX_ZOOM = 50;
+
 	public CombinedInputProcessor(LocalInputHandler validator, OrthographicCamera camera) {
 		this.validator = validator;
 		this.camera = camera;
@@ -19,7 +22,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean scrolled(int amount) {
-		if (camera.zoom + amount > 0 && camera.zoom + amount < 50) {
+		if (camera.zoom + amount > MIN_ZOOM && camera.zoom + amount < MAX_ZOOM) {
 			Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 			camera.zoom += amount;
 			camera.update();
@@ -41,12 +44,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean zoom(float initialDistance, float distance) {
-		// kind of works... good enough for now
-		float amount = (initialDistance - distance) / 2500;
-		if (camera.zoom + amount > 0 && camera.zoom + amount < 50) {
-			camera.zoom += amount;
-		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -79,6 +77,19 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+		float initialDistance = initialPointer1.dst(initialPointer2);
+		float currentDistance = pointer1.dst(pointer2);
+		float zoomAmount = (initialDistance - currentDistance)/1000;
+		float newZoom = camera.zoom+zoomAmount;
+		if (newZoom > MIN_ZOOM && newZoom < MAX_ZOOM) {
+			Vector2 oldPointerCenter = new Vector2((pointer1.x+pointer2.x)/2, (pointer1.y+pointer2.y)/2);
+			Vector3 oldPointerCenterInWorld = camera.unproject(new Vector3(oldPointerCenter, 0));
+			camera.zoom +=zoomAmount;
+			camera.update();
+			Vector3 newPointerCenterInWorld = camera.unproject(new Vector3(oldPointerCenter, 0));
+			camera.translate(oldPointerCenterInWorld.sub(newPointerCenterInWorld));
+			camera.update();
+		}
 		return false;
 	}
 
