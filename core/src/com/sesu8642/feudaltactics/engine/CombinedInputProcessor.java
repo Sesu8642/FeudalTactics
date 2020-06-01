@@ -32,9 +32,10 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		// not very good and dependent on resolution; refactor later
-		final int DRAG_MULTIPLIER = 50; // 50 seems to work pretty well; no idea why
-		camera.translate(-deltaX * camera.zoom / DRAG_MULTIPLIER, deltaY * camera.zoom / DRAG_MULTIPLIER);
+		Vector3 worldDistance = camera.unproject(new Vector3(x, y, 0))
+				.sub(camera.unproject(new Vector3(x + deltaX, y + deltaY, 0)));
+		camera.translate(worldDistance);
+		camera.update();
 		return true;
 	}
 
