@@ -62,7 +62,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
 		validator.inputTap(worldCoords);
-		return false;
+		return true;
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 			camera.translate(oldPointerCenterInWorld.sub(newPointerCenterInWorld));
 			camera.update();
 		}
-		return false;
+		return true;
 	}
 
 	@Override
