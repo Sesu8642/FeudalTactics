@@ -28,12 +28,12 @@ public class GameController {
 	public void generateDummyMap() {
 		ArrayList<Player> players = new ArrayList<Player>();
 		gameState.setBotIntelligence(BotAI.Intelligence.MEDIUM);
-		Player p1 = new Player(new Color(0, 0.5f, 0.8f, 1), Type.LOCAL_PLAYER);
-		Player p2 = new Player(new Color(1F, 0F, 0F, 1), Type.LOCAL_BOT);
-		Player p3 = new Player(new Color(0F, 1F, 0F, 1), Type.LOCAL_BOT);
+		Player p1 = new Player(new Color(0F, 1F, 1F, 1), Type.LOCAL_PLAYER);
+		Player p2 = new Player(new Color(0.75F, 0.5F, 0F, 1), Type.LOCAL_BOT);
+		Player p3 = new Player(new Color(1F, 0.67F, 0.67F, 1), Type.LOCAL_BOT);
 		Player p4 = new Player(new Color(1F, 1F, 0F, 1), Type.LOCAL_BOT);
 		Player p5 = new Player(new Color(1F, 1F, 1F, 1), Type.LOCAL_BOT);
-		Player p6 = new Player(new Color(0F, 1F, 1F, 1), Type.LOCAL_BOT);
+		Player p6 = new Player(new Color(0F, 1F, 0F, 1), Type.LOCAL_BOT);
 		players.add(p1);
 		players.add(p2);
 		players.add(p3);
