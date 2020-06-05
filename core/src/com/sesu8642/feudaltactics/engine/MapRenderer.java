@@ -1,8 +1,11 @@
 package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -29,17 +32,28 @@ public class MapRenderer {
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 	private OrthographicCamera camera;
-	private HashMap<Vector2, Color> tiles;
-	private HashMap<String, TextureRegion> textureRegions;
-	private HashMap<String, Animation<TextureRegion>> animations;
-	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
-	private HashMap<Vector2, Animation<TextureRegion>> animatedContents;
-	private ArrayList<Vector2> whitelineStartPoints;
-	private ArrayList<Vector2> whitelineEndPoints;
 	private float stateTime; // for keeping animations at the correct pace
 	private SpriteBatch batch;
 	private TextureRegion tileRegion;
 	private ShapeRenderer shapeRenderer;
+
+	// stuff that is to be drawn
+	private HashMap<Vector2, Color> tiles;
+	private Set<Vector2> darkenedTiles;
+	private HashMap<String, TextureRegion> textureRegions;
+	private HashMap<String, Animation<TextureRegion>> animations;
+	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
+	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents;
+	private HashMap<Vector2, Animation<TextureRegion>> animatedContents;
+	private ArrayList<Vector2> whiteLineStartPoints;
+	private ArrayList<Vector2> whiteLineEndPoints;
+	private ArrayList<Vector2> redLineStartPoints;
+	private ArrayList<Vector2> redLineEndPoints;
+
+	private class Line {
+		private Vector2 start;
+		private Vector2 end;
+	}
 
 	public MapRenderer(OrthographicCamera camera) {
 		this.camera = camera;
@@ -47,12 +61,16 @@ public class MapRenderer {
 		tiles = new HashMap<Vector2, Color>();
 		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
 		nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
+		darkenedNonAnimatedContents = new HashMap<Vector2, TextureRegion>();
 		tileRegion = FeudalTactics.textureAtlas.findRegion("tile_bw");
 		batch = new SpriteBatch();
 		textureRegions = new HashMap<String, TextureRegion>();
 		animations = new HashMap<String, Animation<TextureRegion>>();
-		whitelineStartPoints = new ArrayList<Vector2>();
-		whitelineEndPoints = new ArrayList<Vector2>();
+		whiteLineStartPoints = new ArrayList<Vector2>();
+		whiteLineEndPoints = new ArrayList<Vector2>();
+		redLineStartPoints = new ArrayList<Vector2>();
+		redLineEndPoints = new ArrayList<Vector2>();
+		darkenedTiles = new HashSet<Vector2>();
 		stateTime = 0F;
 	}
 
@@ -61,8 +79,12 @@ public class MapRenderer {
 		tiles.clear();
 		nonAnimatedContents.clear();
 		animatedContents.clear();
-		whitelineStartPoints.clear();
-		whitelineEndPoints.clear();
+		darkenedNonAnimatedContents.clear();
+		whiteLineStartPoints.clear();
+		whiteLineEndPoints.clear();
+		redLineStartPoints.clear();
+		redLineEndPoints.clear();
+		darkenedTiles.clear();
 		for (Entry<Vector2, HexTile> hexTileEntry : (gameState.getMap().getTiles()).entrySet()) {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
@@ -91,9 +113,20 @@ public class MapRenderer {
 							new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
 							getAnimationFromName(tileContent.getSpriteName()));
 				} else {
-					nonAnimatedContents.put(
-							new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
-							getTextureRegionFromName(tileContent.getSpriteName()));
+					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
+							&& tile.getKingdom() != gameState.getActiveKingdom()
+							&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
+						// darkened content
+						darkenedNonAnimatedContents.put(
+								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								getTextureRegionFromName(tileContent.getSpriteName()));
+					} else {
+						nonAnimatedContents.put(
+								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								getTextureRegionFromName(tileContent.getSpriteName()));
+					}
 				}
 
 			}
@@ -104,56 +137,91 @@ public class MapRenderer {
 				for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
 					if (neighborTile == null || neighborTile.getKingdom() == null
 							|| neighborTile.getKingdom() != tile.getKingdom()) {
-						// index contains the information where the neighbor tile is positioned
-						switch (index) {
-						case 0:
-							// top left
-							whitelineStartPoints.add(new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION,
-									mapCoords.y + height / 2 + LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION,
-									mapCoords.y - LINE_EXTENSION));
-							break;
-						case 1:
-							// top
-							whitelineStartPoints.add(
-									new Vector2(mapCoords.x - width / 4 - LINE_EXTENSION, mapCoords.y + height / 2));
-							whitelineEndPoints.add(
-									new Vector2(mapCoords.x + width / 4 + LINE_EXTENSION, mapCoords.y + height / 2));
-							break;
-						case 2:
-							// top right
-							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION,
-									mapCoords.y + height / 2 + LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION,
-									mapCoords.y - LINE_EXTENSION));
-							break;
-						case 3:
-							// bottom right
-							whitelineStartPoints.add(new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION,
-									mapCoords.y - height / 2 - LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION,
-									mapCoords.y + LINE_EXTENSION));
-							break;
-						case 4:
-							// bottom
-							whitelineStartPoints.add(
-									new Vector2(mapCoords.x - width / 4 - LINE_EXTENSION, mapCoords.y - height / 2));
-							whitelineEndPoints.add(
-									new Vector2(mapCoords.x + width / 4 + LINE_EXTENSION, mapCoords.y - height / 2));
-							break;
-						case 5:
-							// bottom left
-							whitelineStartPoints.add(new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION,
-									mapCoords.y - height / 2 - LINE_EXTENSION));
-							whitelineEndPoints.add(new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION,
-									mapCoords.y + LINE_EXTENSION));
-							break;
-						}
+						Line line = getNeighborLine(mapCoords, index);
+						whiteLineStartPoints.add(line.start);
+						whiteLineEndPoints.add(line.end);
 					}
 					index++;
 				}
+			} else if (gameState.getHeldObject() != null) {
+				// red lines for indicating if able to conquer
+				if (InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
+					int index = 0;
+					for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+						if (neighborTile == null || (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
+							Line line = getNeighborLine(mapCoords, index);
+							Collection<Line> dottedLineParts = lineToDottedLine(line);
+							for (Line linePart : dottedLineParts) {
+								redLineStartPoints.add(linePart.start);
+								redLineEndPoints.add(linePart.end);
+							}
+						}
+						index++;
+					}
+				} else {
+					darkenedTiles.add(mapCoords);
+				}
 			}
 		}
+	}
+
+	private Collection<Line> lineToDottedLine(Line line) {
+		int PART_AMOUNT = 3;
+		Collection<Line> resultLines = new HashSet<Line>();
+		float lineXDiff = line.end.x - line.start.x;
+		float lineYDiff = line.end.y - line.start.y;
+		for (int i = 1; i <= PART_AMOUNT; i += 2) {
+			Line linePart = new Line();
+			linePart.start = new Vector2(line.start.x + (lineXDiff / PART_AMOUNT) * (i - 1),
+					line.start.y + (lineYDiff / PART_AMOUNT) * (i - 1));
+			linePart.end = new Vector2(line.start.x + (lineXDiff / PART_AMOUNT) * i,
+					line.start.y + (lineYDiff / PART_AMOUNT) * i);
+			resultLines.add(linePart);
+		}
+		return resultLines;
+	}
+
+	private Line getNeighborLine(Vector2 mapCoords, int index) {
+		Vector2 start = new Vector2();
+		Vector2 end = new Vector2();
+		switch (index) {
+		case 0:
+			// top left
+			start = new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION, mapCoords.y + height / 2 + LINE_EXTENSION);
+			end = new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION, mapCoords.y - LINE_EXTENSION);
+			break;
+		case 1:
+			// top
+
+			start = new Vector2(mapCoords.x - width / 4 - LINE_EXTENSION, mapCoords.y + height / 2);
+
+			end = new Vector2(mapCoords.x + width / 4 + LINE_EXTENSION, mapCoords.y + height / 2);
+			break;
+		case 2:
+			// top right
+			start = new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION, mapCoords.y + height / 2 + LINE_EXTENSION);
+			end = new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION, mapCoords.y - LINE_EXTENSION);
+			break;
+		case 3:
+			// bottom right
+			start = new Vector2(mapCoords.x + width / 4 - LINE_EXTENSION, mapCoords.y - height / 2 - LINE_EXTENSION);
+			end = new Vector2(mapCoords.x + width / 2 + LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
+			break;
+		case 4:
+			// bottom
+			start = new Vector2(mapCoords.x - width / 4 - LINE_EXTENSION, mapCoords.y - height / 2);
+			end = new Vector2(mapCoords.x + width / 4 + LINE_EXTENSION, mapCoords.y - height / 2);
+			break;
+		case 5:
+			// bottom left
+			start = new Vector2(mapCoords.x - width / 4 + LINE_EXTENSION, mapCoords.y - height / 2 - LINE_EXTENSION);
+			end = new Vector2(mapCoords.x - width / 2 - LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
+			break;
+		}
+		Line result = new Line();
+		result.start = start;
+		result.end = end;
+		return result;
 	}
 
 	private TextureRegion getTextureRegionFromName(String name) {
@@ -188,11 +256,18 @@ public class MapRenderer {
 		batch.begin();
 		// draw all the tiles
 		for (Entry<Vector2, Color> tile : tiles.entrySet()) {
-			batch.setColor(tile.getValue());
+			Color color = new Color(tile.getValue());
+			// darken tile
+			if (darkenedTiles.contains(tile.getKey())) {
+				color.mul(0.5F, 0.5F, 0.5F, 1);
+			}
+			batch.setColor(color);
 			batch.draw(tileRegion, tile.getKey().x - width / 2, tile.getKey().y - height / 2, width, height);
 		}
-		batch.setColor(1, 1, 1, 1);
 		// draw all the animated contents
+		Color normalColor = new Color(1, 1, 1, 1);
+		Color darkenedColor = new Color(0, 0, 0, 0.4F);
+		batch.setColor(normalColor);
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
 			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
 					currentFrame.getKey().y - itemOffsetY, width, height);
@@ -202,13 +277,29 @@ public class MapRenderer {
 			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY, width,
 					height);
 		}
+		// draw the darkened contents like normal but then draw a shadow over them
+		for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
+			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY, width,
+					height);
+		}
+		batch.setColor(darkenedColor);
+		for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
+			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY, width,
+					height);
+		}
 		batch.end();
 		// draw all the lines
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-		for (int i = 0; i < whitelineStartPoints.size(); i++) {
-			shapeRenderer.rectLine(whitelineStartPoints.get(i).x, whitelineStartPoints.get(i).y,
-					whitelineEndPoints.get(i).x, whitelineEndPoints.get(i).y, 0.6F);
+		shapeRenderer.setColor(1F, 1F, 1F, 1);
+		for (int i = 0; i < whiteLineStartPoints.size(); i++) {
+			shapeRenderer.rectLine(whiteLineStartPoints.get(i).x, whiteLineStartPoints.get(i).y,
+					whiteLineEndPoints.get(i).x, whiteLineEndPoints.get(i).y, 0.6F);
+		}
+		shapeRenderer.setColor(1F, 0F, 0F, 1);
+		for (int i = 0; i < redLineStartPoints.size(); i++) {
+			shapeRenderer.rectLine(redLineStartPoints.get(i).x, redLineStartPoints.get(i).y, redLineEndPoints.get(i).x,
+					redLineEndPoints.get(i).y, 0.6F);
 		}
 		shapeRenderer.end();
 	}

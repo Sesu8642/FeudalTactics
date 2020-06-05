@@ -125,12 +125,14 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.buyPeasant(gameState);
 		updateInfoText();
+		mapRenderer.updateMap(gameState);
 		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void buyCastle() {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.buyCastle(gameState);
+		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
