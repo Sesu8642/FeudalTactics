@@ -11,26 +11,26 @@ import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.LocalInputHandler;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
-import com.sesu8642.feudaltactics.scenes.Hud;
+import com.sesu8642.feudaltactics.scenes.GameUIOverlay;
 
 public class IngameScreen implements Screen {
 
 	private OrthographicCamera camera;
 	private MapRenderer mapRenderer;
-	private Hud hud;
+	private GameUIOverlay gameUIOverlay;
 	private InputMultiplexer multiplexer;
 
 	public IngameScreen(FeudalTactics game) {
 		GameController gameController = new GameController();
 		LocalInputHandler inputValidator = new LocalInputHandler(gameController);
-		hud = new Hud(inputValidator);
-		gameController.setHud(hud);
+		gameUIOverlay = new GameUIOverlay(inputValidator);
+		gameController.setHud(gameUIOverlay);
 		camera = new OrthographicCamera();
 		mapRenderer = new MapRenderer(camera);
 		gameController.setMapRenderer(mapRenderer);
 		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(inputValidator, camera);
 		multiplexer = new InputMultiplexer();
-		multiplexer.addProcessor(hud.getStage());
+		multiplexer.addProcessor(gameUIOverlay.getStage());
 		multiplexer.addProcessor(new GestureDetector(inputProcessor));
 		multiplexer.addProcessor(inputProcessor);
 		gameController.generateDummyMap();
@@ -50,12 +50,12 @@ public class IngameScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		mapRenderer.render();
-		hud.render();
+		gameUIOverlay.render();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		hud.resize(width, height);
+		gameUIOverlay.resize(width, height);
 		camera.viewportWidth = 30f;
 		camera.viewportHeight = 30f * height / width;
 		camera.update();
@@ -79,7 +79,7 @@ public class IngameScreen implements Screen {
 	@Override
 	public void dispose() {
 		mapRenderer.dispose();
-		hud.dispose();
+		gameUIOverlay.dispose();
 	}
 
 	public OrthographicCamera getCamera() {

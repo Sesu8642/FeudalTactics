@@ -10,13 +10,13 @@ import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
-import com.sesu8642.feudaltactics.scenes.Hud;
+import com.sesu8642.feudaltactics.scenes.GameUIOverlay;
 
 public class GameController {
 
 	private MapRenderer mapRenderer;
 	private GameState gameState;
-	private Hud hud;
+	private GameUIOverlay gameUIOverlay;
 	private LinkedList<GameState> undoStates;
 	BotAI botAI = new BotAI();
 	
@@ -50,24 +50,21 @@ public class GameController {
 	}
 
 	public void updateInfoText() {
-		if (hud == null) {
+		if (gameUIOverlay == null) {
 			return;
 		}
 		Kingdom kingdom = gameState.getActiveKingdom();
 		if (kingdom == null) {
-			hud.setInfoText("");
+			gameUIOverlay.setInfoText("");
 			return;
 		}
 		int income = kingdom.getIncome();
 		int salaries = kingdom.getSalaries();
 		int result = income - salaries;
 		int savings = kingdom.getSavings();
-		String infoText = "";
-		infoText += "Income: " + income;
-		infoText += "\nSalaries: " + salaries;
-		infoText += "\nResult: " + result;
-		infoText += "\nSavings: " + savings;
-		hud.setInfoText(infoText);
+		String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+		String infoText = "Savings: " + savings + " (" + resultText + ")";
+		gameUIOverlay.setInfoText(infoText);
 	}
 
 	public void activateKingdom(Kingdom kingdom) {
@@ -80,14 +77,14 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
-		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
+		gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void placeOwn(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
-		hud.updateHandContent(null);
+		gameUIOverlay.updateHandContent(null);
 	}
 
 	public void combineUnits(HexTile tile) {
@@ -95,7 +92,7 @@ public class GameController {
 		GameStateController.combineUnits(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
-		hud.updateHandContent(null);
+		gameUIOverlay.updateHandContent(null);
 	}
 
 	public void conquer(HexTile tile) {
@@ -103,7 +100,7 @@ public class GameController {
 		GameStateController.conquer(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
-		hud.updateHandContent(null);
+		gameUIOverlay.updateHandContent(null);
 	}
 
 	public void endTurn() {
@@ -126,7 +123,7 @@ public class GameController {
 		GameStateController.buyPeasant(gameState);
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
-		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
+		gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void buyCastle() {
@@ -134,7 +131,7 @@ public class GameController {
 		GameStateController.buyCastle(gameState);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
-		hud.updateHandContent(gameState.getHeldObject().getSpriteName());
+		gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void undoLastAction() {
@@ -142,14 +139,14 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		if (gameState.getHeldObject() != null) {
-			hud.updateHandContent(gameState.getHeldObject().getSpriteName());
+			gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
 		} else {
-			hud.updateHandContent(null);
+			gameUIOverlay.updateHandContent(null);
 		}
 	}
 
-	public void setHud(Hud hud) {
-		this.hud = hud;
+	public void setHud(GameUIOverlay gameUIOverlay) {
+		this.gameUIOverlay = gameUIOverlay;
 	}
 
 	public MapRenderer getMapRenderer() {
