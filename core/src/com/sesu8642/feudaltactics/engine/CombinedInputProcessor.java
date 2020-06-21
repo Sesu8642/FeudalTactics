@@ -10,13 +10,13 @@ import com.badlogic.gdx.math.Vector3;
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	private OrthographicCamera camera;
-	private LocalInputHandler validator;
+	private AcceptTapInput inputAcceptor;
 
 	public static float MIN_ZOOM = 1;
 	public static float MAX_ZOOM = 50;
 
-	public CombinedInputProcessor(LocalInputHandler validator, OrthographicCamera camera) {
-		this.validator = validator;
+	public CombinedInputProcessor(AcceptTapInput inputAcceptor, OrthographicCamera camera) {
+		this.inputAcceptor = inputAcceptor;
 		this.camera = camera;
 	}
 
@@ -61,7 +61,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	public boolean tap(float x, float y, int count, int button) {
 		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
-		validator.inputTap(worldCoords);
+		inputAcceptor.inputTap(worldCoords);
 		return true;
 	}
 

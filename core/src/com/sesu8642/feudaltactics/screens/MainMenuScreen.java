@@ -34,6 +34,12 @@ public class MainMenuScreen implements Screen {
 			}
 		});
 		TextButton tutorialButton = new TextButton("Tutorial", FeudalTactics.skin);
+		tutorialButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				game.setScreen(new EditorScreen(game));
+			}
+		});
 		TextButton aboutButton = new TextButton("About", FeudalTactics.skin);
 		versionTextLabel = new Label("Version 1.0", FeudalTactics.skin);
 		

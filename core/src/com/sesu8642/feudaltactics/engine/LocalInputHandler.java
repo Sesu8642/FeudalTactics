@@ -10,7 +10,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
-public class LocalInputHandler {
+public class LocalInputHandler implements AcceptTapInput {
 
 	// TODO: when validating multiplayer inputs, make sure that it's the player's
 	// turn before calling check*

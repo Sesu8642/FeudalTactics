@@ -505,4 +505,9 @@ public class GameStateController {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Castle.COST);
 		gameState.setHeldObject(new Castle(gameState.getActiveKingdom()));
 	}
+	
+	public static void placeTile(GameState gameState, Vector2 hexCoords, Player player) {
+		HexTile newTile = new HexTile(player, hexCoords);
+		gameState.getMap().getTiles().put(hexCoords, newTile);
+	}
 }
