@@ -27,7 +27,7 @@ public class BotAI {
 		DUMB, MEDIUM, SMART
 	}
 
-	private class TileScoreInfo {
+	private class TileScoreInfo{
 
 		public HexTile tile;
 		public int score;

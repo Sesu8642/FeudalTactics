@@ -9,17 +9,19 @@ public class ValueWithSize extends Value {
 	public float get(Actor context) {
 		return 0;
 	}
-	
-	/** Returns a value that is a percentage of the specified actor's size. The context actor is ignored. */
+
+	/**
+	 * Returns a value that is a percentage of the specified actor's size. The
+	 * context actor is ignored.
+	 */
 	static public Value percentSize(final float percent, final Actor actor) {
-		if (actor == null) throw new IllegalArgumentException("actor cannot be null.");
+		if (actor == null)
+			throw new IllegalArgumentException("actor cannot be null.");
 		return new Value() {
-			public float get (Actor context) {
-				return (float) Math.sqrt(((float) actor.getHeight() * actor.getWidth()))/12;
+			public float get(Actor context) {
+				return (float) Math.sqrt(((float) actor.getHeight() * actor.getWidth())) / 12;
 			}
 		};
 	}
-	
-	
 
 }
