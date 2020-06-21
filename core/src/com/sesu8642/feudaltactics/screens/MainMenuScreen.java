@@ -5,11 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -25,7 +28,7 @@ public class MainMenuScreen implements Screen {
 		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
 		stage = new Stage(viewport);
-
+		Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));
 		TextButton playButton = new TextButton("Play", FeudalTactics.skin);
 		playButton.addListener(new ChangeListener() {
 			@Override
@@ -45,28 +48,18 @@ public class MainMenuScreen implements Screen {
 		
 		rootTable = new Table();
 		rootTable.setFillParent(true);
-		rootTable.setDebug(true);
-		rootTable.defaults().expand().fill().uniformY().minSize(0);
-		rootTable.add();
-		rootTable.add();
-		rootTable.add();
+//		rootTable.setDebug(true);
+		rootTable.defaults().minSize(0).fillX().expandY();
+		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
 		rootTable.row();
-		rootTable.add();
+		rootTable.defaults().minHeight(100).pad(10);
+		rootTable.add(playButton).prefWidth(Value.percentWidth(0.5F, rootTable));
 		rootTable.row();
-		rootTable.add();
-		rootTable.add(playButton);
-		rootTable.row();
-		rootTable.add();
-		rootTable.row();
-		rootTable.add();
 		rootTable.add(tutorialButton);
 		rootTable.row();
-		rootTable.add();
-		rootTable.row();
-		rootTable.add();
 		rootTable.add(aboutButton);
 		rootTable.row();
-		rootTable.add(versionTextLabel).fill(false).right().bottom().pad(10).colspan(3);
+		rootTable.add(versionTextLabel).fill(false).right().bottom().pad(10).minHeight(0);
 		stage.addActor(rootTable);
 	}
 
