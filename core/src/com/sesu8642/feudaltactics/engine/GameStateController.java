@@ -406,6 +406,9 @@ public class GameStateController {
 			HexTile currentTile = todoTiles.removeFirst();
 			newKingdom.getTiles().add(currentTile);
 			currentTile.setKingdom(newKingdom);
+			if (currentTile.getContent() != null) {
+				currentTile.getContent().setKingdom(newKingdom);
+			}
 			doneTiles.add(currentTile);
 			for (HexTile expandTile : gameState.getMap().getNeighborTiles(currentTile)) {
 				if (!doneTiles.contains(expandTile) && !todoTiles.contains(expandTile)
