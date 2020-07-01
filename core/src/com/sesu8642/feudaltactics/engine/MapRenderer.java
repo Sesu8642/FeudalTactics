@@ -113,21 +113,27 @@ public class MapRenderer {
 				}
 				if (animate) {
 					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
-							&& tile.getKingdom() != gameState.getActiveKingdom()
-							&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
+							&& (!InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(),
+											tile))) {
 						// darkened content
 						darkenedAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
 								getAnimationFromName(tileContent.getSpriteName()));
 					} else {
 						animatedContents.put(
-								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
 								getAnimationFromName(tileContent.getSpriteName()));
 					}
 				} else {
 					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
-							&& tile.getKingdom() != gameState.getActiveKingdom()
-							&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
+							&& (!InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(),
+											tile))) {
 						// darkened content
 						darkenedNonAnimatedContents.put(
 								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
@@ -155,12 +161,20 @@ public class MapRenderer {
 					}
 					index++;
 				}
+				// darken the tile if placing is impossible
+				if (gameState.getHeldObject() != null
+						&& !InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+						&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
+					darkenedTiles.add(mapCoords);
+				}
 			} else if (gameState.getHeldObject() != null) {
 				// red lines for indicating if able to conquer
 				if (InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
 					int index = 0;
 					for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
-						if (neighborTile == null || (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
+						if (neighborTile == null
+								|| (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidator
+										.checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
 							Line line = getNeighborLine(mapCoords, index);
 							Collection<Line> dottedLineParts = lineToDottedLine(line);
 							for (Line linePart : dottedLineParts) {
@@ -255,8 +269,10 @@ public class MapRenderer {
 	}
 
 	public void render() {
-		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map object
-		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<Vector2, TextureRegion>(); // current frame for each map object
+		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map
+																						// object
+		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<Vector2, TextureRegion>(); // current frame for
+																								// each map object
 		batch.setProjectionMatrix(camera.combined);
 		stateTime += Gdx.graphics.getDeltaTime();
 		// get the correct frames
@@ -264,7 +280,8 @@ public class MapRenderer {
 			frames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
 		for (Entry<Vector2, Animation<TextureRegion>> content : darkenedAnimatedContents.entrySet()) {
-			darkenedFrames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
+			darkenedFrames.put(content.getKey(),
+					((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
 		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
