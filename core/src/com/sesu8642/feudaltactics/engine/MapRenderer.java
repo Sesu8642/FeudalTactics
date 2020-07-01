@@ -45,6 +45,7 @@ public class MapRenderer {
 	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
 	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents;
 	private HashMap<Vector2, Animation<TextureRegion>> animatedContents;
+	private HashMap<Vector2, Animation<TextureRegion>> darkenedAnimatedContents;
 	private ArrayList<Vector2> whiteLineStartPoints;
 	private ArrayList<Vector2> whiteLineEndPoints;
 	private ArrayList<Vector2> redLineStartPoints;
@@ -62,6 +63,7 @@ public class MapRenderer {
 		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
 		nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
 		darkenedNonAnimatedContents = new HashMap<Vector2, TextureRegion>();
+		darkenedAnimatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
 		tileRegion = FeudalTactics.textureAtlas.findRegion("tile_bw");
 		batch = new SpriteBatch();
 		textureRegions = new HashMap<String, TextureRegion>();
@@ -80,6 +82,7 @@ public class MapRenderer {
 		nonAnimatedContents.clear();
 		animatedContents.clear();
 		darkenedNonAnimatedContents.clear();
+		darkenedAnimatedContents.clear();
 		whiteLineStartPoints.clear();
 		whiteLineEndPoints.clear();
 		redLineStartPoints.clear();
@@ -109,9 +112,18 @@ public class MapRenderer {
 					}
 				}
 				if (animate) {
-					animatedContents.put(
-							new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
-							getAnimationFromName(tileContent.getSpriteName()));
+					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
+							&& tile.getKingdom() != gameState.getActiveKingdom()
+							&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
+						// darkened content
+						darkenedAnimatedContents.put(
+								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								getAnimationFromName(tileContent.getSpriteName()));
+					} else {
+						animatedContents.put(
+								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS, mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								getAnimationFromName(tileContent.getSpriteName()));
+					}
 				} else {
 					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
 							&& tile.getKingdom() != gameState.getActiveKingdom()
@@ -243,12 +255,16 @@ public class MapRenderer {
 	}
 
 	public void render() {
-		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map
-		batch.setProjectionMatrix(camera.combined); // object
+		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map object
+		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<Vector2, TextureRegion>(); // current frame for each map object
+		batch.setProjectionMatrix(camera.combined);
 		stateTime += Gdx.graphics.getDeltaTime();
 		// get the correct frames
 		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
 			frames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
+		}
+		for (Entry<Vector2, Animation<TextureRegion>> content : darkenedAnimatedContents.entrySet()) {
+			darkenedFrames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
 		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
@@ -272,12 +288,22 @@ public class MapRenderer {
 			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
 					currentFrame.getKey().y - itemOffsetY, width, height);
 		}
+		// draw the darkened contents like normal but then draw a shadow over them
+		for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
+			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
+					currentFrame.getKey().y - itemOffsetY, width, height);
+		}
+		batch.setColor(darkenedColor);
+		for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
+			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
+					currentFrame.getKey().y - itemOffsetY, width, height);
+		}
+		batch.setColor(normalColor);
 		// draw all the non-animated contents
 		for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {
 			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY, width,
 					height);
 		}
-		// draw the darkened contents like normal but then draw a shadow over them
 		for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
 			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY, width,
 					height);
