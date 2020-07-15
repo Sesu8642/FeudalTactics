@@ -41,7 +41,7 @@ public class IngameScreen implements Screen {
 		Gdx.input.setInputProcessor(multiplexer);
 		camera.position.set(camera.viewportWidth, camera.viewportHeight, 0);
 		camera.update();
-		camera.zoom = 10;
+		camera.zoom = 0.2F;
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class IngameScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		gameUIOverlay.resize(width, height);
-		camera.viewportWidth = 30f;
-		camera.viewportHeight = 30f * height / width;
+		camera.viewportHeight = height;
+		camera.viewportWidth = width;
 		camera.update();
 	}
 
