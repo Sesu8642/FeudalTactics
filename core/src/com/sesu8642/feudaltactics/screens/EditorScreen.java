@@ -3,39 +3,57 @@ package com.sesu8642.feudaltactics.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.EditorController;
 import com.sesu8642.feudaltactics.engine.EditorInputHandler;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
-import com.sesu8642.feudaltactics.scenes.EditorUIOverlay;
 
 public class EditorScreen implements Screen {
 
 	private OrthographicCamera camera;
 	private MapRenderer mapRenderer;
-	private EditorUIOverlay editorUIOverlay;
 	private InputMultiplexer multiplexer;
+	private EditorInputHandler inputValidator;
+	
+	private Stage stage;
+	private Table rootTable;
+	private Viewport viewport;
 
 	public EditorScreen(FeudalTactics game) {
 		EditorController editorController = new EditorController();
-		EditorInputHandler editorInputHandler = new EditorInputHandler(editorController);
-		editorUIOverlay = new EditorUIOverlay(editorInputHandler);
+		inputValidator = new EditorInputHandler(editorController);
+		//editorController.setHud(this);
 		camera = new OrthographicCamera();
-		//camera.rotate(90);
 		mapRenderer = new MapRenderer(camera);
 		editorController.setMapRenderer(mapRenderer);
-		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(editorInputHandler, camera);
+		initUI();
+		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(inputValidator, camera);
 		multiplexer = new InputMultiplexer();
-		multiplexer.addProcessor(editorUIOverlay.getStage());
+		multiplexer.addProcessor(stage);
 		multiplexer.addProcessor(new GestureDetector(inputProcessor));
 		multiplexer.addProcessor(inputProcessor);
 		editorController.generateEmptyMap();
 	}
 
+	private void initUI() {
+		Camera camera = new OrthographicCamera();
+		viewport = new ScreenViewport(camera);
+		stage = new Stage(viewport);
+		rootTable = new Table();
+		rootTable.setDebug(true);
+		rootTable.setFillParent(true);
+		stage.addActor(rootTable);
+	}
+	
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
@@ -50,12 +68,16 @@ public class EditorScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		mapRenderer.render();
-		editorUIOverlay.render();
+		viewport.apply();
+		stage.draw();
+		stage.act();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		editorUIOverlay.resize(width, height);
+		viewport.update(width, height, true);
+		viewport.apply();
+		rootTable.pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup and going fullscreen etc.; took me hours to find out
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
 		camera.update();
@@ -79,7 +101,7 @@ public class EditorScreen implements Screen {
 	@Override
 	public void dispose() {
 		mapRenderer.dispose();
-		editorUIOverlay.dispose();
+		stage.dispose();
 	}
 
 	public OrthographicCamera getCamera() {

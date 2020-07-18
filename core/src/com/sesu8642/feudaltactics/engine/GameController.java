@@ -10,13 +10,13 @@ import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
-import com.sesu8642.feudaltactics.scenes.GameUIOverlay;
+import com.sesu8642.feudaltactics.screens.IngameScreen;
 
 public class GameController {
 
 	private MapRenderer mapRenderer;
 	private GameState gameState;
-	private GameUIOverlay gameUIOverlay;
+	private IngameScreen gameUIOverlay;
 	private LinkedList<GameState> undoStates;
 	BotAI botAI = new BotAI();
 	
@@ -145,7 +145,7 @@ public class GameController {
 		}
 	}
 
-	public void setHud(GameUIOverlay gameUIOverlay) {
+	public void setHud(IngameScreen gameUIOverlay) {
 		this.gameUIOverlay = gameUIOverlay;
 	}
 
