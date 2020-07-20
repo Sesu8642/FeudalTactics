@@ -19,7 +19,7 @@ public class ValueWithSize extends Value {
 			throw new IllegalArgumentException("actor cannot be null.");
 		return new Value() {
 			public float get(Actor context) {
-				return (float) Math.sqrt(((float) actor.getHeight() * actor.getWidth())) / 12;
+				return (float) Math.sqrt(((float) actor.getHeight() * actor.getWidth())) * percent;
 			}
 		};
 	}

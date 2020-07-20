@@ -10,7 +10,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
-public class LocalInputHandler implements AcceptTapInput {
+public class LocalInputHandler implements AcceptCommonInput {
 
 	// TODO: when validating multiplayer inputs, make sure that it's the player's
 	// turn before calling check*
@@ -24,7 +24,13 @@ public class LocalInputHandler implements AcceptTapInput {
 	public LocalInputHandler(GameController gameController) {
 		this.gameController = gameController;
 	}
-
+	
+	@Override
+	public void inputEsc() {
+		gameController.toggleMenu();
+	}
+	
+	@Override
 	public void inputTap(Vector2 worldCoords) {
 		if (!isActivePlayerLocalHuman()) {
 			// don't accept inputs if its not the human player's turn

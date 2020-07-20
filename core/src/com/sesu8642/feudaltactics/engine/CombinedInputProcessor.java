@@ -10,12 +10,12 @@ import com.badlogic.gdx.math.Vector3;
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	private OrthographicCamera camera;
-	private AcceptTapInput inputAcceptor;
+	private AcceptCommonInput inputAcceptor;
 
 	public static float MIN_ZOOM = 0.01F;
 	public static float MAX_ZOOM = 1;
 
-	public CombinedInputProcessor(AcceptTapInput inputAcceptor, OrthographicCamera camera) {
+	public CombinedInputProcessor(AcceptCommonInput inputAcceptor, OrthographicCamera camera) {
 		this.inputAcceptor = inputAcceptor;
 		this.camera = camera;
 	}
@@ -111,6 +111,10 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
+		if (keycode == 131) {
+			// ESC
+			inputAcceptor.inputEsc();
+		}
 		return false;
 	}
 

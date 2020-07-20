@@ -11,6 +11,7 @@ import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.screens.IngameScreen;
+import com.sesu8642.feudaltactics.screens.IngameScreen.IngameStages;
 
 public class GameController {
 
@@ -40,7 +41,8 @@ public class GameController {
 		players.add(p4);
 		players.add(p5);
 		players.add(p6);
-		GameStateController.initializeMap(gameState, players, 100, -10, 0.1F, null);
+		Long seed = GameStateController.initializeMap(gameState, players, 100, -10, 0.1F, null);
+		updateSeedText(seed.toString());
 		mapRenderer.updateMap(gameState);
 	}
 
@@ -48,7 +50,14 @@ public class GameController {
 		System.out.println("clicked tile position " + hexCoords);
 		System.out.println(gameState.getMap().getTiles().get(hexCoords));
 	}
-
+	
+	public void updateSeedText(String seedText) {
+		if (gameUIOverlay == null) {
+			return;
+		}
+		gameUIOverlay.setSeedText(seedText);
+	}
+	
 	public void updateInfoText() {
 		if (gameUIOverlay == null) {
 			return;
@@ -145,6 +154,10 @@ public class GameController {
 		}
 	}
 
+	public void toggleMenu() {
+		gameUIOverlay.activateStage(IngameStages.MENU);
+	}
+	
 	public void setHud(IngameScreen gameUIOverlay) {
 		this.gameUIOverlay = gameUIOverlay;
 	}

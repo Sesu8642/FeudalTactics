@@ -3,7 +3,7 @@ package com.sesu8642.feudaltactics.engine;
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 
-public class EditorInputHandler implements AcceptTapInput {
+public class EditorInputHandler implements AcceptCommonInput {
 
 	private EditorController editorController;
 
@@ -15,6 +15,12 @@ public class EditorInputHandler implements AcceptTapInput {
 		HexMap map = editorController.getGameState().getMap();
 		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
 		editorController.createTile(hexCoords);
+	}
+
+	@Override
+	public void inputEsc() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

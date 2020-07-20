@@ -22,17 +22,21 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
 public class GameStateController {
-	// only class supposed to modify the game state
+	// only class supposed to modify the game state (except the bot AI actually)
 
 	private final static float TREE_SPREAD_RATE = 0.3F;
 	private final static float TREE_SPAWN_RATE = 0.01F;
 
-	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
+	public static Long initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
+		if (mapSeed == null) {
+			mapSeed = System.currentTimeMillis();
+		}
 		gameState.setPlayers(players);
 		gameState.setMap(new HexMap());
 		gameState.setKingdoms(new ArrayList<Kingdom>());
 		generateMap(gameState, players, landMass, density, vegetationDensity, mapSeed);
+		return mapSeed;
 	}
 
 	public static void generateMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
@@ -47,9 +51,6 @@ public class GameStateController {
 			Long mapSeed) {
 		// density between -3 and 3 produces good results
 		gameState.getMap().getTiles().clear();
-		if (mapSeed == null) {
-			mapSeed = System.currentTimeMillis();
-		}
 		System.out.println("mapSeed: " + mapSeed.toString());
 		gameState.getRandom().setSeed(mapSeed);
 		// could be done recursively but stack size is uncertain
