@@ -1,41 +1,41 @@
 package com.sesu8642.feudaltactics.screens;
 
+import java.util.LinkedHashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.stages.SplashImageStage;
+import com.sesu8642.feudaltactics.stages.UIAction;
 
 public class SplashScreen implements Screen {
-	private Stage stage;
-	private Table rootTable;
+	private SplashImageStage stage;
 	private Viewport viewport;
-	private FeudalTactics game;
 	private long startTime;
-	
-	public SplashScreen(FeudalTactics game) {
-		this.game = game;
+
+	public SplashScreen() {
+		initUI();
+	}
+
+	private void initUI() {
 		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
-		stage = new Stage(viewport);
-		Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));		
-		rootTable = new Table();
-		rootTable.setFillParent(true);
-//		rootTable.setDebug(true);
-		rootTable.defaults().minSize(0).fillX().expandY();
-		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
-		stage.addActor(rootTable);
+
+		LinkedHashMap<String, UIAction> buttonData = new LinkedHashMap<String, UIAction>();
+		buttonData.put("Play", () -> FeudalTactics.game.setScreen(new IngameScreen()));
+		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(new EditorScreen()));
+		buttonData.put("About", () -> {
+		});
+		stage = new SplashImageStage(viewport);
 	}
-	
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
@@ -43,21 +43,21 @@ public class SplashScreen implements Screen {
 		viewport.apply();
 		stage.draw();
 		stage.act();
-	    if(TimeUtils.timeSinceMillis(startTime) > 1000){
-	    	game.setScreen(new MainMenuScreen(game));
-	    }
+		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
+			FeudalTactics.game.setScreen(new MainMenuScreen());
+		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		viewport.apply();
-		rootTable.pack();
+		((Table) stage.getActors().get(0)).pack();
 	}
 
 	@Override
 	public void show() {
-		startTime=TimeUtils.millis();
+		startTime = TimeUtils.millis();
 	}
 
 	@Override

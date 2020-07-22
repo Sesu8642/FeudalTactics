@@ -17,7 +17,7 @@ public class GameController {
 
 	private MapRenderer mapRenderer;
 	private GameState gameState;
-	private IngameScreen gameUIOverlay;
+	private IngameScreen ingameScreen;
 	private LinkedList<GameState> undoStates;
 	BotAI botAI = new BotAI();
 	
@@ -52,19 +52,16 @@ public class GameController {
 	}
 	
 	public void updateSeedText(String seedText) {
-		if (gameUIOverlay == null) {
-			return;
-		}
-		gameUIOverlay.setSeedText(seedText);
+		ingameScreen.getMenuStage().setBottomLabelText("Seed: " + seedText);
 	}
 	
 	public void updateInfoText() {
-		if (gameUIOverlay == null) {
+		if (ingameScreen == null) {
 			return;
 		}
 		Kingdom kingdom = gameState.getActiveKingdom();
 		if (kingdom == null) {
-			gameUIOverlay.setInfoText("");
+			ingameScreen.getHudStage().setInfoText("");
 			return;
 		}
 		int income = kingdom.getIncome();
@@ -73,7 +70,7 @@ public class GameController {
 		int savings = kingdom.getSavings();
 		String resultText = result < 0 ? String.valueOf(result) : "+" + result;
 		String infoText = "Savings: " + savings + " (" + resultText + ")";
-		gameUIOverlay.setInfoText(infoText);
+		ingameScreen.getHudStage().setInfoText(infoText);
 	}
 
 	public void activateKingdom(Kingdom kingdom) {
@@ -86,14 +83,14 @@ public class GameController {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
-		gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
+		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void placeOwn(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
 		GameStateController.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
-		gameUIOverlay.updateHandContent(null);
+		ingameScreen.getHudStage().updateHandContent(null);
 	}
 
 	public void combineUnits(HexTile tile) {
@@ -101,7 +98,7 @@ public class GameController {
 		GameStateController.combineUnits(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
-		gameUIOverlay.updateHandContent(null);
+		ingameScreen.getHudStage().updateHandContent(null);
 	}
 
 	public void conquer(HexTile tile) {
@@ -109,7 +106,7 @@ public class GameController {
 		GameStateController.conquer(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
-		gameUIOverlay.updateHandContent(null);
+		ingameScreen.getHudStage().updateHandContent(null);
 	}
 
 	public void endTurn() {
@@ -132,7 +129,7 @@ public class GameController {
 		GameStateController.buyPeasant(gameState);
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
-		gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
+		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void buyCastle() {
@@ -140,7 +137,7 @@ public class GameController {
 		GameStateController.buyCastle(gameState);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
-		gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
+		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void undoLastAction() {
@@ -148,18 +145,18 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		if (gameState.getHeldObject() != null) {
-			gameUIOverlay.updateHandContent(gameState.getHeldObject().getSpriteName());
+			ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 		} else {
-			gameUIOverlay.updateHandContent(null);
+			ingameScreen.getHudStage().updateHandContent(null);
 		}
 	}
 
 	public void toggleMenu() {
-		gameUIOverlay.activateStage(IngameStages.MENU);
+		ingameScreen.activateStage(IngameStages.MENU);
 	}
 	
 	public void setHud(IngameScreen gameUIOverlay) {
-		this.gameUIOverlay = gameUIOverlay;
+		this.ingameScreen = gameUIOverlay;
 	}
 
 	public MapRenderer getMapRenderer() {

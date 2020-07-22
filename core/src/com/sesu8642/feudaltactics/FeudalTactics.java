@@ -10,13 +10,14 @@ public class FeudalTactics extends Game {
 
 	static public Skin skin;
 	static public TextureAtlas textureAtlas;
-
+	static public FeudalTactics game;
+	
 	@Override
 	public void create() {
+		game = this;
 		textureAtlas = new TextureAtlas(Gdx.files.internal("textures.atlas"));
 		skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
-		setScreen(new SplashScreen(this));
-//		setScreen(new MainMenuScreen(this));
+		setScreen(new SplashScreen());
 	}
 
 	@Override
@@ -33,6 +34,7 @@ public class FeudalTactics extends Game {
 	public void dispose() {
 		skin.dispose();
 		super.dispose();
+		textureAtlas.dispose();
 	}
 
 }

@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.EditorController;
 import com.sesu8642.feudaltactics.engine.EditorInputHandler;
@@ -28,7 +27,7 @@ public class EditorScreen implements Screen {
 	private Table rootTable;
 	private Viewport viewport;
 
-	public EditorScreen(FeudalTactics game) {
+	public EditorScreen() {
 		EditorController editorController = new EditorController();
 		inputValidator = new EditorInputHandler(editorController);
 		//editorController.setHud(this);

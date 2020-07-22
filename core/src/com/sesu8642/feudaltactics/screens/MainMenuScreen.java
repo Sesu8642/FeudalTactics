@@ -1,71 +1,44 @@
 package com.sesu8642.feudaltactics.screens;
 
+import java.util.LinkedHashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.stages.UIAction;
 
 public class MainMenuScreen implements Screen {
-	private Stage stage;
-	private Table rootTable;
+
 	private Viewport viewport;
-	private Label versionTextLabel;
-		
-	public MainMenuScreen(FeudalTactics game) {
+	private GenericMenuStage menuStage;
+
+	public MainMenuScreen() {
+		initUI();
+	}
+
+	private void initUI() {
 		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
-		stage = new Stage(viewport);
-		Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));
-		TextButton playButton = new TextButton("Play", FeudalTactics.skin);
-		playButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.setScreen(new IngameScreen(game));
-			}
+
+		LinkedHashMap<String, UIAction> buttonData = new LinkedHashMap<String, UIAction>();
+		buttonData.put("Play", () -> FeudalTactics.game.setScreen(new IngameScreen()));
+		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(new EditorScreen()));
+		buttonData.put("About", () -> {
 		});
-		TextButton tutorialButton = new TextButton("Tutorial", FeudalTactics.skin);
-		tutorialButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				game.setScreen(new EditorScreen(game));
-			}
-		});
-		TextButton aboutButton = new TextButton("About", FeudalTactics.skin);
-		versionTextLabel = new Label("Version 1.0", FeudalTactics.skin);
-		
-		rootTable = new Table();
-		rootTable.setFillParent(true);
-//		rootTable.setDebug(true);
-		rootTable.defaults().minSize(0).fillX().expandY();
-		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
-		rootTable.row();
-		rootTable.defaults().minHeight(100).pad(10);
-		rootTable.add(playButton).prefWidth(Value.percentWidth(0.5F, rootTable));
-		rootTable.row();
-		rootTable.add(tutorialButton);
-		rootTable.row();
-		rootTable.add(aboutButton);
-		rootTable.row();
-		rootTable.add(versionTextLabel).fill(false).right().bottom().pad(10).minHeight(0);
-		stage.addActor(rootTable);
+		menuStage = new GenericMenuStage(viewport, buttonData);
+		menuStage.setBottomLabelText("Version 1.0");
 	}
 
 	@Override
 	public void show() {
-		Gdx.input.setInputProcessor(stage);
+		Gdx.input.setInputProcessor(menuStage);
 	}
 
 	@Override
@@ -73,26 +46,26 @@ public class MainMenuScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		viewport.apply();
-		stage.draw();
-		stage.act();
+		menuStage.draw();
+		menuStage.act();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		versionTextLabel.setFontScale(height / 1000F);
+		menuStage.setFontScale(height / 1000F);
 		viewport.update(width, height, true);
 		viewport.apply();
-		rootTable.pack();
+		((Table) menuStage.getActors().get(0)).pack();
 	}
 
 	@Override
 	public void pause() {
-		
+
 	}
 
 	@Override
 	public void resume() {
-		
+
 	}
 
 	@Override
@@ -102,7 +75,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		stage.dispose();
+		menuStage.dispose();
 	}
 
 }
