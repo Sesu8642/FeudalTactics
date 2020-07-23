@@ -26,11 +26,15 @@ public class GameStateController {
 
 	private final static float TREE_SPREAD_RATE = 0.3F;
 	private final static float TREE_SPAWN_RATE = 0.01F;
+	private final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
 
 	public static Long initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
-			float vegetationDensity, Long mapSeed) {
+			Float vegetationDensity, Long mapSeed) {
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
+		}
+		if (vegetationDensity == null) {
+			vegetationDensity = DEAFULT_INITIAL_TREE_DENSITY;
 		}
 		gameState.setPlayers(players);
 		gameState.setMap(new HexMap());

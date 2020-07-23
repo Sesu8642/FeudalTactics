@@ -23,6 +23,7 @@ import com.sesu8642.feudaltactics.stages.GenericMenuStage;
 import com.sesu8642.feudaltactics.stages.HudStage;
 import com.sesu8642.feudaltactics.stages.UIAction;
 import com.sesu8642.feudaltactics.stages.HudStage.ActionUIElements;
+import com.sesu8642.feudaltactics.stages.ParameterInputStage;
 
 public class IngameScreen implements Screen {
 
@@ -31,18 +32,20 @@ public class IngameScreen implements Screen {
 	private InputMultiplexer multiplexer;
 	private LocalInputHandler inputHandler;
 	private CombinedInputProcessor inputProcessor;
+	GameController gameController;
 
+	private ParameterInputStage parameterInputStage;
 	private HudStage hudStage;
 	private GenericMenuStage menuStage;
 	private Stage activeStage;
 	private Viewport viewport;
 
 	public enum IngameStages {
-		HUD, MENU
+		PARAMETERS, HUD, MENU
 	}
 
 	public IngameScreen() {
-		GameController gameController = new GameController();
+		gameController = new GameController();
 		inputHandler = new LocalInputHandler(gameController);
 		gameController.setHud(this);
 		camera = new OrthographicCamera();
@@ -51,21 +54,32 @@ public class IngameScreen implements Screen {
 		inputProcessor = new CombinedInputProcessor(inputHandler, camera);
 		multiplexer = new InputMultiplexer();
 		initUI();
-		gameController.generateDummyMap();
-		activateStage(IngameStages.HUD);
+		// gameController.generateDummyMap();
+		activateStage(IngameStages.PARAMETERS);
+		gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(), parameterInputStage.getSeedParam(),
+				parameterInputStage.getMapSizeParam(), parameterInputStage.getMapDensityParam());
 	}
 
 	private void initUI() {
 		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
 
+		// parameter input
+		Map<ParameterInputStage.ActionUIElements, UIAction> paramActions = new LinkedHashMap<ParameterInputStage.ActionUIElements, UIAction>();
+		paramActions.put(ParameterInputStage.ActionUIElements.PLAY, () -> activateStage(IngameStages.HUD));
+		paramActions.put(ParameterInputStage.ActionUIElements.REGEN,
+				() -> gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+						parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+						parameterInputStage.getMapDensityParam()));
+		parameterInputStage = new ParameterInputStage(viewport, paramActions);
+
 		// hud
 		Map<ActionUIElements, UIAction> hudActions = new LinkedHashMap<HudStage.ActionUIElements, UIAction>();
-		hudActions.put(ActionUIElements.UNDO, () -> inputHandler.inputUndo());
-		hudActions.put(ActionUIElements.BUY_PEASANT, () -> inputHandler.inputBuyPeasant());
-		hudActions.put(ActionUIElements.BUY_CASTLE, () -> inputHandler.inputBuyCastle());
-		hudActions.put(ActionUIElements.END_TURN, () -> inputHandler.inputEndTurn());
-		hudActions.put(ActionUIElements.MENU, () -> activateStage(IngameStages.MENU));
+		hudActions.put(HudStage.ActionUIElements.UNDO, () -> inputHandler.inputUndo());
+		hudActions.put(HudStage.ActionUIElements.BUY_PEASANT, () -> inputHandler.inputBuyPeasant());
+		hudActions.put(HudStage.ActionUIElements.BUY_CASTLE, () -> inputHandler.inputBuyCastle());
+		hudActions.put(HudStage.ActionUIElements.END_TURN, () -> inputHandler.inputEndTurn());
+		hudActions.put(HudStage.ActionUIElements.MENU, () -> activateStage(IngameStages.MENU));
 		hudStage = new HudStage(viewport, hudActions);
 
 		// menu
@@ -79,17 +93,29 @@ public class IngameScreen implements Screen {
 		menuStage = new GenericMenuStage(viewport, buttonData);
 	}
 
-	public void activateStage(IngameStages ingameStages) {
-		if (ingameStages == IngameStages.MENU) {
+	public void activateStage(IngameStages ingameStage) {
+		switch (ingameStage) {
+		case MENU:
 			multiplexer.clear();
 			multiplexer.addProcessor(menuStage);
 			activeStage = menuStage;
-		} else if (ingameStages == IngameStages.HUD) {
+			break;
+		case HUD:
 			multiplexer.clear();
 			multiplexer.addProcessor(hudStage);
 			multiplexer.addProcessor(new GestureDetector(inputProcessor));
 			multiplexer.addProcessor(inputProcessor);
 			activeStage = hudStage;
+			break;
+		case PARAMETERS:
+			multiplexer.clear();
+			multiplexer.addProcessor(parameterInputStage);
+			multiplexer.addProcessor(new GestureDetector(inputProcessor));
+			multiplexer.addProcessor(inputProcessor);
+			activeStage = parameterInputStage;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -118,6 +144,7 @@ public class IngameScreen implements Screen {
 		menuStage.setFontScale(height / 1000F);
 		viewport.update(width, height, true);
 		viewport.apply();
+		((Table) parameterInputStage.getActors().get(0)).pack();
 		((Table) hudStage.getActors().get(0)).pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup
 														// and going fullscreen etc.; took me hours to find out
 		((Table) menuStage.getActors().get(0)).pack();

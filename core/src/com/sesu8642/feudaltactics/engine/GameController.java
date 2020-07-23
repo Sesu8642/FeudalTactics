@@ -15,34 +15,39 @@ import com.sesu8642.feudaltactics.screens.IngameScreen.IngameStages;
 
 public class GameController {
 
+	public final static Color[] PLAYER_COLORS = { new Color(0F, 1F, 1F, 1), new Color(0.75F, 0.5F, 0F, 1),
+			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
+			new Color(0F, 1F, 0F, 1) };
+
 	private MapRenderer mapRenderer;
 	private GameState gameState;
 	private IngameScreen ingameScreen;
 	private LinkedList<GameState> undoStates;
 	BotAI botAI = new BotAI();
-	
+
 	public GameController() {
 		this.gameState = new GameState();
 		this.undoStates = new LinkedList<GameState>();
 	}
 
-	public void generateDummyMap() {
+	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAI.Intelligence botIntelligence, Long seed,
+			float landMass, float density) {
+		gameState.setBotIntelligence(botIntelligence);
 		ArrayList<Player> players = new ArrayList<Player>();
-		gameState.setBotIntelligence(BotAI.Intelligence.MEDIUM);
-		Player p1 = new Player(new Color(0F, 1F, 1F, 1), Type.LOCAL_PLAYER);
-		Player p2 = new Player(new Color(0.75F, 0.5F, 0F, 1), Type.LOCAL_BOT);
-		Player p3 = new Player(new Color(1F, 0.67F, 0.67F, 1), Type.LOCAL_BOT);
-		Player p4 = new Player(new Color(1F, 1F, 0F, 1), Type.LOCAL_BOT);
-		Player p5 = new Player(new Color(1F, 1F, 1F, 1), Type.LOCAL_BOT);
-		Player p6 = new Player(new Color(0F, 1F, 0F, 1), Type.LOCAL_BOT);
-		players.add(p1);
-		players.add(p2);
-		players.add(p3);
-		players.add(p4);
-		players.add(p5);
-		players.add(p6);
-		Long seed = GameStateController.initializeMap(gameState, players, 100, -10, 0.1F, null);
-		updateSeedText(seed.toString());
+		int remainingHumanPlayers = humanPlayerNo;
+		int remainingBotPlayers = botPlayerNo;
+		for (Color color : PLAYER_COLORS) {
+			if (remainingHumanPlayers > 0) {
+				remainingHumanPlayers--;
+				players.add(new Player(color, Type.LOCAL_PLAYER));
+			} else if (remainingBotPlayers > 0) {
+				players.add(new Player(color, Type.LOCAL_BOT));
+			} else {
+				break;
+			}
+		}
+		Long actualSeed = GameStateController.initializeMap(gameState, players, landMass, density, null, seed);
+		updateSeedText(actualSeed.toString());
 		mapRenderer.updateMap(gameState);
 	}
 
@@ -50,11 +55,11 @@ public class GameController {
 		System.out.println("clicked tile position " + hexCoords);
 		System.out.println(gameState.getMap().getTiles().get(hexCoords));
 	}
-	
+
 	public void updateSeedText(String seedText) {
 		ingameScreen.getMenuStage().setBottomLabelText("Seed: " + seedText);
 	}
-	
+
 	public void updateInfoText() {
 		if (ingameScreen == null) {
 			return;
@@ -118,8 +123,7 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		// make bots act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
-			gameState = botAI.doTurn(gameState,
-					gameState.getBotIntelligence());
+			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
 			endTurn();
 		}
 	}
@@ -154,7 +158,7 @@ public class GameController {
 	public void toggleMenu() {
 		ingameScreen.activateStage(IngameStages.MENU);
 	}
-	
+
 	public void setHud(IngameScreen gameUIOverlay) {
 		this.ingameScreen = gameUIOverlay;
 	}
