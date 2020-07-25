@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -56,8 +57,9 @@ public class IngameScreen implements Screen {
 		initUI();
 		// gameController.generateDummyMap();
 		activateStage(IngameStages.PARAMETERS);
-		gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(), parameterInputStage.getSeedParam(),
-				parameterInputStage.getMapSizeParam(), parameterInputStage.getMapDensityParam());
+		gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+				parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+				parameterInputStage.getMapDensityParam());
 	}
 
 	private void initUI() {
@@ -88,7 +90,22 @@ public class IngameScreen implements Screen {
 		});
 		buttonData.put("Load", () -> {
 		});
-		buttonData.put("Exit", () -> FeudalTactics.game.setScreen(new MainMenuScreen()));
+		buttonData.put("Exit", () -> {
+			Dialog confirmDialog = new Dialog("", FeudalTactics.skin) {
+				public void result(Object result) {
+					if ((boolean) result) {
+						FeudalTactics.game.setScreen(new MainMenuScreen());
+					}
+				}
+			};
+			confirmDialog.getColor().a = 0; // fixes pop-in; see https://github.com/libgdx/libgdx/issues/3920
+			confirmDialog.setMovable(false);
+			confirmDialog.pad(20);
+			confirmDialog.text("All unsaved progress will be lost. Are you sure?\n");
+			confirmDialog.button("OK", true);
+			confirmDialog.button("Cancel", false);
+			confirmDialog.show(menuStage);
+		});
 		buttonData.put("Continue", () -> activateStage(IngameStages.HUD));
 		menuStage = new GenericMenuStage(viewport, buttonData);
 	}
