@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -66,6 +66,8 @@ public class ParameterInputStage extends Stage {
 		densitySelect.setItems(densities);
 		seedLabel = new Label("Seed", FeudalTactics.skin);
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), FeudalTactics.skin);
+		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
+		seedTextField.setMaxLength(18);
 		ImageButton randomButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("die")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("die_pressed")));
 		randomButton.getImageCell().expand().fill();
@@ -139,7 +141,7 @@ public class ParameterInputStage extends Stage {
 		try {
 			return Long.valueOf(seedTextField.getText());
 		} catch (NumberFormatException e) {
-			return UUID.nameUUIDFromBytes(seedTextField.getText().getBytes()).getMostSignificantBits();
+			return 0L;
 		}
 	}
 
