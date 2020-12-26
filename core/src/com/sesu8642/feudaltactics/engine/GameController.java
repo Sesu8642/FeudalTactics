@@ -11,10 +11,9 @@ import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.screens.IngameScreen;
-import com.sesu8642.feudaltactics.screens.IngameScreen.IngameStages;
 
 public class GameController {
-
+	
 	public final static Color[] PLAYER_COLORS = { new Color(0F, 1F, 1F, 1), new Color(0.75F, 0.5F, 0F, 1),
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
 			new Color(0F, 1F, 0F, 1) };
@@ -115,7 +114,17 @@ public class GameController {
 	}
 
 	public void endTurn() {
+		// remember old winner
+		Player oldWinner = gameState.getWinner();
+		// update gameState
 		gameState = GameStateController.endTurn(gameState);
+		// check if winner changed
+		if (oldWinner != gameState.getWinner()) {
+			ingameScreen.showGiveUpGameMessage(gameState.getWinner().getType() == Type.LOCAL_PLAYER, gameState.getWinner().getColor());
+		}
+		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER && gameState.getActivePlayer().isDefeated()) {
+			ingameScreen.showLostMessage();
+		}
 		// clear undo states
 		undoStates.clear();
 		// reset info text
@@ -156,7 +165,7 @@ public class GameController {
 	}
 
 	public void toggleMenu() {
-		ingameScreen.activateStage(IngameStages.MENU);
+		ingameScreen.tooglePause();
 	}
 
 	public void setHud(IngameScreen gameUIOverlay) {

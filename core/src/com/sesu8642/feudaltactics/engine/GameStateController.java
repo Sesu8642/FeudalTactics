@@ -27,6 +27,7 @@ public class GameStateController {
 	private final static float TREE_SPREAD_RATE = 0.3F;
 	private final static float TREE_SPAWN_RATE = 0.01F;
 	private final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
+	private final static float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
 	public static Long initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
@@ -443,11 +444,30 @@ public class GameStateController {
 	}
 
 	public static GameState endTurn(GameState gameState) {
+		// check win condition; the winner can change if the human player recovers from a really bad situation
+		for (Kingdom kingdom: gameState.getKingdoms()) {
+			if (kingdom.getPlayer() == gameState.getActivePlayer() && kingdom.getTiles().size() >= gameState.getMap().getTiles().size() * WIN_LANDMASS_PERCENTAGE) {
+				gameState.setWinner(kingdom.getPlayer());
+			}
+		}
 		// update active player
 		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
 			gameState.setPlayerTurn(0);
 			spreadTrees(gameState);
+		}
+		// check defeat condition
+		playerLoop: for (Player player: gameState.getPlayers()) {
+			if (player.isDefeated()) {
+				continue;
+			}
+			for (Kingdom kingdom: gameState.getKingdoms()) {
+				if (kingdom.getPlayer() == player) {
+					continue playerLoop;
+				}
+			}
+			// player has no kingdoms --> is defeated
+			player.setDefeated(true);
 		}
 		// reset active kingdom
 		gameState.setActiveKingdom(null);

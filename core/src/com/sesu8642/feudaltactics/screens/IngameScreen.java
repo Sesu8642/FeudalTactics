@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -110,11 +111,54 @@ public class IngameScreen implements Screen {
 		menuStage = new GenericMenuStage(viewport, buttonData);
 	}
 
-	public void activateStage(IngameStages ingameStage) {
+	public void tooglePause() {
+		if (activeStage == menuStage) {
+			activateStage(IngameStages.HUD);
+			System.out.println("exiting menu");
+		} else if (activeStage == hudStage) {
+			activateStage(IngameStages.MENU);
+		}
+	}
+
+	public void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
+		Dialog endDialog = new Dialog("", FeudalTactics.skin) {
+			public void result(Object result) {
+				if ((boolean) result) {
+					FeudalTactics.game.setScreen(new MainMenuScreen());
+				}
+			}
+		};
+		endDialog.getColor().a = 0;
+		endDialog.pad(20);
+		endDialog.button("Exit", true);
+		endDialog.button("Continue", false);
+		if (win) {
+			endDialog.text("VICTORY! Your Enemies give up.\n\nDo you wish to continue?");
+		} else {
+			endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?");
+		}
+		endDialog.show(hudStage);
+	}
+
+	public void showLostMessage() {
+		Dialog endDialog = new Dialog("", FeudalTactics.skin) {
+			public void result(Object result) {
+				FeudalTactics.game.setScreen(new MainMenuScreen());
+			}
+		};
+		endDialog.getColor().a = 0;
+		endDialog.pad(20);
+		endDialog.button("Exit", true);
+		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.");
+		endDialog.show(hudStage);
+	}
+
+	private void activateStage(IngameStages ingameStage) {
 		switch (ingameStage) {
 		case MENU:
 			multiplexer.clear();
 			multiplexer.addProcessor(menuStage);
+			multiplexer.addProcessor(inputProcessor);
 			activeStage = menuStage;
 			break;
 		case HUD:

@@ -11,6 +11,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 public class GameState {
 
 	private ArrayList<Player> players;
+	private Player winner = null;
 	private int playerTurn = 0;
 	private HexMap map;
 	private ArrayList<Kingdom> kingdoms;
@@ -67,6 +68,14 @@ public class GameState {
 
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
+	}
+
+	public Player getWinner() {
+		return winner;
+	}
+
+	public void setWinner(Player winner) {
+		this.winner = winner;
 	}
 
 	public int getPlayerTurn() {

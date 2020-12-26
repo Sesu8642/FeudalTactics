@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.sesu8642.feudaltactics.screens.IngameScreen;
 import com.sesu8642.feudaltactics.screens.SplashScreen;
 
 public class FeudalTactics extends Game {
@@ -17,7 +18,7 @@ public class FeudalTactics extends Game {
 		game = this;
 		textureAtlas = new TextureAtlas(Gdx.files.internal("textures.atlas"));
 		skin = new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
-		setScreen(new SplashScreen());
+		setScreen(new IngameScreen());
 	}
 
 	@Override
