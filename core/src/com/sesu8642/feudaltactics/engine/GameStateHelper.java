@@ -21,7 +21,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
-public class GameStateController {
+public class GameStateHelper {
 	// only class supposed to modify the game state (except the bot AI actually)
 
 	private final static float TREE_SPREAD_RATE = 0.3F;

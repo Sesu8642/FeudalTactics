@@ -6,7 +6,7 @@ import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.engine.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.engine.NewGamePreferences.MapSizes;
 
-public class PreferencesController {
+public class PreferencesHelper {
 	
 	public static void saveNewGamePreferences(NewGamePreferences prefs) {
 		Preferences newGamePrefs = Gdx.app.getPreferences("newGamePreferences");

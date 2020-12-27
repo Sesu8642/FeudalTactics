@@ -151,7 +151,7 @@ public class BotAI {
 							|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
 						pickedUpUnits.availablePeasants--;
 						gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
-						GameStateController.placeOwn(gameState, tile);
+						GameStateHelper.placeOwn(gameState, tile);
 					} else {
 						return;
 					}
@@ -167,18 +167,18 @@ public class BotAI {
 		while (bestProtectionCandidate.score >= MUST_PROTECT_SCORE_THRESHOLD) {
 			// if enough money buy castle
 			if (InputValidator.checkBuyObject(gameState, Castle.COST)) {
-				GameStateController.buyCastle(gameState);
-				GameStateController.placeOwn(gameState, bestProtectionCandidate.tile);
+				GameStateHelper.buyCastle(gameState);
+				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 				placedCastleTiles.add(bestProtectionCandidate.tile);
 			} else if (pickedUpUnits.availablePeasants > 0) {
 				// protect with existing peasant
 				pickedUpUnits.availablePeasants--;
 				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
-				GameStateController.placeOwn(gameState, bestProtectionCandidate.tile);
+				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else if (InputValidator.checkBuyObject(gameState, Unit.COST)) {
 				// protect with new peasant
-				GameStateController.buyPeasant(gameState);
-				GameStateController.placeOwn(gameState, bestProtectionCandidate.tile);
+				GameStateHelper.buyPeasant(gameState);
+				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else {
 				break;
 			}
@@ -189,7 +189,7 @@ public class BotAI {
 				// protect with existing peasant
 				pickedUpUnits.availablePeasants--;
 				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
-				GameStateController.placeOwn(gameState, bestProtectionCandidate.tile);
+				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else {
 				break;
 			}
@@ -367,19 +367,19 @@ public class BotAI {
 		while (bestDefenseTileScore.score >= 0) {
 			if (pickedUpUnits.availableBarons > 0) {
 				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.BARON));
-				GameStateController.placeOwn(gameState, bestDefenseTileScore.tile);
+				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availableBarons--;
 			} else if (pickedUpUnits.availableKnights > 0) {
 				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.KNIGHT));
-				GameStateController.placeOwn(gameState, bestDefenseTileScore.tile);
+				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availableKnights--;
 			} else if (pickedUpUnits.availableSpearmen > 0) {
 				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.SPEARMAN));
-				GameStateController.placeOwn(gameState, bestDefenseTileScore.tile);
+				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availableSpearmen--;
 			} else if (pickedUpUnits.availablePeasants > 0) {
 				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
-				GameStateController.placeOwn(gameState, bestDefenseTileScore.tile);
+				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availablePeasants--;
 			} else {
 				break;
@@ -514,7 +514,7 @@ public class BotAI {
 			Integer nrAvailableUnits) {
 		if (nrAvailableUnits > 0) {
 			gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), unitType));
-			GameStateController.conquer(gameState, tile);
+			GameStateHelper.conquer(gameState, tile);
 			return true;
 		}
 		return false;

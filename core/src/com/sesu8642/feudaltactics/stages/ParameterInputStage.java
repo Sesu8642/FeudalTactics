@@ -25,7 +25,7 @@ import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.engine.NewGamePreferences;
 import com.sesu8642.feudaltactics.engine.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.engine.NewGamePreferences.MapSizes;
-import com.sesu8642.feudaltactics.engine.PreferencesController;
+import com.sesu8642.feudaltactics.engine.PreferencesHelper;
 
 public class ParameterInputStage extends Stage {
 
@@ -57,7 +57,7 @@ public class ParameterInputStage extends Stage {
 	}
 
 	private void initUI(Map<ActionUIElements, UIAction> actions) {
-		NewGamePreferences prefs = PreferencesController.getNewGamePreferences();
+		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
 		difficultyLabel = new Label("CPU\nDifficulty", FeudalTactics.skin);
 		difficultySelect = new SelectBox<String>(FeudalTactics.skin);
 		String[] difficulties = { "Easy", "Medium", "Hard" };

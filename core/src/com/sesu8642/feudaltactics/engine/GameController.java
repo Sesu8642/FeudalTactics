@@ -45,7 +45,7 @@ public class GameController {
 				break;
 			}
 		}
-		Long actualSeed = GameStateController.initializeMap(gameState, players, landMass, density, null, seed);
+		Long actualSeed = GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
 		updateSeedText(actualSeed.toString());
 		mapRenderer.updateMap(gameState);
 	}
@@ -78,28 +78,28 @@ public class GameController {
 	}
 
 	public void activateKingdom(Kingdom kingdom) {
-		GameStateController.activateKingdom(gameState, kingdom);
+		GameStateHelper.activateKingdom(gameState, kingdom);
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
 	}
 
 	public void pickupObject(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
-		GameStateController.pickupObject(gameState, tile);
+		GameStateHelper.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 	}
 
 	public void placeOwn(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
-		GameStateController.placeOwn(gameState, tile);
+		GameStateHelper.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(null);
 	}
 
 	public void combineUnits(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
-		GameStateController.combineUnits(gameState, tile);
+		GameStateHelper.combineUnits(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
@@ -107,7 +107,7 @@ public class GameController {
 
 	public void conquer(HexTile tile) {
 		undoStates.add(new GameState(this.gameState));
-		GameStateController.conquer(gameState, tile);
+		GameStateHelper.conquer(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
@@ -117,7 +117,7 @@ public class GameController {
 		// remember old winner
 		Player oldWinner = gameState.getWinner();
 		// update gameState
-		gameState = GameStateController.endTurn(gameState);
+		gameState = GameStateHelper.endTurn(gameState);
 		// check if player lost
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER && gameState.getActivePlayer().isDefeated()) {
 			ingameScreen.showLostMessage();
@@ -142,7 +142,7 @@ public class GameController {
 
 	public void buyPeasant() {
 		undoStates.add(new GameState(this.gameState));
-		GameStateController.buyPeasant(gameState);
+		GameStateHelper.buyPeasant(gameState);
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
@@ -150,7 +150,7 @@ public class GameController {
 
 	public void buyCastle() {
 		undoStates.add(new GameState(this.gameState));
-		GameStateController.buyCastle(gameState);
+		GameStateHelper.buyCastle(gameState);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());

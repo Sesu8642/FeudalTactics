@@ -22,7 +22,7 @@ import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.LocalInputHandler;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
 import com.sesu8642.feudaltactics.engine.NewGamePreferences;
-import com.sesu8642.feudaltactics.engine.PreferencesController;
+import com.sesu8642.feudaltactics.engine.PreferencesHelper;
 import com.sesu8642.feudaltactics.stages.GenericMenuStage;
 import com.sesu8642.feudaltactics.stages.HudStage;
 import com.sesu8642.feudaltactics.stages.UIAction;
@@ -77,7 +77,7 @@ public class IngameScreen implements Screen {
 						parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
 						parameterInputStage.getMapDensityParam()));
 		paramActions.put(ParameterInputStage.ActionUIElements.CHANGE,
-				() -> PreferencesController
+				() -> PreferencesHelper
 						.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
 								parameterInputStage.getMapSize(), parameterInputStage.getMapDensity())));
 		parameterInputStage = new ParameterInputStage(viewport, paramActions);

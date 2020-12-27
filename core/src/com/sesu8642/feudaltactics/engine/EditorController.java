@@ -32,7 +32,7 @@ public class EditorController {
 		players.add(p4);
 		players.add(p5);
 		players.add(p6);
-		GameStateController.initializeMap(gameState, players, 0, 0, 0F, null);
+		GameStateHelper.initializeMap(gameState, players, 0, 0, 0F, null);
 		mapRenderer.updateMap(gameState);
 	}
 
@@ -43,7 +43,7 @@ public class EditorController {
 
 	public void createTile(Vector2 hexCoords) {
 		Player randomPlayer = gameState.getPlayers().get(gameState.getRandom().nextInt(gameState.getPlayers().size()));
-		GameStateController.placeTile(gameState, hexCoords, randomPlayer);
+		GameStateHelper.placeTile(gameState, hexCoords, randomPlayer);
 		mapRenderer.updateMap(gameState);
 	}
 
