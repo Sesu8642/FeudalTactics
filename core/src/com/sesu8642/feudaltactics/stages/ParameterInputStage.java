@@ -21,13 +21,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.BotAI;
+import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.engine.NewGamePreferences;
+import com.sesu8642.feudaltactics.engine.NewGamePreferences.Densities;
+import com.sesu8642.feudaltactics.engine.NewGamePreferences.MapSizes;
+import com.sesu8642.feudaltactics.engine.PreferencesController;
 
 public class ParameterInputStage extends Stage {
 
 	public enum ActionUIElements {
-		REGEN, PLAY
+		CHANGE, REGEN, PLAY
 	}
-
+	
 	private Label seedLabel;
 	private Label sizeLabel;
 	private Label densityLabel;
@@ -52,18 +57,22 @@ public class ParameterInputStage extends Stage {
 	}
 
 	private void initUI(Map<ActionUIElements, UIAction> actions) {
+		NewGamePreferences prefs = PreferencesController.getNewGamePreferences();
 		difficultyLabel = new Label("CPU\nDifficulty", FeudalTactics.skin);
 		difficultySelect = new SelectBox<String>(FeudalTactics.skin);
 		String[] difficulties = { "Easy", "Medium", "Hard" };
 		difficultySelect.setItems(difficulties);
+		difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
 		sizeLabel = new Label("Map\nSize", FeudalTactics.skin);
 		sizeSelect = new SelectBox<String>(FeudalTactics.skin);
 		String[] sizes = { "Small", "Medium", "Large" };
 		sizeSelect.setItems(sizes);
+		sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
 		densityLabel = new Label("Map\nDensity", FeudalTactics.skin);
 		densitySelect = new SelectBox<String>(FeudalTactics.skin);
 		String[] densities = { "Dense", "Medium", "Loose" };
 		densitySelect.setItems(densities);
+		densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
 		seedLabel = new Label("Seed", FeudalTactics.skin);
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), FeudalTactics.skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
@@ -107,6 +116,11 @@ public class ParameterInputStage extends Stage {
 		for (Entry<ActionUIElements, UIAction> action : actions.entrySet()) {
 			Collection<Actor> uIElements = new HashSet<Actor>();
 			switch (action.getKey()) {
+			case CHANGE:
+				uIElements.add(difficultySelect);
+				uIElements.add(sizeSelect);
+				uIElements.add(densitySelect);
+				break;
 			case REGEN:
 				uIElements.add(seedTextField);
 				uIElements.add(randomButton);
@@ -145,6 +159,10 @@ public class ParameterInputStage extends Stage {
 		}
 	}
 
+	public MapSizes getMapSize() {
+		return MapSizes.values()[sizeSelect.getSelectedIndex()];
+	}
+	
 	public int getMapSizeParam() {
 		switch (sizeSelect.getSelectedIndex()) {
 		case 0:
@@ -158,6 +176,10 @@ public class ParameterInputStage extends Stage {
 		}
 	}
 
+	public Densities getMapDensity() {
+		return Densities.values()[densitySelect.getSelectedIndex()];
+	}
+	
 	public float getMapDensityParam() {
 		switch (densitySelect.getSelectedIndex()) {
 		case 0:
@@ -171,6 +193,10 @@ public class ParameterInputStage extends Stage {
 		}
 	}
 
+	public Intelligence getBotIntelligence() {
+		return Intelligence.values()[difficultySelect.getSelectedIndex()];
+	}
+	
 	public BotAI.Intelligence getBotIntelligenceParam() {
 		switch (difficultySelect.getSelectedIndex()) {
 		case 0:

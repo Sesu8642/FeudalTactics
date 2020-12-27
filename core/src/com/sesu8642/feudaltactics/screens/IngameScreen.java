@@ -21,6 +21,8 @@ import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.GameController;
 import com.sesu8642.feudaltactics.engine.LocalInputHandler;
 import com.sesu8642.feudaltactics.engine.MapRenderer;
+import com.sesu8642.feudaltactics.engine.NewGamePreferences;
+import com.sesu8642.feudaltactics.engine.PreferencesController;
 import com.sesu8642.feudaltactics.stages.GenericMenuStage;
 import com.sesu8642.feudaltactics.stages.HudStage;
 import com.sesu8642.feudaltactics.stages.UIAction;
@@ -74,6 +76,10 @@ public class IngameScreen implements Screen {
 				() -> gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
 						parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
 						parameterInputStage.getMapDensityParam()));
+		paramActions.put(ParameterInputStage.ActionUIElements.CHANGE,
+				() -> PreferencesController
+						.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
+								parameterInputStage.getMapSize(), parameterInputStage.getMapDensity())));
 		parameterInputStage = new ParameterInputStage(viewport, paramActions);
 
 		// hud
@@ -162,7 +168,7 @@ public class IngameScreen implements Screen {
 			public void result(Object result) {
 				if ((boolean) result) {
 					FeudalTactics.game.setScreen(new MainMenuScreen());
-				}else {
+				} else {
 					activateStage(IngameStages.PARAMETERS);
 					gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
 							parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
