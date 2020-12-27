@@ -123,32 +123,58 @@ public class IngameScreen implements Screen {
 	public void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
 		Dialog endDialog = new Dialog("", FeudalTactics.skin) {
 			public void result(Object result) {
-				if ((boolean) result) {
+				switch ((byte) result) {
+				case 1:
+					// exit button
 					FeudalTactics.game.setScreen(new MainMenuScreen());
+					break;
+				case 2:
+					// retry button
+					activateStage(IngameStages.PARAMETERS);
+					gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+							parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+							parameterInputStage.getMapDensityParam());
+					this.remove();
+					break;
+				case 0:
+					// do nothing on continue button
+				default:
+					break;
 				}
 			}
 		};
 		endDialog.getColor().a = 0;
 		endDialog.pad(20);
-		endDialog.button("Exit", true);
-		endDialog.button("Continue", false);
+		endDialog.button("Exit", (byte) 1);
 		if (win) {
 			endDialog.text("VICTORY! Your Enemies give up.\n\nDo you wish to continue?");
+			endDialog.button("Retry", (byte) 2);
 		} else {
 			endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?");
+			endDialog.button("Replay", (byte) 2);
 		}
+		endDialog.button("Continue", (byte) 0);
 		endDialog.show(hudStage);
 	}
 
 	public void showLostMessage() {
 		Dialog endDialog = new Dialog("", FeudalTactics.skin) {
 			public void result(Object result) {
-				FeudalTactics.game.setScreen(new MainMenuScreen());
+				if ((boolean) result) {
+					FeudalTactics.game.setScreen(new MainMenuScreen());
+				}else {
+					activateStage(IngameStages.PARAMETERS);
+					gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+							parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+							parameterInputStage.getMapDensityParam());
+					this.remove();
+				}
 			}
 		};
 		endDialog.getColor().a = 0;
 		endDialog.pad(20);
 		endDialog.button("Exit", true);
+		endDialog.button("Retry", false);
 		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.");
 		endDialog.show(hudStage);
 	}
