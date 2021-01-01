@@ -104,10 +104,6 @@ public class IngameScreen implements Screen {
 
 		// menu
 		LinkedHashMap<String, UIAction> buttonData = new LinkedHashMap<String, UIAction>();
-		buttonData.put("Save", () -> {
-		});
-		buttonData.put("Load", () -> {
-		});
 		buttonData.put("Exit", () -> {
 			Dialog confirmDialog = new Dialog("", FeudalTactics.skin) {
 				public void result(Object result) {
