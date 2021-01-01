@@ -71,7 +71,7 @@ public class InputValidator {
 		if (tile.getKingdom() == null) {
 			return false;
 		}
-		if (gameState.getHeldObject().getKingdom() != tile.getKingdom()) {
+		if (gameState.getActiveKingdom() != tile.getKingdom()) {
 			return false;
 		}
 		if (tile.getContent() != null && !ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
@@ -102,7 +102,7 @@ public class InputValidator {
 		if (tile.getKingdom() == null) {
 			return false;
 		}
-		if (gameState.getHeldObject().getKingdom() != tile.getKingdom()) {
+		if (gameState.getActiveKingdom() != tile.getKingdom()) {
 			return false;
 		}
 		if (!ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
@@ -149,7 +149,7 @@ public class InputValidator {
 				continue;
 			}
 			// check if tile is next to own kingdom
-			if (neighborTile.getKingdom() == gameState.getHeldObject().getKingdom()) {
+			if (neighborTile.getKingdom() == gameState.getActiveKingdom()) {
 				isNextoToOwnKingdom = true;
 			}
 			MapObject neighborContent = neighborTile.getContent();

@@ -1,7 +1,5 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-
 public class Castle extends MapObject {
 
 	static public final int COST = 15;
@@ -9,13 +7,9 @@ public class Castle extends MapObject {
 	static private final int strength = 2;
 	
 	public Castle() {
-		super(null);
+		super();
 	}
 	
-	public Castle(Kingdom kingdom) {
-		super(kingdom);
-	}
-
 	@Override
 	public String getSpriteName() {
 		return spriteName;
@@ -27,8 +21,8 @@ public class Castle extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy(Kingdom newKingdom) {
-		return new Castle(newKingdom);
+	public MapObject getCopy() {
+		return new Castle();
 	}
 
 }

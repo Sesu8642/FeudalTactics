@@ -1,17 +1,12 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-
 public class Tree extends MapObject {
 
 	static private final String spriteName = "tree";
 	private final int strength = 0;
 
 	public Tree() {
-	}
-
-	public Tree(Kingdom kingdom) {
-		super(kingdom);
+		super();
 	}
 
 	@Override
@@ -25,8 +20,8 @@ public class Tree extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy(Kingdom newKingdom) {
-		return new Tree(newKingdom);
+	public MapObject getCopy() {
+		return new Tree();
 	}
 
 }

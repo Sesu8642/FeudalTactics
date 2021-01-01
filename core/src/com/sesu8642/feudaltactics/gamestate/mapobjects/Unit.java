@@ -1,7 +1,5 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-
 public class Unit extends MapObject {
 
 	static public final int COST = 10;
@@ -40,8 +38,8 @@ public class Unit extends MapObject {
 	public Unit() {
 	}
 	
-	public Unit(Kingdom kingdom, UnitTypes unitType) {
-		super(kingdom);
+	public Unit(UnitTypes unitType) {
+		super();
 		this.unitType = unitType;
 	}
 
@@ -68,8 +66,8 @@ public class Unit extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy(Kingdom newKingdom) {
-		Unit newUnit = new Unit(newKingdom, this.getUnitType());
+	public MapObject getCopy() {
+		Unit newUnit = new Unit(this.getUnitType());
 		newUnit.setCanAct(this.canAct);
 		return newUnit;
 	}

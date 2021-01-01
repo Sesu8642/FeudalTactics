@@ -150,7 +150,7 @@ public class BotAI {
 					if (pickedUpUnits.availablePeasants >= 1
 							|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
 						pickedUpUnits.availablePeasants--;
-						gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+						gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 						GameStateHelper.placeOwn(gameState, tile);
 					} else {
 						return;
@@ -173,7 +173,7 @@ public class BotAI {
 			} else if (pickedUpUnits.availablePeasants > 0) {
 				// protect with existing peasant
 				pickedUpUnits.availablePeasants--;
-				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else if (InputValidator.checkBuyObject(gameState, Unit.COST)) {
 				// protect with new peasant
@@ -188,7 +188,7 @@ public class BotAI {
 			if (pickedUpUnits.availablePeasants > 0 || acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
 				// protect with existing peasant
 				pickedUpUnits.availablePeasants--;
-				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else {
 				break;
@@ -366,19 +366,19 @@ public class BotAI {
 		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		while (bestDefenseTileScore.score >= 0) {
 			if (pickedUpUnits.availableBarons > 0) {
-				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.BARON));
+				gameState.setHeldObject(new Unit(UnitTypes.BARON));
 				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availableBarons--;
 			} else if (pickedUpUnits.availableKnights > 0) {
-				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.KNIGHT));
+				gameState.setHeldObject(new Unit(UnitTypes.KNIGHT));
 				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availableKnights--;
 			} else if (pickedUpUnits.availableSpearmen > 0) {
-				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.SPEARMAN));
+				gameState.setHeldObject(new Unit(UnitTypes.SPEARMAN));
 				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availableSpearmen--;
 			} else if (pickedUpUnits.availablePeasants > 0) {
-				gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
 				pickedUpUnits.availablePeasants--;
 			} else {
@@ -513,7 +513,7 @@ public class BotAI {
 	private boolean conquerTileWithStoredUnit(GameState gameState, HexTile tile, Unit.UnitTypes unitType,
 			Integer nrAvailableUnits) {
 		if (nrAvailableUnits > 0) {
-			gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), unitType));
+			gameState.setHeldObject(new Unit(unitType));
 			GameStateHelper.conquer(gameState, tile);
 			return true;
 		}

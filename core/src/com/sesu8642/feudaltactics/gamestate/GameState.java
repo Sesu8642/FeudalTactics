@@ -53,13 +53,12 @@ public class GameState {
 				newTile.getKingdom().getTiles().add(newTile);
 			}
 			if (originalTile.getContent() != null) {
-				newTile.setContent(originalTile.getContent().getCopy(newTile.getKingdom()));
+				newTile.setContent(originalTile.getContent().getCopy());
 			}
 			this.map.getTiles().put(newTile.getPosition(), newTile);
 		}
 		if (original.getHeldObject() != null) {
-			this.setHeldObject(original.getHeldObject()
-					.getCopy(this.kingdoms.get(original.getKingdoms().indexOf(original.getHeldObject().getKingdom()))));
+			this.setHeldObject(original.getHeldObject().getCopy());
 		}
 	}
 

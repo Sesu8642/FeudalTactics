@@ -160,7 +160,7 @@ public class GameStateHelper {
 	private static void createTrees(GameState gameState, float vegetationDensity) {
 		for (HexTile tile : gameState.getMap().getTiles().values()) {
 			if (gameState.getRandom().nextFloat() <= vegetationDensity) {
-				tile.setContent(new Tree(tile.getKingdom()));
+				tile.setContent(new Tree());
 			}
 		}
 	}
@@ -194,7 +194,7 @@ public class GameStateHelper {
 					}
 				}
 			}
-		newCapitalTile.setContent(new Capital(oldCapitalTile.getKingdom()));
+		newCapitalTile.setContent(new Capital());
 	}
 	
 	private static void createCapital(GameState gameState, Kingdom kingdom) {
@@ -208,7 +208,7 @@ public class GameStateHelper {
 			// no empty tile -> just select any
 			newCapitalTile = kingdom.getTiles().stream().findFirst().get();
 		}
-		newCapitalTile.setContent(new Capital(kingdom));
+		newCapitalTile.setContent(new Capital());
 	}
 
 	private static void createInitialSavings(Kingdom kingdom, int multiplier) {
@@ -255,7 +255,7 @@ public class GameStateHelper {
 		default:
 			break;
 		}
-		Unit newUnit = new Unit(tile.getKingdom(), newUnitType);
+		Unit newUnit = new Unit(newUnitType);
 		newUnit.setCanAct(((Unit) tile.getContent()).isCanAct());
 		gameState.setHeldObject(newUnit);
 		placeObject(gameState, tile);
@@ -277,7 +277,7 @@ public class GameStateHelper {
 			}
 			tile.getKingdom().getTiles().remove(tile);
 		}
-		tile.setKingdom(gameState.getHeldObject().getKingdom());
+		tile.setKingdom(gameState.getActiveKingdom());
 		tile.getKingdom().getTiles().add(tile);
 		ArrayList<HexTile> oldKingdomNeighborTiles = new ArrayList<HexTile>();
 		for (HexTile neighborTile : neighborTiles) {
@@ -296,7 +296,6 @@ public class GameStateHelper {
 				if (neighborTile.getPlayer() == tile.getPlayer() && !(neighborTile.getKingdom() == tile.getKingdom())) {
 					// combine kingdoms if owned by the same player
 					combineKingdoms(gameState, neighborTile.getKingdom(), tile.getKingdom());
-					gameState.getHeldObject().setKingdom(neighborTile.getKingdom());
 					gameState.setActiveKingdom(neighborTile.getKingdom());
 				} else if (neighborTile.getKingdom() == oldTileKingdom) {
 					// remember neighbor tiles of the same kingdom as the old tile
@@ -365,13 +364,10 @@ public class GameStateHelper {
 		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
 			slaveKingdomTile.setKingdom(masterKingdom);
 			MapObject content = slaveKingdomTile.getContent();
-			if (content != null) {
-				content.setKingdom(masterKingdom);
-				if (ClassReflection.isAssignableFrom(content.getClass(), Capital.class)) {
+				if (content != null && ClassReflection.isAssignableFrom(content.getClass(), Capital.class)) {
 					// delete slave capital
 					slaveKingdomTile.setContent(null);
 				}
-			}
 		}
 		gameState.getKingdoms().remove(slaveKingdom);
 	}
@@ -412,9 +408,6 @@ public class GameStateHelper {
 			HexTile currentTile = todoTiles.removeFirst();
 			newKingdom.getTiles().add(currentTile);
 			currentTile.setKingdom(newKingdom);
-			if (currentTile.getContent() != null) {
-				currentTile.getContent().setKingdom(newKingdom);
-			}
 			doneTiles.add(currentTile);
 			for (HexTile expandTile : gameState.getMap().getNeighborTiles(currentTile)) {
 				if (!doneTiles.contains(expandTile) && !todoTiles.contains(expandTile)
@@ -522,18 +515,18 @@ public class GameStateHelper {
 			}
 		}
 		for (HexTile tile : newTreeTiles) {
-			tile.setContent(new Tree(tile.getKingdom()));
+			tile.setContent(new Tree());
 		}
 	}
 
 	public static void buyPeasant(GameState gameState) {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Unit.COST);
-		gameState.setHeldObject(new Unit(gameState.getActiveKingdom(), UnitTypes.PEASANT));
+		gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 	}
 
 	public static void buyCastle(GameState gameState) {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Castle.COST);
-		gameState.setHeldObject(new Castle(gameState.getActiveKingdom()));
+		gameState.setHeldObject(new Castle());
 	}
 	
 	public static void placeTile(GameState gameState, Vector2 hexCoords, Player player) {

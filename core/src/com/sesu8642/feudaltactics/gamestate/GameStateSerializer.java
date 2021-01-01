@@ -22,7 +22,6 @@ public class GameStateSerializer implements Serializer<GameState> {
 	private static final String BOT_INTELLIGENCE_FIELD_NAME = "botIntelligence";
 	private static final String PLAYER_TURN_FIELD_NAME = "playerTurn";
 	private static final String PLAYER_TURN_NAME = "player_turn";
-	private static final String KINGDOM_ID_NAME = "kingdom_id";
 	private static final String HELD_OBJ_NAME = "held_obj";
 	private static final String TILE_IDS_NAME = "tile_ids";
 	private static final String SAVINGS_NAME = "savings";
@@ -73,9 +72,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 				json.writeObjectStart(CONTENT_NAME);
 				json.writeValue(ID_NAME, getId(idMap, tile.getContent()));
 				json.writeValue(CLASS_NAME, tile.getContent().getClass().getSimpleName());
-				// make copy to remove kingdom reference
-				MapObject contentDuplicate = tile.getContent().getCopy(null);
-				json.writeFields(contentDuplicate);
+				json.writeFields(tile.getContent());
 				json.writeObjectEnd();
 			}
 			json.writeObjectEnd();
@@ -98,10 +95,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 		if (object.getHeldObject() != null) {
 			json.writeObjectStart(HELD_OBJ_NAME);
 			json.writeValue(CLASS_NAME, object.getHeldObject().getClass().getSimpleName());
-			// make copy to remove kingdom reference
-			MapObject objectDuplicate = object.getHeldObject().getCopy(null);
-			json.writeFields(objectDuplicate);
-			json.writeValue(KINGDOM_ID_NAME, getId(idMap, object.getHeldObject().getKingdom()));
+			json.writeFields(object.getHeldObject());
 			json.writeObjectEnd();
 		}
 		json.writeField(object, PLAYER_TURN_FIELD_NAME, PLAYER_TURN_NAME);
@@ -177,8 +171,6 @@ public class GameStateSerializer implements Serializer<GameState> {
 		});
 		if (jsonData.has(HELD_OBJ_NAME)) {
 			JsonValue heldObjJson = jsonData.get(HELD_OBJ_NAME);
-			int heldObjectKingdomId = heldObjJson.getInt(KINGDOM_ID_NAME);
-			heldObjJson.remove(KINGDOM_ID_NAME);
 			// replace short class name with full one
 			String shortClassName = heldObjJson.getString(CLASS_NAME);
 			heldObjJson.remove(CLASS_NAME);
@@ -186,7 +178,6 @@ public class GameStateSerializer implements Serializer<GameState> {
 			heldObjJson.remove(KINGDOM_FIELD_NAME);
 			// toString causes an error here... maybe because of the enum?
 			MapObject heldObject = json.fromJson(MapObject.class, heldObjJson.prettyPrint(OutputType.json, 1));
-			heldObject.setKingdom((Kingdom) reverseIdMap.get(heldObjectKingdomId));
 			result.setHeldObject(heldObject);
 		}
 		result.setPlayerTurn(jsonData.getInt(PLAYER_TURN_NAME));
@@ -208,9 +199,6 @@ public class GameStateSerializer implements Serializer<GameState> {
 		for (Kingdom kingdom : result.getKingdoms()) {
 			for (HexTile tile : kingdom.getTiles()) {
 				tile.setKingdom(kingdom);
-				if (tile.getContent() != null) {
-					tile.getContent().setKingdom(kingdom);
-				}
 			}
 		}
 		return result;
