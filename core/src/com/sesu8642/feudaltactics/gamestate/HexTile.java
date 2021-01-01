@@ -13,6 +13,9 @@ public class HexTile {
 	private Vector2 position;
 	private ArrayList<HexTile> cachedNeighborTiles;
 
+	public HexTile() {
+	}
+
 	public HexTile(Player player, Vector2 position) {
 		this.player = player;
 		this.position = position;
@@ -20,6 +23,10 @@ public class HexTile {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 
 	public MapObject getContent() {

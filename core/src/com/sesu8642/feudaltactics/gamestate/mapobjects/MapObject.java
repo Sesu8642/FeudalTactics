@@ -6,6 +6,9 @@ abstract public class MapObject {
 
 	private Kingdom kingdom;
 
+	public MapObject(){
+	}
+	
 	public MapObject(Kingdom kingdom){
 		this.kingdom = kingdom;
 	}

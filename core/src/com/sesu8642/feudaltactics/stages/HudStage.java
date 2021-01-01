@@ -25,9 +25,11 @@ public class HudStage extends Stage {
 	public enum ActionUIElements {
 		UNDO, END_TURN, BUY_PEASANT, BUY_CASTLE, MENU
 	}
-	
+
+	private Table rootTable;
 	private Stack handStack;
 	private Label infoTextLabel;
+	private Table handContentTable;
 	private Image handContent;
 
 	public HudStage(Map<ActionUIElements, UIAction> actions) {
@@ -48,13 +50,16 @@ public class HudStage extends Stage {
 		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo_pressed")));
 		undoButton.getImageCell().expand().fill();
-		ImageButton endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")),
+		ImageButton endTurnButton = new ImageButton(
+				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn_pressed")));
 		endTurnButton.getImageCell().expand().fill();
-		ImageButton buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant")),
+		ImageButton buyPeasantButton = new ImageButton(
+				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant_pressed")));
 		buyPeasantButton.getImageCell().expand().fill();
-		ImageButton buyCastleButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")),
+		ImageButton buyCastleButton = new ImageButton(
+				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle_pressed")));
 		buyCastleButton.getImageCell().expand().fill();
 		ImageButton menuButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("pause")),
@@ -62,7 +67,7 @@ public class HudStage extends Stage {
 		menuButton.getImageCell().expand().fill();
 
 		handStack = new Stack();
-		Table handContentTable = new Table();
+		handContentTable = new Table();
 		handContent = new Image();
 
 		Sprite handSprite = new Sprite(FeudalTactics.textureAtlas.createSprite("hand"));
@@ -73,7 +78,7 @@ public class HudStage extends Stage {
 		Image thumbImage = new Image(thumbSprite);
 		infoTextLabel = new Label("", FeudalTactics.skin);
 
-		Table rootTable = new Table();
+		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.add(infoTextLabel).left().top().pad(10);
 		rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.05F, rootTable)).pad(10);
@@ -99,7 +104,7 @@ public class HudStage extends Stage {
 		handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
 				.width(Value.percentHeight(1.16F));
 		this.addActor(rootTable);
-		
+
 		// add actions
 		for (Entry<ActionUIElements, UIAction> action : actions.entrySet()) {
 			Actor uIElement = null;
@@ -131,6 +136,11 @@ public class HudStage extends Stage {
 		}
 	}
 
+	public void updateOnResize() {
+		rootTable.pack();
+		handContentTable.pack();
+	}
+	
 	public void updateHandContent(String spritename) {
 		if (spritename != null) {
 			handStack.setVisible(true);

@@ -14,6 +14,10 @@ public class Kingdom {
 	// only used by ai
 	private boolean doneMoving = false;
 
+	public Kingdom() {
+		this.tiles = new LinkedHashSet<HexTile>();
+	}
+
 	public Kingdom(Player player) {
 		this.player = player;
 		this.tiles = new LinkedHashSet<HexTile>();
@@ -51,6 +55,10 @@ public class Kingdom {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 
 	public int getSavings() {

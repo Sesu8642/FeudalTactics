@@ -20,7 +20,6 @@ public class InputValidator {
 		if (player != tile.getPlayer()) {
 			return false;
 		}
-		System.out.println(gameState.getHeldObject());
 		if (gameState.getHeldObject() != null) {
 			return false;
 		}
@@ -186,7 +185,7 @@ public class InputValidator {
 	}
 
 	public static boolean checkUndoAction(GameController gameController) {
-		return (gameController.getUndoStates().size() > 0);
+		return (PreferencesHelper.getNoOfAutoSaves() > 0);
 	}
 
 	private static boolean isWater(HexTile tile) {

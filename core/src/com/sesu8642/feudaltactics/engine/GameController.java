@@ -1,7 +1,6 @@
 package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -21,12 +20,23 @@ public class GameController {
 	private MapRenderer mapRenderer;
 	private GameState gameState;
 	private IngameScreen ingameScreen;
-	private LinkedList<GameState> undoStates;
 	BotAI botAI = new BotAI();
 
 	public GameController() {
 		this.gameState = new GameState();
-		this.undoStates = new LinkedList<GameState>();
+	}
+
+	private void autosave() {
+		PreferencesHelper.autoSaveGameState(gameState);
+	}
+	
+	public void loadLatestAutosave() {
+		gameState = PreferencesHelper.getLatestAutoSave();
+		mapRenderer.updateMap(gameState);
+		if (gameState.getHeldObject() != null) {
+			ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
+		}
+		updateInfoText();
 	}
 
 	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAI.Intelligence botIntelligence, Long seed,
@@ -48,6 +58,8 @@ public class GameController {
 		Long actualSeed = GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
 		updateSeedText(actualSeed.toString());
 		mapRenderer.updateMap(gameState);
+		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+		autosave();
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
@@ -81,36 +93,37 @@ public class GameController {
 		GameStateHelper.activateKingdom(gameState, kingdom);
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
+		autosave();
 	}
 
 	public void pickupObject(HexTile tile) {
-		undoStates.add(new GameState(this.gameState));
 		GameStateHelper.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
+		autosave();
 	}
 
 	public void placeOwn(HexTile tile) {
-		undoStates.add(new GameState(this.gameState));
 		GameStateHelper.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(null);
+		autosave();
 	}
 
 	public void combineUnits(HexTile tile) {
-		undoStates.add(new GameState(this.gameState));
 		GameStateHelper.combineUnits(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
+		autosave();
 	}
 
 	public void conquer(HexTile tile) {
-		undoStates.add(new GameState(this.gameState));
 		GameStateHelper.conquer(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
+		autosave();
 	}
 
 	public void endTurn() {
@@ -128,8 +141,6 @@ public class GameController {
 						gameState.getWinner().getColor());
 			}
 		}
-		// clear undo states
-		undoStates.clear();
 		// reset info text
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
@@ -137,27 +148,39 @@ public class GameController {
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
 			endTurn();
+		} else {
+			// autosave when a player turn begins
+			autosave();
+			// clear autosaves from previous turn
+			PreferencesHelper.deleteAllAutoSaveExceptLatestN(1);
 		}
 	}
 
 	public void buyPeasant() {
-		undoStates.add(new GameState(this.gameState));
 		GameStateHelper.buyPeasant(gameState);
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
+		autosave();
 	}
 
 	public void buyCastle() {
-		undoStates.add(new GameState(this.gameState));
 		GameStateHelper.buyCastle(gameState);
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
+		autosave();
 	}
 
 	public void undoLastAction() {
-		this.gameState = undoStates.removeLast();
+		if (PreferencesHelper.getNoOfAutoSaves() > 1) {
+			// 1 means the current state is the only one saved
+			// remove the current state from autosaves
+			PreferencesHelper.deleteLatestAutoSave();
+			// load the previous state
+			GameState loaded = PreferencesHelper.getLatestAutoSave();
+			gameState = loaded;
+		}
 		mapRenderer.updateMap(gameState);
 		updateInfoText();
 		if (gameState.getHeldObject() != null) {
@@ -171,7 +194,7 @@ public class GameController {
 		ingameScreen.tooglePause();
 	}
 
-	public void setHud(IngameScreen gameUIOverlay) {
+	public void setIngameScreen(IngameScreen gameUIOverlay) {
 		this.ingameScreen = gameUIOverlay;
 	}
 
@@ -186,9 +209,4 @@ public class GameController {
 	public GameState getGameState() {
 		return gameState;
 	}
-
-	public LinkedList<GameState> getUndoStates() {
-		return undoStates;
-	}
-
 }

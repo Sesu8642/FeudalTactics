@@ -12,6 +12,9 @@ public class Player {
 		LOCAL_PLAYER, LOCAL_BOT, REMOTE
 	}
 
+	public Player(){
+	}
+	
 	public Player(Color color, Type type) {
 		this.color = color;
 		this.type = type;

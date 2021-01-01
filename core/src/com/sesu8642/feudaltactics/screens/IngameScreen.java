@@ -48,21 +48,29 @@ public class IngameScreen implements Screen {
 		PARAMETERS, HUD, MENU
 	}
 
-	public IngameScreen() {
+	public IngameScreen(boolean loadAutoSave) {
 		gameController = new GameController();
 		inputHandler = new LocalInputHandler(gameController);
-		gameController.setHud(this);
+		gameController.setIngameScreen(this);
 		camera = new OrthographicCamera();
 		mapRenderer = new MapRenderer(camera);
 		gameController.setMapRenderer(mapRenderer);
 		inputProcessor = new CombinedInputProcessor(inputHandler, camera);
 		multiplexer = new InputMultiplexer();
 		initUI();
-		// gameController.generateDummyMap();
-		activateStage(IngameStages.PARAMETERS);
-		gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-				parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-				parameterInputStage.getMapDensityParam());
+		if (loadAutoSave) {
+			activateStage(IngameStages.HUD);
+			gameController.loadLatestAutosave();
+		} else {
+			activateStage(IngameStages.PARAMETERS);
+			gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+					parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+					parameterInputStage.getMapDensityParam());
+		}
+	}
+
+	public IngameScreen() {
+		this(false);
 	}
 
 	private void initUI() {
@@ -88,7 +96,10 @@ public class IngameScreen implements Screen {
 		hudActions.put(HudStage.ActionUIElements.BUY_PEASANT, () -> inputHandler.inputBuyPeasant());
 		hudActions.put(HudStage.ActionUIElements.BUY_CASTLE, () -> inputHandler.inputBuyCastle());
 		hudActions.put(HudStage.ActionUIElements.END_TURN, () -> inputHandler.inputEndTurn());
-		hudActions.put(HudStage.ActionUIElements.MENU, () -> activateStage(IngameStages.MENU));
+		hudActions.put(HudStage.ActionUIElements.MENU, () -> {
+			activateStage(IngameStages.MENU);
+			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+		});
 		hudStage = new HudStage(viewport, hudActions);
 
 		// menu
@@ -120,7 +131,6 @@ public class IngameScreen implements Screen {
 	public void tooglePause() {
 		if (activeStage == menuStage) {
 			activateStage(IngameStages.HUD);
-			System.out.println("exiting menu");
 		} else if (activeStage == hudStage) {
 			activateStage(IngameStages.MENU);
 		}
@@ -133,6 +143,7 @@ public class IngameScreen implements Screen {
 				case 1:
 					// exit button
 					FeudalTactics.game.setScreen(new MainMenuScreen());
+					PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 					break;
 				case 2:
 					// retry button
@@ -168,6 +179,7 @@ public class IngameScreen implements Screen {
 			public void result(Object result) {
 				if ((boolean) result) {
 					FeudalTactics.game.setScreen(new MainMenuScreen());
+					PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 				} else {
 					activateStage(IngameStages.PARAMETERS);
 					gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
@@ -237,9 +249,10 @@ public class IngameScreen implements Screen {
 		menuStage.setFontScale(height / 1000F);
 		viewport.update(width, height, true);
 		viewport.apply();
-		((Table) parameterInputStage.getActors().get(0)).pack();
-		((Table) hudStage.getActors().get(0)).pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup
-														// and going fullscreen etc.; took me hours to find out
+		((Table) parameterInputStage.getActors().get(0)).pack(); // VERY IMPORTANT!!! makes everything scale correctly
+																	// on startup and going fullscreen etc.; took me
+																	// hours to find out
+		hudStage.updateOnResize();
 		((Table) menuStage.getActors().get(0)).pack();
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;

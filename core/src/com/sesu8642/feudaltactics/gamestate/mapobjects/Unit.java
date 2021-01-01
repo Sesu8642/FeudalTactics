@@ -37,6 +37,9 @@ public class Unit extends MapObject {
 
 	private UnitTypes unitType;
 
+	public Unit() {
+	}
+	
 	public Unit(Kingdom kingdom, UnitTypes unitType) {
 		super(kingdom);
 		this.unitType = unitType;
