@@ -25,6 +25,8 @@ public class FeudalTactics extends Game {
 		} else {
 			setScreen(new SplashScreen());
 		}
+		// do not close on android back key
+		Gdx.input.setCatchKey(Keys.BACK, true);
 	}
 
 	@Override
