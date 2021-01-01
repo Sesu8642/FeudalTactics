@@ -161,10 +161,10 @@ public class IngameScreen implements Screen {
 		endDialog.button("Exit", (byte) 1);
 		if (win) {
 			endDialog.text("VICTORY! Your Enemies give up.\n\nDo you wish to continue?");
-			endDialog.button("Retry", (byte) 2);
+			endDialog.button("Replay", (byte) 2);
 		} else {
 			endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?");
-			endDialog.button("Replay", (byte) 2);
+			endDialog.button("Retry", (byte) 2);
 		}
 		endDialog.button("Continue", (byte) 0);
 		endDialog.show(hudStage);
