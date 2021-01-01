@@ -19,6 +19,7 @@ public class GameState {
 	private MapObject heldObject;
 	private Random random = new Random();
 	private BotAI.Intelligence botIntelligence;
+	private Long seed;
 
 	public GameState() {
 	}
@@ -132,6 +133,14 @@ public class GameState {
 
 	public void setBotIntelligence(BotAI.Intelligence botIntelligence) {
 		this.botIntelligence = botIntelligence;
+	}
+
+	public Long getSeed() {
+		return seed;
+	}
+
+	public void setSeed(Long seed) {
+		this.seed = seed;
 	}
 
 }

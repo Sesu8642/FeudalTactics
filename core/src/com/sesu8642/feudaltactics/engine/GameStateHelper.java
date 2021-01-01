@@ -29,7 +29,7 @@ public class GameStateHelper {
 	private final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
 	private final static float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
-	public static Long initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
+	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
@@ -37,11 +37,11 @@ public class GameStateHelper {
 		if (vegetationDensity == null) {
 			vegetationDensity = DEAFULT_INITIAL_TREE_DENSITY;
 		}
+		gameState.setSeed(mapSeed);
 		gameState.setPlayers(players);
 		gameState.setMap(new HexMap());
 		gameState.setKingdoms(new ArrayList<Kingdom>());
 		generateMap(gameState, players, landMass, density, vegetationDensity, mapSeed);
-		return mapSeed;
 	}
 
 	public static void generateMap(GameState gameState, ArrayList<Player> players, float landMass, float density,

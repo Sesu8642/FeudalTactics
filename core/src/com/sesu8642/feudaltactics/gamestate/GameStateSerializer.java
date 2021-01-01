@@ -34,6 +34,8 @@ public class GameStateSerializer implements Serializer<GameState> {
 	private static final String TILES_NAME = "tiles";
 	private static final String ID_NAME = "id";
 	private static final String PLAYERS_NAME = "players";
+	private static final String SEED_FIELD_NAME = "seed";
+	private static final String SEED_NAME = "seed";
 
 	Integer lastId = 0;
 
@@ -104,6 +106,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 		}
 		json.writeField(object, PLAYER_TURN_FIELD_NAME, PLAYER_TURN_NAME);
 		json.writeField(object, BOT_INTELLIGENCE_FIELD_NAME, BOT_INTELLIGENCE_NAME);
+		json.writeField(object, SEED_FIELD_NAME, SEED_NAME);
 		if (object.getWinner() != null) {
 			json.writeValue(WINNER_ID_NAME, getId(idMap, object.getWinner()));
 		}
@@ -189,6 +192,8 @@ public class GameStateSerializer implements Serializer<GameState> {
 		result.setPlayerTurn(jsonData.getInt(PLAYER_TURN_NAME));
 		JsonValue botIntelligenceJson = jsonData.get(BOT_INTELLIGENCE_NAME);
 		result.setBotIntelligence(Intelligence.valueOf(botIntelligenceJson.asString()));
+		JsonValue seedJson = jsonData.get(SEED_NAME);
+		result.setSeed(seedJson.asLong());
 		if (jsonData.has(WINNER_ID_NAME)) {
 			Integer winnerId = jsonData.getInt(WINNER_ID_NAME);
 			Player winner = (Player) reverseIdMap.get(winnerId);

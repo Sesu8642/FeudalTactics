@@ -29,7 +29,7 @@ public class GameController {
 	private void autosave() {
 		PreferencesHelper.autoSaveGameState(gameState);
 	}
-	
+
 	public void loadLatestAutosave() {
 		gameState = PreferencesHelper.getLatestAutoSave();
 		mapRenderer.updateMap(gameState);
@@ -37,6 +37,7 @@ public class GameController {
 			ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 		}
 		updateInfoText();
+		updateSeedText(gameState.getSeed().toString());
 	}
 
 	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAI.Intelligence botIntelligence, Long seed,
@@ -55,8 +56,8 @@ public class GameController {
 				break;
 			}
 		}
-		Long actualSeed = GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
-		updateSeedText(actualSeed.toString());
+		GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
+		updateSeedText(gameState.getSeed().toString());
 		mapRenderer.updateMap(gameState);
 		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 		autosave();
@@ -180,13 +181,13 @@ public class GameController {
 			// load the previous state
 			GameState loaded = PreferencesHelper.getLatestAutoSave();
 			gameState = loaded;
-		}
-		mapRenderer.updateMap(gameState);
-		updateInfoText();
-		if (gameState.getHeldObject() != null) {
-			ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
-		} else {
-			ingameScreen.getHudStage().updateHandContent(null);
+			mapRenderer.updateMap(gameState);
+			updateInfoText();
+			if (gameState.getHeldObject() != null) {
+				ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
+			} else {
+				ingameScreen.getHudStage().updateHandContent(null);
+			}
 		}
 	}
 
