@@ -32,21 +32,21 @@ public class HudStage extends Stage {
 	private Table handContentTable;
 	private Image handContent;
 
-	public HudStage(Map<ActionUIElements, UIAction> actions) {
+	public HudStage(Map<ActionUIElements, Runnable> actions) {
 		initUI(actions);
 	}
 
-	public HudStage(Viewport viewport, Map<ActionUIElements, UIAction> actions) {
+	public HudStage(Viewport viewport, Map<ActionUIElements, Runnable> actions) {
 		super(viewport);
 		initUI(actions);
 	}
 
-	public HudStage(Viewport viewport, Batch batch, Map<ActionUIElements, UIAction> actions) {
+	public HudStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions) {
 		super(viewport, batch);
 		initUI(actions);
 	}
 
-	private void initUI(Map<ActionUIElements, UIAction> actions) {
+	private void initUI(Map<ActionUIElements, Runnable> actions) {
 		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo_pressed")));
 		undoButton.getImageCell().expand().fill();
@@ -106,7 +106,7 @@ public class HudStage extends Stage {
 		this.addActor(rootTable);
 
 		// add actions
-		for (Entry<ActionUIElements, UIAction> action : actions.entrySet()) {
+		for (Entry<ActionUIElements, Runnable> action : actions.entrySet()) {
 			Actor uIElement = null;
 			switch (action.getKey()) {
 			case UNDO:
@@ -130,7 +130,7 @@ public class HudStage extends Stage {
 			uIElement.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
-					action.getValue().action();
+					action.getValue().run();
 				}
 			});
 		}

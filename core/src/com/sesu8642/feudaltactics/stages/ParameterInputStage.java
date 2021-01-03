@@ -43,23 +43,23 @@ public class ParameterInputStage extends Stage {
 	private SelectBox<String> densitySelect;
 	private SelectBox<String> difficultySelect;
 	private TextField seedTextField;
-	private UIAction regenAction;
+	private Runnable regenAction;
 
-	public ParameterInputStage(Map<ActionUIElements, UIAction> actions) {
+	public ParameterInputStage(Map<ActionUIElements, Runnable> actions) {
 		initUI(actions);
 	}
 
-	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, UIAction> actions) {
+	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, Runnable> actions) {
 		super(viewport);
 		initUI(actions);
 	}
 
-	public ParameterInputStage(Viewport viewport, Batch batch, Map<ActionUIElements, UIAction> actions) {
+	public ParameterInputStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions) {
 		super(viewport, batch);
 		initUI(actions);
 	}
 
-	private void initUI(Map<ActionUIElements, UIAction> actions) {
+	private void initUI(Map<ActionUIElements, Runnable> actions) {
 		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
 		difficultyLabel = new Label("CPU\nDifficulty", FeudalTactics.skin);
 		difficultySelect = new SelectBox<String>(FeudalTactics.skin);
@@ -116,7 +116,7 @@ public class ParameterInputStage extends Stage {
 				seedTextField.setText(String.valueOf(System.currentTimeMillis()));
 			}
 		});
-		for (Entry<ActionUIElements, UIAction> action : actions.entrySet()) {
+		for (Entry<ActionUIElements, Runnable> action : actions.entrySet()) {
 			Collection<Actor> uIElements = new HashSet<Actor>();
 			switch (action.getKey()) {
 			case CHANGE:
@@ -141,7 +141,7 @@ public class ParameterInputStage extends Stage {
 				uIElement.addListener(new ChangeListener() {
 					@Override
 					public void changed(ChangeEvent event, Actor actor) {
-						action.getValue().action();
+						action.getValue().run();
 					}
 				});
 			}
@@ -156,7 +156,7 @@ public class ParameterInputStage extends Stage {
 	}
 
 	public void regenerateMap() {
-		regenAction.action();
+		regenAction.run();
 	}
 	
 	public Long getSeedParam() {

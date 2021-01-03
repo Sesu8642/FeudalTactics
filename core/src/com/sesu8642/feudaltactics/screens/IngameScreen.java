@@ -25,7 +25,6 @@ import com.sesu8642.feudaltactics.engine.NewGamePreferences;
 import com.sesu8642.feudaltactics.engine.PreferencesHelper;
 import com.sesu8642.feudaltactics.stages.GenericMenuStage;
 import com.sesu8642.feudaltactics.stages.HudStage;
-import com.sesu8642.feudaltactics.stages.UIAction;
 import com.sesu8642.feudaltactics.stages.HudStage.ActionUIElements;
 import com.sesu8642.feudaltactics.stages.ParameterInputStage;
 
@@ -81,7 +80,7 @@ public class IngameScreen implements Screen {
 		viewport = new ScreenViewport(camera);
 
 		// parameter input
-		Map<ParameterInputStage.ActionUIElements, UIAction> paramActions = new LinkedHashMap<ParameterInputStage.ActionUIElements, UIAction>();
+		Map<ParameterInputStage.ActionUIElements, Runnable> paramActions = new LinkedHashMap<ParameterInputStage.ActionUIElements, Runnable>();
 		paramActions.put(ParameterInputStage.ActionUIElements.PLAY, () -> activateStage(IngameStages.HUD));
 		paramActions.put(ParameterInputStage.ActionUIElements.REGEN, () -> {
 			gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
@@ -107,7 +106,7 @@ public class IngameScreen implements Screen {
 		parameterInputStage = new ParameterInputStage(viewport, paramActions);
 
 		// hud
-		Map<ActionUIElements, UIAction> hudActions = new LinkedHashMap<HudStage.ActionUIElements, UIAction>();
+		Map<ActionUIElements, Runnable> hudActions = new LinkedHashMap<HudStage.ActionUIElements, Runnable>();
 		hudActions.put(HudStage.ActionUIElements.UNDO, () -> inputHandler.inputUndo());
 		hudActions.put(HudStage.ActionUIElements.BUY_PEASANT, () -> inputHandler.inputBuyPeasant());
 		hudActions.put(HudStage.ActionUIElements.BUY_CASTLE, () -> inputHandler.inputBuyCastle());
@@ -119,7 +118,7 @@ public class IngameScreen implements Screen {
 		hudStage = new HudStage(viewport, hudActions);
 
 		// menu
-		LinkedHashMap<String, UIAction> buttonData = new LinkedHashMap<String, UIAction>();
+		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Exit", () -> {
 			Dialog confirmDialog = new Dialog("", FeudalTactics.skin) {
 				public void result(Object result) {

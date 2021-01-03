@@ -25,28 +25,28 @@ public class GenericMenuStage extends Stage {
 	private List<TextButton> buttons = new ArrayList<TextButton>();
 	private Label bottomLabel;
 
-	public GenericMenuStage(LinkedHashMap<String, UIAction> buttonData) {
+	public GenericMenuStage(LinkedHashMap<String, Runnable> buttonData) {
 		initUI(buttonData);
 	}
 
-	public GenericMenuStage(Viewport viewport, LinkedHashMap<String, UIAction> buttonData) {
+	public GenericMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData) {
 		super(viewport);
 		initUI(buttonData);
 	}
 
-	public GenericMenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, UIAction> buttonData) {
+	public GenericMenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, Runnable> buttonData) {
 		super(viewport, batch);
 		initUI(buttonData);
 	}
 
-	private void initUI(LinkedHashMap<String, UIAction> buttonData) {
+	private void initUI(LinkedHashMap<String, Runnable> buttonData) {
 		Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));
-		for (Entry<String, UIAction> buttonDataPoint : buttonData.entrySet()) {
+		for (Entry<String, Runnable> buttonDataPoint : buttonData.entrySet()) {
 			TextButton button = new TextButton(buttonDataPoint.getKey(), FeudalTactics.skin);
 			button.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
-					buttonDataPoint.getValue().action();
+					buttonDataPoint.getValue().run();
 				}
 			});
 			buttons.add(button);

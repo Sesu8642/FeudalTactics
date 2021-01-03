@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.stages.GenericMenuStage;
-import com.sesu8642.feudaltactics.stages.UIAction;
 
 public class MainMenuScreen implements Screen {
 
@@ -27,7 +26,7 @@ public class MainMenuScreen implements Screen {
 		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
 
-		LinkedHashMap<String, UIAction> buttonData = new LinkedHashMap<String, UIAction>();
+		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Play", () -> FeudalTactics.game.setScreen(new IngameScreen()));
 		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(new EditorScreen()));
 		buttonData.put("About", () -> {
