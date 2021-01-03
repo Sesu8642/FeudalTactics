@@ -15,11 +15,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamestate.HexMap.MapDimensions;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
@@ -351,6 +353,35 @@ public class MapRenderer {
 		float y = (float) (HexMap.HEX_OUTER_RADIUS
 				* (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
 		return new Vector2(x, y);
+	}
+
+	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx,
+			long marginBottomPx, long marginRightPx, long marginTopPx) {
+		System.out.println(camera.viewportWidth);
+		System.out.println(camera.viewportHeight);
+		MapDimensions dims = gameState.getMap().getMapDimensionsInWorldCoords();
+		// calculate how much 1 pixel is in world coordinates
+		Vector3 testWorldCoordinates1 = camera.unproject(new Vector3(0, 0, 0));
+		Vector3 testWorldCoordinates2 = camera.unproject(new Vector3(1, 0, 0));
+		float onePixelInWorldSpace = testWorldCoordinates2.x - testWorldCoordinates1.x;
+		// get the factors needed to adjust the camera zoom
+		float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
+		float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
+		float xFactor = (dims.width / onePixelInWorldSpace) / useViewportWidth; // lol
+		float yFactor = (dims.height / onePixelInWorldSpace) / useViewportHeight;
+		// use the bigger factor because both dimensions must fit
+		float scaleFactor = Math.max(xFactor, yFactor);
+		camera.zoom *= scaleFactor;
+		camera.update();
+		// re-calculate how much 1 pixel is in world coordinates after zooming
+		testWorldCoordinates1 = camera.unproject(new Vector3(0, 0, 0));
+		testWorldCoordinates2 = camera.unproject(new Vector3(1, 0, 0));
+		onePixelInWorldSpace = testWorldCoordinates2.x - testWorldCoordinates1.x;
+		// move camera to center
+		camera.position.set(dims.center, 0);
+		// offset to apply the margin
+		camera.translate(marginRightPx * onePixelInWorldSpace / 2 - marginLeftPx * onePixelInWorldSpace / 2,marginTopPx * onePixelInWorldSpace/ 2 - marginBottomPx * onePixelInWorldSpace/ 2);
+		camera.update();
 	}
 
 	public void dispose() {

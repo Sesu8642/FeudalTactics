@@ -16,6 +16,16 @@ public class HexMap {
 		this.tiles = new LinkedHashMap<Vector2, HexTile>();
 	}
 
+	public Vector2 hexCoordsToWorldCoords(Vector2 hexCoords) {
+		// https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
+		// get third coordinate
+		float cubeZ = -hexCoords.x - hexCoords.y;
+		// calculate world coordinates
+		float worldX = hexCoords.x * HEX_OUTER_RADIUS * 1.5F;
+		float worldY = (float) (HEX_OUTER_RADIUS * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * cubeZ));
+		return new Vector2(worldX, worldY);
+	}
+
 	public Vector2 worldCoordsToHexCoords(Vector2 worldCoords) {
 		float hexX = (2F / 3 * worldCoords.x) / HEX_OUTER_RADIUS;
 		float hexY = (float) ((-1F / 3 * worldCoords.x + Math.sqrt(3) / 3 * worldCoords.y) / HEX_OUTER_RADIUS);
@@ -113,7 +123,49 @@ public class HexMap {
 		return unusedNeighbors;
 	}
 
+	public MapDimensions getMapDimensionsInWorldCoords() {
+		// get most extreme map coordinates
+		float minWorldX = 0;
+		float maxWorldX = 0;
+		float minWorldY = 0;
+		float maxWorldY = 0;
+		for (Vector2 hexCoords : tiles.keySet()) {
+			Vector2 mapCoords = hexCoordsToWorldCoords(hexCoords);
+			if (mapCoords.x < minWorldX) {
+				minWorldX = mapCoords.x;
+			} else if (mapCoords.x > maxWorldX) {
+				maxWorldX = mapCoords.x;
+			}
+			if (mapCoords.y < minWorldY) {
+				minWorldY = mapCoords.y;
+			} else if (mapCoords.y > maxWorldY) {
+				maxWorldY = mapCoords.y;
+			}
+		}
+		// calculate dimensions
+		MapDimensions dims = new MapDimensions();
+		// the world coordinates of the tiles are always the center so this must be
+		// adjusted here
+		minWorldX -= HEX_OUTER_RADIUS;
+		maxWorldX += HEX_OUTER_RADIUS;
+		minWorldY -= HEX_OUTER_RADIUS;
+		maxWorldY += HEX_OUTER_RADIUS;
+		dims.width = maxWorldX - minWorldX;
+		dims.height = maxWorldY - minWorldY;
+		dims.center = new Vector2();
+		dims.center.x = minWorldX + (dims.width / 2);
+		dims.center.y = minWorldY + (dims.height / 2);
+		return dims;
+	}
+
 	public Map<Vector2, HexTile> getTiles() {
 		return tiles;
 	}
+
+	public class MapDimensions {
+		public Vector2 center;
+		public float width;
+		public float height;
+	}
+
 }

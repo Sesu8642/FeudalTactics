@@ -29,6 +29,8 @@ import com.sesu8642.feudaltactics.engine.PreferencesHelper;
 
 public class ParameterInputStage extends Stage {
 
+	public static final int NO_OF_INPUTS = 4;
+	
 	public enum ActionUIElements {
 		CHANGE, REGEN, PLAY
 	}
@@ -41,6 +43,7 @@ public class ParameterInputStage extends Stage {
 	private SelectBox<String> densitySelect;
 	private SelectBox<String> difficultySelect;
 	private TextField seedTextField;
+	private UIAction regenAction;
 
 	public ParameterInputStage(Map<ActionUIElements, UIAction> actions) {
 		initUI(actions);
@@ -122,6 +125,7 @@ public class ParameterInputStage extends Stage {
 				uIElements.add(densitySelect);
 				break;
 			case REGEN:
+				regenAction = action.getValue();
 				uIElements.add(seedTextField);
 				uIElements.add(randomButton);
 				uIElements.add(sizeSelect);
@@ -151,6 +155,10 @@ public class ParameterInputStage extends Stage {
 		}
 	}
 
+	public void regenerateMap() {
+		regenAction.action();
+	}
+	
 	public Long getSeedParam() {
 		try {
 			return Long.valueOf(seedTextField.getText());

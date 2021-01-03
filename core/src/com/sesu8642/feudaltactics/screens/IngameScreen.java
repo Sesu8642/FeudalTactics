@@ -48,11 +48,15 @@ public class IngameScreen implements Screen {
 		PARAMETERS, HUD, MENU
 	}
 
+	private static final long BUTTON_HEIGHT_PX = 110;
+	private static final long INPUT_HEIGHT_PX = 79;
+	private static final long INPUT_WIDTH_PX = 419;
+
 	public IngameScreen(boolean loadAutoSave) {
 		gameController = new GameController();
 		inputHandler = new LocalInputHandler(gameController);
 		gameController.setIngameScreen(this);
-		camera = new OrthographicCamera();
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		mapRenderer = new MapRenderer(camera);
 		gameController.setMapRenderer(mapRenderer);
 		inputProcessor = new CombinedInputProcessor(inputHandler, camera);
@@ -61,11 +65,10 @@ public class IngameScreen implements Screen {
 		if (loadAutoSave) {
 			activateStage(IngameStages.HUD);
 			gameController.loadLatestAutosave();
+			gameController.placeCameraForFullMapView(0, 0, 0, 0);
 		} else {
 			activateStage(IngameStages.PARAMETERS);
-			gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-					parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-					parameterInputStage.getMapDensityParam());
+			parameterInputStage.regenerateMap();
 		}
 	}
 
@@ -80,10 +83,23 @@ public class IngameScreen implements Screen {
 		// parameter input
 		Map<ParameterInputStage.ActionUIElements, UIAction> paramActions = new LinkedHashMap<ParameterInputStage.ActionUIElements, UIAction>();
 		paramActions.put(ParameterInputStage.ActionUIElements.PLAY, () -> activateStage(IngameStages.HUD));
-		paramActions.put(ParameterInputStage.ActionUIElements.REGEN,
-				() -> gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-						parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-						parameterInputStage.getMapDensityParam()));
+		paramActions.put(ParameterInputStage.ActionUIElements.REGEN, () -> {
+			gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+					parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+					parameterInputStage.getMapDensityParam());
+			// place the camera for full map view
+			// calculate what is the bigger rectangular area for the map to fit: above the
+			// inputs or to their right
+			float aboveArea = camera.viewportWidth
+					* (camera.viewportHeight - BUTTON_HEIGHT_PX - ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX);
+			float rightArea = (camera.viewportWidth - INPUT_WIDTH_PX) * (camera.viewportHeight - BUTTON_HEIGHT_PX);
+			if (aboveArea > rightArea) {
+				gameController.placeCameraForFullMapView(0,
+						BUTTON_HEIGHT_PX + ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX, 0, 0);
+			} else {
+				gameController.placeCameraForFullMapView(INPUT_WIDTH_PX, BUTTON_HEIGHT_PX, 0, 0);
+			}
+		});
 		paramActions.put(ParameterInputStage.ActionUIElements.CHANGE,
 				() -> PreferencesHelper
 						.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
@@ -223,9 +239,6 @@ public class IngameScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
-		camera.position.set(camera.viewportWidth, camera.viewportHeight, 0);
-		camera.update();
-		camera.zoom = 0.2F;
 	}
 
 	@Override

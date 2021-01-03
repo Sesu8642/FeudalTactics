@@ -194,6 +194,10 @@ public class GameController {
 	public void toggleMenu() {
 		ingameScreen.tooglePause();
 	}
+	
+	public void placeCameraForFullMapView(long marginLeftPx, long marginBottomPx, long marginRightPx, long marginTopPx) {
+		mapRenderer.placeCameraForFullMapView(gameState, marginLeftPx, marginBottomPx, marginRightPx, marginTopPx);
+	}
 
 	public void setIngameScreen(IngameScreen gameUIOverlay) {
 		this.ingameScreen = gameUIOverlay;
