@@ -1,9 +1,12 @@
 package com.sesu8642.feudaltactics.engine;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -55,22 +58,44 @@ public class GameStateHelper {
 	private static void generateTiles(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			Long mapSeed) {
 		// density between -3 and 3 produces good results
+		// distribute the land mass evenly to all players
+		Map<Player, Integer> tileAmountsToGenerate = new HashMap<Player, Integer>();
+		// if there are tiles left, distribute them to random players
+		Collections.shuffle(players);
+		int remainingLandMass = (int) (landMass % players.size());
+		for (Player player : players) {
+			int additionalTiles = 0;
+			if (remainingLandMass > 0) {
+				additionalTiles = 1;
+				remainingLandMass--;
+			}
+			tileAmountsToGenerate.put(player, (int) (landMass / players.size() + additionalTiles));
+			System.out.println(tileAmountsToGenerate.get(player));
+		}
+		System.out.println(tileAmountsToGenerate);
+		// keep track of the players that still have tiles left to generate in a list
+		// (because a random one can be selected)
+		ArrayList<Player> remainingPlayers = new ArrayList<Player>(players);
 		gameState.getMap().getTiles().clear();
-		System.out.println("mapSeed: " + mapSeed.toString());
 		gameState.getRandom().setSeed(mapSeed);
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
 		ArrayList<Vector2> positionHistory = new ArrayList<Vector2>(); // for backtracking
-		while (landMass > 0) {
+		while (remainingPlayers.size() > 0) {
 			Vector2 currentTilePos = nextTilePos;
 			// place tile
-			Player player = players.get(gameState.getRandom().nextInt(players.size()));
+			Player player = remainingPlayers.get(gameState.getRandom().nextInt(remainingPlayers.size()));
 			HexTile tile = new HexTile(player, currentTilePos);
 			gameState.getMap().getTiles().put(currentTilePos, tile);
-			landMass--;
+			// remove player if no tiles are left
+			if (tileAmountsToGenerate.get(player) == 1) {
+				remainingPlayers.remove(player);
+			} else {
+				tileAmountsToGenerate.put(player, tileAmountsToGenerate.get(player) - 1);
+			}
 			// add to history
 			positionHistory.add(currentTilePos);
-			// get next tile with usable neighboring tiles
+			// get next tile position with empty neighboring tiles
 			ArrayList<Vector2> usableCoords = gameState.getMap().getUnusedNeighborCoords(currentTilePos);
 			while (usableCoords.isEmpty()) {
 				// backtrack until able to place a tile again
@@ -167,36 +192,36 @@ public class GameStateHelper {
 
 	private static void createCapital(GameState gameState, HexTile oldCapitalTile) {
 		HexTile newCapitalTile;
-			// try to find empty neighbor tile
-			ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(oldCapitalTile);
-			Optional<HexTile> optionalCapitalTile = neighborTiles.stream()
-					.filter((HexTile neighborTile) -> neighborTile != null
-							&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
-							&& neighborTile.getContent() == null)
-					.findFirst();
+		// try to find empty neighbor tile
+		ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(oldCapitalTile);
+		Optional<HexTile> optionalCapitalTile = neighborTiles.stream()
+				.filter((HexTile neighborTile) -> neighborTile != null
+						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
+						&& neighborTile.getContent() == null)
+				.findFirst();
+		if (optionalCapitalTile.isPresent()) {
+			newCapitalTile = optionalCapitalTile.get();
+		} else {
+			// no empty neighbor tile -> select any empty tile in the kingdom
+			optionalCapitalTile = oldCapitalTile.getKingdom().getTiles().stream()
+					.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
 			if (optionalCapitalTile.isPresent()) {
 				newCapitalTile = optionalCapitalTile.get();
 			} else {
-				// no empty neighbor tile -> select any empty tile in the kingdom
-				optionalCapitalTile = oldCapitalTile.getKingdom().getTiles().stream()
-						.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
+				// no empty tile --> select any neighbor tile
+				optionalCapitalTile = neighborTiles.stream().filter((HexTile neighborTile) -> neighborTile != null
+						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()).findFirst();
 				if (optionalCapitalTile.isPresent()) {
+					System.out.println(oldCapitalTile.getKingdom().getTiles().size());
 					newCapitalTile = optionalCapitalTile.get();
 				} else {
-					// no empty tile --> select any neighbor tile
-					optionalCapitalTile = neighborTiles.stream().filter((HexTile neighborTile) -> neighborTile != null && neighborTile.getKingdom() == oldCapitalTile.getKingdom())
-							.findFirst();
-					if (optionalCapitalTile.isPresent()) {
-						System.out.println(oldCapitalTile.getKingdom().getTiles().size());
-						newCapitalTile = optionalCapitalTile.get();
-					} else {
-						return;
-					}
+					return;
 				}
 			}
+		}
 		newCapitalTile.setContent(new Capital());
 	}
-	
+
 	private static void createCapital(GameState gameState, Kingdom kingdom) {
 		HexTile newCapitalTile;
 		// try to find any empty kingdom tile
@@ -364,10 +389,10 @@ public class GameStateHelper {
 		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
 			slaveKingdomTile.setKingdom(masterKingdom);
 			MapObject content = slaveKingdomTile.getContent();
-				if (content != null && ClassReflection.isAssignableFrom(content.getClass(), Capital.class)) {
-					// delete slave capital
-					slaveKingdomTile.setContent(null);
-				}
+			if (content != null && ClassReflection.isAssignableFrom(content.getClass(), Capital.class)) {
+				// delete slave capital
+				slaveKingdomTile.setContent(null);
+			}
 		}
 		gameState.getKingdoms().remove(slaveKingdom);
 	}
@@ -421,7 +446,8 @@ public class GameStateHelper {
 		if (newKingdom.getTiles().size() < 2) {
 			// delete capital, units and kingdom if too small
 			for (HexTile tile : newKingdom.getTiles()) {
-				if (tile.getContent() != null && !ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+				if (tile.getContent() != null
+						&& !ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
 					tile.setContent(null);
 				}
 			}
@@ -437,9 +463,11 @@ public class GameStateHelper {
 	}
 
 	public static GameState endTurn(GameState gameState) {
-		// check win condition; the winner can change if the human player recovers from a really bad situation
-		for (Kingdom kingdom: gameState.getKingdoms()) {
-			if (kingdom.getPlayer() == gameState.getActivePlayer() && kingdom.getTiles().size() >= gameState.getMap().getTiles().size() * WIN_LANDMASS_PERCENTAGE) {
+		// check win condition; the winner can change if the human player recovers from
+		// a really bad situation
+		for (Kingdom kingdom : gameState.getKingdoms()) {
+			if (kingdom.getPlayer() == gameState.getActivePlayer()
+					&& kingdom.getTiles().size() >= gameState.getMap().getTiles().size() * WIN_LANDMASS_PERCENTAGE) {
 				gameState.setWinner(kingdom.getPlayer());
 			}
 		}
@@ -450,11 +478,11 @@ public class GameStateHelper {
 			spreadTrees(gameState);
 		}
 		// check defeat condition
-		playerLoop: for (Player player: gameState.getPlayers()) {
+		playerLoop: for (Player player : gameState.getPlayers()) {
 			if (player.isDefeated()) {
 				continue;
 			}
-			for (Kingdom kingdom: gameState.getKingdoms()) {
+			for (Kingdom kingdom : gameState.getKingdoms()) {
 				if (kingdom.getPlayer() == player) {
 					continue playerLoop;
 				}
@@ -528,7 +556,7 @@ public class GameStateHelper {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Castle.COST);
 		gameState.setHeldObject(new Castle());
 	}
-	
+
 	public static void placeTile(GameState gameState, Vector2 hexCoords, Player player) {
 		HexTile newTile = new HexTile(player, hexCoords);
 		gameState.getMap().getTiles().put(hexCoords, newTile);
