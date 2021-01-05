@@ -138,6 +138,26 @@ public class IngameScreen implements Screen {
 			confirmDialog.button("Cancel", false);
 			confirmDialog.show(menuStage);
 		});
+		buttonData.put("Retry", () -> {
+			Dialog confirmDialog = new Dialog("", FeudalTactics.skin) {
+				public void result(Object result) {
+					if ((boolean) result) {
+						activateStage(IngameStages.PARAMETERS);
+						gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+								parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+								parameterInputStage.getMapDensityParam());
+						this.remove();
+					}
+				}
+			};
+			confirmDialog.getColor().a = 0; // fixes pop-in; see https://github.com/libgdx/libgdx/issues/3920
+			confirmDialog.setMovable(false);
+			confirmDialog.pad(20);
+			confirmDialog.text("All unsaved progress will be lost. Are you sure?\n");
+			confirmDialog.button("OK", true);
+			confirmDialog.button("Cancel", false);
+			confirmDialog.show(menuStage);
+		});
 		buttonData.put("Continue", () -> activateStage(IngameStages.HUD));
 		menuStage = new GenericMenuStage(viewport, buttonData);
 	}
