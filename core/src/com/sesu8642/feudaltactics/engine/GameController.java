@@ -32,6 +32,7 @@ public class GameController {
 			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
 			endTurn();
 		}
+		autosave();
 	}
 	
 	private void autosave() {
@@ -68,7 +69,6 @@ public class GameController {
 		updateSeedText(gameState.getSeed().toString());
 		mapRenderer.updateMap(gameState);
 		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
-		autosave();
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
