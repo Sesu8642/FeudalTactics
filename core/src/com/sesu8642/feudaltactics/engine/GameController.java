@@ -26,6 +26,14 @@ public class GameController {
 		this.gameState = new GameState();
 	}
 
+	public void startGame() {
+		// if a bot begins, make it act
+		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
+			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
+			endTurn();
+		}
+	}
+	
 	private void autosave() {
 		PreferencesHelper.autoSaveGameState(gameState);
 	}

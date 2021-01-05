@@ -81,7 +81,10 @@ public class IngameScreen implements Screen {
 
 		// parameter input
 		Map<ParameterInputStage.ActionUIElements, Runnable> paramActions = new LinkedHashMap<ParameterInputStage.ActionUIElements, Runnable>();
-		paramActions.put(ParameterInputStage.ActionUIElements.PLAY, () -> activateStage(IngameStages.HUD));
+		paramActions.put(ParameterInputStage.ActionUIElements.PLAY, () -> {
+			activateStage(IngameStages.HUD);
+			gameController.startGame();
+		});
 		paramActions.put(ParameterInputStage.ActionUIElements.REGEN, () -> {
 			gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
 					parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
