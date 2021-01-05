@@ -6,8 +6,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.engine.PreferencesHelper;
-import com.sesu8642.feudaltactics.screens.IngameScreen;
-import com.sesu8642.feudaltactics.screens.SplashScreen;
+import com.sesu8642.feudaltactics.ui.IngameScreen;
+import com.sesu8642.feudaltactics.ui.SplashScreen;
 
 public class FeudalTactics extends Game {
 

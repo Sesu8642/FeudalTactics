@@ -9,7 +9,7 @@ import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
-import com.sesu8642.feudaltactics.screens.IngameScreen;
+import com.sesu8642.feudaltactics.ui.IngameScreen;
 
 public class GameController {
 

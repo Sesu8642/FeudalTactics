@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.screens;
+package com.sesu8642.feudaltactics.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;

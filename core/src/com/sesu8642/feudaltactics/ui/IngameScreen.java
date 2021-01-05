@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.screens;
+package com.sesu8642.feudaltactics.ui;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -123,39 +123,18 @@ public class IngameScreen implements Screen {
 		// menu
 		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Exit", () -> {
-			Dialog confirmDialog = new Dialog("", FeudalTactics.skin) {
-				public void result(Object result) {
-					if ((boolean) result) {
-						FeudalTactics.game.setScreen(new MainMenuScreen());
-					}
-				}
-			};
-			confirmDialog.getColor().a = 0; // fixes pop-in; see https://github.com/libgdx/libgdx/issues/3920
-			confirmDialog.setMovable(false);
-			confirmDialog.pad(20);
-			confirmDialog.text("All unsaved progress will be lost. Are you sure?\n");
-			confirmDialog.button("OK", true);
-			confirmDialog.button("Cancel", false);
+			Dialog confirmDialog = new ConfirmDialog("All unsaved progress will be lost. Are you sure?\\n", () -> {
+				FeudalTactics.game.setScreen(new MainMenuScreen());
+			});
 			confirmDialog.show(menuStage);
 		});
 		buttonData.put("Retry", () -> {
-			Dialog confirmDialog = new Dialog("", FeudalTactics.skin) {
-				public void result(Object result) {
-					if ((boolean) result) {
-						activateStage(IngameStages.PARAMETERS);
-						gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-								parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-								parameterInputStage.getMapDensityParam());
-						this.remove();
-					}
-				}
-			};
-			confirmDialog.getColor().a = 0; // fixes pop-in; see https://github.com/libgdx/libgdx/issues/3920
-			confirmDialog.setMovable(false);
-			confirmDialog.pad(20);
-			confirmDialog.text("All unsaved progress will be lost. Are you sure?\n");
-			confirmDialog.button("OK", true);
-			confirmDialog.button("Cancel", false);
+			Dialog confirmDialog = new ConfirmDialog("All unsaved progress will be lost. Are you sure?\\n", () -> {
+				activateStage(IngameStages.PARAMETERS);
+				gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
+						parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+						parameterInputStage.getMapDensityParam());
+			});
 			confirmDialog.show(menuStage);
 		});
 		buttonData.put("Continue", () -> activateStage(IngameStages.HUD));
@@ -171,7 +150,7 @@ public class IngameScreen implements Screen {
 	}
 
 	public void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
-		Dialog endDialog = new Dialog("", FeudalTactics.skin) {
+		Dialog endDialog = new FeudalTacticsDialog() {
 			public void result(Object result) {
 				switch ((byte) result) {
 				case 1:
@@ -194,8 +173,6 @@ public class IngameScreen implements Screen {
 				}
 			}
 		};
-		endDialog.getColor().a = 0;
-		endDialog.pad(20);
 		endDialog.button("Exit", (byte) 1);
 		if (win) {
 			endDialog.text("VICTORY! Your Enemies give up.\n\nDo you wish to continue?");
@@ -209,7 +186,7 @@ public class IngameScreen implements Screen {
 	}
 
 	public void showLostMessage() {
-		Dialog endDialog = new Dialog("", FeudalTactics.skin) {
+		Dialog endDialog = new FeudalTacticsDialog() {
 			public void result(Object result) {
 				if ((boolean) result) {
 					FeudalTactics.game.setScreen(new MainMenuScreen());
@@ -223,8 +200,6 @@ public class IngameScreen implements Screen {
 				}
 			}
 		};
-		endDialog.getColor().a = 0;
-		endDialog.pad(20);
 		endDialog.button("Exit", true);
 		endDialog.button("Retry", false);
 		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.");

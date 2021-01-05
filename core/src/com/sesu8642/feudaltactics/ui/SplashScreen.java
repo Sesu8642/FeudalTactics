@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.screens;
+package com.sesu8642.feudaltactics.ui;
 
 import java.util.LinkedHashMap;
 
@@ -8,17 +8,18 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.stages.SplashImageStage;
 
-public class MainMenuScreen implements Screen {
-
+public class SplashScreen implements Screen {
+	private SplashImageStage stage;
 	private Viewport viewport;
-	private GenericMenuStage menuStage;
+	private long startTime;
 
-	public MainMenuScreen() {
+	public SplashScreen() {
 		initUI();
 	}
 
@@ -31,13 +32,7 @@ public class MainMenuScreen implements Screen {
 		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(new EditorScreen()));
 		buttonData.put("About", () -> {
 		});
-		menuStage = new GenericMenuStage(viewport, buttonData);
-		menuStage.setBottomLabelText("Version 1.0");
-	}
-
-	@Override
-	public void show() {
-		Gdx.input.setInputProcessor(menuStage);
+		stage = new SplashImageStage(viewport);
 	}
 
 	@Override
@@ -45,26 +40,23 @@ public class MainMenuScreen implements Screen {
 		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		viewport.apply();
-		menuStage.draw();
-		menuStage.act();
+		stage.draw();
+		stage.act();
+		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
+			FeudalTactics.game.setScreen(new MainMenuScreen());
+		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		menuStage.setFontScale(height / 1000F);
 		viewport.update(width, height, true);
 		viewport.apply();
-		((Table) menuStage.getActors().get(0)).pack();
+		((Table) stage.getActors().get(0)).pack();
 	}
 
 	@Override
-	public void pause() {
-
-	}
-
-	@Override
-	public void resume() {
-
+	public void show() {
+		startTime = TimeUtils.millis();
 	}
 
 	@Override
@@ -73,8 +65,16 @@ public class MainMenuScreen implements Screen {
 	}
 
 	@Override
+	public void pause() {
+	}
+
+	@Override
+	public void resume() {
+	}
+
+	@Override
 	public void dispose() {
-		menuStage.dispose();
+		stage.dispose();
 	}
 
 }
