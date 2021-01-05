@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -49,10 +51,31 @@ public class GameStateHelper {
 
 	public static void generateMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
-		generateTiles(gameState, players, landMass, density, mapSeed);
-		createInitialKingdoms(gameState);
+		// if not every player has at least one kingdom, try again
+		Random random = new Random();
+		do {
+			generateTiles(gameState, players, landMass, density, mapSeed);
+			createInitialKingdoms(gameState);
+			// generate a new seed from the seed
+			random.setSeed(mapSeed);
+			mapSeed = random.nextLong();
+		} while (!doesEveryPlayerHaveAKingdom(gameState));
 		createTrees(gameState, vegetationDensity);
 		createCapitalsAndMoney(gameState);
+	}
+
+	private static boolean doesEveryPlayerHaveAKingdom(GameState gameState) {
+		List<Player> playersWithoutKingdoms = new ArrayList<Player>(gameState.getPlayers());
+		for (Kingdom kingdom : gameState.getKingdoms()) {
+			if (playersWithoutKingdoms.contains(kingdom.getPlayer())) {
+				playersWithoutKingdoms.remove(kingdom.getPlayer());
+			}
+		}
+		if (playersWithoutKingdoms.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	private static void generateTiles(GameState gameState, ArrayList<Player> players, float landMass, float density,
@@ -70,9 +93,7 @@ public class GameStateHelper {
 				remainingLandMass--;
 			}
 			tileAmountsToGenerate.put(player, (int) (landMass / players.size() + additionalTiles));
-			System.out.println(tileAmountsToGenerate.get(player));
 		}
-		System.out.println(tileAmountsToGenerate);
 		// keep track of the players that still have tiles left to generate in a list
 		// (because a random one can be selected)
 		ArrayList<Player> remainingPlayers = new ArrayList<Player>(players);
