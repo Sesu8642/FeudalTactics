@@ -62,6 +62,7 @@ public class GameStateHelper {
 		} while (!doesEveryPlayerHaveAKingdom(gameState));
 		createTrees(gameState, vegetationDensity);
 		createCapitalsAndMoney(gameState);
+		sortPlayersByIncome(gameState);
 	}
 
 	private static boolean doesEveryPlayerHaveAKingdom(GameState gameState) {
@@ -76,6 +77,17 @@ public class GameStateHelper {
 		} else {
 			return false;
 		}
+	}
+
+	private static void sortPlayersByIncome(GameState gameState) {
+		gameState.getPlayers().sort((a, b) -> {
+			// if they are the same, it doesn't matter
+			int incomeA = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == a)
+					.mapToInt(kingdom -> kingdom.getIncome()).sum();
+			int incomeB = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == b)
+					.mapToInt(kingdom -> kingdom.getIncome()).sum();
+			return incomeA > incomeB ? 1 : -1;
+		});
 	}
 
 	private static void generateTiles(GameState gameState, ArrayList<Player> players, float landMass, float density,
