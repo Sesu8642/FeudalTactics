@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.stages;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -17,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 
@@ -54,6 +57,12 @@ public class GenericMenuStage extends Stage {
 		bottomLabel = new Label("", FeudalTactics.skin);
 
 		Table rootTable = new Table();
+		// use colored background
+		Pixmap bgPixmap = new Pixmap(1,1, Pixmap.Format.RGB565);
+		bgPixmap.setColor(FeudalTactics.backgroundColor);
+		bgPixmap.fill();
+		TextureRegionDrawable textureRegionDrawableBg = new TextureRegionDrawable(new TextureRegion(new Texture(bgPixmap)));
+		rootTable.setBackground(textureRegionDrawableBg);
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0).fillX().expandY();
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
