@@ -75,9 +75,11 @@ public class HudStage extends Stage {
 		Sprite handSprite = new Sprite(FeudalTactics.textureAtlas.createSprite("hand"));
 		handSprite.setFlip(true, false);
 		Image handImage = new Image(handSprite);
+		handImage.setColor(FeudalTactics.buttonIconColor);
 		Sprite thumbSprite = new Sprite(FeudalTactics.textureAtlas.createSprite("hand_thumb"));
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
+		thumbImage.setColor(FeudalTactics.buttonIconColor);
 		infoTextLabel = new Label("", FeudalTactics.skin);
 
 		rootTable = new Table();
