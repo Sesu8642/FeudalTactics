@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -52,13 +51,12 @@ public class GameStateHelper {
 	public static void generateMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
 		// if not every player has at least one kingdom, try again
-		Random random = new Random();
 		do {
 			generateTiles(gameState, players, landMass, density, mapSeed);
 			createInitialKingdoms(gameState);
 			// generate a new seed from the seed
-			random.setSeed(mapSeed);
-			mapSeed = random.nextLong();
+			gameState.getRandom().setSeed(mapSeed);
+			mapSeed = gameState.getRandom().nextLong();
 		} while (!doesEveryPlayerHaveAKingdom(gameState));
 		createTrees(gameState, vegetationDensity);
 		createCapitalsAndMoney(gameState);
@@ -93,10 +91,12 @@ public class GameStateHelper {
 	private static void generateTiles(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			Long mapSeed) {
 		// density between -3 and 3 produces good results
+		// set seed
+		gameState.getRandom().setSeed(mapSeed);
 		// distribute the land mass evenly to all players
 		Map<Player, Integer> tileAmountsToGenerate = new HashMap<Player, Integer>();
 		// if there are tiles left, distribute them to random players
-		Collections.shuffle(players);
+		Collections.shuffle(players, gameState.getRandom());
 		int remainingLandMass = (int) (landMass % players.size());
 		for (Player player : players) {
 			int additionalTiles = 0;
@@ -110,7 +110,6 @@ public class GameStateHelper {
 		// (because a random one can be selected)
 		ArrayList<Player> remainingPlayers = new ArrayList<Player>(players);
 		gameState.getMap().getTiles().clear();
-		gameState.getRandom().setSeed(mapSeed);
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
 		ArrayList<Vector2> positionHistory = new ArrayList<Vector2>(); // for backtracking
