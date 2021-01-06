@@ -185,7 +185,7 @@ public class InputValidator {
 	}
 
 	public static boolean checkUndoAction(GameController gameController) {
-		return (PreferencesHelper.getNoOfAutoSaves() > 0);
+		return (PreferencesHelper.getNoOfAutoSaves() > 1);
 	}
 
 	private static boolean isWater(HexTile tile) {
