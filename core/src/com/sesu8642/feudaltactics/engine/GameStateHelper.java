@@ -60,8 +60,9 @@ public class GameStateHelper {
 			mapSeed = gameState.getRandom().nextLong();
 		} while (!doesEveryPlayerHaveAKingdom(gameState));
 		createTrees(gameState, vegetationDensity);
-		createCapitalsAndMoney(gameState);
+		createCapitals(gameState);
 		sortPlayersByIncome(gameState);
+		createMoney(gameState);
 	}
 
 	private static boolean doesEveryPlayerHaveAKingdom(GameState gameState) {
@@ -203,9 +204,14 @@ public class GameStateHelper {
 		}
 	}
 
-	private static void createCapitalsAndMoney(GameState gameState) {
+	private static void createCapitals(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			createCapital(gameState, kingdom);
+		}
+	}
+	
+	private static void createMoney(GameState gameState) {
+		for (Kingdom kingdom : gameState.getKingdoms()) {
 			// first player gets more money as he wont earn money for his first turn
 			int multiplier = 4;
 			if (gameState.getActivePlayer() == kingdom.getPlayer()) {
