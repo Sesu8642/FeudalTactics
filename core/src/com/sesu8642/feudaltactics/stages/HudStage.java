@@ -67,6 +67,7 @@ public class HudStage extends Stage {
 		ImageButton menuButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("pause")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("pause_pressed")));
 		menuButton.getImageCell().expand().fill();
+		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
 
 		handStack = new Stack();
 		handContentTable = new Table();
