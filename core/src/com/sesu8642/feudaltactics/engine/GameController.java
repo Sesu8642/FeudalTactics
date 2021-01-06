@@ -9,6 +9,8 @@ import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
+import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.ui.IngameScreen;
 
 public class GameController {
@@ -33,6 +35,7 @@ public class GameController {
 			endTurn();
 		}
 		autosave();
+		updateButtonEnabledStatus();
 	}
 	
 	private void autosave() {
@@ -47,6 +50,7 @@ public class GameController {
 		}
 		updateInfoText();
 		updateSeedText(gameState.getSeed().toString());
+		updateButtonEnabledStatus();
 	}
 
 	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAI.Intelligence botIntelligence, Long seed,
@@ -103,6 +107,8 @@ public class GameController {
 		updateInfoText();
 		mapRenderer.updateMap(gameState);
 		autosave();
+		// save first because is is relevant for the undo button status
+		updateButtonEnabledStatus();
 	}
 
 	public void pickupObject(HexTile tile) {
@@ -110,6 +116,7 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 		autosave();
+		updateButtonEnabledStatus();
 	}
 
 	public void placeOwn(HexTile tile) {
@@ -117,6 +124,7 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(null);
 		autosave();
+		updateButtonEnabledStatus();
 	}
 
 	public void combineUnits(HexTile tile) {
@@ -125,6 +133,7 @@ public class GameController {
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
 		autosave();
+		updateButtonEnabledStatus();
 	}
 
 	public void conquer(HexTile tile) {
@@ -133,6 +142,7 @@ public class GameController {
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
 		autosave();
+		updateButtonEnabledStatus();
 	}
 
 	public void endTurn() {
@@ -171,6 +181,7 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 		autosave();
+		updateButtonEnabledStatus();
 	}
 
 	public void buyCastle() {
@@ -179,6 +190,7 @@ public class GameController {
 		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 		autosave();
+		updateButtonEnabledStatus();
 	}
 
 	public void undoLastAction() {
@@ -197,8 +209,17 @@ public class GameController {
 				ingameScreen.getHudStage().updateHandContent(null);
 			}
 		}
+		updateButtonEnabledStatus();
 	}
 
+	private void updateButtonEnabledStatus() {
+		boolean canUndo = InputValidator.checkUndoAction(this);
+		boolean canBuyPeasant = InputValidator.checkBuyObject(gameState, Unit.COST);
+		boolean canBuyCastle = InputValidator.checkBuyObject(gameState, Castle.COST);
+		boolean canEndTurn = InputValidator.checkEndTurn(gameState);
+		ingameScreen.getHudStage().setButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+	}
+	
 	public void toggleMenu() {
 		ingameScreen.tooglePause();
 	}

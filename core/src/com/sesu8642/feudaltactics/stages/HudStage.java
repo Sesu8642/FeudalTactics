@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -31,6 +32,10 @@ public class HudStage extends Stage {
 	private Label infoTextLabel;
 	private Table handContentTable;
 	private Image handContent;
+	private ImageButton undoButton;
+	private ImageButton endTurnButton;
+	private ImageButton buyPeasantButton;
+	private ImageButton buyCastleButton;
 
 	public HudStage(Map<ActionUIElements, Runnable> actions) {
 		initUI(actions);
@@ -47,19 +52,16 @@ public class HudStage extends Stage {
 	}
 
 	private void initUI(Map<ActionUIElements, Runnable> actions) {
-		ImageButton undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")),
+		undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo_pressed")));
 		undoButton.getImageCell().expand().fill();
-		ImageButton endTurnButton = new ImageButton(
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")),
+		endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn_pressed")));
 		endTurnButton.getImageCell().expand().fill();
-		ImageButton buyPeasantButton = new ImageButton(
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant")),
+		buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant_pressed")));
 		buyPeasantButton.getImageCell().expand().fill();
-		ImageButton buyCastleButton = new ImageButton(
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")),
+		buyCastleButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")),
 				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle_pressed")));
 		buyCastleButton.getImageCell().expand().fill();
 		ImageButton menuButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("pause")),
@@ -140,13 +142,45 @@ public class HudStage extends Stage {
 		rootTable.pack();
 		handContentTable.pack();
 	}
-	
+
 	public void updateHandContent(String spritename) {
 		if (spritename != null) {
 			handStack.setVisible(true);
 			handContent.setDrawable(new TextureRegionDrawable(FeudalTactics.textureAtlas.createSprite(spritename)));
 		} else {
 			handStack.setVisible(false);
+		}
+	}
+
+	public void setButtonEnabledStatus(boolean undoButtonState, boolean buyPeasantButtonState,
+			boolean buyCastleButtonState, boolean endTurnButtonState) {
+		if (undoButtonState) {
+			undoButton.setTouchable(Touchable.enabled);
+			undoButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		} else {
+			undoButton.setTouchable(Touchable.disabled);
+			undoButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+		}
+		if (buyPeasantButtonState) {
+			buyPeasantButton.setTouchable(Touchable.enabled);
+			buyPeasantButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		} else {
+			buyPeasantButton.setTouchable(Touchable.disabled);
+			buyPeasantButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+		}
+		if (buyCastleButtonState) {
+			buyCastleButton.setTouchable(Touchable.enabled);
+			buyCastleButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		} else {
+			buyCastleButton.setTouchable(Touchable.disabled);
+			buyCastleButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+		}
+		if (endTurnButtonState) {
+			endTurnButton.setTouchable(Touchable.enabled);
+			endTurnButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		} else {
+			endTurnButton.setTouchable(Touchable.disabled);
+			endTurnButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
 		}
 	}
 
