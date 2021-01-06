@@ -25,7 +25,7 @@ public class GameController {
 	BotAI botAI = new BotAI();
 
 	public GameController() {
-		this.gameState = new GameState();
+		gameState = new GameState();
 	}
 
 	public void startGame() {
@@ -55,6 +55,7 @@ public class GameController {
 
 	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAI.Intelligence botIntelligence, Long seed,
 			float landMass, float density) {
+		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
 		ArrayList<Player> players = new ArrayList<Player>();
 		int remainingHumanPlayers = humanPlayerNo;
@@ -73,6 +74,7 @@ public class GameController {
 		updateSeedText(gameState.getSeed().toString());
 		mapRenderer.updateMap(gameState);
 		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+		ingameScreen.getHudStage().updateHandContent(null);
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
