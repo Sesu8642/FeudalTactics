@@ -155,7 +155,10 @@ public class ParameterInputStage extends Stage {
 		}
 	}
 
-	public void regenerateMap() {
+	public void regenerateMap(Long seed) {
+		if (seed != null) {
+			seedTextField.setText(seed.toString());
+		}
 		regenAction.run();
 	}
 	

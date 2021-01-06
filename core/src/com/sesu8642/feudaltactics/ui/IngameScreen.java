@@ -67,7 +67,7 @@ public class IngameScreen implements Screen {
 			gameController.placeCameraForFullMapView(0, 0, 0, 0);
 		} else {
 			activateStage(IngameStages.PARAMETERS);
-			parameterInputStage.regenerateMap();
+			parameterInputStage.regenerateMap(null);
 		}
 	}
 
@@ -130,10 +130,8 @@ public class IngameScreen implements Screen {
 		});
 		buttonData.put("Retry", () -> {
 			Dialog confirmDialog = new ConfirmDialog("All unsaved progress will be lost. Are you sure?\\n", () -> {
+				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
 				activateStage(IngameStages.PARAMETERS);
-				gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-						parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-						parameterInputStage.getMapDensityParam());
 			});
 			confirmDialog.show(menuStage);
 		});
@@ -160,10 +158,8 @@ public class IngameScreen implements Screen {
 					break;
 				case 2:
 					// retry button
+					parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
 					activateStage(IngameStages.PARAMETERS);
-					gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-							parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-							parameterInputStage.getMapDensityParam());
 					this.remove();
 					break;
 				case 0:
@@ -192,10 +188,8 @@ public class IngameScreen implements Screen {
 					FeudalTactics.game.setScreen(new MainMenuScreen());
 					PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 				} else {
+					parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
 					activateStage(IngameStages.PARAMETERS);
-					gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-							parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-							parameterInputStage.getMapDensityParam());
 					this.remove();
 				}
 			}
