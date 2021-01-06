@@ -202,7 +202,8 @@ public class BotAI {
 		Kingdom kingdom = gameState.getActiveKingdom();
 		boolean unableToConquerAnyMore = false;
 		whileloop: while (!unableToConquerAnyMore) {
-			Set<HexTile> possibleConquerTiles = new HashSet<HexTile>();
+			// need a list here to avoid randomness
+			List<HexTile> possibleConquerTiles = new ArrayList<HexTile>();
 			for (HexTile tile : kingdom.getTiles()) {
 				ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
 				for (HexTile neighborTile : neighborTiles) {
@@ -224,7 +225,17 @@ public class BotAI {
 			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<OffenseTileScoreInfo>(
 					offenseTileScoreInfoSet);
 			offenseTileScoreInfos
-					.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> Integer.compare(o2.score, o1.score));
+					.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
+						int result = Integer.compare(o2.score, o1.score);
+						// if the score is the same, use the coordinates to eliminate randomness
+						if (result == 0) {
+							result = Float.compare(o2.tile.getPosition().x, o1.tile.getPosition().x);
+						}
+						if (result == 0) {
+							result = Float.compare(o2.tile.getPosition().y, o1.tile.getPosition().y);
+						}
+						return result;
+					});
 			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
 
 				switch (offenseTileScoreInfo.requiredStrength) {
