@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.engine.EditorController;
 import com.sesu8642.feudaltactics.engine.EditorInputHandler;
@@ -64,7 +65,8 @@ public class EditorScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		camera.update();
-		Gdx.gl.glClearColor(0, 0.2f, 0.8f, 1);
+		Gdx.gl.glClearColor(FeudalTactics.backgroundColor.r, FeudalTactics.backgroundColor.g,
+				FeudalTactics.backgroundColor.b, FeudalTactics.backgroundColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		mapRenderer.render();
 		viewport.apply();
