@@ -140,7 +140,7 @@ public class HudStage extends Stage {
 			});
 		}
 	}
-
+	
 	public void updateOnResize() {
 		rootTable.pack();
 		handContentTable.pack();

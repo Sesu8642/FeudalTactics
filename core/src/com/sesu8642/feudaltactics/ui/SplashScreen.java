@@ -45,6 +45,7 @@ public class SplashScreen implements Screen {
 		stage.act();
 		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
 			FeudalTactics.game.setScreen(new MainMenuScreen());
+			this.hide();
 		}
 	}
 

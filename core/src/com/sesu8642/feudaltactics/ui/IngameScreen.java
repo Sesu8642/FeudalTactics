@@ -278,7 +278,9 @@ public class IngameScreen implements Screen {
 	@Override
 	public void dispose() {
 		mapRenderer.dispose();
-		activeStage.dispose();
+		parameterInputStage.dispose();
+		hudStage.dispose();
+		menuStage.dispose();
 	}
 
 	public OrthographicCamera getCamera() {

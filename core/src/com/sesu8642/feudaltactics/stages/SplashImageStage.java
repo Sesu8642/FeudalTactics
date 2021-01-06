@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class SplashImageStage extends Stage {
 
+	private Texture logoTexture;
+
 	public SplashImageStage() {
 		initUI();
 	}
@@ -26,12 +28,18 @@ public class SplashImageStage extends Stage {
 	}
 
 	private void initUI() {
-		Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));
+		logoTexture = new Texture(Gdx.files.internal("logo.png"));
+		Image logo = new Image(logoTexture);
 		Table rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0).fillX().expandY();
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
 		addActor(rootTable);
+	}
+
+	@Override
+	public void dispose() {
+		logoTexture.dispose();
 	}
 
 }
