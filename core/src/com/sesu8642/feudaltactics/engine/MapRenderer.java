@@ -285,15 +285,16 @@ public class MapRenderer {
 			darkenedFrames.put(content.getKey(),
 					((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
+		Animation<TextureRegion> waterAnimation = getAnimationFromName("water");
+		TextureRegion waterRegion = waterAnimation.getKeyFrame(stateTime, true);
+		Vector3 bottomLeftPoint = camera.unproject(new Vector3(0, camera.viewportHeight, 0));
 		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
 		float itemOffsetY = height * -0.075F;
 
+		batch.setColor(1, 1, 1, 1);
 		batch.begin();
 		// draw water background
-		batch.setColor(1, 1, 1, 1);
-		TextureRegion waterRegion = getTextureRegionFromName("water");
-		Vector3 bottomLeftPoint = camera.unproject(new Vector3(0, camera.viewportHeight, 0));
 		for (int i = 0; (i - 2) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
 			for (int j = 0; (j - 2) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
 				batch.draw(waterRegion,

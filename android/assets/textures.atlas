@@ -48,7 +48,7 @@ buy_peasant_pressed
   index: -1
 capital
   rotate: false
-  xy: 1190, 68
+  xy: 1256, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -69,14 +69,14 @@ die
   index: -1
 die_pressed
   rotate: false
-  xy: 794, 59
+  xy: 860, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 end_turn
   rotate: false
-  xy: 860, 59
+  xy: 926, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -104,7 +104,7 @@ hand_thumb
   index: -1
 knight
   rotate: false
-  xy: 1058, 68
+  xy: 1124, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -125,7 +125,7 @@ pause
   index: -1
 pause_pressed
   rotate: false
-  xy: 992, 59
+  xy: 1058, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -139,7 +139,7 @@ peasant
   index: 2
 peasant
   rotate: false
-  xy: 1256, 68
+  xy: 1322, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -153,7 +153,7 @@ spearman
   index: 1
 spearman
   rotate: false
-  xy: 1322, 68
+  xy: 1388, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -167,7 +167,7 @@ tile_bw
   index: -1
 tree
   rotate: false
-  xy: 1124, 68
+  xy: 1190, 68
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -188,7 +188,14 @@ undo_pressed
   index: -1
 water
   rotate: false
-  xy: 926, 59
+  xy: 794, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
+water
+  rotate: false
+  xy: 992, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
