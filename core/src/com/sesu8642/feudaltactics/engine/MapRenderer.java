@@ -30,6 +30,7 @@ public class MapRenderer {
 
 	final float SPRITE_SIZE_MULTIPLIER = 1.05F;
 	final float LINE_EXTENSION = 0.14F;
+	final float WATER_TILE_SIZE = 12;
 
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
@@ -287,7 +288,21 @@ public class MapRenderer {
 		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
 		float itemOffsetY = height * -0.075F;
+
 		batch.begin();
+		// draw water background
+		batch.setColor(1, 1, 1, 1);
+		TextureRegion waterRegion = getTextureRegionFromName("water");
+		Vector3 bottomLeftPoint = camera.unproject(new Vector3(0, camera.viewportHeight, 0));
+		for (int i = 0; (i - 2) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
+			for (int j = 0; (j - 2) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
+				batch.draw(waterRegion,
+						bottomLeftPoint.x + i * WATER_TILE_SIZE - camera.position.x % WATER_TILE_SIZE - WATER_TILE_SIZE,
+						bottomLeftPoint.y + j * WATER_TILE_SIZE - camera.position.y % WATER_TILE_SIZE - WATER_TILE_SIZE,
+						WATER_TILE_SIZE, WATER_TILE_SIZE);
+			}
+		}
+
 		// draw all the tiles
 		for (Entry<Vector2, Color> tile : tiles.entrySet()) {
 			Color color = new Color(tile.getValue());
@@ -355,8 +370,8 @@ public class MapRenderer {
 		return new Vector2(x, y);
 	}
 
-	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx,
-			long marginBottomPx, long marginRightPx, long marginTopPx) {
+	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
+			long marginRightPx, long marginTopPx) {
 		System.out.println(camera.viewportWidth);
 		System.out.println(camera.viewportHeight);
 		MapDimensions dims = gameState.getMap().getMapDimensionsInWorldCoords();
@@ -380,7 +395,8 @@ public class MapRenderer {
 		// move camera to center
 		camera.position.set(dims.center, 0);
 		// offset to apply the margin
-		camera.translate(marginRightPx * onePixelInWorldSpace / 2 - marginLeftPx * onePixelInWorldSpace / 2,marginTopPx * onePixelInWorldSpace/ 2 - marginBottomPx * onePixelInWorldSpace/ 2);
+		camera.translate(marginRightPx * onePixelInWorldSpace / 2 - marginLeftPx * onePixelInWorldSpace / 2,
+				marginTopPx * onePixelInWorldSpace / 2 - marginBottomPx * onePixelInWorldSpace / 2);
 		camera.update();
 	}
 
