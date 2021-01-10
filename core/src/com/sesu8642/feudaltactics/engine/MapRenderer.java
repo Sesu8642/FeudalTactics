@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -31,6 +31,7 @@ public class MapRenderer {
 	final float SPRITE_SIZE_MULTIPLIER = 1.05F;
 	final float LINE_EXTENSION = 0.14F;
 	final float WATER_TILE_SIZE = 12;
+	final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
 
 	private float width = HexMap.HEX_OUTER_RADIUS * 2;
 	private float height = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
@@ -38,11 +39,14 @@ public class MapRenderer {
 	private float stateTime; // for keeping animations at the correct pace
 	private SpriteBatch batch;
 	private TextureRegion tileRegion;
+	private Animation<TextureRegion> waterAnimation;
+	private Animation<TextureRegion> beachSandAnimation;
+	private Animation<TextureRegion> beachWaterAnimation;
 	private ShapeRenderer shapeRenderer;
+	private boolean darkenBeaches;
 
 	// stuff that is to be drawn
-	private HashMap<Vector2, Color> tiles;
-	private Set<Vector2> darkenedTiles;
+	private List<DrawTile> tiles;
 	private HashMap<String, TextureRegion> textureRegions;
 	private HashMap<String, Animation<TextureRegion>> animations;
 	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
@@ -62,20 +66,23 @@ public class MapRenderer {
 	public MapRenderer(OrthographicCamera camera) {
 		this.camera = camera;
 		shapeRenderer = new ShapeRenderer();
-		tiles = new HashMap<Vector2, Color>();
+		tiles = new ArrayList<DrawTile>();
 		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
 		nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
 		darkenedNonAnimatedContents = new HashMap<Vector2, TextureRegion>();
 		darkenedAnimatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
+		animations = new HashMap<String, Animation<TextureRegion>>();
 		tileRegion = FeudalTactics.textureAtlas.findRegion("tile_bw");
+		waterAnimation = getAnimationFromName("water");
+		beachSandAnimation = getAnimationFromName("beach_sand");
+		beachWaterAnimation = getAnimationFromName("beach_water");
+
 		batch = new SpriteBatch();
 		textureRegions = new HashMap<String, TextureRegion>();
-		animations = new HashMap<String, Animation<TextureRegion>>();
 		whiteLineStartPoints = new ArrayList<Vector2>();
 		whiteLineEndPoints = new ArrayList<Vector2>();
 		redLineStartPoints = new ArrayList<Vector2>();
 		redLineEndPoints = new ArrayList<Vector2>();
-		darkenedTiles = new HashSet<Vector2>();
 		stateTime = 0F;
 	}
 
@@ -90,13 +97,41 @@ public class MapRenderer {
 		whiteLineEndPoints.clear();
 		redLineStartPoints.clear();
 		redLineEndPoints.clear();
-		darkenedTiles.clear();
+		darkenBeaches = gameState.getHeldObject() != null;
 		for (Entry<Vector2, HexTile> hexTileEntry : (gameState.getMap().getTiles()).entrySet()) {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
 			HexTile tile = hexTileEntry.getValue();
 			// create tiles
-			tiles.put(mapCoords, tile.getPlayer().getColor());
+			DrawTile drawTile = new DrawTile();
+			drawTile.mapCoords = mapCoords;
+			drawTile.color = tile.getPlayer().getColor();
+			// create beaches on the edges
+			ArrayList<HexTile> neighbors = gameState.getMap().getNeighborTiles(tile);
+			if (neighbors.get(0) == null) {
+				// top left
+				drawTile.topLeftBeach = true;
+			}
+			if (neighbors.get(1) == null) {
+				// top
+				drawTile.topBeach = true;
+			}
+			if (neighbors.get(2) == null) {
+				// top right
+				drawTile.topRightBeach = true;
+			}
+			if (neighbors.get(3) == null) {
+				// bottom right
+				drawTile.bottomRightBeach = true;
+			}
+			if (neighbors.get(4) == null) {
+				// bottom
+				drawTile.bottomBeach = true;
+			}
+			if (neighbors.get(5) == null) {
+				// bottom left
+				drawTile.bottomLeftBeach = true;
+			}
 			// create content (units etc)
 			MapObject tileContent = tile.getContent();
 			if (tileContent != null) {
@@ -167,7 +202,7 @@ public class MapRenderer {
 				if (gameState.getHeldObject() != null
 						&& !InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
 						&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
-					darkenedTiles.add(mapCoords);
+					drawTile.darken = true;
 				}
 			} else if (gameState.getHeldObject() != null) {
 				// red lines for indicating if able to conquer
@@ -187,9 +222,10 @@ public class MapRenderer {
 						index++;
 					}
 				} else {
-					darkenedTiles.add(mapCoords);
+					drawTile.darken = true;
 				}
 			}
+			tiles.add(drawTile);
 		}
 	}
 
@@ -285,16 +321,34 @@ public class MapRenderer {
 			darkenedFrames.put(content.getKey(),
 					((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
 		}
-		Animation<TextureRegion> waterAnimation = getAnimationFromName("water");
 		TextureRegion waterRegion = waterAnimation.getKeyFrame(stateTime, true);
+		TextureRegion bottomRightBeachSandRegion = beachSandAnimation.getKeyFrame(stateTime, true);
+		TextureRegion bottomLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+		bottomLeftBeachSandRegion.flip(true, false);
+		TextureRegion topLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+		topLeftBeachSandRegion.flip(true, true);
+		TextureRegion topRightBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+		topRightBeachSandRegion.flip(false, true);
+		TextureRegion bottomRightBeachWaterRegion = beachWaterAnimation.getKeyFrame(stateTime, true);
+		TextureRegion bottomLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+		bottomLeftBeachWaterRegion.flip(true, false);
+		TextureRegion topLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+		topLeftBeachWaterRegion.flip(true, true);
+		TextureRegion topRightBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+		topRightBeachWaterRegion.flip(false, true);
 		Vector3 bottomLeftPoint = camera.unproject(new Vector3(0, camera.viewportHeight, 0));
 		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
 		float itemOffsetY = height * -0.075F;
 
-		batch.setColor(1, 1, 1, 1);
+		// colors for normal and darkened stuff
+		Color normalColor = new Color(1, 1, 1, 1);
+		Color darkenedColor = new Color(0, 0, 0, 0.4F);
+		batch.setColor(normalColor);
+
 		batch.begin();
-		// draw water background
+
+		// draw sea background
 		for (int i = 0; (i - 2) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
 			for (int j = 0; (j - 2) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
 				batch.draw(waterRegion,
@@ -304,19 +358,65 @@ public class MapRenderer {
 			}
 		}
 
+		// draw all the beaches first because they would cover some of the tiles
+		// otherwise
+		// beach water first (should not cover any sand)
+		Color beachWaterColor = new Color(BEACH_WATER_COLOR);
+		if (darkenBeaches) {
+			beachWaterColor.mul(0.75F, 0.75F, 0.75F, 1);
+		}
+		batch.setColor(beachWaterColor);
+		for (DrawTile tile : tiles) {
+			if (tile.bottomBeach || tile.bottomRightBeach) {
+				batch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - height * 2, width * 2,
+						height * 2);
+			}
+			if (tile.bottomBeach || tile.bottomLeftBeach) {
+				batch.draw(bottomLeftBeachWaterRegion, tile.mapCoords.x - width * 2, tile.mapCoords.y - height * 2,
+						width * 2, height * 2);
+			}
+			if (tile.topBeach || tile.topLeftBeach) {
+				batch.draw(topLeftBeachWaterRegion, tile.mapCoords.x - width * 2, tile.mapCoords.y, width * 2,
+						height * 2);
+			}
+			if (tile.topBeach || tile.topRightBeach) {
+				batch.draw(topRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y, width * 2, height * 2);
+			}
+		}
+		// beach sand
+		Color beachSandColor = new Color(normalColor);
+		if (darkenBeaches) {
+			beachSandColor.mul(0.5F, 0.5F, 0.5F, 1);
+		}
+		batch.setColor(beachSandColor);
+		for (DrawTile tile : tiles) {
+			if (tile.bottomBeach || tile.bottomRightBeach) {
+				batch.draw(bottomRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y - height, width, height);
+			}
+			if (tile.bottomBeach || tile.bottomLeftBeach) {
+				batch.draw(bottomLeftBeachSandRegion, tile.mapCoords.x - width, tile.mapCoords.y - height, width,
+						height);
+			}
+			if (tile.topBeach || tile.topLeftBeach) {
+				batch.draw(topLeftBeachSandRegion, tile.mapCoords.x - width, tile.mapCoords.y, width, height);
+			}
+			if (tile.topBeach || tile.topRightBeach) {
+				batch.draw(topRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y, width, height);
+			}
+		}
+
 		// draw all the tiles
-		for (Entry<Vector2, Color> tile : tiles.entrySet()) {
-			Color color = new Color(tile.getValue());
+		for (DrawTile tile : tiles) {
+			Color color = new Color(tile.color);
 			// darken tile
-			if (darkenedTiles.contains(tile.getKey())) {
+			if (tile.darken) {
 				color.mul(0.5F, 0.5F, 0.5F, 1);
 			}
 			batch.setColor(color);
-			batch.draw(tileRegion, tile.getKey().x - width / 2, tile.getKey().y - height / 2, width, height);
+			batch.draw(tileRegion, tile.mapCoords.x - width / 2, tile.mapCoords.y - height / 2, width, height);
 		}
+
 		// draw all the animated contents
-		Color normalColor = new Color(1, 1, 1, 1);
-		Color darkenedColor = new Color(0, 0, 0, 0.4F);
 		batch.setColor(normalColor);
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
 			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
@@ -407,5 +507,17 @@ public class MapRenderer {
 
 	public void resize() {
 		batch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+	}
+
+	private class DrawTile {
+		public Vector2 mapCoords;
+		public Color color;
+		public boolean darken = false;
+		public boolean topLeftBeach = false;
+		public boolean topBeach = false;
+		public boolean topRightBeach = false;
+		public boolean bottomRightBeach = false;
+		public boolean bottomBeach = false;
+		public boolean bottomLeftBeach = false;
 	}
 }
