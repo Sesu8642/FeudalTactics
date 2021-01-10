@@ -15,7 +15,7 @@ import com.sesu8642.feudaltactics.ui.IngameScreen;
 
 public class GameController {
 
-	public final static Color[] PLAYER_COLORS = { new Color(0F, 1F, 1F, 1), new Color(0.75F, 0.5F, 0F, 1),
+	public final static Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
 			new Color(0F, 1F, 0F, 1) };
 
