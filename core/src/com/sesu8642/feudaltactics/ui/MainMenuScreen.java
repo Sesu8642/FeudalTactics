@@ -52,7 +52,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		menuStage.setFontScale(height / 1000F);
+		menuStage.updateOnResize(width, height);
 		viewport.update(width, height, true);
 		viewport.apply();
 		((Table) menuStage.getActors().get(0)).pack();

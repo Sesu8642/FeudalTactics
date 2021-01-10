@@ -247,7 +247,7 @@ public class IngameScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		hudStage.setFontScale(height / 1000F);
-		menuStage.setFontScale(height / 1000F);
+		menuStage.updateOnResize(width, height);
 		viewport.update(width, height, true);
 		viewport.apply();
 		((Table) parameterInputStage.getActors().get(0)).pack(); // VERY IMPORTANT!!! makes everything scale correctly

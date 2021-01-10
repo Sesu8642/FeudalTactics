@@ -1,7 +1,6 @@
 package com.sesu8642.feudaltactics.stages;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -21,16 +20,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.engine.MapRenderer;
 
 public class GenericMenuStage extends Stage {
 
 	private List<TextButton> buttons = new ArrayList<TextButton>();
 	private Label bottomLabel;
 	Set<Disposable> disposables = new HashSet<Disposable>();
+	private MapRenderer mapRenderer;
+	private OrthographicCamera camera;
 
 	public GenericMenuStage(LinkedHashMap<String, Runnable> buttonData) {
 		initUI(buttonData);
@@ -47,9 +48,12 @@ public class GenericMenuStage extends Stage {
 	}
 
 	private void initUI(LinkedHashMap<String, Runnable> buttonData) {
-		Texture logoTecture = new Texture(Gdx.files.internal("logo.png"));
-		disposables.add(logoTecture);
-		Image logo = new Image(logoTecture);
+		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.zoom = 0.2F;
+		mapRenderer = new MapRenderer(camera);
+		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
+		disposables.add(logoTexture);
+		Image logo = new Image(logoTexture);
 		for (Entry<String, Runnable> buttonDataPoint : buttonData.entrySet()) {
 			TextButton button = new TextButton(buttonDataPoint.getKey(), FeudalTactics.skin);
 			button.addListener(new ChangeListener() {
@@ -63,15 +67,6 @@ public class GenericMenuStage extends Stage {
 		bottomLabel = new Label("", FeudalTactics.skin);
 
 		Table rootTable = new Table();
-		// use colored background
-		Pixmap bgPixmap = new Pixmap(1,1, Pixmap.Format.RGB565);
-		bgPixmap.setColor(FeudalTactics.backgroundColor);
-		bgPixmap.fill();
-		disposables.add(bgPixmap);
-		Texture pmTexture = new Texture(bgPixmap);
-		disposables.add(bgPixmap);
-		TextureRegionDrawable textureRegionDrawableBg = new TextureRegionDrawable(new TextureRegion(pmTexture));
-		rootTable.setBackground(textureRegionDrawableBg);
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0).fillX().expandY();
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
@@ -91,7 +86,7 @@ public class GenericMenuStage extends Stage {
 		bottomLabel.setText(seedText);
 	}
 
-	public void setFontScale(Float fontScale) {
+	private void setFontScale(Float fontScale) {
 		bottomLabel.setFontScale(fontScale);
 	}
 
@@ -99,8 +94,21 @@ public class GenericMenuStage extends Stage {
 		return buttons;
 	}
 
+	public void updateOnResize(int width, int height) {
+		setFontScale(height / 1000F);
+		camera.viewportHeight = height;
+		camera.viewportWidth = width;
+		camera.update();
+	}
+
 	@Override
-	public void dispose(){
+	public void draw() {
+		mapRenderer.render();
+		super.draw();
+	}
+
+	@Override
+	public void dispose() {
 		super.dispose();
 		for (Disposable disposable : disposables) {
 			disposable.dispose();

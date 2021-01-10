@@ -45,8 +45,8 @@ public class FeudalTactics extends Game {
 
 	@Override
 	public void dispose() {
-		skin.dispose();
 		super.dispose();
+		skin.dispose();
 		textureAtlas.dispose();
 	}
 
