@@ -45,6 +45,9 @@ public class GameStateHelper {
 		gameState.setPlayers(players);
 		gameState.setMap(new HexMap());
 		gameState.setKingdoms(new ArrayList<Kingdom>());
+		if (landMass == 0) {
+			return;
+		}
 		generateMap(gameState, players, landMass, density, vegetationDensity, mapSeed);
 	}
 
