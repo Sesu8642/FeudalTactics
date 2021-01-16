@@ -211,7 +211,7 @@ public class GameStateHelper {
 			createCapital(gameState, kingdom);
 		}
 	}
-	
+
 	private static void createMoney(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			// first player gets more money as he wont earn money for his first turn
@@ -337,7 +337,8 @@ public class GameStateHelper {
 		if (tile.getKingdom() != null) {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class) && tile.getKingdom().getTiles().size() > 2) {
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)
+					&& tile.getKingdom().getTiles().size() > 2) {
 				tile.getKingdom().setSavings(0);
 				createCapital(gameState, tile);
 			}
@@ -601,5 +602,19 @@ public class GameStateHelper {
 	public static void placeTile(GameState gameState, Vector2 hexCoords, Player player) {
 		HexTile newTile = new HexTile(player, hexCoords);
 		gameState.getMap().getTiles().put(hexCoords, newTile);
+	}
+
+	public static int getProtectionLevel(GameState gameState, HexTile tile) {
+		int protectionLevel = 0;
+		if (tile.getContent() != null) {
+			protectionLevel = tile.getContent().getStrength();
+		}
+		for (HexTile neighbor : gameState.getMap().getNeighborTiles(tile)) {
+			if (neighbor != null && neighbor.getKingdom() != null && tile.getKingdom() == neighbor.getKingdom()
+					&& neighbor.getContent() != null && neighbor.getContent().getStrength() > protectionLevel) {
+				protectionLevel = neighbor.getContent().getStrength();
+			}
+		}
+		return protectionLevel;
 	}
 }

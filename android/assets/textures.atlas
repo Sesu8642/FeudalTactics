@@ -172,6 +172,13 @@ peasant
   orig: 64, 55
   offset: 0, 0
   index: 1
+shield
+  rotate: false
+  xy: 988, 237
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 spearman
   rotate: false
   xy: 68, 2
