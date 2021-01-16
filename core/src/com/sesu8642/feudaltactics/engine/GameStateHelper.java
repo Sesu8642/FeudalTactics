@@ -337,7 +337,7 @@ public class GameStateHelper {
 		if (tile.getKingdom() != null) {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)) {
+					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class) && tile.getKingdom().getTiles().size() > 2) {
 				tile.getKingdom().setSavings(0);
 				createCapital(gameState, tile);
 			}
