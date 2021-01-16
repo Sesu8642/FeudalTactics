@@ -336,10 +336,13 @@ public class MapRenderer {
 		topLeftBeachWaterRegion.flip(true, true);
 		TextureRegion topRightBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
 		topRightBeachWaterRegion.flip(false, true);
-		Vector3 bottomLeftPoint = camera.unproject(new Vector3(0, camera.viewportHeight, 0));
+
+		Vector2 waterOriginPoint = calculateWaterOriginPoint();
+
 		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = width * 0.0F;
 		float itemOffsetY = height * -0.075F;
+
 
 		// colors for normal and darkened stuff
 		Color normalColor = new Color(1, 1, 1, 1);
@@ -349,12 +352,12 @@ public class MapRenderer {
 		batch.begin();
 
 		// draw sea background
+		// subtract -2 in the loop condition because some room is needed due to the
+		// movement offset
 		for (int i = 0; (i - 2) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
 			for (int j = 0; (j - 2) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
-				batch.draw(waterRegion,
-						bottomLeftPoint.x + i * WATER_TILE_SIZE - camera.position.x % WATER_TILE_SIZE - WATER_TILE_SIZE,
-						bottomLeftPoint.y + j * WATER_TILE_SIZE - camera.position.y % WATER_TILE_SIZE - WATER_TILE_SIZE,
-						WATER_TILE_SIZE, WATER_TILE_SIZE);
+				batch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE - WATER_TILE_SIZE,
+						waterOriginPoint.y + j * WATER_TILE_SIZE - WATER_TILE_SIZE, WATER_TILE_SIZE, WATER_TILE_SIZE);
 			}
 		}
 
@@ -471,10 +474,35 @@ public class MapRenderer {
 		return new Vector2(x, y);
 	}
 
+	private Vector2 calculateWaterOriginPoint() {
+		float waterTileSizePx = WATER_TILE_SIZE / camera.zoom;
+		int waterTilesNeededToCoverScreenHorizonally = (int) Math
+				.ceil((camera.viewportWidth * camera.zoom) / WATER_TILE_SIZE);
+		int waterTilesNeededToCoverScreenVertically = (int) Math
+				.ceil((camera.viewportHeight * camera.zoom) / WATER_TILE_SIZE);
+		// make sure the tile number is even or there will be visible steps when zooming
+		if (waterTilesNeededToCoverScreenHorizonally % 2 != 0) {
+			waterTilesNeededToCoverScreenHorizonally += 1;
+		}
+		if (waterTilesNeededToCoverScreenVertically % 2 != 0) {
+			waterTilesNeededToCoverScreenVertically += 1;
+		}
+		float waterOffsetForZoomXPx = (waterTilesNeededToCoverScreenHorizonally * waterTileSizePx
+				- camera.viewportWidth) / 2;
+		float waterOffsetForZoomYPx = (waterTilesNeededToCoverScreenVertically * waterTileSizePx
+				- camera.viewportHeight) / 2;
+		float waterOffsetForMovementX = camera.position.x % WATER_TILE_SIZE;
+		float waterOffsetForMovementY = camera.position.y % WATER_TILE_SIZE;
+		// bottom left point from where the water is drawn
+		Vector3 waterOriginPoint = camera
+				.unproject(new Vector3(-waterOffsetForZoomXPx, camera.viewportHeight + waterOffsetForZoomYPx, 0));
+		waterOriginPoint.x -= waterOffsetForMovementX;
+		waterOriginPoint.y -= waterOffsetForMovementY;
+		return new Vector2(waterOriginPoint.x, waterOriginPoint.y);
+	}
+
 	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
 			long marginRightPx, long marginTopPx) {
-		System.out.println(camera.viewportWidth);
-		System.out.println(camera.viewportHeight);
 		MapDimensions dims = gameState.getMap().getMapDimensionsInWorldCoords();
 		// calculate how much 1 pixel is in world coordinates
 		Vector3 testWorldCoordinates1 = camera.unproject(new Vector3(0, 0, 0));
