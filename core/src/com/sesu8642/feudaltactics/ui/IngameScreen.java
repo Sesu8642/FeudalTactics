@@ -123,13 +123,13 @@ public class IngameScreen implements Screen {
 		// menu
 		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Exit", () -> {
-			Dialog confirmDialog = new ConfirmDialog("All unsaved progress will be lost. Are you sure?\\n", () -> {
+			Dialog confirmDialog = new ConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
 				FeudalTactics.game.setScreen(new MainMenuScreen());
 			});
 			confirmDialog.show(menuStage);
 		});
 		buttonData.put("Retry", () -> {
-			Dialog confirmDialog = new ConfirmDialog("All unsaved progress will be lost. Are you sure?\\n", () -> {
+			Dialog confirmDialog = new ConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
 				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
 				activateStage(IngameStages.PARAMETERS);
 			});
