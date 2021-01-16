@@ -394,10 +394,10 @@ public class MapRenderer {
 		batch.begin();
 
 		// draw sea background
-		// subtract -2 in the loop condition because some room is needed due to the
+		// subtract -3 in the loop condition because some room is needed due to the
 		// movement offset
-		for (int i = 0; (i - 2) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
-			for (int j = 0; (j - 2) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
+		for (int i = 0; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
+			for (int j = 0; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
 				batch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE - WATER_TILE_SIZE,
 						waterOriginPoint.y + j * WATER_TILE_SIZE - WATER_TILE_SIZE, WATER_TILE_SIZE, WATER_TILE_SIZE);
 			}
