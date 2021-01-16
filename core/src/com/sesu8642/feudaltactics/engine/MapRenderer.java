@@ -504,28 +504,20 @@ public class MapRenderer {
 	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
 			long marginRightPx, long marginTopPx) {
 		MapDimensions dims = gameState.getMap().getMapDimensionsInWorldCoords();
-		// calculate how much 1 pixel is in world coordinates
-		Vector3 testWorldCoordinates1 = camera.unproject(new Vector3(0, 0, 0));
-		Vector3 testWorldCoordinates2 = camera.unproject(new Vector3(1, 0, 0));
-		float onePixelInWorldSpace = testWorldCoordinates2.x - testWorldCoordinates1.x;
 		// get the factors needed to adjust the camera zoom
 		float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
 		float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
-		float xFactor = (dims.width / onePixelInWorldSpace) / useViewportWidth; // lol
-		float yFactor = (dims.height / onePixelInWorldSpace) / useViewportHeight;
+		float xFactor = (dims.width / camera.zoom) / useViewportWidth; // lol
+		float yFactor = (dims.height / camera.zoom) / useViewportHeight;
 		// use the bigger factor because both dimensions must fit
 		float scaleFactor = Math.max(xFactor, yFactor);
 		camera.zoom *= scaleFactor;
 		camera.update();
-		// re-calculate how much 1 pixel is in world coordinates after zooming
-		testWorldCoordinates1 = camera.unproject(new Vector3(0, 0, 0));
-		testWorldCoordinates2 = camera.unproject(new Vector3(1, 0, 0));
-		onePixelInWorldSpace = testWorldCoordinates2.x - testWorldCoordinates1.x;
 		// move camera to center
 		camera.position.set(dims.center, 0);
 		// offset to apply the margin
-		camera.translate(marginRightPx * onePixelInWorldSpace / 2 - marginLeftPx * onePixelInWorldSpace / 2,
-				marginTopPx * onePixelInWorldSpace / 2 - marginBottomPx * onePixelInWorldSpace / 2);
+		camera.translate(marginRightPx * camera.zoom / 2 - marginLeftPx * camera.zoom / 2,
+				marginTopPx * camera.zoom / 2 - marginBottomPx * camera.zoom / 2);
 		camera.update();
 	}
 
