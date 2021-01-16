@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,11 +13,6 @@ import java.util.Optional;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.HexMap;
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;

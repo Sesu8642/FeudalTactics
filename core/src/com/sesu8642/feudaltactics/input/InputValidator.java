@@ -1,5 +1,6 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.input;
 
+import com.sesu8642.feudaltactics.GameController;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
@@ -8,7 +9,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
-
+import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 public class InputValidator {

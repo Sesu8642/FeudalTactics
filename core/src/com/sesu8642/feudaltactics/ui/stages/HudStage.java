@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.stages;
+package com.sesu8642.feudaltactics.ui.stages;
 
 import java.util.Map;
 import java.util.Map.Entry;

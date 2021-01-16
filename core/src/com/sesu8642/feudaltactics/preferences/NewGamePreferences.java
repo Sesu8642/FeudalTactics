@@ -1,6 +1,7 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.preferences;
 
-import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAI;
+import com.sesu8642.feudaltactics.BotAI.Intelligence;
 
 /**
  * Preferences for a new game

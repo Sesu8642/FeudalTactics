@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;

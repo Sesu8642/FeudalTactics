@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.stages;
+package com.sesu8642.feudaltactics.ui.stages;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 
@@ -23,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.engine.MapRenderer;
+import com.sesu8642.feudaltactics.MapRenderer;
 
 public class GenericMenuStage extends Stage {
 

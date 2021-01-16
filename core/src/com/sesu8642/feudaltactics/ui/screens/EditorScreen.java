@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.ui;
+package com.sesu8642.feudaltactics.ui.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -11,11 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sesu8642.feudaltactics.EditorController;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
-import com.sesu8642.feudaltactics.engine.EditorController;
-import com.sesu8642.feudaltactics.engine.EditorInputHandler;
-import com.sesu8642.feudaltactics.engine.MapRenderer;
+import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
+import com.sesu8642.feudaltactics.input.EditorInputHandler;
 
 public class EditorScreen implements Screen {
 

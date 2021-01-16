@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.ui;
+package com.sesu8642.feudaltactics.ui.screens;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,16 +17,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.engine.CombinedInputProcessor;
-import com.sesu8642.feudaltactics.engine.GameController;
-import com.sesu8642.feudaltactics.engine.LocalInputHandler;
-import com.sesu8642.feudaltactics.engine.MapRenderer;
-import com.sesu8642.feudaltactics.engine.NewGamePreferences;
-import com.sesu8642.feudaltactics.engine.PreferencesHelper;
-import com.sesu8642.feudaltactics.stages.GenericMenuStage;
-import com.sesu8642.feudaltactics.stages.HudStage;
-import com.sesu8642.feudaltactics.stages.HudStage.ActionUIElements;
-import com.sesu8642.feudaltactics.stages.ParameterInputStage;
+import com.sesu8642.feudaltactics.GameController;
+import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
+import com.sesu8642.feudaltactics.input.LocalInputHandler;
+import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
+import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import com.sesu8642.feudaltactics.ui.ConfirmDialog;
+import com.sesu8642.feudaltactics.ui.FeudalTacticsDialog;
+import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.HudStage;
+import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
+import com.sesu8642.feudaltactics.ui.stages.HudStage.ActionUIElements;
 
 public class IngameScreen implements Screen {
 

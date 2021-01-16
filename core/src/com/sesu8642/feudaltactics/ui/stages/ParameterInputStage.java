@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.stages;
+package com.sesu8642.feudaltactics.ui.stages;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,13 +19,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sesu8642.feudaltactics.BotAI;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.engine.BotAI;
-import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
-import com.sesu8642.feudaltactics.engine.NewGamePreferences;
-import com.sesu8642.feudaltactics.engine.NewGamePreferences.Densities;
-import com.sesu8642.feudaltactics.engine.NewGamePreferences.MapSizes;
-import com.sesu8642.feudaltactics.engine.PreferencesHelper;
+import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
+import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
+import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
 
 public class ParameterInputStage extends Stage {
 

@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.ui;
+package com.sesu8642.feudaltactics.ui.screens;
 
 import java.util.LinkedHashMap;
 
@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
 
 public class SplashScreen implements Screen {
 	private GenericMenuStage stage;

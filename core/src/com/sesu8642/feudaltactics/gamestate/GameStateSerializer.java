@@ -8,7 +8,7 @@ import java.util.Map;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializer;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.badlogic.gdx.utils.JsonValue;
 

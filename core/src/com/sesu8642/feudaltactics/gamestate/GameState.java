@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.engine.BotAI;
+import com.sesu8642.feudaltactics.BotAI;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 public class GameState {

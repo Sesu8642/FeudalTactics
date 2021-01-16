@@ -1,7 +1,8 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.sesu8642.feudaltactics.GameController;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Player;

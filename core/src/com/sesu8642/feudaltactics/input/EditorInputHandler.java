@@ -1,6 +1,7 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.EditorController;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 
 public class EditorInputHandler implements AcceptCommonInput {

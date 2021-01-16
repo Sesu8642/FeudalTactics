@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.engine;
+package com.sesu8642.feudaltactics.preferences;
 
 import java.util.Map;
 
@@ -8,11 +8,11 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.sesu8642.feudaltactics.engine.BotAI.Intelligence;
-import com.sesu8642.feudaltactics.engine.NewGamePreferences.Densities;
-import com.sesu8642.feudaltactics.engine.NewGamePreferences.MapSizes;
+import com.sesu8642.feudaltactics.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateSerializer;
+import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
+import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
 
 public class PreferencesHelper {
 	private static final String AUTO_SAVE_PREFERENCES_NAME = "autoSavePreferences";
