@@ -2,6 +2,7 @@ package com.sesu8642.feudaltactics.engine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -112,11 +113,15 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean keyUp(int keycode) {
-		if (keycode == 131) {
-			// ESC
-			inputAcceptor.inputEsc();
+		switch (keycode) {
+		case Keys.ESCAPE:
+			inputAcceptor.inputEsc();	
+			break;
+		case Keys.BACK:
+			inputAcceptor.inputBack();
+			break;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

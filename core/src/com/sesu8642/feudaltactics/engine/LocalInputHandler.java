@@ -24,12 +24,19 @@ public class LocalInputHandler implements AcceptCommonInput {
 	public LocalInputHandler(GameController gameController) {
 		this.gameController = gameController;
 	}
-	
+
 	@Override
 	public void inputEsc() {
 		gameController.toggleMenu();
 	}
-	
+
+	@Override
+	public void inputBack() {
+		if (InputValidator.checkUndoAction(gameController)) {
+			gameController.undoLastAction();
+		}
+	}
+
 	@Override
 	public void inputTap(Vector2 worldCoords) {
 		if (!isActivePlayerLocalHuman()) {

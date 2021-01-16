@@ -23,4 +23,10 @@ public class EditorInputHandler implements AcceptCommonInput {
 		
 	}
 
+	@Override
+	public void inputBack() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

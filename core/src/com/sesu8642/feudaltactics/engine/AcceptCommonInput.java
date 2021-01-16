@@ -8,4 +8,6 @@ public interface AcceptCommonInput {
 	
 	public void inputEsc();
 	
+	public void inputBack();
+	
 }
