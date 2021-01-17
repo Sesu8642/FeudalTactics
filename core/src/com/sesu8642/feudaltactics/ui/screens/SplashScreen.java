@@ -25,6 +25,7 @@ public class SplashScreen implements Screen {
 		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
 		stage = new GenericMenuStage(viewport, new LinkedHashMap<String, Runnable>());
+		stage.setBottomLabelText("By Sesu8642");
 	}
 
 	@Override

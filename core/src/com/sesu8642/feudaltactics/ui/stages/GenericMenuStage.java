@@ -82,8 +82,8 @@ public class GenericMenuStage extends Stage {
 		this.addActor(rootTable);
 	}
 
-	public void setBottomLabelText(String seedText) {
-		bottomLabel.setText(seedText);
+	public void setBottomLabelText(String text) {
+		bottomLabel.setText(text);
 	}
 
 	private void setFontScale(Float fontScale) {
