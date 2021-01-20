@@ -77,10 +77,6 @@ public class BotAI {
 
 	private Kingdom getNextKingdom(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
-			if (kingdom.getTiles().size() == 0) {
-				// TODO: why is it even there?!
-				// continue;
-			}
 			if (!kingdom.isDoneMoving() && kingdom.getPlayer() == gameState.getActivePlayer()) {
 				return kingdom;
 			}

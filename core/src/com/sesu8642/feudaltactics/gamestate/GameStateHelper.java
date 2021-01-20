@@ -496,6 +496,10 @@ public class GameStateHelper {
 		}
 		// recursive call with the tiles that are not connected
 		updateSplitKingdom(gameState, tiles);
+		// remove old empty kingdom
+		if (oldKingdom.getTiles().size() == 0) {
+			gameState.getKingdoms().remove(oldKingdom);
+		}
 		return;
 	}
 
