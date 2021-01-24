@@ -25,6 +25,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 	private static final String HELD_OBJ_NAME = "held_obj";
 	private static final String TILE_IDS_NAME = "tile_ids";
 	private static final String SAVINGS_NAME = "savings";
+	private static final String WAS_ACTIVE_IN_CURRENT_TURN_NAME = "wasActiveInCurrentTurn";
 	private static final String KINGDOMS_NAME = "kingdoms";
 	private static final String CLASS_NAME = "class";
 	private static final String CONTENT_NAME = "content";
@@ -84,6 +85,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 			json.writeValue(ID_NAME, getId(idMap, kingdom));
 			json.writeValue(PLAYER_ID_NAME, getId(idMap, kingdom.getPlayer()));
 			json.writeField(kingdom, SAVINGS_NAME);
+			json.writeField(kingdom, WAS_ACTIVE_IN_CURRENT_TURN_NAME);
 			json.writeArrayStart(TILE_IDS_NAME);
 			for (HexTile tile : kingdom.getTiles()) {
 				json.writeValue(getId(idMap, tile));

@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.GameController;
 import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.LocalInputHandler;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
@@ -115,7 +116,17 @@ public class IngameScreen implements Screen {
 		hudActions.put(HudStage.ActionUIElements.UNDO, () -> inputHandler.inputUndo());
 		hudActions.put(HudStage.ActionUIElements.BUY_PEASANT, () -> inputHandler.inputBuyPeasant());
 		hudActions.put(HudStage.ActionUIElements.BUY_CASTLE, () -> inputHandler.inputBuyCastle());
-		hudActions.put(HudStage.ActionUIElements.END_TURN, () -> inputHandler.inputEndTurn());
+		hudActions.put(HudStage.ActionUIElements.END_TURN, () -> {
+			if (GameStateHelper.hasActivePlayerlikelyForgottenAKingom(gameController.getGameState())) {
+				Dialog confirmDialog = new ConfirmDialog(
+						"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n", () -> {
+							inputHandler.inputEndTurn();
+						});
+				confirmDialog.show(hudStage);
+			} else {
+				inputHandler.inputEndTurn();
+			}
+		});
 		hudActions.put(HudStage.ActionUIElements.MENU, () -> {
 			activateStage(IngameStages.MENU);
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);

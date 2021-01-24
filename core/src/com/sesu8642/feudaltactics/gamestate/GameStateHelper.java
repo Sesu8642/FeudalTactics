@@ -19,6 +19,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
+import com.sesu8642.feudaltactics.input.InputValidator;
 
 public class GameStateHelper {
 	// only class supposed to modify the game state (except the bot AI actually)
@@ -277,6 +278,7 @@ public class GameStateHelper {
 	}
 
 	public static void activateKingdom(GameState gameState, Kingdom kingdom) {
+		kingdom.setWasActiveInCurrentTurn(true);
 		gameState.setActiveKingdom(kingdom);
 	}
 
@@ -359,6 +361,7 @@ public class GameStateHelper {
 					// combine kingdoms if owned by the same player
 					combineKingdoms(gameState, neighborTile.getKingdom(), tile.getKingdom());
 					gameState.setActiveKingdom(neighborTile.getKingdom());
+					neighborTile.getKingdom().setWasActiveInCurrentTurn(true);
 				} else if (neighborTile.getKingdom() == oldTileKingdom) {
 					// remember neighbor tiles of the same kingdom as the old tile
 					oldKingdomNeighborTiles.add(neighborTile);
@@ -533,8 +536,8 @@ public class GameStateHelper {
 		}
 		// reset active kingdom
 		gameState.setActiveKingdom(null);
-		// update savings
 		for (Kingdom kingdom : gameState.getKingdoms()) {
+			// update savings
 			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
 				kingdom.setSavings(kingdom.getSavings() + kingdom.getIncome());
 				if (kingdom.getSavings() < kingdom.getSalaries()) {
@@ -556,6 +559,8 @@ public class GameStateHelper {
 					}
 				}
 			}
+			// reset wasActiveInCurrentTurn
+			kingdom.setWasActiveInCurrentTurn(false);
 		}
 		return gameState;
 	}
@@ -615,5 +620,54 @@ public class GameStateHelper {
 			}
 		}
 		return protectionLevel;
+	}
+
+	public static boolean hasActivePlayerlikelyForgottenAKingom(GameState gameState) {
+		boolean result = false;
+		kingdomLoop: for (Kingdom kingdom : gameState.getKingdoms()) {
+			if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
+				// can buy castle or any unit that is more expensive
+				if (InputValidator.checkBuyObject(gameState, Castle.COST)) {
+					result = true;
+					break kingdomLoop;
+				}
+				// has unit stronger than peasant
+				boolean hasPeasant = false;
+				boolean hasTree = false;
+				for (HexTile tile : kingdom.getTiles()) {
+					if (tile.getContent() != null
+							&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+						if (tile.getContent().getStrength() > 1) {
+							result = true;
+							break kingdomLoop;
+						} else if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
+							hasPeasant = true;
+						}
+					} else if (tile.getContent() != null
+							&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+						hasTree = true;
+					}
+				}
+				boolean canBuyPeasant = kingdom.getSavings() >= Unit.COST;
+				// has or can get peasant that can conquer something or destroy tree
+				if (hasPeasant || canBuyPeasant) {
+					if (hasTree) {
+						result = true;
+						break kingdomLoop;
+					}
+					// there is a neighbor tile which can be conquered by the peasant
+					for (HexTile tile : kingdom.getTiles()) {
+						for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+							if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()
+									&& getProtectionLevel(gameState, neighborTile) == 0) {
+								result = true;
+								break kingdomLoop;
+							}
+						}
+					}
+				}
+			}
+		}
+		return result;
 	}
 }

@@ -13,6 +13,8 @@ public class Kingdom {
 	private int savings = 0;
 	// only used by ai
 	private boolean doneMoving = false;
+	// for displaying a hint when the player forgets the kingdom
+	private boolean wasActiveInCurrentTurn = false;
 
 	public Kingdom() {
 		this.tiles = new LinkedHashSet<HexTile>();
@@ -75,6 +77,14 @@ public class Kingdom {
 
 	public void setDoneMoving(boolean doneMoving) {
 		this.doneMoving = doneMoving;
+	}
+
+	public boolean isWasActiveInCurrentTurn() {
+		return wasActiveInCurrentTurn;
+	}
+
+	public void setWasActiveInCurrentTurn(boolean wasActiveInCurrentTurn) {
+		this.wasActiveInCurrentTurn = wasActiveInCurrentTurn;
 	}
 
 	@Override
