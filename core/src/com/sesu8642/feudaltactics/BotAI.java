@@ -94,13 +94,15 @@ public class BotAI {
 		Set<HexTile> placedCastleTiles = new HashSet<HexTile>();
 		switch (intelligence) {
 		case DUMB:
-			chopTrees(gameState, pickedUpUnits, 0.5F);
-			conquerAsMuchAsPossible(gameState, pickedUpUnits);
+			chopTrees(gameState, pickedUpUnits, 0.3F);
+			// only 50% chance to conquer anything
+			if (gameState.getRandom().nextFloat() <= 0.5F) {
+				conquerAsMuchAsPossible(gameState, pickedUpUnits);
+			}
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
 		case MEDIUM:
 			chopTrees(gameState, pickedUpUnits, 0.7F);
-			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
