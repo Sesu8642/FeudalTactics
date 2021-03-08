@@ -210,12 +210,12 @@ public class GameStateHelper {
 
 	private static void createMoney(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
-			// first player gets more money as he wont earn money for his first turn
-			int multiplier = 4;
-			if (gameState.getActivePlayer() == kingdom.getPlayer()) {
-				multiplier = 5;
+			int savings = kingdom.getTiles().size() * 5;
+			// players other than the first one will earn some money once their turn starts
+			if (gameState.getActivePlayer() != kingdom.getPlayer()) {
+				savings -= kingdom.getIncome();
 			}
-			createInitialSavings(kingdom, multiplier);
+			kingdom.setSavings(savings);
 		}
 	}
 
@@ -281,10 +281,6 @@ public class GameStateHelper {
 			newCapitalTile = kingdom.getTiles().stream().findFirst().get();
 		}
 		newCapitalTile.setContent(new Capital());
-	}
-
-	private static void createInitialSavings(Kingdom kingdom, int multiplier) {
-		kingdom.setSavings(kingdom.getIncome() * multiplier);
 	}
 
 	public static void activateKingdom(GameState gameState, Kingdom kingdom) {
