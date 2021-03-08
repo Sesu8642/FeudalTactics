@@ -408,8 +408,9 @@ public class GameStateHelper {
 			ArrayList<HexTile> notOldKingdomNeighborTiles = new ArrayList<HexTile>(
 					gameState.getMap().getNeighborTiles(tile));
 			notOldKingdomNeighborTiles.removeAll(oldKingdomNeighborTiles);
-			if (notOldKingdomNeighborTiles.get(0) != null && gameState.getMap()
-					.getNeighborTiles(notOldKingdomNeighborTiles.get(0)).contains(notOldKingdomNeighborTiles.get(1))) {
+			if (notOldKingdomNeighborTiles.get(0) != null && notOldKingdomNeighborTiles.get(1) != null
+					&& gameState.getMap().getNeighborTiles(notOldKingdomNeighborTiles.get(0))
+							.contains(notOldKingdomNeighborTiles.get(1))) {
 				potentiallySplit = false;
 			}
 			break;
