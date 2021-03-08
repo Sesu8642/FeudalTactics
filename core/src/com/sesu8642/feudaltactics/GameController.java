@@ -119,6 +119,7 @@ public class GameController {
 	public void pickupObject(HexTile tile) {
 		GameStateHelper.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
+		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(gameState.getHeldObject().getSpriteName());
 		autosave();
 		updateButtonEnabledStatus();
@@ -127,6 +128,7 @@ public class GameController {
 	public void placeOwn(HexTile tile) {
 		GameStateHelper.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
+		updateInfoText();
 		ingameScreen.getHudStage().updateHandContent(null);
 		autosave();
 		updateButtonEnabledStatus();
