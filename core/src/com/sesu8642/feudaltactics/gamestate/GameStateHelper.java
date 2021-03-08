@@ -245,15 +245,25 @@ public class GameStateHelper {
 			if (optionalCapitalTile.isPresent()) {
 				newCapitalTile = optionalCapitalTile.get();
 			} else {
-				// no empty tile --> select any neighbor tile
-				optionalCapitalTile = neighborTiles.stream().filter((HexTile neighborTile) -> neighborTile != null
-						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()).findFirst();
-				if (optionalCapitalTile.isPresent()) {
-					System.out.println(oldCapitalTile.getKingdom().getTiles().size());
-					newCapitalTile = optionalCapitalTile.get();
-				} else {
-					return;
-				}
+				// no empty tile -> select any neighbor tile
+				optionalCapitalTile = neighborTiles.stream().filter((HexTile neighborTile) -> {
+					if (neighborTile != null && neighborTile.getKingdom() == oldCapitalTile.getKingdom()) {
+						// make sure the tile is not unconnected
+						if (neighborTile.getCachedNeighborTiles().stream()
+								.anyMatch((HexTile neighborsNeighbor) -> neighborsNeighbor != null
+										&& neighborsNeighbor != oldCapitalTile
+										&& neighborsNeighbor.getKingdom() == oldCapitalTile.getKingdom())) {
+							return true;
+						}
+					}
+					return false;
+				}).findFirst();
+			}
+
+			if (optionalCapitalTile.isPresent()) {
+				newCapitalTile = optionalCapitalTile.get();
+			} else {
+				return;
 			}
 		}
 		newCapitalTile.setContent(new Capital());
