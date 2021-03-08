@@ -129,7 +129,6 @@ public class IngameScreen implements Screen {
 		});
 		hudActions.put(HudStage.ActionUIElements.MENU, () -> {
 			activateStage(IngameStages.MENU);
-			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 		});
 		hudStage = new HudStage(viewport, hudActions);
 
@@ -137,6 +136,7 @@ public class IngameScreen implements Screen {
 		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Exit", () -> {
 			Dialog confirmDialog = new ConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
+				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 				FeudalTactics.game.setScreen(new MainMenuScreen());
 			});
 			confirmDialog.show(menuStage);
