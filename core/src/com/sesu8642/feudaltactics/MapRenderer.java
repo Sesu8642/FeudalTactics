@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -395,11 +396,15 @@ public class MapRenderer {
 
 		// draw sea background
 		// subtract -3 in the loop condition because some room is needed due to the
-		// movement offset
-		for (int i = 0; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
-			for (int j = 0; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
-				batch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE - WATER_TILE_SIZE,
-						waterOriginPoint.y + j * WATER_TILE_SIZE - WATER_TILE_SIZE, WATER_TILE_SIZE, WATER_TILE_SIZE);
+		// movement offset on the top right
+		// start with -1 to do the same on the bottom left
+		for (int i = -1; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
+			for (int j = -1; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
+				// there is a bug that causes tiny gaps between the water tiles on the sides (but not top/bottom); probably some rounding issue
+				// a similar thing happens with TiledDrawable so maybe look into that and report it later
+				// the 0.01F is a hack that seems to mitigate this
+				batch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
+						waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
 			}
 		}
 
