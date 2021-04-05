@@ -248,9 +248,6 @@ public class IngameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		camera.update();
-		Gdx.gl.glClearColor(FeudalTactics.backgroundColor.r, FeudalTactics.backgroundColor.g,
-				FeudalTactics.backgroundColor.b, FeudalTactics.backgroundColor.a);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		mapRenderer.render();
 		viewport.apply();
 		activeStage.draw();
