@@ -29,6 +29,11 @@ public class GameStateHelper {
 	private final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
 	private final static float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
+	// prevent instanciation
+	private GameStateHelper() {
+		throw new AssertionError();
+	}
+	
 	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
 		if (mapSeed == null) {

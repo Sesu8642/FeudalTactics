@@ -22,6 +22,11 @@ public class PreferencesHelper {
 	private static final String NEW_GAME_PREFERENCES_NAME = "newGamePreferences";
 	private static final int MAX_AUTOSAVES = 50;
 
+	// prevent instanciation
+	private PreferencesHelper() {
+		throw new AssertionError();
+	}
+	
 	public static void saveNewGamePreferences(NewGamePreferences prefs) {
 		Preferences newGamePrefs = Gdx.app.getPreferences(NEW_GAME_PREFERENCES_NAME);
 		newGamePrefs.putInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, prefs.getBotIntelligence().ordinal());
