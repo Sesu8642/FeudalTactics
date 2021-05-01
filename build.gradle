@@ -12,9 +12,8 @@ buildscript {
     dependencies {
         classpath 'org.wisepersist:gwt-gradle-plugin:1.0.9'
         classpath 'com.android.tools.build:gradle:3.4.1'
-        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.8'
-        
-
+        classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.8'    
+         
     }
 }
 
@@ -106,6 +105,8 @@ project(":core") {
 
 
     dependencies {
+    	compile 'com.google.dagger:dagger:2.33'
+		annotationProcessor 'com.google.dagger:dagger-compiler:2.33'
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
@@ -121,6 +122,8 @@ project(":html") {
 
     dependencies {
         implementation project(":core")
+        compile 'com.google.dagger:dagger-gwt:2.33'
+        compile 'javax.inject:javax.inject:1:source'
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
         api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
         api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"

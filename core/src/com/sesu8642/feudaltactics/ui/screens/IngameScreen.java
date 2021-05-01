@@ -3,10 +3,12 @@ package com.sesu8642.feudaltactics.ui.screens;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
@@ -18,32 +20,42 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.GameController;
 import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.dagger.IngameCamera;
+import com.sesu8642.feudaltactics.dagger.IngameRenderer;
+import com.sesu8642.feudaltactics.dagger.MenuCamera;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.LocalInputHandler;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
-import com.sesu8642.feudaltactics.ui.ConfirmDialog;
-import com.sesu8642.feudaltactics.ui.FeudalTacticsDialog;
+import com.sesu8642.feudaltactics.ui.DialogFactory;
 import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
 import com.sesu8642.feudaltactics.ui.stages.HudStage;
 import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
 import com.sesu8642.feudaltactics.ui.stages.HudStage.ActionUIElements;
+import com.sesu8642.feudaltactics.ui.stages.StageFactory;
 
+@Singleton
 public class IngameScreen implements Screen {
 
-	private OrthographicCamera camera;
+	private OrthographicCamera ingameCamera;
+	private OrthographicCamera menuCamera;
+	
 	private MapRenderer mapRenderer;
 	private InputMultiplexer multiplexer;
 	private LocalInputHandler inputHandler;
 	private CombinedInputProcessor inputProcessor;
-	GameController gameController;
+	private GameController gameController;
 
 	private ParameterInputStage parameterInputStage;
 	private HudStage hudStage;
 	private GenericMenuStage menuStage;
 	private Stage activeStage;
 	private Viewport viewport;
+
+	private Screen mainMenuScreen;
+	private StageFactory stageFactory;
+	private DialogFactory dialogFactory;
 
 	public enum IngameStages {
 		PARAMETERS, HUD, MENU
@@ -53,33 +65,32 @@ public class IngameScreen implements Screen {
 	private static final long INPUT_HEIGHT_PX = 79;
 	private static final long INPUT_WIDTH_PX = 419;
 
-	public IngameScreen(boolean loadAutoSave) {
+	@Inject
+	public IngameScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
+			MainMenuScreen mainMenuScreen, StageFactory stageFactory, DialogFactory confirmDialogFactory) {
 		gameController = new GameController();
 		inputHandler = new LocalInputHandler(gameController);
 		gameController.setIngameScreen(this);
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		mapRenderer = new MapRenderer(camera);
+		this.ingameCamera = ingameCamera;
+		this.menuCamera = menuCamera;
+		this.mapRenderer = mapRenderer;
+		this.mainMenuScreen = mainMenuScreen;
+		this.stageFactory = stageFactory;
+		this.dialogFactory = confirmDialogFactory;
 		gameController.setMapRenderer(mapRenderer);
-		inputProcessor = new CombinedInputProcessor(inputHandler, camera);
+		inputProcessor = new CombinedInputProcessor(inputHandler, ingameCamera);
 		multiplexer = new InputMultiplexer();
 		initUI();
-		if (loadAutoSave) {
-			activateStage(IngameStages.HUD);
-			gameController.loadLatestAutosave();
-			gameController.placeCameraForFullMapView(0, 0, 0, 0);
-		} else {
-			activateStage(IngameStages.PARAMETERS);
-			parameterInputStage.regenerateMap(null);
-		}
 	}
 
-	public IngameScreen() {
-		this(false);
+	public void loadAutoSave() {
+		activateStage(IngameStages.HUD);
+		gameController.loadLatestAutosave();
+		gameController.placeCameraForFullMapView(0, 0, 0, 0);
 	}
 
 	private void initUI() {
-		Camera camera = new OrthographicCamera();
-		viewport = new ScreenViewport(camera);
+		viewport = new ScreenViewport(menuCamera);
 
 		// parameter input
 		Map<ParameterInputStage.ActionUIElements, Runnable> paramActions = new LinkedHashMap<ParameterInputStage.ActionUIElements, Runnable>();
@@ -94,9 +105,9 @@ public class IngameScreen implements Screen {
 			// place the camera for full map view
 			// calculate what is the bigger rectangular area for the map to fit: above the
 			// inputs or to their right
-			float aboveArea = camera.viewportWidth
-					* (camera.viewportHeight - BUTTON_HEIGHT_PX - ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX);
-			float rightArea = (camera.viewportWidth - INPUT_WIDTH_PX) * (camera.viewportHeight - BUTTON_HEIGHT_PX);
+			float aboveArea = ingameCamera.viewportWidth
+					* (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX - ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX);
+			float rightArea = (ingameCamera.viewportWidth - INPUT_WIDTH_PX) * (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX);
 			if (aboveArea > rightArea) {
 				gameController.placeCameraForFullMapView(0,
 						BUTTON_HEIGHT_PX + ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX, 0, 0);
@@ -108,7 +119,7 @@ public class IngameScreen implements Screen {
 				() -> PreferencesHelper
 						.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
 								parameterInputStage.getMapSize(), parameterInputStage.getMapDensity())));
-		parameterInputStage = new ParameterInputStage(viewport, paramActions);
+		parameterInputStage = stageFactory.createParameterInputStage(viewport, paramActions);
 
 		// hud
 		Map<ActionUIElements, Runnable> hudActions = new LinkedHashMap<HudStage.ActionUIElements, Runnable>();
@@ -117,8 +128,9 @@ public class IngameScreen implements Screen {
 		hudActions.put(HudStage.ActionUIElements.BUY_CASTLE, () -> inputHandler.inputBuyCastle());
 		hudActions.put(HudStage.ActionUIElements.END_TURN, () -> {
 			if (GameStateHelper.hasActivePlayerlikelyForgottenAKingom(gameController.getGameState())) {
-				Dialog confirmDialog = new ConfirmDialog(
-						"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n", () -> {
+				Dialog confirmDialog = dialogFactory.createConfirmDialog(
+						"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
+						() -> {
 							inputHandler.inputEndTurn();
 						});
 				confirmDialog.show(hudStage);
@@ -129,26 +141,28 @@ public class IngameScreen implements Screen {
 		hudActions.put(HudStage.ActionUIElements.MENU, () -> {
 			activateStage(IngameStages.MENU);
 		});
-		hudStage = new HudStage(viewport, hudActions);
+		hudStage = stageFactory.createHudStage(viewport, hudActions);
 
 		// menu
 		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Exit", () -> {
-			Dialog confirmDialog = new ConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
-				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
-				FeudalTactics.game.setScreen(new MainMenuScreen());
-			});
+			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+					() -> {
+						PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+						FeudalTactics.game.setScreen(mainMenuScreen);
+					});
 			confirmDialog.show(menuStage);
 		});
 		buttonData.put("Retry", () -> {
-			Dialog confirmDialog = new ConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
-				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
-				activateStage(IngameStages.PARAMETERS);
-			});
+			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+					() -> {
+						parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
+						activateStage(IngameStages.PARAMETERS);
+					});
 			confirmDialog.show(menuStage);
 		});
 		buttonData.put("Continue", () -> activateStage(IngameStages.HUD));
-		menuStage = new GenericMenuStage(viewport, buttonData);
+		menuStage = stageFactory.createMenuStage(viewport, buttonData);
 	}
 
 	public void tooglePause() {
@@ -160,27 +174,24 @@ public class IngameScreen implements Screen {
 	}
 
 	public void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
-		Dialog endDialog = new FeudalTacticsDialog() {
-			public void result(Object result) {
-				switch ((byte) result) {
-				case 1:
-					// exit button
-					FeudalTactics.game.setScreen(new MainMenuScreen());
-					PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
-					break;
-				case 2:
-					// retry button
-					parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
-					activateStage(IngameStages.PARAMETERS);
-					this.remove();
-					break;
-				case 0:
-					// do nothing on continue button
-				default:
-					break;
-				}
+		Dialog endDialog = dialogFactory.createDialog(result -> {
+			switch ((byte) result) {
+			case 1:
+				// exit button
+				FeudalTactics.game.setScreen(mainMenuScreen);
+				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+				break;
+			case 2:
+				// retry button
+				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
+				activateStage(IngameStages.PARAMETERS);
+				break;
+			case 0:
+				// do nothing on continue button
+			default:
+				break;
 			}
-		};
+		});
 		endDialog.button("Exit", (byte) 1);
 		if (win) {
 			endDialog.text("VICTORY! Your Enemies give up.\n\nDo you wish to continue?");
@@ -194,18 +205,15 @@ public class IngameScreen implements Screen {
 	}
 
 	public void showLostMessage() {
-		Dialog endDialog = new FeudalTacticsDialog() {
-			public void result(Object result) {
-				if ((boolean) result) {
-					FeudalTactics.game.setScreen(new MainMenuScreen());
-					PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
-				} else {
-					parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
-					activateStage(IngameStages.PARAMETERS);
-					this.remove();
-				}
+		Dialog endDialog = dialogFactory.createDialog(result -> {
+			if ((boolean) result) {
+				FeudalTactics.game.setScreen(mainMenuScreen);
+				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+			} else {
+				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
+				activateStage(IngameStages.PARAMETERS);
 			}
-		};
+		});
 		endDialog.button("Exit", true);
 		endDialog.button("Retry", false);
 		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.");
@@ -213,22 +221,20 @@ public class IngameScreen implements Screen {
 	}
 
 	private void activateStage(IngameStages ingameStage) {
+		multiplexer.clear();
 		switch (ingameStage) {
 		case MENU:
-			multiplexer.clear();
 			multiplexer.addProcessor(menuStage);
 			multiplexer.addProcessor(inputProcessor);
 			activeStage = menuStage;
 			break;
 		case HUD:
-			multiplexer.clear();
 			multiplexer.addProcessor(hudStage);
 			multiplexer.addProcessor(new GestureDetector(inputProcessor));
 			multiplexer.addProcessor(inputProcessor);
 			activeStage = hudStage;
 			break;
 		case PARAMETERS:
-			multiplexer.clear();
 			multiplexer.addProcessor(parameterInputStage);
 			multiplexer.addProcessor(new GestureDetector(inputProcessor));
 			multiplexer.addProcessor(inputProcessor);
@@ -242,11 +248,13 @@ public class IngameScreen implements Screen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
+		activateStage(IngameStages.PARAMETERS);
+		parameterInputStage.regenerateMap(System.currentTimeMillis());
 	}
 
 	@Override
 	public void render(float delta) {
-		camera.update();
+		ingameCamera.update();
 		mapRenderer.render();
 		viewport.apply();
 		activeStage.draw();
@@ -264,9 +272,9 @@ public class IngameScreen implements Screen {
 																	// hours to find out
 		hudStage.updateOnResize();
 		((Table) menuStage.getActors().get(0)).pack();
-		camera.viewportHeight = height;
-		camera.viewportWidth = width;
-		camera.update();
+		ingameCamera.viewportHeight = height;
+		ingameCamera.viewportWidth = width;
+		ingameCamera.update();
 	}
 
 	@Override
@@ -281,7 +289,7 @@ public class IngameScreen implements Screen {
 
 	@Override
 	public void hide() {
-		dispose();
+
 	}
 
 	@Override
@@ -293,7 +301,7 @@ public class IngameScreen implements Screen {
 	}
 
 	public OrthographicCamera getCamera() {
-		return camera;
+		return ingameCamera;
 	}
 
 	public HudStage getHudStage() {

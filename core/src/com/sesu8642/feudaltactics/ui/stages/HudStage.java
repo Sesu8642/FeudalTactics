@@ -5,12 +5,14 @@ import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
@@ -36,36 +38,38 @@ public class HudStage extends Stage {
 	private ImageButton endTurnButton;
 	private ImageButton buyPeasantButton;
 	private ImageButton buyCastleButton;
+	private TextureAtlas textureAtlas;
+	private Skin skin;
 
-	public HudStage(Map<ActionUIElements, Runnable> actions) {
-		initUI(actions);
-	}
-
-	public HudStage(Viewport viewport, Map<ActionUIElements, Runnable> actions) {
+	public HudStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
+		this.textureAtlas = textureAtlas;
+		this.skin = skin;
 		initUI(actions);
 	}
 
-	public HudStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions) {
+	public HudStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport, batch);
+		this.textureAtlas = textureAtlas;
+		this.skin = skin;
 		initUI(actions);
 	}
 
 	private void initUI(Map<ActionUIElements, Runnable> actions) {
-		undoButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo")),
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("undo_pressed")));
+		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
+				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
 		undoButton.getImageCell().expand().fill();
-		endTurnButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn")),
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("end_turn_pressed")));
+		endTurnButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("end_turn")),
+				new SpriteDrawable(textureAtlas.createSprite("end_turn_pressed")));
 		endTurnButton.getImageCell().expand().fill();
-		buyPeasantButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant")),
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_peasant_pressed")));
+		buyPeasantButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_peasant")),
+				new SpriteDrawable(textureAtlas.createSprite("buy_peasant_pressed")));
 		buyPeasantButton.getImageCell().expand().fill();
-		buyCastleButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle")),
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("buy_castle_pressed")));
+		buyCastleButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_castle")),
+				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
 		buyCastleButton.getImageCell().expand().fill();
-		ImageButton menuButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("pause")),
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("pause_pressed")));
+		ImageButton menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
+				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
 		menuButton.getImageCell().expand().fill();
 		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
 
@@ -73,15 +77,15 @@ public class HudStage extends Stage {
 		handContentTable = new Table();
 		handContent = new Image();
 
-		Sprite handSprite = new Sprite(FeudalTactics.textureAtlas.createSprite("hand"));
+		Sprite handSprite = new Sprite(textureAtlas.createSprite("hand"));
 		handSprite.setFlip(true, false);
 		Image handImage = new Image(handSprite);
 		handImage.setColor(FeudalTactics.buttonIconColor);
-		Sprite thumbSprite = new Sprite(FeudalTactics.textureAtlas.createSprite("hand_thumb"));
+		Sprite thumbSprite = new Sprite(textureAtlas.createSprite("hand_thumb"));
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
 		thumbImage.setColor(FeudalTactics.buttonIconColor);
-		infoTextLabel = new Label("", FeudalTactics.skin);
+		infoTextLabel = new Label("", skin);
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
@@ -149,7 +153,7 @@ public class HudStage extends Stage {
 	public void updateHandContent(String spritename) {
 		if (spritename != null) {
 			handStack.setVisible(true);
-			handContent.setDrawable(new TextureRegionDrawable(FeudalTactics.textureAtlas.createSprite(spritename)));
+			handContent.setDrawable(new TextureRegionDrawable(textureAtlas.createSprite(spritename)));
 		} else {
 			handStack.setVisible(false);
 		}

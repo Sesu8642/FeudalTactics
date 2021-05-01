@@ -37,6 +37,7 @@ public class GameController {
 			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
 			endTurn();
 		}
+		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 		autosave();
 		updateButtonEnabledStatus();
 	}
@@ -76,7 +77,6 @@ public class GameController {
 		GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
 		updateSeedText(gameState.getSeed().toString());
 		mapRenderer.updateMap(gameState);
-		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 		ingameScreen.getHudStage().updateHandContent(null);
 	}
 

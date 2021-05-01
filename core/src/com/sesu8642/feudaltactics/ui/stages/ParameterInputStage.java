@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -20,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.BotAI;
-import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
@@ -44,46 +45,48 @@ public class ParameterInputStage extends Stage {
 	private SelectBox<String> difficultySelect;
 	private TextField seedTextField;
 	private Runnable regenAction;
+	private Skin skin;
+	private TextureAtlas textureAtlas;
 
-	public ParameterInputStage(Map<ActionUIElements, Runnable> actions) {
-		initUI(actions);
-	}
-
-	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, Runnable> actions) {
+	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
+		this.textureAtlas = textureAtlas;
+		this.skin = skin;
 		initUI(actions);
 	}
-
-	public ParameterInputStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions) {
+	
+	public ParameterInputStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport, batch);
+		this.textureAtlas = textureAtlas;
+		this.skin = skin;
 		initUI(actions);
 	}
 
 	private void initUI(Map<ActionUIElements, Runnable> actions) {
 		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
-		difficultyLabel = new Label("CPU\nDifficulty", FeudalTactics.skin);
-		difficultySelect = new SelectBox<String>(FeudalTactics.skin);
+		difficultyLabel = new Label("CPU\nDifficulty", skin);
+		difficultySelect = new SelectBox<String>(skin);
 		String[] difficulties = { "Easy", "Medium", "Hard" };
 		difficultySelect.setItems(difficulties);
 		difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
-		sizeLabel = new Label("Map\nSize", FeudalTactics.skin);
-		sizeSelect = new SelectBox<String>(FeudalTactics.skin);
+		sizeLabel = new Label("Map\nSize", skin);
+		sizeSelect = new SelectBox<String>(skin);
 		String[] sizes = { "Small", "Medium", "Large" };
 		sizeSelect.setItems(sizes);
 		sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
-		densityLabel = new Label("Map\nDensity", FeudalTactics.skin);
-		densitySelect = new SelectBox<String>(FeudalTactics.skin);
+		densityLabel = new Label("Map\nDensity", skin);
+		densitySelect = new SelectBox<String>(skin);
 		String[] densities = { "Dense", "Medium", "Loose" };
 		densitySelect.setItems(densities);
 		densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
-		seedLabel = new Label("Seed", FeudalTactics.skin);
-		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), FeudalTactics.skin);
+		seedLabel = new Label("Seed", skin);
+		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
-		ImageButton randomButton = new ImageButton(new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("die")),
-				new SpriteDrawable(FeudalTactics.textureAtlas.createSprite("die_pressed")));
+		ImageButton randomButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("die")),
+				new SpriteDrawable(textureAtlas.createSprite("die_pressed")));
 		randomButton.getImageCell().expand().fill();
-		TextButton playButton = new TextButton("Play", FeudalTactics.skin);
+		TextButton playButton = new TextButton("Play", skin);
 
 		Table rootTable = new Table();
 		rootTable.setFillParent(true);

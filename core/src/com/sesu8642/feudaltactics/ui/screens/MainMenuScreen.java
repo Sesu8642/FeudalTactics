@@ -2,35 +2,52 @@ package com.sesu8642.feudaltactics.ui.screens;
 
 import java.util.LinkedHashMap;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.dagger.MenuCamera;
 import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.StageFactory;
 
+@Singleton
 public class MainMenuScreen implements Screen {
 
+	private OrthographicCamera camera;
 	private Viewport viewport;
 	private GenericMenuStage menuStage;
 
-	public MainMenuScreen() {
+	// using providers here to avoid depdendency cycle problems
+	private Provider<IngameScreen> ingameScreenProvider;
+	private Provider<EditorScreen> editorScreenProvider;
+	private StageFactory stageFactory;
+
+	@Inject
+	public MainMenuScreen(@MenuCamera OrthographicCamera camera, Provider<IngameScreen> ingameScreenProvider, Provider<EditorScreen> editorScreenProvider,
+			StageFactory stageFactory) {
+		this.camera = camera;
+		this.ingameScreenProvider = ingameScreenProvider;
+		this.editorScreenProvider = editorScreenProvider;
+		this.stageFactory = stageFactory;
 		initUI();
 	}
 
 	private void initUI() {
-		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
 
 		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
-		buttonData.put("Play", () -> FeudalTactics.game.setScreen(new IngameScreen()));
-		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(new EditorScreen()));
+		buttonData.put("Play", () -> FeudalTactics.game.setScreen(ingameScreenProvider.get()));
+		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(editorScreenProvider.get()));
 		buttonData.put("About", () -> {
 		});
-		menuStage = new GenericMenuStage(viewport, buttonData);
+		menuStage = stageFactory.createMenuStage(viewport, buttonData);
 		menuStage.setBottomLabelText("Version 1.0");
 	}
 
@@ -66,7 +83,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void hide() {
-		dispose();
+//		dispose();
 	}
 
 	@Override

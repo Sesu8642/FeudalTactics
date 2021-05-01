@@ -1,7 +1,5 @@
 package com.sesu8642.feudaltactics.ui.stages;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -12,17 +10,18 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.MapRenderer;
 
 public class GenericMenuStage extends Stage {
@@ -31,31 +30,31 @@ public class GenericMenuStage extends Stage {
 	private Label bottomLabel;
 	Set<Disposable> disposables = new HashSet<Disposable>();
 	private MapRenderer mapRenderer;
+	private Skin skin;
 	private OrthographicCamera camera;
 
-	public GenericMenuStage(LinkedHashMap<String, Runnable> buttonData) {
-		initUI(buttonData);
-	}
-
-	public GenericMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData) {
+	public GenericMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
 		super(viewport);
+		this.camera = camera;
+		this.mapRenderer = mapRenderer;
+		this.skin = skin;
 		initUI(buttonData);
 	}
-
-	public GenericMenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, Runnable> buttonData) {
+	
+	public GenericMenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
 		super(viewport, batch);
+		this.camera = camera;
+		this.mapRenderer = mapRenderer;
+		this.skin = skin;
 		initUI(buttonData);
 	}
 
 	private void initUI(LinkedHashMap<String, Runnable> buttonData) {
-		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.zoom = 0.2F;
-		mapRenderer = new MapRenderer(camera);
 		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
 		disposables.add(logoTexture);
 		Image logo = new Image(logoTexture);
 		for (Entry<String, Runnable> buttonDataPoint : buttonData.entrySet()) {
-			TextButton button = new TextButton(buttonDataPoint.getKey(), FeudalTactics.skin);
+			TextButton button = new TextButton(buttonDataPoint.getKey(), skin);
 			button.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
@@ -64,7 +63,7 @@ public class GenericMenuStage extends Stage {
 			});
 			buttons.add(button);
 		}
-		bottomLabel = new Label("", FeudalTactics.skin);
+		bottomLabel = new Label("", skin);
 
 		Table rootTable = new Table();
 		rootTable.setFillParent(true);

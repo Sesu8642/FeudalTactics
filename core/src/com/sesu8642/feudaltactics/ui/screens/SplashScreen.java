@@ -2,29 +2,42 @@ package com.sesu8642.feudaltactics.ui.screens;
 
 import java.util.LinkedHashMap;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.dagger.MenuCamera;
 import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.StageFactory;
 
+@Singleton
 public class SplashScreen implements Screen {
+	
+	private OrthographicCamera camera;
 	private GenericMenuStage stage;
 	private Viewport viewport;
 	private long startTime;
+	
+	private Screen mainMenuScreen;
+	private StageFactory stageFactory;
 
-	public SplashScreen() {
+	@Inject
+	public SplashScreen(@MenuCamera OrthographicCamera camera, MainMenuScreen mainMenuScreen, StageFactory stageFactory) {
+		this.camera = camera;
+		this.mainMenuScreen = mainMenuScreen;
+		this.stageFactory = stageFactory;
 		initUI();
 	}
 
 	private void initUI() {
-		Camera camera = new OrthographicCamera();
 		viewport = new ScreenViewport(camera);
-		stage = new GenericMenuStage(viewport, new LinkedHashMap<String, Runnable>());
+		stage = stageFactory.createMenuStage(viewport, new LinkedHashMap<String, Runnable>());
 		stage.setBottomLabelText("By Sesu8642");
 	}
 
@@ -34,7 +47,7 @@ public class SplashScreen implements Screen {
 		stage.draw();
 		stage.act();
 		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
-			FeudalTactics.game.setScreen(new MainMenuScreen());
+			FeudalTactics.game.setScreen(mainMenuScreen);
 			this.hide();
 		}
 	}

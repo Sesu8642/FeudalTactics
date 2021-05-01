@@ -7,16 +7,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.sesu8642.feudaltactics.dagger.IngameCamera;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
@@ -62,13 +66,17 @@ public class MapRenderer {
 	private ArrayList<Vector2> redLineStartPoints;
 	private ArrayList<Vector2> redLineEndPoints;
 
+	private TextureAtlas textureAtlas;
+	
 	private class Line {
 		private Vector2 start;
 		private Vector2 end;
 	}
 
-	public MapRenderer(OrthographicCamera camera) {
+	@Inject
+	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas) {
 		this.camera = camera;
+		this.textureAtlas = textureAtlas;
 		shapeRenderer = new ShapeRenderer();
 		tiles = new ArrayList<DrawTile>();
 		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
@@ -77,8 +85,8 @@ public class MapRenderer {
 		darkenedAnimatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
 		shields = new HashMap<Vector2, Boolean>();
 		animations = new HashMap<String, Animation<TextureRegion>>();
-		tileRegion = FeudalTactics.textureAtlas.findRegion("tile_bw");
-		shieldRegion = FeudalTactics.textureAtlas.findRegion("shield");
+		tileRegion = textureAtlas.findRegion("tile_bw");
+		shieldRegion = textureAtlas.findRegion("shield");
 		waterAnimation = getAnimationFromName("water");
 		beachSandAnimation = getAnimationFromName("beach_sand");
 		beachWaterAnimation = getAnimationFromName("beach_water");
@@ -334,7 +342,7 @@ public class MapRenderer {
 	private TextureRegion getTextureRegionFromName(String name) {
 		TextureRegion textureRegion = textureRegions.get(name);
 		if (textureRegion == null) {
-			textureRegion = FeudalTactics.textureAtlas.findRegion(name);
+			textureRegion = textureAtlas.findRegion(name);
 			textureRegions.put(name, textureRegion);
 		}
 		return textureRegion;
@@ -343,7 +351,7 @@ public class MapRenderer {
 	private Animation<TextureRegion> getAnimationFromName(String name) {
 		Animation<TextureRegion> animation = animations.get(name);
 		if (animation == null) {
-			animation = new Animation<TextureRegion>(1F, FeudalTactics.textureAtlas.findRegions(name));
+			animation = new Animation<TextureRegion>(1F, textureAtlas.findRegions(name));
 			animations.put(name, animation);
 		}
 		return animation;
