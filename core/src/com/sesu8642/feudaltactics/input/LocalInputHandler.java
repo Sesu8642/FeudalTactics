@@ -1,5 +1,8 @@
 package com.sesu8642.feudaltactics.input;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.GameController;
@@ -7,10 +10,12 @@ import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
+import com.sesu8642.feudaltactics.ui.screens.IngameScreen;
 
+import dagger.Lazy;
+
+@Singleton
 public class LocalInputHandler implements AcceptCommonInput {
 
 	// TODO: when validating multiplayer inputs, make sure that it's the player's
@@ -21,19 +26,23 @@ public class LocalInputHandler implements AcceptCommonInput {
 	}
 
 	private GameController gameController;
+	private Lazy<IngameScreen> ingameScreenLazy;
 
-	public LocalInputHandler(GameController gameController) {
+	@Inject
+	public LocalInputHandler(GameController gameController, Lazy<IngameScreen> ingameScreenLazy) {
 		this.gameController = gameController;
+		// using lazy because of dependency cycle
+		this.ingameScreenLazy = ingameScreenLazy;
 	}
 
 	@Override
 	public void inputEsc() {
-		gameController.toggleMenu();
+		ingameScreenLazy.get().togglePause();
 	}
 
 	@Override
 	public void inputBack() {
-		if (InputValidator.checkUndoAction(gameController)) {
+		if (InputValidator.checkUndoAction()) {
 			gameController.undoLastAction();
 		}
 	}
@@ -103,45 +112,45 @@ public class LocalInputHandler implements AcceptCommonInput {
 		}
 	}
 
-	public void inputEndTurn() {
-		if (!isActivePlayerLocalHuman()) {
-			// don't accept inputs if its not the human player's turn
-			return;
-		}
-		if (InputValidator.checkEndTurn(gameController.getGameState())) {
-			gameController.endTurn();
-		}
-	}
-
-	public void inputBuyPeasant() {
-		if (!isActivePlayerLocalHuman()) {
-			// don't accept inputs if its not the human player's turn
-			return;
-		}
-		if (InputValidator.checkBuyObject(gameController.getGameState(), Unit.COST)) {
-			gameController.buyPeasant();
-		}
-	}
-
-	public void inputBuyCastle() {
-		if (!isActivePlayerLocalHuman()) {
-			// don't accept inputs if its not the human player's turn
-			return;
-		}
-		if (InputValidator.checkBuyObject(gameController.getGameState(), Castle.COST)) {
-			gameController.buyCastle();
-		}
-	}
-
-	public void inputUndo() {
-		if (!isActivePlayerLocalHuman()) {
-			// don't accept inputs if its not the human player's turn
-			return;
-		}
-		if (InputValidator.checkUndoAction(gameController)) {
-			gameController.undoLastAction();
-		}
-	}
+//	public void inputEndTurn() {
+//		if (!isActivePlayerLocalHuman()) {
+//			// don't accept inputs if its not the human player's turn
+//			return;
+//		}
+//		if (InputValidator.checkEndTurn(gameController.getGameState())) {
+//			gameController.endTurn();
+//		}
+//	}
+//
+//	public void inputBuyPeasant() {
+//		if (!isActivePlayerLocalHuman()) {
+//			// don't accept inputs if its not the human player's turn
+//			return;
+//		}
+//		if (InputValidator.checkBuyObject(gameController.getGameState(), Unit.COST)) {
+//			gameController.buyPeasant();
+//		}
+//	}
+//
+//	public void inputBuyCastle() {
+//		if (!isActivePlayerLocalHuman()) {
+//			// don't accept inputs if its not the human player's turn
+//			return;
+//		}
+//		if (InputValidator.checkBuyObject(gameController.getGameState(), Castle.COST)) {
+//			gameController.buyCastle();
+//		}
+//	}
+//
+//	public void inputUndo() {
+//		if (!isActivePlayerLocalHuman()) {
+//			// don't accept inputs if its not the human player's turn
+//			return;
+//		}
+//		if (InputValidator.checkUndoAction()) {
+//			gameController.undoLastAction();
+//		}
+//	}
 
 	private boolean isActivePlayerLocalHuman() {
 		return (gameController.getGameState().getActivePlayer().getType() == Type.LOCAL_PLAYER);

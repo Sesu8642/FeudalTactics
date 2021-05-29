@@ -44,7 +44,9 @@ public class GameState {
 			newKingdom.setWasActiveInCurrentTurn(originalKingdom.isWasActiveInCurrentTurn());
 			this.kingdoms.add(newKingdom);
 		}
-		this.activeKingdom = this.kingdoms.get(original.getKingdoms().indexOf(original.getActiveKingdom()));
+		if (original.getActiveKingdom() != null) {
+			this.activeKingdom = this.kingdoms.get(original.getKingdoms().indexOf(original.getActiveKingdom()));
+		}
 		for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().getTiles().entrySet()) {
 			HexTile originalTile = originalTileEntry.getValue();
 			HexTile newTile = new HexTile(this.players.get(original.getPlayers().indexOf(originalTile.getPlayer())),

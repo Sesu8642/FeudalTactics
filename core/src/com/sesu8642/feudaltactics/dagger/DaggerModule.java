@@ -3,10 +3,13 @@ package com.sesu8642.feudaltactics.dagger;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
+import com.sesu8642.feudaltactics.input.LocalInputHandler;
 
 import dagger.Module;
 import dagger.Provides;
@@ -62,5 +65,16 @@ public class DaggerModule {
 	static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera, TextureAtlas textureAtlas) {
 		return new MapRenderer(camera, textureAtlas);
 	}
-
+	
+	@Provides
+	@Singleton
+	@IngameInputProcessor
+	static CombinedInputProcessor provideCombinedInputProcessor(LocalInputHandler inputHandler, @IngameCamera OrthographicCamera camera) {
+		return new CombinedInputProcessor(inputHandler, camera);
+	}
+	
+	@Provides
+	static InputMultiplexer provideInputMultiplexer() {
+		return new InputMultiplexer();
+	}
 }

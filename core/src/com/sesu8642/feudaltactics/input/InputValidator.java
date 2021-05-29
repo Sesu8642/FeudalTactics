@@ -1,6 +1,5 @@
 package com.sesu8642.feudaltactics.input;
 
-import com.sesu8642.feudaltactics.GameController;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
@@ -185,7 +184,7 @@ public class InputValidator {
 		return true;
 	}
 
-	public static boolean checkUndoAction(GameController gameController) {
+	public static boolean checkUndoAction() {
 		return (PreferencesHelper.getNoOfAutoSaves() > 1);
 	}
 
