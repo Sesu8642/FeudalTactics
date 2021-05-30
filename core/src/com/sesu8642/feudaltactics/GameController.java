@@ -37,6 +37,7 @@ public class GameController {
 	public GameController(@IngameRenderer MapRenderer mapRenderer, BotAI botAI) {
 		this.mapRenderer = mapRenderer;
 		this.botAI = botAI;
+		// PropertyChangeSupport is not injected because this is a dependency cycle and there is not benefit really
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		gameState = new GameState();
 	}
