@@ -5,7 +5,8 @@ public class Unit extends MapObject {
 	static public final int COST = 10;
 
 	private boolean canAct = true;
-
+	private UnitTypes unitType;
+	
 	public enum UnitTypes {
 		PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"),
 		BARON(4, 54, "baron");
@@ -33,9 +34,10 @@ public class Unit extends MapObject {
 		}
 	}
 
-	private UnitTypes unitType;
-
+	// only for deserialization
+	@Deprecated
 	public Unit() {
+		super();
 	}
 	
 	public Unit(UnitTypes unitType) {

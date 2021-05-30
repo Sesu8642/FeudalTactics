@@ -2,21 +2,17 @@ package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
 public class Capital extends MapObject {
 
-	static private final String spriteName = "capital";
-	static private final int strength = 1;
-	
-	public Capital() {
-		super();
-	}
-	
+	static public final String SPRITE_NAME = "capital";
+	static public final int STRENGTH = 1;
+
 	@Override
 	public String getSpriteName() {
-		return spriteName;
+		return SPRITE_NAME;
 	}
 
 	@Override
 	public int getStrength() {
-		return strength;
+		return STRENGTH;
 	}
 
 	@Override

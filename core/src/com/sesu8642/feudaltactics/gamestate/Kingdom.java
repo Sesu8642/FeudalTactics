@@ -8,7 +8,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 public class Kingdom {
 
-	private LinkedHashSet<HexTile> tiles;
+	private LinkedHashSet<HexTile> tiles = new LinkedHashSet<HexTile>();
 	private Player player;
 	private int savings = 0;
 	// only used by ai
@@ -17,12 +17,10 @@ public class Kingdom {
 	private boolean wasActiveInCurrentTurn = false;
 
 	public Kingdom() {
-		this.tiles = new LinkedHashSet<HexTile>();
 	}
 
 	public Kingdom(Player player) {
 		this.player = player;
-		this.tiles = new LinkedHashSet<HexTile>();
 	}
 
 	public int getIncome() {

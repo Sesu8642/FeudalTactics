@@ -3,21 +3,17 @@ package com.sesu8642.feudaltactics.gamestate.mapobjects;
 public class Castle extends MapObject {
 
 	static public final int COST = 15;
-	static private final String spriteName = "castle";
-	static private final int strength = 2;
-	
-	public Castle() {
-		super();
-	}
-	
+	static public final String SPRITE_NAME = "castle";
+	static public final int STRENGTH = 2;
+
 	@Override
 	public String getSpriteName() {
-		return spriteName;
+		return SPRITE_NAME;
 	}
 
 	@Override
 	public int getStrength() {
-		return strength;
+		return STRENGTH;
 	}
 
 	@Override
