@@ -28,14 +28,15 @@ public class GameController {
 	public final static String GAME_STATE_OBSERVABLE_PROPERTY_NAME = "gameState";
 	
 	private MapRenderer mapRenderer;
+	private BotAI botAI;
 	private GameState gameState;
 	// for observing the GameState
 	private PropertyChangeSupport propertyChangeSupport;
-	BotAI botAI = new BotAI();
 
 	@Inject
-	public GameController(@IngameRenderer MapRenderer mapRenderer) {
+	public GameController(@IngameRenderer MapRenderer mapRenderer, BotAI botAI) {
 		this.mapRenderer = mapRenderer;
+		this.botAI = botAI;
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		gameState = new GameState();
 	}

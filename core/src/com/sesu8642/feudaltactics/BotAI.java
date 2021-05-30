@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
@@ -20,6 +23,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.input.InputValidator;
 
+@Singleton
 public class BotAI {
 
 	final int MUST_PROTECT_SCORE_THRESHOLD = 12;
@@ -29,34 +33,8 @@ public class BotAI {
 		DUMB, MEDIUM, SMART
 	}
 
-	private class TileScoreInfo{
-
-		public HexTile tile;
-		public int score;
-
-		public TileScoreInfo(HexTile tile, int score) {
-			super();
-			this.tile = tile;
-			this.score = score;
-		}
-	}
-
-	private class OffenseTileScoreInfo extends TileScoreInfo {
-
-		public int requiredStrength;
-
-		public OffenseTileScoreInfo(HexTile tile, int score, int requiredStrength) {
-			super(tile, score);
-			this.requiredStrength = requiredStrength;
-		}
-
-	}
-
-	private class PickedUpUnits {
-		Integer availablePeasants = 0;
-		Integer availableSpearmen = 0;
-		Integer availableKnights = 0;
-		Integer availableBarons = 0;
+	@Inject
+	public BotAI() {
 	}
 
 	public GameState doTurn(GameState gameState, Intelligence intelligence) {
@@ -224,18 +202,17 @@ public class BotAI {
 			});
 			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<OffenseTileScoreInfo>(
 					offenseTileScoreInfoSet);
-			offenseTileScoreInfos
-					.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
-						int result = Integer.compare(o2.score, o1.score);
-						// if the score is the same, use the coordinates to eliminate randomness
-						if (result == 0) {
-							result = Float.compare(o2.tile.getPosition().x, o1.tile.getPosition().x);
-						}
-						if (result == 0) {
-							result = Float.compare(o2.tile.getPosition().y, o1.tile.getPosition().y);
-						}
-						return result;
-					});
+			offenseTileScoreInfos.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
+				int result = Integer.compare(o2.score, o1.score);
+				// if the score is the same, use the coordinates to eliminate randomness
+				if (result == 0) {
+					result = Float.compare(o2.tile.getPosition().x, o1.tile.getPosition().x);
+				}
+				if (result == 0) {
+					result = Float.compare(o2.tile.getPosition().y, o1.tile.getPosition().y);
+				}
+				return result;
+			});
 			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
 
 				switch (offenseTileScoreInfo.requiredStrength) {
@@ -529,5 +506,34 @@ public class BotAI {
 			return true;
 		}
 		return false;
+	}
+
+	private class TileScoreInfo {
+
+		public HexTile tile;
+		public int score;
+
+		public TileScoreInfo(HexTile tile, int score) {
+			this.tile = tile;
+			this.score = score;
+		}
+	}
+
+	private class OffenseTileScoreInfo extends TileScoreInfo {
+
+		public int requiredStrength;
+
+		public OffenseTileScoreInfo(HexTile tile, int score, int requiredStrength) {
+			super(tile, score);
+			this.requiredStrength = requiredStrength;
+		}
+
+	}
+
+	private class PickedUpUnits {
+		Integer availablePeasants = 0;
+		Integer availableSpearmen = 0;
+		Integer availableKnights = 0;
+		Integer availableBarons = 0;
 	}
 }
