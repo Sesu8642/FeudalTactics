@@ -5,7 +5,9 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
@@ -39,8 +41,9 @@ public class DaggerModule {
 	@Provides
 	@Singleton
 	@IngameRenderer
-	static MapRenderer provideIngameMapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas) {
-		return new MapRenderer(camera, textureAtlas);
+	static MapRenderer provideIngameMapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas,
+			ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch);
 	}
 
 	@Provides
@@ -49,7 +52,7 @@ public class DaggerModule {
 	static OrthographicCamera provideMenuCamera() {
 		return new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	}
-	
+
 	@Provides
 	@Singleton
 	@MenuBackgroundCamera
@@ -62,19 +65,31 @@ public class DaggerModule {
 	@Provides
 	@Singleton
 	@MenuBackgroundRenderer
-	static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera, TextureAtlas textureAtlas) {
-		return new MapRenderer(camera, textureAtlas);
+	static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera,
+			TextureAtlas textureAtlas, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch);
 	}
-	
+
 	@Provides
 	@Singleton
 	@IngameInputProcessor
-	static CombinedInputProcessor provideCombinedInputProcessor(LocalInputHandler inputHandler, @IngameCamera OrthographicCamera camera) {
+	static CombinedInputProcessor provideCombinedInputProcessor(LocalInputHandler inputHandler,
+			@IngameCamera OrthographicCamera camera) {
 		return new CombinedInputProcessor(inputHandler, camera);
 	}
-	
+
 	@Provides
 	static InputMultiplexer provideInputMultiplexer() {
 		return new InputMultiplexer();
+	}
+
+	@Provides
+	static ShapeRenderer provideShapeRenderer() {
+		return new ShapeRenderer();
+	}
+
+	@Provides
+	static SpriteBatch provideSpriteBatch() {
+		return new SpriteBatch();
 	}
 }

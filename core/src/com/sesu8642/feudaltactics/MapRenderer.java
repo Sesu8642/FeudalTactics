@@ -33,71 +33,52 @@ import com.sesu8642.feudaltactics.input.InputValidator;
 
 public class MapRenderer {
 
-	final float SPRITE_SIZE_MULTIPLIER = 1.05F;
-	final float LINE_EXTENSION = 0.14F;
-	final float WATER_TILE_SIZE = 12;
-	final float SHIELD_SIZE = 2;
-	final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
+	public final float SPRITE_SIZE_MULTIPLIER = 1.05F;
+	public final float LINE_EXTENSION = 0.14F;
+	public final float WATER_TILE_SIZE = 12;
+	public final float SHIELD_SIZE = 2;
+	public final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
+	public final float HEXTILE_WIDTH = HexMap.HEX_OUTER_RADIUS * 2;
+	public final float HEXTILE_HEIGHT = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 
-	private final float HEXTILE_WIDTH = HexMap.HEX_OUTER_RADIUS * 2;
-	private final float HEXTILE_HEIGHT = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
-	private OrthographicCamera camera;
-	private float stateTime; // for keeping animations at the correct pace
-	private SpriteBatch batch;
-	private TextureRegion tileRegion;
-	private TextureRegion shieldRegion;
-	private Animation<TextureRegion> waterAnimation;
-	private Animation<TextureRegion> beachSandAnimation;
-	private Animation<TextureRegion> beachWaterAnimation;
-	private ShapeRenderer shapeRenderer;
+	private final ShapeRenderer shapeRenderer;
+	private final OrthographicCamera camera;
+	private final SpriteBatch spriteBatch;
+	private TextureAtlas textureAtlas;
+	private final TextureRegion tileRegion;
+	private final TextureRegion shieldRegion;
+	private final Animation<TextureRegion> waterAnimation;
+	private final Animation<TextureRegion> beachSandAnimation;
+	private final Animation<TextureRegion> beachWaterAnimation;
+	private float stateTime = 0F; // for keeping animations at the correct pace
 	private boolean darkenBeaches;
 
 	// stuff that is to be drawn
-	private List<DrawTile> tiles;
-	private HashMap<String, TextureRegion> textureRegions;
-	private HashMap<String, Animation<TextureRegion>> animations;
-	private HashMap<Vector2, TextureRegion> nonAnimatedContents;
-	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents;
-	private HashMap<Vector2, Animation<TextureRegion>> animatedContents;
-	private HashMap<Vector2, Animation<TextureRegion>> darkenedAnimatedContents;
-	private HashMap<Vector2, Boolean> shields;
-	private ArrayList<Vector2> whiteLineStartPoints;
-	private ArrayList<Vector2> whiteLineEndPoints;
-	private ArrayList<Vector2> redLineStartPoints;
-	private ArrayList<Vector2> redLineEndPoints;
-
-	private TextureAtlas textureAtlas;
-	
-	private class Line {
-		private Vector2 start;
-		private Vector2 end;
-	}
+	private List<DrawTile> tiles = new ArrayList<DrawTile>();
+	private HashMap<String, TextureRegion> textureRegions = new HashMap<String, TextureRegion>();
+	private HashMap<String, Animation<TextureRegion>> animations = new HashMap<String, Animation<TextureRegion>>();
+	private HashMap<Vector2, TextureRegion> nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
+	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents = new HashMap<Vector2, TextureRegion>();
+	private HashMap<Vector2, Animation<TextureRegion>> animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
+	private HashMap<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
+	private HashMap<Vector2, Boolean> shields = new HashMap<Vector2, Boolean>();
+	private ArrayList<Vector2> whiteLineStartPoints = new ArrayList<Vector2>();
+	private ArrayList<Vector2> whiteLineEndPoints = new ArrayList<Vector2>();
+	private ArrayList<Vector2> redLineStartPoints = new ArrayList<Vector2>();
+	private ArrayList<Vector2> redLineEndPoints = new ArrayList<Vector2>();
 
 	@Inject
-	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas) {
+	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
 		this.camera = camera;
+		this.shapeRenderer = shapeRenderer;
+		this.spriteBatch = spriteBatch;
 		this.textureAtlas = textureAtlas;
-		shapeRenderer = new ShapeRenderer();
-		tiles = new ArrayList<DrawTile>();
-		animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
-		nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
-		darkenedNonAnimatedContents = new HashMap<Vector2, TextureRegion>();
-		darkenedAnimatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
-		shields = new HashMap<Vector2, Boolean>();
-		animations = new HashMap<String, Animation<TextureRegion>>();
+
 		tileRegion = textureAtlas.findRegion("tile_bw");
 		shieldRegion = textureAtlas.findRegion("shield");
 		waterAnimation = getAnimationFromName("water");
 		beachSandAnimation = getAnimationFromName("beach_sand");
 		beachWaterAnimation = getAnimationFromName("beach_water");
-
-		batch = new SpriteBatch();
-		textureRegions = new HashMap<String, TextureRegion>();
-		whiteLineStartPoints = new ArrayList<Vector2>();
-		whiteLineEndPoints = new ArrayList<Vector2>();
-		redLineStartPoints = new ArrayList<Vector2>();
-		redLineEndPoints = new ArrayList<Vector2>();
-		stateTime = 0F;
 	}
 
 	public void updateMap(GameState gameState) {
@@ -117,7 +98,7 @@ public class MapRenderer {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
 			HexTile tile = hexTileEntry.getValue();
-			
+
 			// create tiles
 			DrawTile drawTile = new DrawTile();
 			drawTile.mapCoords = mapCoords;
@@ -243,28 +224,33 @@ public class MapRenderer {
 				}
 			}
 			tiles.add(drawTile);
-			
+
 			if (gameState.getHeldObject() != null) {
 				// create protection indicators
 				int protectionLevel = GameStateHelper.getProtectionLevel(gameState, tile);
 				switch (protectionLevel) {
 				case 4:
-					shields.put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
+					shields.put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
+							drawTile.darken);
 					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
 					shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
 					shields.put(new Vector2(mapCoords.x + SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
 					break;
 				case 3:
-					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE * 1.5F, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
-					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
-					shields.put(new Vector2(mapCoords.x + SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
+					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE * 1.5F, mapCoords.y - SHIELD_SIZE / 2),
+							drawTile.darken);
+					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
+							drawTile.darken);
+					shields.put(new Vector2(mapCoords.x + SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
+							drawTile.darken);
 					break;
 				case 2:
 					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
 					shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
 					break;
 				case 1:
-					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
+					shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
+							drawTile.darken);
 					break;
 				case 0:
 					// intentional fall-through
@@ -272,7 +258,7 @@ public class MapRenderer {
 					break;
 				}
 			}
-			
+
 		}
 	}
 
@@ -362,7 +348,7 @@ public class MapRenderer {
 																						// object
 		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<Vector2, TextureRegion>(); // current frame for
 																								// each map object
-		batch.setProjectionMatrix(camera.combined);
+		spriteBatch.setProjectionMatrix(camera.combined);
 		stateTime += Gdx.graphics.getDeltaTime();
 		// get the correct frames
 		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
@@ -397,9 +383,9 @@ public class MapRenderer {
 		// colors for normal and darkened stuff
 		Color normalColor = new Color(1, 1, 1, 1);
 		Color darkenedColor = new Color(0, 0, 0, 0.4F);
-		batch.setColor(normalColor);
+		spriteBatch.setColor(normalColor);
 
-		batch.begin();
+		spriteBatch.begin();
 
 		// draw sea background
 		// subtract -3 in the loop condition because some room is needed due to the
@@ -407,10 +393,12 @@ public class MapRenderer {
 		// start with -1 to do the same on the bottom left
 		for (int i = -1; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
 			for (int j = -1; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
-				// there is a bug that causes tiny gaps between the water tiles on the sides (but not top/bottom); probably some rounding issue
-				// a similar thing happens with TiledDrawable so maybe look into that and report it later
+				// there is a bug that causes tiny gaps between the water tiles on the sides
+				// (but not top/bottom); probably some rounding issue
+				// a similar thing happens with TiledDrawable so maybe look into that and report
+				// it later
 				// the 0.01F is a hack that seems to mitigate this
-				batch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
+				spriteBatch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
 						waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
 			}
 		}
@@ -422,22 +410,22 @@ public class MapRenderer {
 		if (darkenBeaches) {
 			beachWaterColor.mul(0.75F, 0.75F, 0.75F, 1);
 		}
-		batch.setColor(beachWaterColor);
+		spriteBatch.setColor(beachWaterColor);
 		for (DrawTile tile : tiles) {
 			if (tile.bottomBeach || tile.bottomRightBeach) {
-				batch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT * 2,
+				spriteBatch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT * 2,
 						HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
 			}
 			if (tile.bottomBeach || tile.bottomLeftBeach) {
-				batch.draw(bottomLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2,
+				spriteBatch.draw(bottomLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2,
 						tile.mapCoords.y - HEXTILE_HEIGHT * 2, HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
 			}
 			if (tile.topBeach || tile.topLeftBeach) {
-				batch.draw(topLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2, tile.mapCoords.y,
+				spriteBatch.draw(topLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2, tile.mapCoords.y,
 						HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
 			}
 			if (tile.topBeach || tile.topRightBeach) {
-				batch.draw(topRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH * 2,
+				spriteBatch.draw(topRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH * 2,
 						HEXTILE_HEIGHT * 2);
 			}
 		}
@@ -446,22 +434,22 @@ public class MapRenderer {
 		if (darkenBeaches) {
 			beachSandColor.mul(0.5F, 0.5F, 0.5F, 1);
 		}
-		batch.setColor(beachSandColor);
+		spriteBatch.setColor(beachSandColor);
 		for (DrawTile tile : tiles) {
 			if (tile.bottomBeach || tile.bottomRightBeach) {
-				batch.draw(bottomRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT,
+				spriteBatch.draw(bottomRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT,
 						HEXTILE_WIDTH, HEXTILE_HEIGHT);
 			}
 			if (tile.bottomBeach || tile.bottomLeftBeach) {
-				batch.draw(bottomLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH,
+				spriteBatch.draw(bottomLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH,
 						tile.mapCoords.y - HEXTILE_HEIGHT, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 			}
 			if (tile.topBeach || tile.topLeftBeach) {
-				batch.draw(topLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH, tile.mapCoords.y, HEXTILE_WIDTH,
+				spriteBatch.draw(topLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH, tile.mapCoords.y, HEXTILE_WIDTH,
 						HEXTILE_HEIGHT);
 			}
 			if (tile.topBeach || tile.topRightBeach) {
-				batch.draw(topRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+				spriteBatch.draw(topRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 			}
 		}
 
@@ -472,11 +460,11 @@ public class MapRenderer {
 			if (tile.darken) {
 				color.mul(0.5F, 0.5F, 0.5F, 1);
 			}
-			batch.setColor(color);
-			batch.draw(tileRegion, tile.mapCoords.x - HEXTILE_WIDTH / 2, tile.mapCoords.y - HEXTILE_HEIGHT / 2,
+			spriteBatch.setColor(color);
+			spriteBatch.draw(tileRegion, tile.mapCoords.x - HEXTILE_WIDTH / 2, tile.mapCoords.y - HEXTILE_HEIGHT / 2,
 					HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
-		
+
 		// draw all the shields
 		Color shieldColor = new Color(normalColor);
 		shieldColor.sub(0, 0, 0, 0.7F);
@@ -484,45 +472,45 @@ public class MapRenderer {
 		darkenedShieldColor.mul(0.5F, 0.5F, 0.5F, 1);
 		for (Entry<Vector2, Boolean> shield : shields.entrySet()) {
 			if (shield.getValue()) {
-				batch.setColor(darkenedShieldColor);
-			}else {
-				batch.setColor(shieldColor);
+				spriteBatch.setColor(darkenedShieldColor);
+			} else {
+				spriteBatch.setColor(shieldColor);
 			}
-			batch.draw(shieldRegion, shield.getKey().x, shield.getKey().y, SHIELD_SIZE, SHIELD_SIZE);
+			spriteBatch.draw(shieldRegion, shield.getKey().x, shield.getKey().y, SHIELD_SIZE, SHIELD_SIZE);
 		}
 
 		// draw all the animated contents
-		batch.setColor(normalColor);
+		spriteBatch.setColor(normalColor);
 		for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
+			spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
 					currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
 		// draw the darkened contents like normal but then draw a shadow over them
 		for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
-			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
+			spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
 					currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
-		batch.setColor(darkenedColor);
+		spriteBatch.setColor(darkenedColor);
 		for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
-			batch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
+			spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
 					currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
-		batch.setColor(normalColor);
+		spriteBatch.setColor(normalColor);
 		// draw all the non-animated contents
 		for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {
-			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
+			spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
 					HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
 		for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
-			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
+			spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
 					HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
-		batch.setColor(darkenedColor);
+		spriteBatch.setColor(darkenedColor);
 		for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
-			batch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
+			spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
 					HEXTILE_WIDTH, HEXTILE_HEIGHT);
 		}
-		batch.end();
+		spriteBatch.end();
 		// draw all the lines
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -594,11 +582,11 @@ public class MapRenderer {
 	}
 
 	public void dispose() {
-		batch.dispose();
+		spriteBatch.dispose();
 	}
 
 	public void resize() {
-		batch.getProjectionMatrix().setToOrtho2D(0, 0, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 	}
 
 	private class DrawTile {
@@ -611,5 +599,10 @@ public class MapRenderer {
 		public boolean bottomRightBeach = false;
 		public boolean bottomBeach = false;
 		public boolean bottomLeftBeach = false;
+	}
+	
+	private class Line {
+		private Vector2 start;
+		private Vector2 end;
 	}
 }
