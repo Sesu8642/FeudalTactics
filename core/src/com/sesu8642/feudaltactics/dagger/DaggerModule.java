@@ -70,6 +70,7 @@ public class DaggerModule {
 		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch);
 	}
 
+	// will need the same for the editor later with a different input handler
 	@Provides
 	@Singleton
 	@IngameInputProcessor

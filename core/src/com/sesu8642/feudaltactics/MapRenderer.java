@@ -29,7 +29,7 @@ import com.sesu8642.feudaltactics.gamestate.HexMap.MapDimensions;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
-import com.sesu8642.feudaltactics.input.InputValidator;
+import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 public class MapRenderer {
 
@@ -148,9 +148,9 @@ public class MapRenderer {
 				}
 				if (animate) {
 					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
-							&& (!InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(),
+							&& (!InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(),
 											tile))) {
 						// darkened content
 						darkenedAnimatedContents.put(
@@ -165,9 +165,9 @@ public class MapRenderer {
 					}
 				} else {
 					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
-							&& (!InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(),
+							&& (!InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)
+									&& !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(),
 											tile))) {
 						// darkened content
 						darkenedNonAnimatedContents.put(
@@ -198,17 +198,17 @@ public class MapRenderer {
 				}
 				// darken the tile if placing is impossible
 				if (gameState.getHeldObject() != null
-						&& !InputValidator.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-						&& !InputValidator.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
+						&& !InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+						&& !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
 					drawTile.darken = true;
 				}
 			} else if (gameState.getHeldObject() != null) {
 				// red lines for indicating if able to conquer
-				if (InputValidator.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
+				if (InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
 					int index = 0;
 					for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
 						if (neighborTile == null
-								|| (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidator
+								|| (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidationHelper
 										.checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
 							Line line = getNeighborLine(mapCoords, index);
 							Collection<Line> dottedLineParts = lineToDottedLine(line);

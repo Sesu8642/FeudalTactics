@@ -34,7 +34,7 @@ import com.sesu8642.feudaltactics.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
-import com.sesu8642.feudaltactics.input.InputValidator;
+import com.sesu8642.feudaltactics.input.InputValidationHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.ui.DialogFactory;
@@ -120,10 +120,10 @@ public class IngameScreen implements Screen, PropertyChangeListener {
 			// seed
 			menuStage.setBottomLabelText("Seed: " + newGameState.getSeed().toString());
 			// buttons
-			boolean canUndo = InputValidator.checkUndoAction();
-			boolean canBuyPeasant = InputValidator.checkBuyObject(newGameState, Unit.COST);
-			boolean canBuyCastle = InputValidator.checkBuyObject(newGameState, Castle.COST);
-			boolean canEndTurn = InputValidator.checkEndTurn(newGameState);
+			boolean canUndo = InputValidationHelper.checkUndoAction();
+			boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, Unit.COST);
+			boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, Castle.COST);
+			boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState);
 			hudStage.setButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
 			// display messages
 			// check if player lost

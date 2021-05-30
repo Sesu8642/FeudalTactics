@@ -21,7 +21,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
-import com.sesu8642.feudaltactics.input.InputValidator;
+import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 @Singleton
 public class BotAI {
@@ -144,7 +144,7 @@ public class BotAI {
 		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		while (bestProtectionCandidate.score >= MUST_PROTECT_SCORE_THRESHOLD) {
 			// if enough money buy castle
-			if (InputValidator.checkBuyObject(gameState, Castle.COST)) {
+			if (InputValidationHelper.checkBuyObject(gameState, Castle.COST)) {
 				GameStateHelper.buyCastle(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 				placedCastleTiles.add(bestProtectionCandidate.tile);
@@ -153,7 +153,7 @@ public class BotAI {
 				pickedUpUnits.availablePeasants--;
 				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
-			} else if (InputValidator.checkBuyObject(gameState, Unit.COST)) {
+			} else if (InputValidationHelper.checkBuyObject(gameState, Unit.COST)) {
 				// protect with new peasant
 				GameStateHelper.buyPeasant(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);

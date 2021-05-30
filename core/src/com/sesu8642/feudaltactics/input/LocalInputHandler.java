@@ -42,7 +42,7 @@ public class LocalInputHandler implements AcceptCommonInput {
 
 	@Override
 	public void inputBack() {
-		if (InputValidator.checkUndoAction()) {
+		if (InputValidationHelper.checkUndoAction()) {
 			gameController.undoLastAction();
 		}
 	}
@@ -59,28 +59,28 @@ public class LocalInputHandler implements AcceptCommonInput {
 		HexTile tile = map.getTiles().get(hexCoords);
 		// print info
 		gameController.printTileInfo(hexCoords);
-		if (InputValidator.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {
+		if (InputValidationHelper.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {
 			// activate kingdom
 			gameController.activateKingdom(tile.getKingdom());
 		}
 		TapAction action = determineTapAction(player, tile);
 		switch (action) {
 		case PICK_UP:
-			if (InputValidator.checkPickupObject(gameController.getGameState(), player, tile)) {
+			if (InputValidationHelper.checkPickupObject(gameController.getGameState(), player, tile)) {
 				gameController.pickupObject(tile);
 			}
 			break;
 		case PLACE_OWN:
-			if (InputValidator.checkPlaceOwn(gameController.getGameState(), player, tile)) {
+			if (InputValidationHelper.checkPlaceOwn(gameController.getGameState(), player, tile)) {
 				gameController.placeOwn(tile);
 			}
 			break;
 		case COMBINE_UNITS:
-			if (InputValidator.checkCombineUnits(gameController.getGameState(), player, tile)) {
+			if (InputValidationHelper.checkCombineUnits(gameController.getGameState(), player, tile)) {
 				gameController.combineUnits(tile);
 			}
 		case CONQUER:
-			if (InputValidator.checkConquer(gameController.getGameState(), player, tile)) {
+			if (InputValidationHelper.checkConquer(gameController.getGameState(), player, tile)) {
 				gameController.conquer(tile);
 			}
 			break;

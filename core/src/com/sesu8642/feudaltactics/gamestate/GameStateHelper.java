@@ -19,7 +19,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
-import com.sesu8642.feudaltactics.input.InputValidator;
+import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 public class GameStateHelper {
 	// only class supposed to modify the game state (except the bot AI actually)
@@ -639,7 +639,7 @@ public class GameStateHelper {
 		kingdomLoop: for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
 				// can buy castle or any unit that is more expensive
-				if (InputValidator.checkBuyObject(gameState, Castle.COST)) {
+				if (InputValidationHelper.checkBuyObject(gameState, Castle.COST)) {
 					result = true;
 					break kingdomLoop;
 				}

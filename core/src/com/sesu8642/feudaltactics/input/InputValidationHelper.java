@@ -11,7 +11,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
-public class InputValidator {
+public class InputValidationHelper {
 
 	public static boolean checkChangeActiveKingdom(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
@@ -54,7 +54,6 @@ public class InputValidator {
 		if (!((Unit) tile.getContent()).isCanAct()) {
 			return false;
 		}
-
 		return true;
 	}
 
