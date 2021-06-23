@@ -128,7 +128,7 @@ public class GameController {
 
 	public void endTurn() {
 		// remember old state
-		GameState oldState = new GameState(gameState);
+		GameState oldState = GameState.copyOf(gameState);
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
 		mapRenderer.updateMap(gameState);
