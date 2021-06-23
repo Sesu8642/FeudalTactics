@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -38,11 +39,12 @@ public class BotAI {
 	}
 
 	public GameState doTurn(GameState gameState, Intelligence intelligence) {
-		Kingdom nextKingdom = getNextKingdom(gameState);
-		while (nextKingdom != null) {
+		Optional<Kingdom> nextKingdomOptional = getNextKingdom(gameState);
+		while (nextKingdomOptional.isPresent()) {
+			Kingdom nextKingdom = nextKingdomOptional.get();
 			nextKingdom.setDoneMoving(true);
 			gameState = doKingdomMove(gameState, nextKingdom, intelligence);
-			nextKingdom = getNextKingdom(gameState);
+			nextKingdomOptional = getNextKingdom(gameState);
 		}
 		// reset kingdom done moving state
 		for (Kingdom kingdom : gameState.getKingdoms()) {
@@ -53,13 +55,13 @@ public class BotAI {
 		return gameState;
 	}
 
-	private Kingdom getNextKingdom(GameState gameState) {
+	private Optional<Kingdom> getNextKingdom(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (!kingdom.isDoneMoving() && kingdom.getPlayer() == gameState.getActivePlayer()) {
-				return kingdom;
+				return Optional.of(kingdom);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence) {

@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.preferences;
 
 import java.util.Map;
+import java.util.Optional;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.Exceptions.SaveLoadingException;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateSerializer;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
@@ -57,32 +59,35 @@ public class PreferencesHelper {
 	public static GameState getLatestAutoSave() {
 		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
 		if (autoSavePrefs.get().isEmpty()) {
-			return null;
+			throw new SaveLoadingException("No autosave available");
 		}
-		String latestSaveName = getLatestAutoSaveName();
+		// cannot be empty if there is a save
+		String latestSaveName = getLatestAutoSaveName().get();
 		String loadedString = autoSavePrefs.getString(latestSaveName);
 		JsonValue loadedStateJsonValue = new JsonReader().parse(loadedString);
 		Json json = new Json();
 		json.setSerializer(GameState.class, new GameStateSerializer());
-		return json.readValue(GameState.class, loadedStateJsonValue);
+		GameState result = json.readValue(GameState.class, loadedStateJsonValue);
+		return result;
 	}
 
 	public static void deleteLatestAutoSave() {
-		String latestSaveName = getLatestAutoSaveName();
-		if (latestSaveName != null) {
+		Optional<String> latestSaveNameOptional = getLatestAutoSaveName();
+		latestSaveNameOptional.ifPresent(latestSaveName -> {
 			Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
 			autoSavePrefs.remove(latestSaveName);
 			autoSavePrefs.flush();
-		}
+		});
 	}
 
-	private static String getLatestAutoSaveName() {
+	private static Optional<String> getLatestAutoSaveName() {
 		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
 		Map<String, ?> prefsMap = autoSavePrefs.get();
 		if (prefsMap.isEmpty()) {
-			return null;
+			return Optional.empty();
 		}
-		return prefsMap.keySet().stream().max((a, b) -> Long.parseLong(a) > Long.parseLong(b) ? 1 : -1).get();
+		String result = prefsMap.keySet().stream().max((a, b) -> Long.parseLong(a) > Long.parseLong(b) ? 1 : -1).get();
+		return Optional.of(result);
 	}
 
 	public static void deleteAllAutoSaveExceptLatestN(int n) {
