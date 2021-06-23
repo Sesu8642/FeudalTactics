@@ -16,7 +16,7 @@ public class Capital extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy() {
+	public Capital getCopy() {
 		return new Capital();
 	}
 

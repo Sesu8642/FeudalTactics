@@ -17,7 +17,7 @@ public class Castle extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy() {
+	public Castle getCopy() {
 		return new Castle();
 	}
 

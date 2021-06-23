@@ -68,7 +68,7 @@ public class Unit extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy() {
+	public Unit getCopy() {
 		Unit newUnit = new Unit(this.getUnitType());
 		newUnit.setCanAct(this.canAct);
 		return newUnit;

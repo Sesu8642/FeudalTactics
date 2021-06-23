@@ -16,7 +16,7 @@ public class Tree extends MapObject {
 	}
 
 	@Override
-	public MapObject getCopy() {
+	public Tree getCopy() {
 		return new Tree();
 	}
 
