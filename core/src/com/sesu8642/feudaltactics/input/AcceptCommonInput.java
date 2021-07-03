@@ -2,7 +2,7 @@ package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.math.Vector2;
 
-public interface AcceptCommonInput {
+interface AcceptCommonInput {
 
 	public void inputTap(Vector2 worldCoords);
 	

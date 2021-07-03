@@ -17,7 +17,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class DaggerModule {
+class DaggerModule {
 
 	@Provides
 	@Singleton
