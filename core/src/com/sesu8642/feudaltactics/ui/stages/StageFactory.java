@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.ui.stages;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.MenuBackgroundCamera;
@@ -59,6 +61,15 @@ public class StageFactory {
 	public GenericMenuStage createMenuStage(Viewport viewport, Batch batch,
 			LinkedHashMap<String, Runnable> buttonData) {
 		return new GenericMenuStage(viewport, batch, buttonData, backgroundCamera, mapRenderer, skin);
+	}
+
+	public GenericSlideStage createSlideStage(Viewport viewport, List<Widget> slides, Runnable finishedCallback) {
+		return new GenericSlideStage(viewport, slides, finishedCallback, backgroundCamera, skin);
+	}
+
+	public GenericSlideStage createSlideStage(Viewport viewport, Batch batch, List<Widget> slides,
+			Runnable finishedCallback) {
+		return new GenericSlideStage(viewport, batch, slides, finishedCallback, backgroundCamera, skin);
 	}
 
 }

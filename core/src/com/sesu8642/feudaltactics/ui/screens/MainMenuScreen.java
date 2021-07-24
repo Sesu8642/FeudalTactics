@@ -26,15 +26,18 @@ public class MainMenuScreen implements Screen {
 
 	// using providers here to avoid depdendency cycle problems
 	private Provider<IngameScreen> ingameScreenProvider;
+	// editor is unfinished and hidden
 	private Provider<EditorScreen> editorScreenProvider;
+	private Provider<TutorialScreen> tutorialScreenProvider;
 	private StageFactory stageFactory;
 
 	@Inject
-	public MainMenuScreen(@MenuCamera OrthographicCamera camera, Provider<IngameScreen> ingameScreenProvider, Provider<EditorScreen> editorScreenProvider,
+	public MainMenuScreen(@MenuCamera OrthographicCamera camera, Provider<IngameScreen> ingameScreenProvider, Provider<EditorScreen> editorScreenProvider, Provider<TutorialScreen> tutorialScreenProvider,
 			StageFactory stageFactory) {
 		this.camera = camera;
 		this.ingameScreenProvider = ingameScreenProvider;
 		this.editorScreenProvider = editorScreenProvider;
+		this.tutorialScreenProvider = tutorialScreenProvider;
 		this.stageFactory = stageFactory;
 		initUI();
 	}
@@ -44,7 +47,7 @@ public class MainMenuScreen implements Screen {
 
 		LinkedHashMap<String, Runnable> buttonData = new LinkedHashMap<String, Runnable>();
 		buttonData.put("Play", () -> FeudalTactics.game.setScreen(ingameScreenProvider.get()));
-		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(editorScreenProvider.get()));
+		buttonData.put("Tutorial", () -> FeudalTactics.game.setScreen(tutorialScreenProvider.get()));
 		buttonData.put("About", () -> {
 		});
 		menuStage = stageFactory.createMenuStage(viewport, buttonData);
