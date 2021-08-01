@@ -1,5 +1,7 @@
 package com.sesu8642.feudaltactics.dagger;
 
+import java.util.List;
+
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
@@ -12,6 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.LocalInputHandler;
+import com.sesu8642.feudaltactics.ui.stages.Slide;
+import com.sesu8642.feudaltactics.ui.stages.TutorialSlideFactory;
 
 import dagger.Module;
 import dagger.Provides;
@@ -92,5 +96,11 @@ class DaggerModule {
 	@Provides
 	static SpriteBatch provideSpriteBatch() {
 		return new SpriteBatch();
+	}
+	
+	@Provides
+	@TutorialSlides
+	static List<Slide> provideTutorialSlides(TutorialSlideFactory slideFactory) {
+		return slideFactory.createAllSlides();
 	}
 }

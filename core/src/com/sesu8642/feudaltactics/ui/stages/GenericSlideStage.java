@@ -3,44 +3,38 @@ package com.sesu8642.feudaltactics.ui.stages;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GenericSlideStage extends Stage {
 
-	private List<Widget> slides;
+	private List<Table> slides;
 
 	Set<Disposable> disposables = new HashSet<Disposable>();
 	private Skin skin;
 	private OrthographicCamera camera;
-	private Widget currentSlide;
+	private Table currentSlide;
 	private TextButton backButton;
 	private TextButton nextButton;
 
-	private Container<Widget> slideContainer = new Container<Widget>();
+	private Container<Table> slideContainer = new Container<Table>();
 	
-	public GenericSlideStage(Viewport viewport, List<Widget> slides, Runnable finishedCallback,
+	public GenericSlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback,
 			OrthographicCamera camera, Skin skin) {
 		super(viewport);
 		if (slides.isEmpty()) {
@@ -48,11 +42,11 @@ public class GenericSlideStage extends Stage {
 		}
 		this.camera = camera;
 		this.skin = skin;
-		this.slides = slides;
-		initUI(slides, finishedCallback);
+		this.slides = slides.stream().map(s -> s.getTable()).collect(Collectors.toList());
+		initUI(this.slides, finishedCallback);
 	}
 
-	public GenericSlideStage(Viewport viewport, Batch batch, List<Widget> slides, Runnable finishedCallback,
+	public GenericSlideStage(Viewport viewport, Batch batch, List<Slide> slides, Runnable finishedCallback,
 			OrthographicCamera camera, Skin skin) {
 		super(viewport, batch);
 		if (slides.isEmpty()) {
@@ -60,40 +54,26 @@ public class GenericSlideStage extends Stage {
 		}
 		this.camera = camera;
 		this.skin = skin;
-		this.slides = slides;
-		initUI(slides, finishedCallback);
+		this.slides = slides.stream().map(s -> s.getTable()).collect(Collectors.toList());
+		initUI(this.slides, finishedCallback);
 	}
 
-	private void initUI(List<Widget> slides, Runnable finishedCallback) {
+	private void initUI(List<Table> slides, Runnable finishedCallback) {
 		backButton = new TextButton("", skin);
 		backButton.setDisabled(true);
 		backButton.setTouchable(Touchable.disabled);
-		nextButton = new TextButton("Next", skin);
+		
+		nextButton = new TextButton("", skin);
 		
 		currentSlide = slides.get(0);
-		//slideContainer.setActor(currentSlide);
-		//slideContainer.fill();
-				
-		Label testLabel = new Label("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", skin);
-		testLabel.setWrap(true);
-		testLabel.setColor(skin.getColor("black"));
-		
-		Texture logoTexture = new Texture(Gdx.files.internal("square_logo.png"));
-		Image logo = new Image(logoTexture);
-		
-		Table widgetTable = new Table(skin);
-		//widgetTable.debug();
-		widgetTable.add(testLabel).fill();
-		widgetTable.row();
-		widgetTable.add(logo).fill().expand().prefWidth(0).maxWidth(1000).height(Value.percentWidth(1));
 		
 		TextArea backgroundArea = new TextArea(null, skin);
 		backgroundArea.setDisabled(true);
-				
-		Container<Actor> slideContainer = new Container<Actor>(widgetTable);
+
 		slideContainer.fill();
 		slideContainer.pad(20, 25, 20, 25);
-
+		slideContainer.setActor(currentSlide);
+		
 		Stack slideAreaStack = new Stack(backgroundArea, slideContainer);
 		
 		ScrollPane scrollPane = new ScrollPane(slideAreaStack, skin);
@@ -116,7 +96,7 @@ public class GenericSlideStage extends Stage {
 			public void changed(ChangeEvent event, Actor actor) {
 				int currentSlideIndex = slides.indexOf(currentSlide);
 				if (slides.size() > currentSlideIndex + 1) {
-					Widget newSlide = slides.get(currentSlideIndex + 1);
+					Table newSlide = slides.get(currentSlideIndex + 1);
 					slideContainer.setActor(newSlide);
 					currentSlide = newSlide;
 					if (slides.size() == currentSlideIndex + 2) {
@@ -136,7 +116,7 @@ public class GenericSlideStage extends Stage {
 			public void changed(ChangeEvent event, Actor actor) {
 				int currentSlideIndex = slides.indexOf(currentSlide);
 				if (currentSlideIndex > 0) {
-					Widget newSlide = slides.get(currentSlideIndex - 1);
+					Table newSlide = slides.get(currentSlideIndex - 1);
 					slideContainer.setActor(newSlide);
 					currentSlide = newSlide;
 					nextButton.setText("Next");
@@ -149,12 +129,13 @@ public class GenericSlideStage extends Stage {
 			}
 		});
 	}
-
+	
 	public void reset() {
 		backButton.setTouchable(Touchable.disabled);
 		backButton.setDisabled(true);
 		backButton.setText("");
-		nextButton.setText("Next");
+		String nextButtonText = slides.size() == 1 ? "Finish" : "Next";
+		nextButton.setText(nextButtonText);
 		System.out.println(slides == null);
 		currentSlide = slides.get(0);
 		slideContainer.setActor(currentSlide);
