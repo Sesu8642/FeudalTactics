@@ -11,12 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -28,12 +30,14 @@ public class GenericSlideStage extends Stage {
 	Set<Disposable> disposables = new HashSet<Disposable>();
 	private Skin skin;
 	private OrthographicCamera camera;
+	private Table rootTable;
 	private Table currentSlide;
 	private TextButton backButton;
 	private TextButton nextButton;
-
+	private ScrollPane scrollPane;
+	private Stack slideAreaStack;
 	private Container<Table> slideContainer = new Container<Table>();
-	
+
 	public GenericSlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback,
 			OrthographicCamera camera, Skin skin) {
 		super(viewport);
@@ -62,32 +66,32 @@ public class GenericSlideStage extends Stage {
 		backButton = new TextButton("", skin);
 		backButton.setDisabled(true);
 		backButton.setTouchable(Touchable.disabled);
-		
+
 		nextButton = new TextButton("", skin);
-		
+
 		currentSlide = slides.get(0);
-		
+
 		TextArea backgroundArea = new TextArea(null, skin);
 		backgroundArea.setDisabled(true);
 
 		slideContainer.fill();
-		slideContainer.pad(20, 25, 20, 25);
+		slideContainer.pad(20, 25, 20, 20);
 		slideContainer.setActor(currentSlide);
+
+		slideAreaStack = new Stack(backgroundArea, slideContainer);
+
+		scrollPane = new ScrollPane(slideAreaStack, skin);
+		scrollPane.setFadeScrollBars(false);
+		scrollPane.setOverscroll(false, false);
 		
-		Stack slideAreaStack = new Stack(backgroundArea, slideContainer);
-		
-		ScrollPane scrollPane = new ScrollPane(slideAreaStack, skin);
-        scrollPane.setFadeScrollBars(false);
-        scrollPane.setOverscroll(false, false);
-		
-		Table rootTable = new Table();
+		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0);
 		rootTable.add(scrollPane).expand().fill().colspan(2);
 		rootTable.row();
-		rootTable.defaults().minHeight(100).pad(10);
-		rootTable.add(backButton).expandX().bottom().fillX().pad(0);
-		rootTable.add(nextButton).expandX().bottom().fillX().pad(0);
+		rootTable.defaults().minHeight(100).pad(0).expandX().bottom().fillX();
+		rootTable.add(backButton);
+		rootTable.add(nextButton);
 
 		this.addActor(rootTable);
 
@@ -105,6 +109,7 @@ public class GenericSlideStage extends Stage {
 					backButton.setTouchable(Touchable.enabled);
 					backButton.setDisabled(false);
 					backButton.setText("Back");
+					camera.update();
 				} else {
 					finishedCallback.run();
 				}
@@ -129,7 +134,7 @@ public class GenericSlideStage extends Stage {
 			}
 		});
 	}
-	
+
 	public void reset() {
 		backButton.setTouchable(Touchable.disabled);
 		backButton.setDisabled(true);
@@ -140,16 +145,34 @@ public class GenericSlideStage extends Stage {
 		currentSlide = slides.get(0);
 		slideContainer.setActor(currentSlide);
 	}
-	
-	private void setFontScale(Float fontScale) {
-		// TODO
+
+	private void setFontScaleOfUITree(Float fontScale, Actor root) {
+		if (root.getClass().isAssignableFrom(Label.class)) {
+			((Label) root).setFontScale(fontScale);
+			System.out.println("set font size!");
+		} else if (WidgetGroup.class.isAssignableFrom(root.getClass())) {
+			((WidgetGroup) root).getChildren().forEach(child -> {
+				setFontScaleOfUITree(fontScale, child);
+			});
+		} else {
+			System.out.println(root.getClass());
+		}
 	}
 
 	public void updateOnResize(int width, int height) {
-		setFontScale(height / 1000F);
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
 		camera.update();
+		rootTable.pack();
+		slides.forEach(slide -> {
+			setFontScaleOfUITree(height / 1000F, slide);
+			slide.pack();
+			slide.getChildren().forEach(child -> {
+				if (Table.class.isAssignableFrom(child.getClass())) {
+					((Table) child).pack();
+				}
+			});
+		});
 	}
 
 	@Override

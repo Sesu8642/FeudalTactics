@@ -10,7 +10,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
@@ -68,7 +67,9 @@ public class TutorialScreen implements Screen {
 		slideStage.updateOnResize(width, height);
 		viewport.update(width, height, true);
 		viewport.apply();
-		((Table) slideStage.getActors().get(0)).pack();
+		camera.viewportHeight = height;
+		camera.viewportWidth = width;
+		camera.update();
 	}
 
 	@Override

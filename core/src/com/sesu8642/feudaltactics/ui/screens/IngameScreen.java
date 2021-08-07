@@ -101,7 +101,7 @@ public class IngameScreen implements Screen, PropertyChangeListener {
 			// hand content
 			if (newGameState.getHeldObject() != null) {
 				hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
-			}else {
+			} else {
 				hudStage.updateHandContent(null);
 			}
 			// info text

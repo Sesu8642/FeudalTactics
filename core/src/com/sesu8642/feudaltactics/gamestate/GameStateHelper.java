@@ -24,10 +24,10 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 public class GameStateHelper {
 	// only class supposed to modify the game state (except the bot AI actually)
 
-	private final static float TREE_SPREAD_RATE = 0.3F;
-	private final static float TREE_SPAWN_RATE = 0.01F;
-	private final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
-	private final static float WIN_LANDMASS_PERCENTAGE = 0.8F;
+	public final static float TREE_SPREAD_RATE = 0.3F;
+	public final static float TREE_SPAWN_RATE = 0.01F;
+	public final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
+	public final static float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
 	// prevent instanciation
 	private GameStateHelper() {
