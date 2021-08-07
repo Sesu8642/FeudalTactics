@@ -28,7 +28,6 @@ import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
 import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
-import com.sesu8642.feudaltactics.ui.ResponsiveFontScaleCalculator;
 
 public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 
@@ -222,11 +221,6 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	
 	@Override
 	public void updateOnResize(int width, int height) {
-		float fontScale = ResponsiveFontScaleCalculator.calculateFontScale();
-		Label[] labels = { sizeLabel, densityLabel, difficultyLabel };
-		for (Label label : labels) {
-			label.setFontScale(fontScale);
-		}
 		// VERY IMPORTANT!!! makes everything scale correctly hours to find out
 		rootTable.pack();
 	}

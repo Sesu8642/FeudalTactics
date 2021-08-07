@@ -11,18 +11,15 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.ui.ResponsiveFontScaleCalculator;
 
 public class GenericSlideStage extends Stage {
 
@@ -147,26 +144,12 @@ public class GenericSlideStage extends Stage {
 		slideContainer.setActor(currentSlide);
 	}
 
-	private void setFontScaleOfUITree(Float fontScale, Actor root) {
-		if (root.getClass().isAssignableFrom(Label.class)) {
-			((Label) root).setFontScale(fontScale);
-			System.out.println("set font size!");
-		} else if (WidgetGroup.class.isAssignableFrom(root.getClass())) {
-			((WidgetGroup) root).getChildren().forEach(child -> {
-				setFontScaleOfUITree(fontScale, child);
-			});
-		} else {
-			System.out.println(root.getClass());
-		}
-	}
-
 	public void updateOnResize(int width, int height) {
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
 		camera.update();
 		rootTable.pack();
 		slides.forEach(slide -> {
-			setFontScaleOfUITree(ResponsiveFontScaleCalculator.calculateFontScale(), slide);
 			slide.pack();
 			slide.getChildren().forEach(child -> {
 				if (Table.class.isAssignableFrom(child.getClass())) {

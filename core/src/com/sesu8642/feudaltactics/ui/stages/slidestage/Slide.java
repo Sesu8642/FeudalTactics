@@ -23,6 +23,7 @@ public class Slide {
 		// adding the headline is a hack needed because the slide would get a width of 0 if the the label does not need to wrap (bug?)
 		Table hackTable = new Table();
 		Label headlineLabel = newNiceLabel(headline);
+		headlineLabel.setFontScale(2F);
 		hackTable.add(headlineLabel);
 		table.add(hackTable);
 		table.row();
@@ -62,6 +63,7 @@ public class Slide {
 	private Label newNiceLabel(String content) {
 		Label result = new Label(content, skin);
 		result.setColor(skin.getColor("black"));
+		result.setFontScale(1.5F);
 		return result;
 	}
 

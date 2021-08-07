@@ -24,7 +24,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
-import com.sesu8642.feudaltactics.ui.ResponsiveFontScaleCalculator;
 
 public class GenericMenuStage extends Stage implements NeedsUpdateOnResize{
 
@@ -88,17 +87,12 @@ public class GenericMenuStage extends Stage implements NeedsUpdateOnResize{
 		bottomLabel.setText(text);
 	}
 
-	private void setFontScale(Float fontScale) {
-		bottomLabel.setFontScale(fontScale);
-	}
-
 	public List<TextButton> getButtons() {
 		return buttons;
 	}
 
 	@Override
 	public void updateOnResize(int width, int height) {
-		setFontScale(ResponsiveFontScaleCalculator.calculateFontScale());
 		rootTable.pack();
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
