@@ -23,9 +23,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
+import com.sesu8642.feudaltactics.ui.ResponsiveFontScaleCalculator;
 
-public class GenericMenuStage extends Stage {
+public class GenericMenuStage extends Stage implements NeedsUpdateOnResize{
 
+	private Table rootTable;
 	private List<TextButton> buttons = new ArrayList<TextButton>();
 	private Label bottomLabel;
 	Set<Disposable> disposables = new HashSet<Disposable>();
@@ -65,7 +68,7 @@ public class GenericMenuStage extends Stage {
 		}
 		bottomLabel = new Label("", skin);
 
-		Table rootTable = new Table();
+		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0).fillX().expandY();
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
@@ -93,8 +96,10 @@ public class GenericMenuStage extends Stage {
 		return buttons;
 	}
 
+	@Override
 	public void updateOnResize(int width, int height) {
-		setFontScale(height / 1000F);
+		setFontScale(ResponsiveFontScaleCalculator.calculateFontScale());
+		rootTable.pack();
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;
 		camera.update();

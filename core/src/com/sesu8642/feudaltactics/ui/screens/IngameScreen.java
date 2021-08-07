@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
@@ -324,18 +323,13 @@ public class IngameScreen implements Screen, PropertyChangeListener {
 
 	@Override
 	public void resize(int width, int height) {
-		hudStage.setFontScale(height / 1000F);
-		menuStage.updateOnResize(width, height);
 		viewport.update(width, height, true);
 		viewport.apply();
-		((Table) parameterInputStage.getActors().get(0)).pack(); // VERY IMPORTANT!!! makes everything scale correctly
-																	// on startup and going fullscreen etc.; took me
-																	// hours to find out
-		hudStage.updateOnResize();
-		((Table) menuStage.getActors().get(0)).pack();
 		ingameCamera.viewportHeight = height;
 		ingameCamera.viewportWidth = width;
 		ingameCamera.update();
+		hudStage.updateOnResize(width, height);
+		menuStage.updateOnResize(width, height);
 	}
 
 	@Override

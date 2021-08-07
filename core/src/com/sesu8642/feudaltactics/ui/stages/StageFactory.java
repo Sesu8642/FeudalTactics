@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.MenuBackgroundCamera;
 import com.sesu8642.feudaltactics.dagger.MenuBackgroundRenderer;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.GenericSlideStage;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
 
 @Singleton
 public class StageFactory {

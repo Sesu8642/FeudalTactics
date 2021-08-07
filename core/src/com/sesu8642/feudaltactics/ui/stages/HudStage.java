@@ -22,8 +22,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.libgdx.ValueWithSize;
+import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
-public class HudStage extends Stage {
+public class HudStage extends Stage implements NeedsUpdateOnResize {
 
 	public enum ActionUIElements {
 		UNDO, END_TURN, BUY_PEASANT, BUY_CASTLE, MENU
@@ -145,7 +146,8 @@ public class HudStage extends Stage {
 		}
 	}
 	
-	public void updateOnResize() {
+	@Override
+	public void updateOnResize(int width, int height) {
 		rootTable.pack();
 		handContentTable.pack();
 	}

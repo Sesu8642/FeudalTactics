@@ -27,8 +27,10 @@ import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
+import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
+import com.sesu8642.feudaltactics.ui.ResponsiveFontScaleCalculator;
 
-public class ParameterInputStage extends Stage {
+public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 
 	public static final int NO_OF_INPUTS = 4;
 	
@@ -36,6 +38,7 @@ public class ParameterInputStage extends Stage {
 		CHANGE, REGEN, PLAY
 	}
 	
+	private Table rootTable;
 	private Label seedLabel;
 	private Label sizeLabel;
 	private Label densityLabel;
@@ -88,7 +91,7 @@ public class ParameterInputStage extends Stage {
 		randomButton.getImageCell().expand().fill();
 		TextButton playButton = new TextButton("Play", skin);
 
-		Table rootTable = new Table();
+		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().left();
 		rootTable.columnDefaults(0).pad(0, 10, 0, 10);
@@ -148,13 +151,6 @@ public class ParameterInputStage extends Stage {
 					}
 				});
 			}
-		}
-	}
-
-	public void setFontScale(Float fontScale) {
-		Label[] labels = { sizeLabel, densityLabel, difficultyLabel };
-		for (Label label : labels) {
-			label.setFontScale(fontScale);
 		}
 	}
 
@@ -222,6 +218,17 @@ public class ParameterInputStage extends Stage {
 		default:
 			return BotAI.Intelligence.MEDIUM;
 		}
+	}
+	
+	@Override
+	public void updateOnResize(int width, int height) {
+		float fontScale = ResponsiveFontScaleCalculator.calculateFontScale();
+		Label[] labels = { sizeLabel, densityLabel, difficultyLabel };
+		for (Label label : labels) {
+			label.setFontScale(fontScale);
+		}
+		// VERY IMPORTANT!!! makes everything scale correctly hours to find out
+		rootTable.pack();
 	}
 
 }

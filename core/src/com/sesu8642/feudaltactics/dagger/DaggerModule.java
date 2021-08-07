@@ -14,8 +14,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.LocalInputHandler;
-import com.sesu8642.feudaltactics.ui.stages.Slide;
-import com.sesu8642.feudaltactics.ui.stages.TutorialSlideFactory;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.TutorialSlideFactory;
 
 import dagger.Module;
 import dagger.Provides;

@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.ui.stages;
+package com.sesu8642.feudaltactics.ui.stages.slidestage;
 
 import java.util.ArrayList;
 import java.util.Arrays;

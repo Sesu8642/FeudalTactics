@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -20,7 +19,7 @@ import com.sesu8642.feudaltactics.ui.stages.StageFactory;
 public class SplashScreen implements Screen {
 	
 	private OrthographicCamera camera;
-	private GenericMenuStage stage;
+	private GenericMenuStage menuStage;
 	private Viewport viewport;
 	private long startTime;
 	
@@ -37,15 +36,16 @@ public class SplashScreen implements Screen {
 
 	private void initUI() {
 		viewport = new ScreenViewport(camera);
-		stage = stageFactory.createMenuStage(viewport, new LinkedHashMap<String, Runnable>());
-		stage.setBottomLabelText("By Sesu8642");
+		// using a menu stage without buttons here
+		menuStage = stageFactory.createMenuStage(viewport, new LinkedHashMap<String, Runnable>());
+		menuStage.setBottomLabelText("By Sesu8642");
 	}
 
 	@Override
 	public void render(float delta) {
 		viewport.apply();
-		stage.draw();
-		stage.act();
+		menuStage.draw();
+		menuStage.act();
 		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
 			FeudalTactics.game.setScreen(mainMenuScreen);
 			this.hide();
@@ -56,8 +56,7 @@ public class SplashScreen implements Screen {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		viewport.apply();
-		((Table) stage.getActors().get(0)).pack();
-		stage.updateOnResize(width, height);
+		menuStage.updateOnResize(width, height);
 	}
 
 	@Override
@@ -81,7 +80,7 @@ public class SplashScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		stage.dispose();
+		menuStage.dispose();
 	}
 
 }

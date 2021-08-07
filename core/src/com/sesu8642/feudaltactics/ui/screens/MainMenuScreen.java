@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
@@ -68,10 +67,9 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		menuStage.updateOnResize(width, height);
 		viewport.update(width, height, true);
 		viewport.apply();
-		((Table) menuStage.getActors().get(0)).pack();
+		menuStage.updateOnResize(width, height);
 	}
 
 	@Override

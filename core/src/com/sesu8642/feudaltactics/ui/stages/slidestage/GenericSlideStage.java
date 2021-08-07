@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.ui.stages;
+package com.sesu8642.feudaltactics.ui.stages.slidestage;
 
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sesu8642.feudaltactics.ui.ResponsiveFontScaleCalculator;
 
 public class GenericSlideStage extends Stage {
 
@@ -165,7 +166,7 @@ public class GenericSlideStage extends Stage {
 		camera.update();
 		rootTable.pack();
 		slides.forEach(slide -> {
-			setFontScaleOfUITree(height / 1000F, slide);
+			setFontScaleOfUITree(ResponsiveFontScaleCalculator.calculateFontScale(), slide);
 			slide.pack();
 			slide.getChildren().forEach(child -> {
 				if (Table.class.isAssignableFrom(child.getClass())) {
