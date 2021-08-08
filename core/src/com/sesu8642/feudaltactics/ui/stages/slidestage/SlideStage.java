@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-public class GenericSlideStage extends Stage {
+public class SlideStage extends Stage {
 
 	private List<Table> slides;
 
@@ -36,7 +36,7 @@ public class GenericSlideStage extends Stage {
 	private Stack slideAreaStack;
 	private Container<Table> slideContainer = new Container<Table>();
 
-	public GenericSlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback,
+	public SlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback,
 			OrthographicCamera camera, Skin skin) {
 		super(viewport);
 		if (slides.isEmpty()) {
@@ -48,7 +48,7 @@ public class GenericSlideStage extends Stage {
 		initUI(this.slides, finishedCallback);
 	}
 
-	public GenericSlideStage(Viewport viewport, Batch batch, List<Slide> slides, Runnable finishedCallback,
+	public SlideStage(Viewport viewport, Batch batch, List<Slide> slides, Runnable finishedCallback,
 			OrthographicCamera camera, Skin skin) {
 		super(viewport, batch);
 		if (slides.isEmpty()) {

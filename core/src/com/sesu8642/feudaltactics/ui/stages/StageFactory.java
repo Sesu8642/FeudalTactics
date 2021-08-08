@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.MenuBackgroundCamera;
 import com.sesu8642.feudaltactics.dagger.MenuBackgroundRenderer;
-import com.sesu8642.feudaltactics.ui.stages.slidestage.GenericSlideStage;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.SlideStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
 
 @Singleton
@@ -55,22 +55,22 @@ public class StageFactory {
 		return new ParameterInputStage(viewport, batch, actions, textureAtlas, skin);
 	}
 
-	public GenericMenuStage createMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData) {
-		return new GenericMenuStage(viewport, buttonData, backgroundCamera, mapRenderer, skin);
+	public MenuStage createMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData) {
+		return new MenuStage(viewport, buttonData, backgroundCamera, mapRenderer, skin);
 	}
 
-	public GenericMenuStage createMenuStage(Viewport viewport, Batch batch,
+	public MenuStage createMenuStage(Viewport viewport, Batch batch,
 			LinkedHashMap<String, Runnable> buttonData) {
-		return new GenericMenuStage(viewport, batch, buttonData, backgroundCamera, mapRenderer, skin);
+		return new MenuStage(viewport, batch, buttonData, backgroundCamera, mapRenderer, skin);
 	}
 
-	public GenericSlideStage createSlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback) {
-		return new GenericSlideStage(viewport, slides, finishedCallback, backgroundCamera, skin);
+	public SlideStage createSlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback) {
+		return new SlideStage(viewport, slides, finishedCallback, backgroundCamera, skin);
 	}
 
-	public GenericSlideStage createSlideStage(Viewport viewport, Batch batch, List<Slide> slides,
+	public SlideStage createSlideStage(Viewport viewport, Batch batch, List<Slide> slides,
 			Runnable finishedCallback) {
-		return new GenericSlideStage(viewport, batch, slides, finishedCallback, backgroundCamera, skin);
+		return new SlideStage(viewport, batch, slides, finishedCallback, backgroundCamera, skin);
 	}
 
 }

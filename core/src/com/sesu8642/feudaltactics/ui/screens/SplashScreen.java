@@ -12,14 +12,14 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.dagger.MenuCamera;
-import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.StageFactory;
 
 @Singleton
 public class SplashScreen implements Screen {
 	
 	private OrthographicCamera camera;
-	private GenericMenuStage menuStage;
+	private MenuStage menuStage;
 	private Viewport viewport;
 	private long startTime;
 	

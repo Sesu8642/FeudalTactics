@@ -16,7 +16,7 @@ import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.dagger.MenuCamera;
 import com.sesu8642.feudaltactics.dagger.TutorialSlides;
 import com.sesu8642.feudaltactics.ui.stages.StageFactory;
-import com.sesu8642.feudaltactics.ui.stages.slidestage.GenericSlideStage;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.SlideStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
 
 @Singleton
@@ -24,7 +24,7 @@ public class TutorialScreen implements Screen {
 
 	private OrthographicCamera camera;
 	private Viewport viewport;
-	private GenericSlideStage slideStage;
+	private SlideStage slideStage;
 	private List<Slide> tutorialSlides;
 	private MainMenuScreen menuScreen;
 	private StageFactory stageFactory;

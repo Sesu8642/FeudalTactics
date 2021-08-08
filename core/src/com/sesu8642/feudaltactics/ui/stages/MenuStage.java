@@ -25,7 +25,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
-public class GenericMenuStage extends Stage implements NeedsUpdateOnResize{
+public class MenuStage extends Stage implements NeedsUpdateOnResize{
 
 	private Table rootTable;
 	private List<TextButton> buttons = new ArrayList<TextButton>();
@@ -35,7 +35,7 @@ public class GenericMenuStage extends Stage implements NeedsUpdateOnResize{
 	private Skin skin;
 	private OrthographicCamera camera;
 
-	public GenericMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
+	public MenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
 		super(viewport);
 		this.camera = camera;
 		this.mapRenderer = mapRenderer;
@@ -43,7 +43,7 @@ public class GenericMenuStage extends Stage implements NeedsUpdateOnResize{
 		initUI(buttonData);
 	}
 	
-	public GenericMenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
+	public MenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
 		super(viewport, batch);
 		this.camera = camera;
 		this.mapRenderer = mapRenderer;

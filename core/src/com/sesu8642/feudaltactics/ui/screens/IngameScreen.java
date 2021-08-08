@@ -37,7 +37,7 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.ui.DialogFactory;
-import com.sesu8642.feudaltactics.ui.stages.GenericMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.HudStage;
 import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
 import com.sesu8642.feudaltactics.ui.stages.HudStage.ActionUIElements;
@@ -56,7 +56,7 @@ public class IngameScreen implements Screen, PropertyChangeListener {
 
 	private ParameterInputStage parameterInputStage;
 	private HudStage hudStage;
-	private GenericMenuStage menuStage;
+	private MenuStage menuStage;
 	private Stage activeStage;
 	private Viewport viewport;
 
@@ -363,7 +363,7 @@ public class IngameScreen implements Screen, PropertyChangeListener {
 		return hudStage;
 	}
 
-	public GenericMenuStage getMenuStage() {
+	public MenuStage getMenuStage() {
 		return menuStage;
 	}
 
