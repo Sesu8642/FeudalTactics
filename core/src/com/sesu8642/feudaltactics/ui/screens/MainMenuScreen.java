@@ -26,6 +26,7 @@ public class MainMenuScreen implements Screen {
 	// using providers here to avoid depdendency cycle problems
 	private Provider<IngameScreen> ingameScreenProvider;
 	// editor is unfinished and hidden
+	@SuppressWarnings("unused")
 	private Provider<EditorScreen> editorScreenProvider;
 	private Provider<TutorialScreen> tutorialScreenProvider;
 	private StageFactory stageFactory;
