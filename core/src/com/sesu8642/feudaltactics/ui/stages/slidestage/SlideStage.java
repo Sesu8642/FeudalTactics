@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class SlideStage extends Stage {
@@ -139,7 +140,7 @@ public class SlideStage extends Stage {
 		slides.forEach(slide -> {
 			slide.pack();
 			slide.getChildren().forEach(child -> {
-				if (Table.class.isAssignableFrom(child.getClass())) {
+				if (ClassReflection.isAssignableFrom(Table.class, child.getClass())) {
 					((Table) child).pack();
 				}
 			});

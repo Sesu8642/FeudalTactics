@@ -101,7 +101,7 @@ public class BotAI {
 
 	private void pickUpAllAvailableUnits(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
 		for (HexTile tile : kingdom.getTiles()) {
-			if (tile.getContent() != null && ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)
+			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
 					&& ((Unit) tile.getContent()).isCanAct()) {
 				switch (((Unit) tile.getContent()).getStrength()) {
 				case 1:
@@ -125,7 +125,7 @@ public class BotAI {
 	private void chopTrees(GameState gameState, PickedUpUnits pickedUpUnits, float chance) {
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 				if (gameState.getRandom().nextFloat() <= chance) {
 					if (pickedUpUnits.availablePeasants >= 1
 							|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
@@ -473,7 +473,7 @@ public class BotAI {
 			}
 		} else {
 			if (tile.getContent() != null) {
-				if (!ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)) {
+				if (!ClassReflection.isAssignableFrom(Capital.class, tile.getContent().getClass())) {
 					// destroying units or castles is better than conquering empty tiles
 					score = tile.getContent().getStrength() + 2;
 				} else {

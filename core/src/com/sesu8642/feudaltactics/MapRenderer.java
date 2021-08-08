@@ -135,11 +135,11 @@ public class MapRenderer {
 			if (tileContent != null) {
 				boolean animate = false;
 				if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
-					if (ClassReflection.isAssignableFrom(tileContent.getClass(), Unit.class)
+					if (ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
 							&& ((Unit) tileContent).isCanAct()) {
 						// animate units that can act
 						animate = true;
-					} else if (ClassReflection.isAssignableFrom(tileContent.getClass(), Capital.class)
+					} else if (ClassReflection.isAssignableFrom(Capital.class, tileContent.getClass())
 							&& gameState.getActivePlayer() == tile.getKingdom().getPlayer()
 							&& tile.getKingdom().getSavings() > Unit.COST) {
 						// animate capitals if they can buy something

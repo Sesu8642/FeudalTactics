@@ -33,7 +33,7 @@ public class GameStateHelper {
 	private GameStateHelper() {
 		throw new AssertionError();
 	}
-	
+
 	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
 		if (mapSeed == null) {
@@ -300,7 +300,7 @@ public class GameStateHelper {
 
 	public static void placeOwn(GameState gameState, HexTile tile) {
 		// units can't act after removing trees
-		if (tile.getContent() != null && ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+		if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 			((Unit) gameState.getHeldObject()).setCanAct(false);
 		}
 		placeObject(gameState, tile);
@@ -345,7 +345,7 @@ public class GameStateHelper {
 		if (tile.getKingdom() != null) {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Capital.class)
+					&& ClassReflection.isAssignableFrom(Capital.class, tile.getContent().getClass())
 					&& tile.getKingdom().getTiles().size() > 2) {
 				tile.getKingdom().setSavings(0);
 				createCapital(gameState, tile);
@@ -441,7 +441,7 @@ public class GameStateHelper {
 		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
 			slaveKingdomTile.setKingdom(masterKingdom);
 			MapObject content = slaveKingdomTile.getContent();
-			if (content != null && ClassReflection.isAssignableFrom(content.getClass(), Capital.class)) {
+			if (content != null && ClassReflection.isAssignableFrom(Capital.class, content.getClass())) {
 				// delete slave capital
 				slaveKingdomTile.setContent(null);
 			}
@@ -458,7 +458,7 @@ public class GameStateHelper {
 		HexTile capitalTile = null;
 		for (HexTile kingdomTile : tiles) {
 			if (kingdomTile.getContent() != null
-					&& ClassReflection.isAssignableFrom(kingdomTile.getContent().getClass(), Capital.class)) {
+					&& ClassReflection.isAssignableFrom(Capital.class, kingdomTile.getContent().getClass())) {
 				capitalTile = kingdomTile;
 				break;
 			}
@@ -499,7 +499,7 @@ public class GameStateHelper {
 			// delete capital, units and kingdom if too small
 			for (HexTile tile : newKingdom.getTiles()) {
 				if (tile.getContent() != null
-						&& !ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+						&& !ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 					tile.setContent(null);
 				}
 			}
@@ -556,7 +556,7 @@ public class GameStateHelper {
 					// destroy all units if they cannot get paid
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
-								&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+								&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 							tile.setContent(null);
 						}
 					}
@@ -565,7 +565,7 @@ public class GameStateHelper {
 					// reset canAct and hasActed state
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
-								&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+								&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 							((Unit) tile.getContent()).setCanAct(true);
 						}
 					}
@@ -581,7 +581,7 @@ public class GameStateHelper {
 		HashSet<HexTile> newTreeTiles = new HashSet<HexTile>();
 		for (HexTile tile : gameState.getMap().getTiles().values()) {
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 				if (gameState.getRandom().nextFloat() <= TREE_SPREAD_RATE) {
 					ArrayList<HexTile> candidates = new ArrayList<HexTile>();
 					for (HexTile neighbor : gameState.getMap().getNeighborTiles(tile)) {
@@ -648,7 +648,7 @@ public class GameStateHelper {
 				boolean hasTree = false;
 				for (HexTile tile : kingdom.getTiles()) {
 					if (tile.getContent() != null
-							&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+							&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 						if (tile.getContent().getStrength() > 1) {
 							result = true;
 							break kingdomLoop;
@@ -656,7 +656,7 @@ public class GameStateHelper {
 							hasPeasant = true;
 						}
 					} else if (tile.getContent() != null
-							&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+							&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 						hasTree = true;
 					}
 				}

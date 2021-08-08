@@ -27,7 +27,7 @@ public class Kingdom {
 		int income = tiles.size();
 		for (HexTile tile : tiles) {
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 				income -= 1;
 			}
 		}
@@ -38,7 +38,7 @@ public class Kingdom {
 		int salaries = 0;
 		for (HexTile tile : tiles) {
 			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+					&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 				salaries += ((Unit) tile.getContent()).getUnitType().salary();
 			}
 		}

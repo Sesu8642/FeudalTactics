@@ -48,7 +48,7 @@ public class InputValidationHelper {
 		if (tile.getPlayer() != player) {
 			return false;
 		}
-		if (!ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 			return false;
 		}
 		if (!((Unit) tile.getContent()).isCanAct()) {
@@ -73,12 +73,12 @@ public class InputValidationHelper {
 		if (gameState.getActiveKingdom() != tile.getKingdom()) {
 			return false;
 		}
-		if (tile.getContent() != null && !ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+		if (tile.getContent() != null && !ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 			// not empty or a tree
 			return false;
 		}
-		if (tile.getContent() != null && ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)
-				&& !ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
+		if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+				&& !ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
 			// non-unit on tree
 			return false;
 		}
@@ -104,10 +104,10 @@ public class InputValidationHelper {
 		if (gameState.getActiveKingdom() != tile.getKingdom()) {
 			return false;
 		}
-		if (!ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
 			return false;
 		}
-		if (!ClassReflection.isAssignableFrom(tile.getContent().getClass(), Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 			return false;
 		}
 		if (((Unit) gameState.getHeldObject()).getUnitType() != UnitTypes.PEASANT
@@ -133,7 +133,7 @@ public class InputValidationHelper {
 		if (tile.getPlayer() == player) {
 			return false;
 		}
-		if (!ClassReflection.isAssignableFrom(gameState.getHeldObject().getClass(), Unit.class)) {
+		if (!ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
 			// not a unit
 			return false;
 		}

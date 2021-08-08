@@ -101,7 +101,7 @@ public class LocalInputHandler implements AcceptCommonInput {
 			// place object
 			if (tile.getPlayer() != null && tile.getPlayer() == player) {
 				if (tile.getContent() == null
-						|| ClassReflection.isAssignableFrom(tile.getContent().getClass(), Tree.class)) {
+						|| ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 					return TapAction.PLACE_OWN;
 				} else {
 					return TapAction.COMBINE_UNITS;
