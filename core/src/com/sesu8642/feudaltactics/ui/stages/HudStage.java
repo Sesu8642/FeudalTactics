@@ -49,6 +49,7 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 	}
 
 	private void initUI(Map<ActionUIElements, Runnable> actions) {
+		// TODO: put the buttons in a custom skin
 		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
 				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
 		undoButton.getImageCell().expand().fill();

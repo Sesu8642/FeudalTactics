@@ -15,6 +15,7 @@ import com.sesu8642.feudaltactics.ui.screens.SplashScreen;
 public class FeudalTactics extends Game {
 
 	static public FeudalTactics game;
+	// TODO: put those in a custom skin
 	static public final Color buttonIconColor = new Color(1, 0.7F, 0.15F, 1);
 	static public final Color disabledButtonIconColor = new Color(0.75F, 0.75F, 0.75F, 1);
 	static public final Color backgroundColor = new Color(0, 0.2f, 0.8f, 1);
