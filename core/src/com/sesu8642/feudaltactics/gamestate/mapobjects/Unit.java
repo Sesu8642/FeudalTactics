@@ -1,6 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-public class Unit extends MapObject {
+public class Unit implements MapObject {
 
 	static public final int COST = 10;
 

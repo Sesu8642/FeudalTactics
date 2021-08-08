@@ -1,6 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-public class Castle extends MapObject {
+public class Castle implements MapObject {
 
 	static public final int COST = 15;
 	static public final String SPRITE_NAME = "castle";
@@ -19,6 +19,11 @@ public class Castle extends MapObject {
 	@Override
 	public Castle getCopy() {
 		return new Castle();
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getName();
 	}
 
 }

@@ -1,15 +1,11 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-abstract public class MapObject {
+ public interface MapObject {
 
-	public abstract String getSpriteName();
+	String getSpriteName();
 
-	public abstract int getStrength();
+	int getStrength();
 
-	public abstract MapObject getCopy();
+	MapObject getCopy();
 
-	@Override
-	public String toString() {
-		return getClass().getName();
-	}
 }

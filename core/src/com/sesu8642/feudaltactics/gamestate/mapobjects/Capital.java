@@ -1,6 +1,6 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
-public class Capital extends MapObject {
+public class Capital implements MapObject {
 
 	static public final String SPRITE_NAME = "capital";
 	static public final int STRENGTH = 1;
@@ -18,6 +18,11 @@ public class Capital extends MapObject {
 	@Override
 	public Capital getCopy() {
 		return new Capital();
+	}
+
+	@Override
+	public String toString() {
+		return getClass().getName();
 	}
 
 }
