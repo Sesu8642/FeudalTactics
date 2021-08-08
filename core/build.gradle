@@ -1,8 +1,16 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 apply plugin: "java"
 
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.resources.srcDirs = [ "resources/" ]
 
 eclipse.project.name = appName + "-core"
+
+processResources {
+	from "$sourceSets.main.resources.srcDirs"
+	filter(ReplaceTokens, tokens: [version: project.version])
+}

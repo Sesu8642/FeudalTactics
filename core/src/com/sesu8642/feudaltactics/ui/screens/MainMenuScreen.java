@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.dagger.MenuCamera;
+import com.sesu8642.feudaltactics.dagger.VersionProperty;
 import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.StageFactory;
 
@@ -30,15 +31,17 @@ public class MainMenuScreen implements Screen {
 	private Provider<EditorScreen> editorScreenProvider;
 	private Provider<TutorialScreen> tutorialScreenProvider;
 	private StageFactory stageFactory;
+	private String gameVersion;
 
 	@Inject
 	public MainMenuScreen(@MenuCamera OrthographicCamera camera, Provider<IngameScreen> ingameScreenProvider, Provider<EditorScreen> editorScreenProvider, Provider<TutorialScreen> tutorialScreenProvider,
-			StageFactory stageFactory) {
+			StageFactory stageFactory, @VersionProperty String gameVersion) {
 		this.camera = camera;
 		this.ingameScreenProvider = ingameScreenProvider;
 		this.editorScreenProvider = editorScreenProvider;
 		this.tutorialScreenProvider = tutorialScreenProvider;
 		this.stageFactory = stageFactory;
+		this.gameVersion = gameVersion;
 		initUI();
 	}
 
@@ -51,7 +54,7 @@ public class MainMenuScreen implements Screen {
 		buttonData.put("About", () -> {
 		});
 		menuStage = stageFactory.createMenuStage(viewport, buttonData);
-		menuStage.setBottomLabelText("Version 1.0");
+		menuStage.setBottomLabelText(String.format("Version %s", gameVersion));
 	}
 
 	@Override

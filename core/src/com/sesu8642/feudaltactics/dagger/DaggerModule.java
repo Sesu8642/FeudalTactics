@@ -1,6 +1,9 @@
 package com.sesu8642.feudaltactics.dagger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 
 import javax.inject.Singleton;
 
@@ -23,6 +26,27 @@ import dagger.Provides;
 @Module
 class DaggerModule {
 
+	@Provides
+	@Singleton
+	static Properties provideGameConfig() {
+		Properties config = new Properties();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();  
+		try (InputStream inputStream = classLoader.getResourceAsStream("gameconfig.properties"))
+		{
+			config.load(inputStream);
+		} catch (IOException e) {
+			throw new RuntimeException("Config cannot be read!");
+		}
+		return config;
+	}
+	
+	@Provides
+	@Singleton
+	@VersionProperty
+	static String provideVersionProperty(Properties config) {
+		return config.getProperty("version");
+	}
+	
 	@Provides
 	@Singleton
 	static TextureAtlas provideTextureAtlas() {
