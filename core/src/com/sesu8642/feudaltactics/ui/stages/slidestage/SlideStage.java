@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -36,21 +35,9 @@ public class SlideStage extends Stage {
 	private Stack slideAreaStack;
 	private Container<Table> slideContainer = new Container<Table>();
 
-	public SlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback,
-			OrthographicCamera camera, Skin skin) {
+	public SlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback, OrthographicCamera camera,
+			Skin skin) {
 		super(viewport);
-		if (slides.isEmpty()) {
-			throw new IllegalArgumentException("at least one slide is required");
-		}
-		this.camera = camera;
-		this.skin = skin;
-		this.slides = slides.stream().map(s -> s.getTable()).collect(Collectors.toList());
-		initUI(this.slides, finishedCallback);
-	}
-
-	public SlideStage(Viewport viewport, Batch batch, List<Slide> slides, Runnable finishedCallback,
-			OrthographicCamera camera, Skin skin) {
-		super(viewport, batch);
 		if (slides.isEmpty()) {
 			throw new IllegalArgumentException("at least one slide is required");
 		}
@@ -81,7 +68,7 @@ public class SlideStage extends Stage {
 		scrollPane = new ScrollPane(slideAreaStack, skin);
 		scrollPane.setFadeScrollBars(false);
 		scrollPane.setOverscroll(false, false);
-		
+
 		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0);

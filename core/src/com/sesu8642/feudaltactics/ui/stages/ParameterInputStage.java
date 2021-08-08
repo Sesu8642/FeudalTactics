@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -32,11 +31,11 @@ import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 
 	public static final int NO_OF_INPUTS = 4;
-	
+
 	public enum ActionUIElements {
 		CHANGE, REGEN, PLAY
 	}
-	
+
 	private Table rootTable;
 	private Label seedLabel;
 	private Label sizeLabel;
@@ -50,15 +49,9 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	private Skin skin;
 	private TextureAtlas textureAtlas;
 
-	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
+	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas,
+			Skin skin) {
 		super(viewport);
-		this.textureAtlas = textureAtlas;
-		this.skin = skin;
-		initUI(actions);
-	}
-	
-	public ParameterInputStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
-		super(viewport, batch);
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUI(actions);
@@ -109,7 +102,8 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 		rootTable.row();
 		rootTable.add(seedLabel);
 		rootTable.add(seedTextField).prefWidth(Value.percentWidth(1, difficultySelect));
-		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1)).padLeft(10);
+		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
+				.padLeft(10);
 		rootTable.row();
 		rootTable.add(playButton).colspan(4).fillX();
 		this.addActor(rootTable);
@@ -159,7 +153,7 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 		}
 		regenAction.run();
 	}
-	
+
 	public Long getSeedParam() {
 		try {
 			return Long.valueOf(seedTextField.getText());
@@ -171,7 +165,7 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	public MapSizes getMapSize() {
 		return MapSizes.values()[sizeSelect.getSelectedIndex()];
 	}
-	
+
 	public int getMapSizeParam() {
 		switch (sizeSelect.getSelectedIndex()) {
 		case 0:
@@ -188,7 +182,7 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	public Densities getMapDensity() {
 		return Densities.values()[densitySelect.getSelectedIndex()];
 	}
-	
+
 	public float getMapDensityParam() {
 		switch (densitySelect.getSelectedIndex()) {
 		case 0:
@@ -205,7 +199,7 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	public Intelligence getBotIntelligence() {
 		return Intelligence.values()[difficultySelect.getSelectedIndex()];
 	}
-	
+
 	public BotAI.Intelligence getBotIntelligenceParam() {
 		switch (difficultySelect.getSelectedIndex()) {
 		case 0:
@@ -218,7 +212,7 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 			return BotAI.Intelligence.MEDIUM;
 		}
 	}
-	
+
 	@Override
 	public void updateOnResize(int width, int height) {
 		// VERY IMPORTANT!!! makes everything scale correctly hours to find out

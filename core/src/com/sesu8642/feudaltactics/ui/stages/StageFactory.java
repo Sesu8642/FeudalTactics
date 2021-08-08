@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -40,37 +39,17 @@ public class StageFactory {
 		return new HudStage(viewport, actions, textureAtlas, skin);
 	}
 
-	public HudStage createHudStage(Viewport viewport, Batch batch,
-			Map<com.sesu8642.feudaltactics.ui.stages.HudStage.ActionUIElements, Runnable> actions) {
-		return new HudStage(viewport, batch, actions, textureAtlas, skin);
-	}
-
 	public ParameterInputStage createParameterInputStage(Viewport viewport,
 			Map<com.sesu8642.feudaltactics.ui.stages.ParameterInputStage.ActionUIElements, Runnable> actions) {
 		return new ParameterInputStage(viewport, actions, textureAtlas, skin);
-	}
-
-	public ParameterInputStage createParameterInputStage(Viewport viewport, Batch batch,
-			Map<com.sesu8642.feudaltactics.ui.stages.ParameterInputStage.ActionUIElements, Runnable> actions) {
-		return new ParameterInputStage(viewport, batch, actions, textureAtlas, skin);
 	}
 
 	public MenuStage createMenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData) {
 		return new MenuStage(viewport, buttonData, backgroundCamera, mapRenderer, skin);
 	}
 
-	public MenuStage createMenuStage(Viewport viewport, Batch batch,
-			LinkedHashMap<String, Runnable> buttonData) {
-		return new MenuStage(viewport, batch, buttonData, backgroundCamera, mapRenderer, skin);
-	}
-
 	public SlideStage createSlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback) {
 		return new SlideStage(viewport, slides, finishedCallback, backgroundCamera, skin);
-	}
-
-	public SlideStage createSlideStage(Viewport viewport, Batch batch, List<Slide> slides,
-			Runnable finishedCallback) {
-		return new SlideStage(viewport, batch, slides, finishedCallback, backgroundCamera, skin);
 	}
 
 }

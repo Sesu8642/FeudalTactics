@@ -3,7 +3,6 @@ package com.sesu8642.feudaltactics.ui.stages;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -44,13 +43,6 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 
 	public HudStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
-		this.textureAtlas = textureAtlas;
-		this.skin = skin;
-		initUI(actions);
-	}
-
-	public HudStage(Viewport viewport, Batch batch, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
-		super(viewport, batch);
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUI(actions);
@@ -145,7 +137,7 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 			});
 		}
 	}
-	
+
 	@Override
 	public void updateOnResize(int width, int height) {
 		rootTable.pack();

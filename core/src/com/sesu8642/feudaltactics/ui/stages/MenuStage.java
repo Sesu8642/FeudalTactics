@@ -10,7 +10,6 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -25,7 +24,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
-public class MenuStage extends Stage implements NeedsUpdateOnResize{
+public class MenuStage extends Stage implements NeedsUpdateOnResize {
 
 	private Table rootTable;
 	private List<TextButton> buttons = new ArrayList<TextButton>();
@@ -35,16 +34,9 @@ public class MenuStage extends Stage implements NeedsUpdateOnResize{
 	private Skin skin;
 	private OrthographicCamera camera;
 
-	public MenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
+	public MenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera,
+			MapRenderer mapRenderer, Skin skin) {
 		super(viewport);
-		this.camera = camera;
-		this.mapRenderer = mapRenderer;
-		this.skin = skin;
-		initUI(buttonData);
-	}
-	
-	public MenuStage(Viewport viewport, Batch batch, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
-		super(viewport, batch);
 		this.camera = camera;
 		this.mapRenderer = mapRenderer;
 		this.skin = skin;
