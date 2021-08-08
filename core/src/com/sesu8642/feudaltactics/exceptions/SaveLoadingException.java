@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.Exceptions;
+package com.sesu8642.feudaltactics.exceptions;
 
 public class SaveLoadingException extends RuntimeException {
 
