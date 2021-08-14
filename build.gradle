@@ -13,9 +13,11 @@ buildscript {
         classpath 'org.wisepersist:gwt-gradle-plugin:1.0.9'
         classpath 'com.android.tools.build:gradle:3.4.1'
         classpath 'com.mobidevelop.robovm:robovm-gradle-plugin:2.3.8'    
-         
+		classpath 'com.github.jk1:gradle-license-report:1.17'
     }
 }
+
+apply plugin: 'com.github.jk1.dependency-license-report'
 
 allprojects {
     apply plugin: "eclipse"
@@ -110,25 +112,6 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        
-    }
-}
-
-project(":html") {
-    apply plugin: "java-library"
-    apply plugin: "gwt"
-    apply plugin: "war"
-
-
-    dependencies {
-        implementation project(":core")
-        compile 'com.google.dagger:dagger-gwt:2.33'
-        compile 'javax.inject:javax.inject:1:source'
-        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-        api "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
-        api "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
         
     }
 }
