@@ -1,86 +1,52 @@
 package com.sesu8642.feudaltactics.ui.screens;
 
-import java.util.LinkedHashMap;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.dagger.MainMenuScreen;
 import com.sesu8642.feudaltactics.dagger.MenuCamera;
-import com.sesu8642.feudaltactics.ui.stages.MenuStage;
-import com.sesu8642.feudaltactics.ui.stages.StageFactory;
+import com.sesu8642.feudaltactics.dagger.MenuViewport;
+import com.sesu8642.feudaltactics.dagger.SplashScreenStage;
+import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
 @Singleton
-public class SplashScreen implements Screen {
-	
-	private OrthographicCamera camera;
-	private MenuStage menuStage;
-	private Viewport viewport;
+public class SplashScreen extends GameScreen {
+
 	private long startTime;
-	
-	private Screen mainMenuScreen;
-	private StageFactory stageFactory;
+	private GameScreen nextScreen;
 
 	@Inject
-	public SplashScreen(@MenuCamera OrthographicCamera camera, MainMenuScreen mainMenuScreen, StageFactory stageFactory) {
-		this.camera = camera;
-		this.mainMenuScreen = mainMenuScreen;
-		this.stageFactory = stageFactory;
-		initUI();
-	}
-
-	private void initUI() {
-		viewport = new ScreenViewport(camera);
-		// using a menu stage without buttons here
-		menuStage = stageFactory.createMenuStage(viewport, new LinkedHashMap<String, Runnable>());
-		menuStage.setBottomLabelText("By Sesu8642");
+	public SplashScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			@SplashScreenStage ResizableResettableStage stage, @MainMenuScreen GameScreen nextScreen) {
+		super(camera, viewport, stage);
+		this.nextScreen = nextScreen;
 	}
 
 	@Override
 	public void render(float delta) {
-		viewport.apply();
-		menuStage.draw();
-		menuStage.act();
+		super.render(delta);
 		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
-			FeudalTactics.game.setScreen(mainMenuScreen);
+			FeudalTactics.game.setScreen(nextScreen);
 			this.hide();
 		}
 	}
 
 	@Override
-	public void resize(int width, int height) {
-		viewport.update(width, height, true);
-		viewport.apply();
-		menuStage.updateOnResize(width, height);
-	}
-
-	@Override
 	public void show() {
 		startTime = TimeUtils.millis();
+		super.show();
 	}
 
 	@Override
 	public void hide() {
-		// TODO: causes error "buffer not allocated with newUnsafeByteBuffer or already disposed"; maybe because the call is caused by the render method
-		//dispose();
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
-	}
-
-	@Override
-	public void dispose() {
-		menuStage.dispose();
+		super.hide();
+		// TODO: causes error "buffer not allocated with newUnsafeByteBuffer or already
+		// disposed"; maybe because the call is caused by the render method
+		// dispose();
 	}
 
 }

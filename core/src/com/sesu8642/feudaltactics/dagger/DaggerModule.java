@@ -14,10 +14,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.LocalInputHandler;
+import com.sesu8642.feudaltactics.ui.screens.GameScreen;
+import com.sesu8642.feudaltactics.ui.stages.MainMenuStage;
+import com.sesu8642.feudaltactics.ui.stages.MenuStage;
+import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.SlideStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.TutorialSlideFactory;
 
 import dagger.Module;
@@ -30,23 +38,22 @@ class DaggerModule {
 	@Singleton
 	static Properties provideGameConfig() {
 		Properties config = new Properties();
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();  
-		try (InputStream inputStream = classLoader.getResourceAsStream("gameconfig.properties"))
-		{
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		try (InputStream inputStream = classLoader.getResourceAsStream("gameconfig.properties")) {
 			config.load(inputStream);
 		} catch (IOException e) {
 			throw new RuntimeException("Config cannot be read!");
 		}
 		return config;
 	}
-	
+
 	@Provides
 	@Singleton
 	@VersionProperty
 	static String provideVersionProperty(Properties config) {
 		return config.getProperty("version");
 	}
-	
+
 	@Provides
 	@Singleton
 	static TextureAtlas provideTextureAtlas() {
@@ -121,10 +128,65 @@ class DaggerModule {
 	static SpriteBatch provideSpriteBatch() {
 		return new SpriteBatch();
 	}
-	
+
 	@Provides
 	@TutorialSlides
 	static List<Slide> provideTutorialSlides(TutorialSlideFactory slideFactory) {
 		return slideFactory.createAllSlides();
+	}
+
+	@Provides
+	@Singleton
+	@MenuViewport
+	static Viewport provideMenuViewport(@MenuCamera OrthographicCamera camera) {
+		return new ScreenViewport(camera);
+	}
+
+	@Provides
+	@Singleton
+	@SplashScreenStage
+	static ResizableResettableStage provideSplashScreenStage(@MenuViewport Viewport viewport,
+			@MenuBackgroundCamera OrthographicCamera camera, @MainMenuScreen GameScreen mainMenuScreen,
+			@MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
+		// using a menu stage without buttons here
+		MenuStage menuStage = new MenuStage(viewport, camera, mapRenderer, skin);
+		menuStage.setBottomLabelText("By Sesu8642");
+		return menuStage;
+	}
+
+	@Provides
+	@Singleton
+	@TutorialSlideStage
+	static SlideStage provideTutorialSlideStage(@MenuViewport Viewport viewport,
+			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera,
+			@MainMenuScreen GameScreen mainMenuScreen, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
+		return new SlideStage(viewport, tutorialSlides, () -> {
+			FeudalTactics.game.setScreen(mainMenuScreen);
+		}, camera, skin);
+	}
+
+	@Provides
+	static MenuStage provideMenuStageWithVersion(@MenuViewport Viewport viewport,
+			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
+			@VersionProperty String gameVersion) {
+		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
+		stage.setBottomLabelText(String.format("Version %s", gameVersion));
+		return stage;
+	}
+	
+	@Provides
+	@Singleton
+	@TutorialScreen
+	static GameScreen provideTutorialScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			@TutorialSlideStage SlideStage slideStage) {
+		return new GameScreen(camera, viewport, slideStage);
+	}
+	
+	@Provides
+	@Singleton
+	@MainMenuScreen
+	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			MainMenuStage menuStage) {
+		return new GameScreen(camera, viewport, menuStage);
 	}
 }

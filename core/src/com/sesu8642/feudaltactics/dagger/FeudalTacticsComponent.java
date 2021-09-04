@@ -7,11 +7,11 @@ import com.sesu8642.feudaltactics.ui.screens.SplashScreen;
 
 import dagger.Component;
 
-@Component(modules = DaggerModule.class)
+@Component(modules = { DaggerModule.class })
 @Singleton
 public interface FeudalTacticsComponent {
-	
+
 	IngameScreen getIngameScreen();
-	
+
 	SplashScreen getSplashScreen();
 }

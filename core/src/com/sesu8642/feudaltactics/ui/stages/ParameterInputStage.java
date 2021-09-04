@@ -1,13 +1,13 @@
 package com.sesu8642.feudaltactics.ui.stages;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -22,17 +22,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.BotAI;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.dagger.MenuViewport;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
-import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
-public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
+public class ParameterInputStage extends ResizableResettableStage {
 
+	// for map centering calculation
 	public static final int NO_OF_INPUTS = 4;
 
-	public enum ActionUIElements {
+	public enum EventTypes {
 		CHANGE, REGEN, PLAY
 	}
 
@@ -44,20 +45,22 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	private SelectBox<String> sizeSelect;
 	private SelectBox<String> densitySelect;
 	private SelectBox<String> difficultySelect;
+	private ImageButton randomButton;
+	private TextButton playButton;
 	private TextField seedTextField;
-	private Runnable regenAction;
+	private Collection<Runnable> regenListeners = new ArrayList<Runnable>();
 	private Skin skin;
 	private TextureAtlas textureAtlas;
 
-	public ParameterInputStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas,
-			Skin skin) {
+	@Inject
+	public ParameterInputStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
-		initUI(actions);
+		initUI();
 	}
 
-	private void initUI(Map<ActionUIElements, Runnable> actions) {
+	private void initUI() {
 		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
 		difficultyLabel = new Label("CPU\nDifficulty", skin);
 		difficultySelect = new SelectBox<String>(skin);
@@ -78,10 +81,10 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
-		ImageButton randomButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("die")),
+		randomButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("die")),
 				new SpriteDrawable(textureAtlas.createSprite("die_pressed")));
 		randomButton.getImageCell().expand().fill();
-		TextButton playButton = new TextButton("Play", skin);
+		playButton = new TextButton("Play", skin);
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
@@ -108,42 +111,42 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 		rootTable.add(playButton).colspan(4).fillX();
 		this.addActor(rootTable);
 
-		// add actions
 		randomButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				seedTextField.setText(String.valueOf(System.currentTimeMillis()));
 			}
 		});
-		for (Entry<ActionUIElements, Runnable> action : actions.entrySet()) {
-			Collection<Actor> uIElements = new HashSet<Actor>();
-			switch (action.getKey()) {
-			case CHANGE:
-				uIElements.add(difficultySelect);
-				uIElements.add(sizeSelect);
-				uIElements.add(densitySelect);
-				break;
-			case REGEN:
-				regenAction = action.getValue();
-				uIElements.add(seedTextField);
-				uIElements.add(randomButton);
-				uIElements.add(sizeSelect);
-				uIElements.add(densitySelect);
-				break;
-			case PLAY:
-				uIElements.add(playButton);
-				break;
-			default:
-				break;
-			}
-			for (Actor uIElement : uIElements) {
-				uIElement.addListener(new ChangeListener() {
-					@Override
-					public void changed(ChangeEvent event, Actor actor) {
-						action.getValue().run();
-					}
-				});
-			}
+	}
+
+	public void registerEventListener(EventTypes type, Runnable listener) {
+		Collection<Actor> uIElements = new HashSet<Actor>();
+		switch (type) {
+		case CHANGE:
+			uIElements.add(difficultySelect);
+			uIElements.add(sizeSelect);
+			uIElements.add(densitySelect);
+			break;
+		case REGEN:
+			regenListeners.add(listener);
+			uIElements.add(seedTextField);
+			uIElements.add(randomButton);
+			uIElements.add(sizeSelect);
+			uIElements.add(densitySelect);
+			break;
+		case PLAY:
+			uIElements.add(playButton);
+			break;
+		default:
+			break;
+		}
+		for (Actor uIElement : uIElements) {
+			uIElement.addListener(new ChangeListener() {
+				@Override
+				public void changed(ChangeEvent event, Actor actor) {
+					listener.run();
+				}
+			});
 		}
 	}
 
@@ -151,7 +154,9 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 		if (seed != null) {
 			seedTextField.setText(seed.toString());
 		}
-		regenAction.run();
+		regenListeners.forEach((Runnable action) -> {
+			action.run();
+		});
 	}
 
 	public Long getSeedParam() {
@@ -217,6 +222,10 @@ public class ParameterInputStage extends Stage implements NeedsUpdateOnResize {
 	public void updateOnResize(int width, int height) {
 		// VERY IMPORTANT!!! makes everything scale correctly hours to find out
 		rootTable.pack();
+	}
+
+	@Override
+	public void reset() {
 	}
 
 }

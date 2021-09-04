@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -20,8 +19,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
-public class SlideStage extends Stage {
+public class SlideStage extends ResizableResettableStage {
 
 	private List<Table> slides;
 

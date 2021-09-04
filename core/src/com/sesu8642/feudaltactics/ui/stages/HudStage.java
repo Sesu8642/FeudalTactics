@@ -1,12 +1,10 @@
 package com.sesu8642.feudaltactics.ui.stages;
 
-import java.util.Map;
-import java.util.Map.Entry;
+import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -20,12 +18,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
+import com.sesu8642.feudaltactics.dagger.MenuViewport;
 import com.sesu8642.feudaltactics.libgdx.ValueWithSize;
-import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
-public class HudStage extends Stage implements NeedsUpdateOnResize {
+public class HudStage extends ResizableResettableStage {
 
-	public enum ActionUIElements {
+	public enum EventTypes {
 		UNDO, END_TURN, BUY_PEASANT, BUY_CASTLE, MENU
 	}
 
@@ -38,17 +36,19 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 	private ImageButton endTurnButton;
 	private ImageButton buyPeasantButton;
 	private ImageButton buyCastleButton;
+	private ImageButton menuButton;
 	private TextureAtlas textureAtlas;
 	private Skin skin;
 
-	public HudStage(Viewport viewport, Map<ActionUIElements, Runnable> actions, TextureAtlas textureAtlas, Skin skin) {
+	@Inject
+	public HudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
-		initUI(actions);
+		initUI();
 	}
 
-	private void initUI(Map<ActionUIElements, Runnable> actions) {
+	private void initUI() {
 		// TODO: put the buttons in a custom skin
 		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
 				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
@@ -62,7 +62,7 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 		buyCastleButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_castle")),
 				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
 		buyCastleButton.getImageCell().expand().fill();
-		ImageButton menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
+		menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
 				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
 		menuButton.getImageCell().expand().fill();
 		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
@@ -107,38 +107,37 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 		handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
 				.width(Value.percentHeight(1.16F));
 		this.addActor(rootTable);
-
-		// add actions
-		for (Entry<ActionUIElements, Runnable> action : actions.entrySet()) {
-			Actor uIElement = null;
-			switch (action.getKey()) {
-			case UNDO:
-				uIElement = undoButton;
-				break;
-			case END_TURN:
-				uIElement = endTurnButton;
-				break;
-			case BUY_PEASANT:
-				uIElement = buyPeasantButton;
-				break;
-			case BUY_CASTLE:
-				uIElement = buyCastleButton;
-				break;
-			case MENU:
-				uIElement = menuButton;
-				break;
-			default:
-				break;
-			}
-			uIElement.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					action.getValue().run();
-				}
-			});
-		}
 	}
 
+	public void registerEventListener(EventTypes type, Runnable listener) {
+		Actor uIElement = null;
+		switch (type) {
+		case UNDO:
+			uIElement = undoButton;
+			break;
+		case END_TURN:
+			uIElement = endTurnButton;
+			break;
+		case BUY_PEASANT:
+			uIElement = buyPeasantButton;
+			break;
+		case BUY_CASTLE:
+			uIElement = buyCastleButton;
+			break;
+		case MENU:
+			uIElement = menuButton;
+			break;
+		default:
+			break;
+		}
+		uIElement.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				listener.run();
+			}
+		});
+	}
+	
 	@Override
 	public void updateOnResize(int width, int height) {
 		rootTable.pack();
@@ -192,6 +191,10 @@ public class HudStage extends Stage implements NeedsUpdateOnResize {
 
 	public void setFontScale(Float fontScale) {
 		infoTextLabel.setFontScale(fontScale);
+	}
+
+	@Override
+	public void reset() {
 	}
 
 }

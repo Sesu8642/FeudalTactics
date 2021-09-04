@@ -11,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -22,9 +21,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
-import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
-public class MenuStage extends Stage implements NeedsUpdateOnResize {
+public class MenuStage extends ResizableResettableStage {
 
 	private Table rootTable;
 	private List<TextButton> buttons = new ArrayList<TextButton>();
@@ -33,6 +31,10 @@ public class MenuStage extends Stage implements NeedsUpdateOnResize {
 	private MapRenderer mapRenderer;
 	private Skin skin;
 	private OrthographicCamera camera;
+
+	public MenuStage(Viewport viewport, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
+		this(viewport, new LinkedHashMap<>(), camera, mapRenderer, skin);
+	}
 
 	public MenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera,
 			MapRenderer mapRenderer, Skin skin) {
@@ -75,6 +77,21 @@ public class MenuStage extends Stage implements NeedsUpdateOnResize {
 		this.addActor(rootTable);
 	}
 
+	public void addButton(String text, Runnable callback) {
+		TextButton button = new TextButton(text, skin);
+		button.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				callback.run();
+			}
+		});
+		rootTable.removeActor(bottomLabel);
+		rootTable.row();
+		rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
+		rootTable.row();
+		rootTable.add(bottomLabel).fill(false).right().bottom().pad(10).minHeight(0);
+	}
+
 	public void setBottomLabelText(String text) {
 		bottomLabel.setText(text);
 	}
@@ -103,5 +120,9 @@ public class MenuStage extends Stage implements NeedsUpdateOnResize {
 		for (Disposable disposable : disposables) {
 			disposable.dispose();
 		}
+	}
+
+	@Override
+	public void reset() {
 	}
 }
