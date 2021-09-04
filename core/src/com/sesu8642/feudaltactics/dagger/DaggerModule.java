@@ -24,6 +24,7 @@ import com.sesu8642.feudaltactics.ui.screens.GameScreen;
 import com.sesu8642.feudaltactics.ui.stages.MainMenuStage;
 import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
+import com.sesu8642.feudaltactics.ui.stages.slidestage.AboutSlideFactory;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.SlideStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.TutorialSlideFactory;
@@ -130,12 +131,6 @@ class DaggerModule {
 	}
 
 	@Provides
-	@TutorialSlides
-	static List<Slide> provideTutorialSlides(TutorialSlideFactory slideFactory) {
-		return slideFactory.createAllSlides();
-	}
-
-	@Provides
 	@Singleton
 	@MenuViewport
 	static Viewport provideMenuViewport(@MenuCamera OrthographicCamera camera) {
@@ -155,17 +150,6 @@ class DaggerModule {
 	}
 
 	@Provides
-	@Singleton
-	@TutorialSlideStage
-	static SlideStage provideTutorialSlideStage(@MenuViewport Viewport viewport,
-			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera,
-			@MainMenuScreen GameScreen mainMenuScreen, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
-		return new SlideStage(viewport, tutorialSlides, () -> {
-			FeudalTactics.game.setScreen(mainMenuScreen);
-		}, camera, skin);
-	}
-
-	@Provides
 	static MenuStage provideMenuStageWithVersion(@MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
 			@VersionProperty String gameVersion) {
@@ -173,7 +157,24 @@ class DaggerModule {
 		stage.setBottomLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
+
+	@Provides
+	@TutorialSlides
+	static List<Slide> provideTutorialSlides(TutorialSlideFactory slideFactory) {
+		return slideFactory.createAllSlides();
+	}
 	
+	@Provides
+	@Singleton
+	@TutorialSlideStage
+	static SlideStage provideTutorialSlideStage(@MenuViewport Viewport viewport,
+			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera,
+			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
+		return new SlideStage(viewport, tutorialSlides, () -> {
+			FeudalTactics.game.setScreen(mainMenuScreen);
+		}, camera, skin);
+	}
+
 	@Provides
 	@Singleton
 	@TutorialScreen
@@ -181,7 +182,32 @@ class DaggerModule {
 			@TutorialSlideStage SlideStage slideStage) {
 		return new GameScreen(camera, viewport, slideStage);
 	}
+
+	@Provides
+	@AboutSlides
+	static List<Slide> provideAboutSlides(AboutSlideFactory slideFactory) {
+		return slideFactory.createAllSlides();
+	}
 	
+	@Provides
+	@Singleton
+	@AboutSlideStage
+	static SlideStage provideAboutSlideStage(@MenuViewport Viewport viewport,
+			@AboutSlides List<Slide> aboutSlides, @MenuBackgroundCamera OrthographicCamera camera,
+			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
+		return new SlideStage(viewport, aboutSlides, () -> {
+			FeudalTactics.game.setScreen(mainMenuScreen);
+		}, camera, skin);
+	}
+
+	@Provides
+	@Singleton
+	@AboutScreen
+	static GameScreen provideAboutScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			@AboutSlideStage SlideStage slideStage) {
+		return new GameScreen(camera, viewport, slideStage);
+	}
+
 	@Provides
 	@Singleton
 	@MainMenuScreen
@@ -189,4 +215,5 @@ class DaggerModule {
 			MainMenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
 	}
+
 }
