@@ -9,6 +9,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Feudal Tactics");
 		config.setWindowIcon("square_logo_64.png");
+		config.setWindowedMode(1600, 900);
 		new Lwjgl3Application(new FeudalTactics(), config);
 	}
 }
