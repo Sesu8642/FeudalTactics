@@ -66,7 +66,7 @@ public class TutorialSlideFactory {
 	}
 	
 	private Slide createTutorialSlide5() {
-		String text = "Units will protect the tile they stand on as well as the tiles next to it from being conquered. To conquer protected tiles anyway, you need a unit stronger that the one protecting. Capitals will also protect the neighboring tiles with a strength of 1. Additionaly, you can buy a castle for 15 coins which will protect neighboring tiles with a strength of 2. When you have something picked up, shield icons indicate the protection level of each tile.";
+		String text = "Units will protect the tile they stand on as well as the tiles next to them from being conquered. To conquer protected tiles anyway, you need a unit stronger that the one protecting. Capitals will also protect the neighboring tiles with a strength of 1. Additionaly, you can buy a castle for 15 coins which will protect neighboring tiles with a strength of 2. When you have something picked up, shield icons indicate the protection level of each tile.";
 		String imagePath = "tutorial_protection.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
