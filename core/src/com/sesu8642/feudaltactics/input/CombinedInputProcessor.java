@@ -22,8 +22,8 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	}
 
 	@Override
-	public boolean scrolled(int amount) {
-		float adjAmount = ((float) amount * camera.zoom) / 3;
+	public boolean scrolled(float amountX, float amountY) {
+		float adjAmount = ((float) amountY * camera.zoom) / 3;
 		if ((adjAmount < 0 && camera.zoom + adjAmount > MIN_ZOOM)
 				|| (adjAmount > 0 && camera.zoom + adjAmount < MAX_ZOOM)) {
 			Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));

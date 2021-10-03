@@ -3,8 +3,8 @@ android {
       sourceCompatibility 1.8
       targetCompatibility 1.8
    }
-    buildToolsVersion "29.0.3"
-    compileSdkVersion 29
+    buildToolsVersion "30.0.2"
+    compileSdkVersion 30
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId "com.sesu8642.feudaltactics"
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
     }
