@@ -61,7 +61,7 @@ public class Slide {
 		return this;
 	}
 
-	private Label newNiceLabel(String content) {
+	public Label newNiceLabel(String content) {
 		Label result = new Label(content, skin);
 		result.setColor(skin.getColor("black"));
 		result.setFontScale(1.5F);
