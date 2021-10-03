@@ -19,6 +19,7 @@ public class Slide {
 
 	public Slide(Skin skin, String headline) {
 		this.skin = skin;
+		// cannot use fillParent because it then the content will be placed a little too high
 		table.defaults().pad(10);
 		// adding the headline is a hack needed because the slide would get a width of 0 if the the label does not need to wrap (bug?)
 		Table hackTable = new Table();
