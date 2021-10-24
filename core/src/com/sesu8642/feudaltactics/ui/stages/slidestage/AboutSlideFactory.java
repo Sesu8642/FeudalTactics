@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.sesu8642.feudaltactics.dagger.DependencyLicenses;
 import com.sesu8642.feudaltactics.dagger.VersionProperty;
 
 @Singleton
@@ -16,11 +17,13 @@ public class AboutSlideFactory {
 
 	private Skin skin;
 	private String version;
+	private String dependencyLicensesText;
 
 	@Inject
-	public AboutSlideFactory(@VersionProperty String version, Skin skin) {
-		this.skin = skin;
+	public AboutSlideFactory(@VersionProperty String version, @DependencyLicenses String dependencyLicensesText, Skin skin) {
 		this.version = version;
+		this.dependencyLicensesText = dependencyLicensesText;
+		this.skin = skin;
 	}
 
 	public List<Slide> createAllSlides() {
@@ -42,8 +45,6 @@ public class AboutSlideFactory {
 	}
 
 	private Slide createAboutSlide2() {
-		String text = "Two or more connected tiles of the same color will form a kingdom. A kingdom will gain one coin per tile per turn. A player can have multiple kingdoms that are financially independent from each other. Select a kingdom by clicking any of its tiles. Its finances will be displayed in the top left corner of the screen. Money is stored in the capital. If a kingdom's capital is destroyed, all of its money is lost.";
-		String imagePath = "tutorial_kingdoms_money.png";
-		return new Slide(skin, "Dependency Licenses").addLabel(text).addImage(imagePath);
+		return new Slide(skin, "Dependency Licenses").addLabel(dependencyLicensesText);
 	}
 }

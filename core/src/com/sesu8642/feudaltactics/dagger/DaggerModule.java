@@ -1,9 +1,13 @@
 package com.sesu8642.feudaltactics.dagger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
@@ -50,11 +54,26 @@ class DaggerModule {
 
 	@Provides
 	@Singleton
+	@DependencyLicenses
+	static String provideDependencyLicensesText() {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		try (InputStream inputStream = classLoader.getResourceAsStream("licenses.txt")) {
+			try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+		             BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+		            return bufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
+		        }
+		} catch (IOException e) {
+			throw new RuntimeException("Dependency licenses cannot be read!");
+		}
+	}
+
+	@Provides
+	@Singleton
 	@VersionProperty
 	static String provideVersionProperty(Properties config) {
 		return config.getProperty("version");
 	}
-
+	
 	@Provides
 	@Singleton
 	static TextureAtlas provideTextureAtlas() {
