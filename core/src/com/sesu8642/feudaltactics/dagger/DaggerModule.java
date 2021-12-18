@@ -57,14 +57,19 @@ class DaggerModule {
 	@DependencyLicenses
 	static String provideDependencyLicensesText() {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		try (InputStream inputStream = classLoader.getResourceAsStream("licenses.txt")) {
-			try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-		             BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-		            return bufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
-		        }
-		} catch (IOException e) {
-			throw new RuntimeException("Dependency licenses cannot be read!");
+		String result = "";
+		String[] filesToRead = { "licenses_pre.txt", "licenses.txt" };
+		for (String file : filesToRead) {
+			try (InputStream inputStream = classLoader.getResourceAsStream(file)) {
+				try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+						BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+					result += bufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
+				}
+			} catch (IOException e) {
+				throw new RuntimeException("Dependency licenses cannot be read!");
+			}
 		}
+		return result;
 	}
 
 	@Provides
@@ -73,7 +78,7 @@ class DaggerModule {
 	static String provideVersionProperty(Properties config) {
 		return config.getProperty("version");
 	}
-	
+
 	@Provides
 	@Singleton
 	static TextureAtlas provideTextureAtlas() {
@@ -182,7 +187,7 @@ class DaggerModule {
 	static List<Slide> provideTutorialSlides(TutorialSlideFactory slideFactory) {
 		return slideFactory.createAllSlides();
 	}
-	
+
 	@Provides
 	@Singleton
 	@TutorialSlideStage
@@ -207,13 +212,12 @@ class DaggerModule {
 	static List<Slide> provideAboutSlides(AboutSlideFactory slideFactory) {
 		return slideFactory.createAllSlides();
 	}
-	
+
 	@Provides
 	@Singleton
 	@AboutSlideStage
-	static SlideStage provideAboutSlideStage(@MenuViewport Viewport viewport,
-			@AboutSlides List<Slide> aboutSlides, @MenuBackgroundCamera OrthographicCamera camera,
-			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
+	static SlideStage provideAboutSlideStage(@MenuViewport Viewport viewport, @AboutSlides List<Slide> aboutSlides,
+			@MenuBackgroundCamera OrthographicCamera camera, @MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
 		return new SlideStage(viewport, aboutSlides, () -> {
 			FeudalTactics.game.setScreen(mainMenuScreen);
 		}, camera, skin);

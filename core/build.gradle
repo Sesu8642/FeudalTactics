@@ -10,6 +10,11 @@ sourceSets.main.resources.srcDirs = [ "resources/", "$buildDir/generated/resourc
 
 eclipse.project.name = appName + "-core"
 
+copy {
+    from "$buildDir/../../licenses_pre.txt"
+    into "$buildDir/generated/resources"
+}
+
 processResources {
 	from "$sourceSets.main.resources.srcDirs"
 	filter(ReplaceTokens, tokens: [version: project.version])
