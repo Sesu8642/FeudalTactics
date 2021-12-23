@@ -2,6 +2,7 @@ package com.sesu8642.feudaltactics;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamestate.GameState;
@@ -9,17 +10,22 @@ import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
 
+/**
+ * this class was used temporarily to create the logo but needs to be refactored to be usable for an actual map editor
+ */
 public class EditorController {
+
+	private static final String TAG = EditorController.class.getName();
 
 	private MapRenderer mapRenderer;
 	private GameState gameState;
-	
+
 	public EditorController() {
 		this.gameState = new GameState();
 	}
 
 	public void generateEmptyMap() {
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
 		gameState.setBotIntelligence(BotAI.Intelligence.MEDIUM);
 		Player p1 = new Player(new Color(0F, 1F, 1F, 1), Type.LOCAL_PLAYER);
 		Player p2 = new Player(new Color(0.75F, 0.5F, 0F, 1), Type.LOCAL_BOT);
@@ -38,8 +44,8 @@ public class EditorController {
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
-		System.out.println("clicked tile position " + hexCoords);
-		System.out.println(gameState.getMap().getTiles().get(hexCoords));
+		Gdx.app.debug(TAG, String.format("clicked tile position %s: %s", hexCoords,
+				gameState.getMap().getTiles().get(hexCoords).toString()));
 	}
 
 	public void createTile(Vector2 hexCoords) {

@@ -39,6 +39,10 @@ import dagger.Provides;
 @Module
 class DaggerModule {
 
+	private DaggerModule() {
+		// static helper class
+	}
+
 	@Provides
 	@Singleton
 	static Properties provideGameConfig() {
@@ -47,6 +51,7 @@ class DaggerModule {
 		try (InputStream inputStream = classLoader.getResourceAsStream("gameconfig.properties")) {
 			config.load(inputStream);
 		} catch (IOException e) {
+			// modules can only throw unchecked exceptions to this needs to be converted
 			throw new RuntimeException("Config cannot be read!");
 		}
 		return config;
@@ -57,19 +62,20 @@ class DaggerModule {
 	@DependencyLicenses
 	static String provideDependencyLicensesText() {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		String result = "";
+		StringBuilder resultBuilder = new StringBuilder();
 		String[] filesToRead = { "licenses_pre.txt", "licenses.txt" };
 		for (String file : filesToRead) {
 			try (InputStream inputStream = classLoader.getResourceAsStream(file)) {
 				try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
 						BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-					result += bufferedReader.lines().collect(Collectors.joining(System.lineSeparator()));
+					resultBuilder.append(bufferedReader.lines().collect(Collectors.joining(System.lineSeparator())));
 				}
 			} catch (IOException e) {
+				// modules can only throw unchecked exceptions to this needs to be converted
 				throw new RuntimeException("Dependency licenses cannot be read!");
 			}
 		}
-		return result;
+		return resultBuilder.toString();
 	}
 
 	@Provides
@@ -194,9 +200,8 @@ class DaggerModule {
 	static SlideStage provideTutorialSlideStage(@MenuViewport Viewport viewport,
 			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera,
 			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
-		return new SlideStage(viewport, tutorialSlides, () -> {
-			FeudalTactics.game.setScreen(mainMenuScreen);
-		}, camera, skin);
+		return new SlideStage(viewport, tutorialSlides, () -> FeudalTactics.game.setScreen(mainMenuScreen), camera,
+				skin);
 	}
 
 	@Provides
@@ -218,9 +223,7 @@ class DaggerModule {
 	@AboutSlideStage
 	static SlideStage provideAboutSlideStage(@MenuViewport Viewport viewport, @AboutSlides List<Slide> aboutSlides,
 			@MenuBackgroundCamera OrthographicCamera camera, @MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
-		return new SlideStage(viewport, aboutSlides, () -> {
-			FeudalTactics.game.setScreen(mainMenuScreen);
-		}, camera, skin);
+		return new SlideStage(viewport, aboutSlides, () -> FeudalTactics.game.setScreen(mainMenuScreen), camera, skin);
 	}
 
 	@Provides

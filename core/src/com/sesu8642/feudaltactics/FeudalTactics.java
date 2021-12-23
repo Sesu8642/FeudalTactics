@@ -16,9 +16,9 @@ public class FeudalTactics extends Game {
 
 	static public FeudalTactics game;
 	// TODO: put those in a custom skin
-	static public final Color buttonIconColor = new Color(1, 0.7F, 0.15F, 1);
-	static public final Color disabledButtonIconColor = new Color(0.75F, 0.75F, 0.75F, 1);
-	static public final Color backgroundColor = new Color(0, 0.2f, 0.8f, 1);
+	public static final Color buttonIconColor = new Color(1, 0.7F, 0.15F, 1);
+	public static final Color disabledButtonIconColor = new Color(0.75F, 0.75F, 0.75F, 1);
+	public static final Color backgroundColor = new Color(0, 0.2f, 0.8f, 1);
 
 	@Override
 	public void create() {
@@ -34,20 +34,4 @@ public class FeudalTactics extends Game {
 		// do not close on android back key
 		Gdx.input.setCatchKey(Keys.BACK, true);
 	}
-
-	@Override
-	public void render() {
-		super.render();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		super.resize(width, height);
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-	}
-
 }

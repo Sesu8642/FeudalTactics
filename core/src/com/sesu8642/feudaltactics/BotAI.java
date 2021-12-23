@@ -27,8 +27,8 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 @Singleton
 public class BotAI {
 
-	final int MUST_PROTECT_SCORE_THRESHOLD = 12;
-	final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 3;
+	static final int MUST_PROTECT_SCORE_THRESHOLD = 12;
+	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 3;
 
 	public enum Intelligence {
 		DUMB, MEDIUM, SMART
@@ -36,6 +36,7 @@ public class BotAI {
 
 	@Inject
 	public BotAI() {
+		// no parameters needed currently
 	}
 
 	public GameState doTurn(GameState gameState, Intelligence intelligence) {
@@ -43,7 +44,7 @@ public class BotAI {
 		while (nextKingdomOptional.isPresent()) {
 			Kingdom nextKingdom = nextKingdomOptional.get();
 			nextKingdom.setDoneMoving(true);
-			gameState = doKingdomMove(gameState, nextKingdom, intelligence);
+			doKingdomMove(gameState, nextKingdom, intelligence);
 			nextKingdomOptional = getNextKingdom(gameState);
 		}
 		// reset kingdom done moving state
@@ -71,7 +72,7 @@ public class BotAI {
 		pickUpAllAvailableUnits(kingdom, pickedUpUnits);
 		// remember the tiles where a castle was placed to reverse the decision later
 		// after conquering
-		Set<HexTile> placedCastleTiles = new HashSet<HexTile>();
+		Set<HexTile> placedCastleTiles = new HashSet<>();
 		switch (intelligence) {
 		case DUMB:
 			chopTrees(gameState, pickedUpUnits, 0.3F);
@@ -103,7 +104,8 @@ public class BotAI {
 		for (HexTile tile : kingdom.getTiles()) {
 			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
 					&& ((Unit) tile.getContent()).isCanAct()) {
-				switch (((Unit) tile.getContent()).getStrength()) {
+				int strength = ((Unit) tile.getContent()).getStrength();
+				switch (strength) {
 				case 1:
 					pickedUpUnits.availablePeasants++;
 					break;
@@ -116,6 +118,8 @@ public class BotAI {
 				case 4:
 					pickedUpUnits.availableBarons++;
 					break;
+				default:
+					throw new AssertionError("Found unit with unexpected strength: " + strength);
 				}
 				tile.setContent(null);
 			}
@@ -124,17 +128,15 @@ public class BotAI {
 
 	private void chopTrees(GameState gameState, PickedUpUnits pickedUpUnits, float chance) {
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
-				if (gameState.getRandom().nextFloat() <= chance) {
-					if (pickedUpUnits.availablePeasants >= 1
-							|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
-						pickedUpUnits.availablePeasants--;
-						gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
-						GameStateHelper.placeOwn(gameState, tile);
-					} else {
-						return;
-					}
+			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+					&& gameState.getRandom().nextFloat() <= chance) {
+				if (pickedUpUnits.availablePeasants >= 1
+						|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
+					pickedUpUnits.availablePeasants--;
+					gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
+					GameStateHelper.placeOwn(gameState, tile);
+				} else {
+					return;
 				}
 			}
 		}
@@ -175,35 +177,26 @@ public class BotAI {
 			}
 			bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		}
-		return;
 	}
 
 	private void conquerAsMuchAsPossible(GameState gameState, PickedUpUnits pickedUpUnits) {
 		Kingdom kingdom = gameState.getActiveKingdom();
 		boolean unableToConquerAnyMore = false;
 		whileloop: while (!unableToConquerAnyMore) {
-			// need a list here to avoid randomness
-			List<HexTile> possibleConquerTiles = new ArrayList<HexTile>();
-			for (HexTile tile : kingdom.getTiles()) {
-				ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
-				for (HexTile neighborTile : neighborTiles) {
-					if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()) {
-						possibleConquerTiles.add(neighborTile);
-					}
-				}
-			}
+			// need a list here to be deterministic
+			List<HexTile> possibleConquerTiles = determineNeighboringEnemyTiles(gameState);
 			if (possibleConquerTiles.isEmpty()) {
 				// the bot actually won the game
 				break;
 			}
 
+			// determine how "valuable" the tiles are for conquering
 			Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
 					.newSetFromMap(new ConcurrentHashMap<BotAI.OffenseTileScoreInfo, Boolean>());
 			possibleConquerTiles.parallelStream().forEach((conquerTile) -> {
 				offenseTileScoreInfoSet.add(getOffenseTileScoreInfo(gameState, conquerTile));
 			});
-			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<OffenseTileScoreInfo>(
-					offenseTileScoreInfoSet);
+			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
 			offenseTileScoreInfos.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
 				int result = Integer.compare(o2.score, o1.score);
 				// if the score is the same, use the coordinates to eliminate randomness
@@ -215,40 +208,39 @@ public class BotAI {
 				}
 				return result;
 			});
-			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
 
+			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
 				switch (offenseTileScoreInfo.requiredStrength) {
-				// fall-through intentional
 				case 1:
 					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.PEASANT,
 							pickedUpUnits.availablePeasants)) {
 						pickedUpUnits.availablePeasants--;
 						continue whileloop;
 					}
-
+					break;
 				case 2:
 					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.SPEARMAN,
 							pickedUpUnits.availableSpearmen)) {
 						pickedUpUnits.availableSpearmen--;
 						continue whileloop;
 					}
-
+					break;
 				case 3:
 					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.KNIGHT,
 							pickedUpUnits.availableKnights)) {
 						pickedUpUnits.availableKnights--;
 						continue whileloop;
 					}
-
+					break;
 				case 4:
 					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.BARON,
 							pickedUpUnits.availableBarons)) {
 						pickedUpUnits.availableBarons--;
 						continue whileloop;
 					}
-
+					break;
 				default:
-					// can not be conquered
+					// cannot be conquered
 					break;
 				}
 
@@ -263,6 +255,19 @@ public class BotAI {
 				unableToConquerAnyMore = true;
 			}
 		}
+	}
+
+	private List<HexTile> determineNeighboringEnemyTiles(GameState gameState) {
+		List<HexTile> result = new ArrayList<>();
+		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
+			ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
+			for (HexTile neighborTile : neighborTiles) {
+				if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()) {
+					result.add(neighborTile);
+				}
+			}
+		}
+		return result;
 	}
 
 	private boolean acquireUnit(Kingdom kingdom, PickedUpUnits pickedUpUnits, int strength) {
@@ -347,6 +352,8 @@ public class BotAI {
 				return true;
 			}
 			break;
+		default:
+			throw new IllegalArgumentException("No known unit with strength " + strength);
 		}
 		return false;
 	}
@@ -394,16 +401,12 @@ public class BotAI {
 	}
 
 	private Set<HexTile> getInterestingProtectionTiles(GameState gameState) {
-		HashSet<HexTile> interestingPlacementTiles = new HashSet<HexTile>();
+		HashSet<HexTile> interestingPlacementTiles = new HashSet<>();
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			// interestingPlacementTilePositions
 			// tile is interesting for placement if it is close to another kingdom
 			Collection<HexTile> neighborsNeighbors = gameState.getMap().getNeighborsNeighborTiles(tile);
 			for (HexTile neighborsNeighbor : neighborsNeighbors) {
-				if (neighborsNeighbor == null) {
-					continue;
-				}
-				if (neighborsNeighbor.getKingdom() != gameState.getActiveKingdom()) {
+				if (neighborsNeighbor != null && neighborsNeighbor.getKingdom() != gameState.getActiveKingdom()) {
 					interestingPlacementTiles.add(tile);
 					break;
 				}
@@ -414,7 +417,7 @@ public class BotAI {
 
 	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Set<HexTile> interestingProtectionTiles) {
 		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<BotAI.TileScoreInfo, Boolean>());
-		interestingProtectionTiles.parallelStream().forEach((tile) -> {
+		interestingProtectionTiles.parallelStream().forEach(tile -> {
 			results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, tile)));
 		});
 		return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> Integer.compare(t1.score, t2.score))
@@ -512,8 +515,8 @@ public class BotAI {
 
 	private class TileScoreInfo {
 
-		public HexTile tile;
-		public int score;
+		HexTile tile;
+		int score;
 
 		public TileScoreInfo(HexTile tile, int score) {
 			this.tile = tile;
@@ -523,7 +526,7 @@ public class BotAI {
 
 	private class OffenseTileScoreInfo extends TileScoreInfo {
 
-		public int requiredStrength;
+		int requiredStrength;
 
 		public OffenseTileScoreInfo(HexTile tile, int score, int requiredStrength) {
 			super(tile, score);

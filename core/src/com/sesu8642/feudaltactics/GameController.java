@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.dagger.IngameRenderer;
@@ -21,12 +22,14 @@ import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 @Singleton
 public class GameController {
 
-	public final static Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
+	private static final String TAG = GameController.class.getName();
+
+	private static final Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
 			new Color(0F, 1F, 0F, 1) };
 
-	public final static String GAME_STATE_OBSERVABLE_PROPERTY_NAME = "gameState";
-	
+	public static final String GAME_STATE_OBSERVABLE_PROPERTY_NAME = "gameState";
+
 	private MapRenderer mapRenderer;
 	private BotAI botAI;
 	private GameState gameState;
@@ -37,7 +40,8 @@ public class GameController {
 	public GameController(@IngameRenderer MapRenderer mapRenderer, BotAI botAI) {
 		this.mapRenderer = mapRenderer;
 		this.botAI = botAI;
-		// PropertyChangeSupport is not injected because this is a dependency cycle and there is not benefit really
+		// PropertyChangeSupport is not injected because this is a dependency cycle and
+		// there is no benefit really
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		gameState = new GameState();
 	}
@@ -52,7 +56,7 @@ public class GameController {
 		autosave();
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
-	
+
 	private void autosave() {
 		PreferencesHelper.autoSaveGameState(gameState);
 	}
@@ -67,7 +71,7 @@ public class GameController {
 			float landMass, float density) {
 		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<>();
 		int remainingHumanPlayers = humanPlayerNo;
 		int remainingBotPlayers = botPlayerNo;
 		for (Color color : PLAYER_COLORS) {
@@ -86,8 +90,9 @@ public class GameController {
 	}
 
 	public void printTileInfo(Vector2 hexCoords) {
-		System.out.println("clicked tile position " + hexCoords);
-		System.out.println(gameState.getMap().getTiles().get(hexCoords));
+
+		Gdx.app.debug(TAG, String.format("clicked tile position %s: %s", hexCoords,
+				String.valueOf(gameState.getMap().getTiles().get(hexCoords))));
 	}
 
 	public void activateKingdom(Kingdom kingdom) {
@@ -128,7 +133,7 @@ public class GameController {
 
 	public void endTurn() {
 		// remember old state
-		GameState oldState = GameState.copyOf(gameState);
+		GameState oldState = GameStateHelper.getCopy(gameState);
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
 		mapRenderer.updateMap(gameState);
@@ -172,14 +177,15 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
-	public void placeCameraForFullMapView(long marginLeftPx, long marginBottomPx, long marginRightPx, long marginTopPx) {
+	public void placeCameraForFullMapView(long marginLeftPx, long marginBottomPx, long marginRightPx,
+			long marginTopPx) {
 		mapRenderer.placeCameraForFullMapView(gameState, marginLeftPx, marginBottomPx, marginRightPx, marginTopPx);
 	}
 
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
-    }
-	
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
 	public MapRenderer getMapRenderer() {
 		return mapRenderer;
 	}

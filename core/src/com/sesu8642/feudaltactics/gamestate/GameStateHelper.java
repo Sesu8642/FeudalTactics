@@ -24,17 +24,73 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 public class GameStateHelper {
 	// only class supposed to modify the game state (except the bot AI actually)
 
-	public final static float TREE_SPREAD_RATE = 0.3F;
-	public final static float TREE_SPAWN_RATE = 0.01F;
-	public final static float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
-	public final static float WIN_LANDMASS_PERCENTAGE = 0.8F;
+	public static final float TREE_SPREAD_RATE = 0.3F;
+	public static final float TREE_SPAWN_RATE = 0.01F;
+	public static final float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
+	public static final float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
-	// prevent instanciation
+	// prevent instantiation
 	private GameStateHelper() {
 		throw new AssertionError();
 	}
+	
+	/**
+	 * Creates a mostly deep copy of the original. Exception: The random uses a
+	 * seed that is derived from the old randoms output.
+	 * 
+	 * @param original
+	 * @return copy
+	 */
+	public static GameState getCopy(GameState original) {
+		GameState result = new GameState();
+		
+		List<Player> copiedPlayers = new ArrayList<>();
+		for (Player originalPlayer : original.getPlayers()) {
+			Player newPlayer = originalPlayer.clone();
+			copiedPlayers.add(newPlayer);
+		}
+		result.setPlayers(copiedPlayers);
+		
+		List<Kingdom> copiedKingdoms = new ArrayList<>();
+		for (Kingdom originalKingdom : original.getKingdoms()) {
+			Kingdom newKingdom = new Kingdom(
+					copiedPlayers.get(original.getPlayers().indexOf(originalKingdom.getPlayer())));
+			newKingdom.setSavings(originalKingdom.getSavings());
+			newKingdom.setDoneMoving(originalKingdom.isDoneMoving());
+			newKingdom.setWasActiveInCurrentTurn(originalKingdom.isWasActiveInCurrentTurn());
+			copiedKingdoms.add(newKingdom);
+		}
+		result.setKingdoms(copiedKingdoms);
+		
+		HexMap copiedMap = new HexMap();
+		for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().getTiles().entrySet()) {
+			HexTile originalTile = originalTileEntry.getValue();
+			HexTile newTile = new HexTile(
+					copiedPlayers.get(original.getPlayers().indexOf(originalTile.getPlayer())),
+					new Vector2(originalTileEntry.getKey()));
+			if (originalTile.getKingdom() != null) {
+				newTile.setKingdom(copiedKingdoms.get(original.getKingdoms().indexOf(originalTile.getKingdom())));
+				newTile.getKingdom().getTiles().add(newTile);
+			}
+			if (originalTile.getContent() != null) {
+				newTile.setContent(originalTile.getContent().getCopy());
+			}
+			copiedMap.getTiles().put(newTile.getPosition(), newTile);
+		}
+		result.setMap(copiedMap);
+				
+		if (original.getActiveKingdom() != null) {
+			result.setActiveKingdom(copiedKingdoms.get(original.getKingdoms().indexOf(original.getActiveKingdom())));
+		}
+		
+		if (original.getHeldObject() != null) {
+			result.setHeldObject(original.getHeldObject().getCopy());
+		}
 
-	public static void initializeMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
+		return result;
+	}
+
+	public static void initializeMap(GameState gameState, List<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
 		if (mapSeed == null) {
 			mapSeed = System.currentTimeMillis();
@@ -45,14 +101,14 @@ public class GameStateHelper {
 		gameState.setSeed(mapSeed);
 		gameState.setPlayers(players);
 		gameState.setMap(new HexMap());
-		gameState.setKingdoms(new ArrayList<Kingdom>());
+		gameState.setKingdoms(new ArrayList<>());
 		if (landMass == 0) {
 			return;
 		}
 		generateMap(gameState, players, landMass, density, vegetationDensity, mapSeed);
 	}
 
-	public static void generateMap(GameState gameState, ArrayList<Player> players, float landMass, float density,
+	public static void generateMap(GameState gameState, List<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
 		// if not every player has at least one kingdom, try again
 		do {
@@ -69,37 +125,33 @@ public class GameStateHelper {
 	}
 
 	private static boolean doesEveryPlayerHaveAKingdom(GameState gameState) {
-		List<Player> playersWithoutKingdoms = new ArrayList<Player>(gameState.getPlayers());
+		List<Player> playersWithoutKingdoms = new ArrayList<>(gameState.getPlayers());
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (playersWithoutKingdoms.contains(kingdom.getPlayer())) {
 				playersWithoutKingdoms.remove(kingdom.getPlayer());
 			}
 		}
-		if (playersWithoutKingdoms.isEmpty()) {
-			return true;
-		} else {
-			return false;
-		}
+		return playersWithoutKingdoms.isEmpty();
 	}
 
 	private static void sortPlayersByIncome(GameState gameState) {
 		gameState.getPlayers().sort((a, b) -> {
 			// if they are the same, it doesn't matter
 			int incomeA = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == a)
-					.mapToInt(kingdom -> kingdom.getIncome()).sum();
+					.mapToInt(Kingdom::getIncome).sum();
 			int incomeB = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == b)
-					.mapToInt(kingdom -> kingdom.getIncome()).sum();
+					.mapToInt(Kingdom::getIncome).sum();
 			return incomeA > incomeB ? 1 : -1;
 		});
 	}
 
-	private static void generateTiles(GameState gameState, ArrayList<Player> players, float landMass, float density,
+	private static void generateTiles(GameState gameState, List<Player> players, float landMass, float density,
 			Long mapSeed) {
 		// density between -3 and 3 produces good results
 		// set seed
 		gameState.getRandom().setSeed(mapSeed);
 		// distribute the land mass evenly to all players
-		Map<Player, Integer> tileAmountsToGenerate = new HashMap<Player, Integer>();
+		Map<Player, Integer> tileAmountsToGenerate = new HashMap<>();
 		// if there are tiles left, distribute them to random players
 		Collections.shuffle(players, gameState.getRandom());
 		int remainingLandMass = (int) (landMass % players.size());
@@ -113,12 +165,12 @@ public class GameStateHelper {
 		}
 		// keep track of the players that still have tiles left to generate in a list
 		// (because a random one can be selected)
-		ArrayList<Player> remainingPlayers = new ArrayList<Player>(players);
+		ArrayList<Player> remainingPlayers = new ArrayList<>(players);
 		gameState.getMap().getTiles().clear();
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
-		ArrayList<Vector2> positionHistory = new ArrayList<Vector2>(); // for backtracking
-		while (remainingPlayers.size() > 0) {
+		ArrayList<Vector2> positionHistory = new ArrayList<>(); // for backtracking
+		while (!remainingPlayers.isEmpty()) {
 			Vector2 currentTilePos = nextTilePos;
 			// place tile
 			Player player = remainingPlayers.get(gameState.getRandom().nextInt(remainingPlayers.size()));
@@ -138,10 +190,10 @@ public class GameStateHelper {
 				// backtrack until able to place a tile again
 				positionHistory.remove(positionHistory.size() - 1);
 				currentTilePos = positionHistory.get(positionHistory.size() - 1);
-				usableCoords = new ArrayList<Vector2>(gameState.getMap().getUnusedNeighborCoords(currentTilePos));
+				usableCoords = new ArrayList<>(gameState.getMap().getUnusedNeighborCoords(currentTilePos));
 			}
 			// calculate a score for each neighboring tile for choosing the next one
-			ArrayList<Float> scores = new ArrayList<Float>();
+			ArrayList<Float> scores = new ArrayList<>();
 			float scoreSum = 0;
 			for (Vector2 candidate : usableCoords) {
 				// factor in density
@@ -168,11 +220,8 @@ public class GameStateHelper {
 			HexTile tile = tileEntry.getValue();
 			tile.setKingdom(null);
 			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
-				if (neighborTile == null) {
-					// water
-					continue;
-				}
-				if (neighborTile.getPlayer() != tile.getPlayer()) {
+				if (neighborTile == null || neighborTile.getPlayer() != tile.getPlayer()) {
+					// water or tile of a different player
 					continue;
 				}
 				// two neighboring tiles belong to the same player
@@ -236,22 +285,22 @@ public class GameStateHelper {
 		HexTile newCapitalTile;
 		// try to find empty neighbor tile
 		ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(oldCapitalTile);
-		Optional<HexTile> optionalCapitalTile = neighborTiles.stream()
+		Optional<HexTile> emptyTileOptional = neighborTiles.stream()
 				.filter((HexTile neighborTile) -> neighborTile != null
 						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
 						&& neighborTile.getContent() == null)
 				.findFirst();
-		if (optionalCapitalTile.isPresent()) {
-			newCapitalTile = optionalCapitalTile.get();
+		if (emptyTileOptional.isPresent()) {
+			newCapitalTile = emptyTileOptional.get();
 		} else {
 			// no empty neighbor tile -> select any empty tile in the kingdom
-			optionalCapitalTile = oldCapitalTile.getKingdom().getTiles().stream()
+			emptyTileOptional = oldCapitalTile.getKingdom().getTiles().stream()
 					.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
-			if (optionalCapitalTile.isPresent()) {
-				newCapitalTile = optionalCapitalTile.get();
+			if (emptyTileOptional.isPresent()) {
+				newCapitalTile = emptyTileOptional.get();
 			} else {
 				// no empty tile -> select any neighbor tile
-				optionalCapitalTile = neighborTiles.stream().filter((HexTile neighborTile) -> {
+				emptyTileOptional = neighborTiles.stream().filter((HexTile neighborTile) -> {
 					if (neighborTile != null && neighborTile.getKingdom() == oldCapitalTile.getKingdom()) {
 						// make sure the tile is not unconnected
 						if (neighborTile.getCachedNeighborTiles().stream()
@@ -263,12 +312,11 @@ public class GameStateHelper {
 					}
 					return false;
 				}).findFirst();
-			}
-
-			if (optionalCapitalTile.isPresent()) {
-				newCapitalTile = optionalCapitalTile.get();
-			} else {
-				return;
+				if (emptyTileOptional.isPresent()) {
+					newCapitalTile = emptyTileOptional.get();
+				} else {
+					return;
+				}
 			}
 		}
 		newCapitalTile.setContent(new Capital());

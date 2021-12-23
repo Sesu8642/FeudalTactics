@@ -33,42 +33,44 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 public class MapRenderer {
 
-	public final float SPRITE_SIZE_MULTIPLIER = 1.05F;
-	public final float LINE_EXTENSION = 0.14F;
-	public final float WATER_TILE_SIZE = 12;
-	public final float SHIELD_SIZE = 2;
-	public final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
-	public final float HEXTILE_WIDTH = HexMap.HEX_OUTER_RADIUS * 2;
-	public final float HEXTILE_HEIGHT = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
+	public static final float SPRITE_SIZE_MULTIPLIER = 1.05F;
+	public static final float LINE_EXTENSION = 0.14F;
+	public static final float WATER_TILE_SIZE = 12;
+	public static final float SHIELD_SIZE = 2;
+	public static final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
+	public static final float HEXTILE_WIDTH = HexMap.HEX_OUTER_RADIUS * 2;
+	public static final float HEXTILE_HEIGHT = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 
 	private final ShapeRenderer shapeRenderer;
 	private final OrthographicCamera camera;
 	private final SpriteBatch spriteBatch;
-	private TextureAtlas textureAtlas;
+	private final TextureAtlas textureAtlas;
 	private final TextureRegion tileRegion;
 	private final TextureRegion shieldRegion;
 	private final Animation<TextureRegion> waterAnimation;
 	private final Animation<TextureRegion> beachSandAnimation;
 	private final Animation<TextureRegion> beachWaterAnimation;
+
 	private float stateTime = 0F; // for keeping animations at the correct pace
 	private boolean darkenBeaches;
 
 	// stuff that is to be drawn
-	private List<DrawTile> tiles = new ArrayList<DrawTile>();
-	private HashMap<String, TextureRegion> textureRegions = new HashMap<String, TextureRegion>();
-	private HashMap<String, Animation<TextureRegion>> animations = new HashMap<String, Animation<TextureRegion>>();
-	private HashMap<Vector2, TextureRegion> nonAnimatedContents = new HashMap<Vector2, TextureRegion>();
-	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents = new HashMap<Vector2, TextureRegion>();
-	private HashMap<Vector2, Animation<TextureRegion>> animatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
-	private HashMap<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<Vector2, Animation<TextureRegion>>();
-	private HashMap<Vector2, Boolean> shields = new HashMap<Vector2, Boolean>();
-	private ArrayList<Vector2> whiteLineStartPoints = new ArrayList<Vector2>();
-	private ArrayList<Vector2> whiteLineEndPoints = new ArrayList<Vector2>();
-	private ArrayList<Vector2> redLineStartPoints = new ArrayList<Vector2>();
-	private ArrayList<Vector2> redLineEndPoints = new ArrayList<Vector2>();
+	private List<DrawTile> tiles = new ArrayList<>();
+	private HashMap<String, TextureRegion> textureRegions = new HashMap<>();
+	private HashMap<String, Animation<TextureRegion>> animations = new HashMap<>();
+	private HashMap<Vector2, TextureRegion> nonAnimatedContents = new HashMap<>();
+	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents = new HashMap<>();
+	private HashMap<Vector2, Animation<TextureRegion>> animatedContents = new HashMap<>();
+	private HashMap<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<>();
+	private HashMap<Vector2, Boolean> shields = new HashMap<>();
+	private ArrayList<Vector2> whiteLineStartPoints = new ArrayList<>();
+	private ArrayList<Vector2> whiteLineEndPoints = new ArrayList<>();
+	private ArrayList<Vector2> redLineStartPoints = new ArrayList<>();
+	private ArrayList<Vector2> redLineEndPoints = new ArrayList<>();
 
 	@Inject
-	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas, ShapeRenderer shapeRenderer,
+			SpriteBatch spriteBatch) {
 		this.camera = camera;
 		this.shapeRenderer = shapeRenderer;
 		this.spriteBatch = spriteBatch;
@@ -263,8 +265,8 @@ public class MapRenderer {
 	}
 
 	private Collection<Line> lineToDottedLine(Line line) {
-		int PART_AMOUNT = 3;
-		Collection<Line> resultLines = new HashSet<Line>();
+		final int PART_AMOUNT = 3;
+		Collection<Line> resultLines = new HashSet<>();
 		float lineXDiff = line.end.x - line.start.x;
 		float lineYDiff = line.end.y - line.start.y;
 		for (int i = 1; i <= PART_AMOUNT; i += 2) {
@@ -279,8 +281,8 @@ public class MapRenderer {
 	}
 
 	private Line getNeighborLine(Vector2 mapCoords, int index) {
-		Vector2 start = new Vector2();
-		Vector2 end = new Vector2();
+		Vector2 start;
+		Vector2 end;
 		switch (index) {
 		case 0:
 			// top left
@@ -317,6 +319,8 @@ public class MapRenderer {
 					mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
 			end = new Vector2(mapCoords.x - HEXTILE_WIDTH / 2 - LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
 			break;
+		default:
+			throw new AssertionError(String.format("Cannot map index %s to a hexagon side", index));
 		}
 		Line result = new Line();
 		result.start = start;
@@ -325,37 +329,24 @@ public class MapRenderer {
 	}
 
 	private TextureRegion getTextureRegionFromName(String name) {
-		TextureRegion textureRegion = textureRegions.get(name);
-		if (textureRegion == null) {
-			textureRegion = textureAtlas.findRegion(name);
-			textureRegions.put(name, textureRegion);
-		}
-		return textureRegion;
+		return textureRegions.computeIfAbsent(name, textureAtlas::findRegion);
 	}
 
 	private Animation<TextureRegion> getAnimationFromName(String name) {
-		Animation<TextureRegion> animation = animations.get(name);
-		if (animation == null) {
-			animation = new Animation<TextureRegion>(1F, textureAtlas.findRegions(name));
-			animations.put(name, animation);
-		}
-		return animation;
+		return animations.computeIfAbsent(name, n2 -> new Animation<TextureRegion>(1F, textureAtlas.findRegions(n2)));
 	}
 
 	public void render() {
-		HashMap<Vector2, TextureRegion> frames = new HashMap<Vector2, TextureRegion>(); // current frame for each map
-																						// object
-		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<Vector2, TextureRegion>(); // current frame for
-																								// each map object
+		HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
+		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
 		spriteBatch.setProjectionMatrix(camera.combined);
 		stateTime += Gdx.graphics.getDeltaTime();
 		// get the correct frames
 		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
-			frames.put(content.getKey(), ((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
+			frames.put(content.getKey(), (content.getValue()).getKeyFrame(stateTime, true));
 		}
 		for (Entry<Vector2, Animation<TextureRegion>> content : darkenedAnimatedContents.entrySet()) {
-			darkenedFrames.put(content.getKey(),
-					((Animation<TextureRegion>) content.getValue()).getKeyFrame(stateTime, true));
+			darkenedFrames.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
 		}
 		TextureRegion waterRegion = waterAnimation.getKeyFrame(stateTime, true);
 		TextureRegion bottomRightBeachSandRegion = beachSandAnimation.getKeyFrame(stateTime, true);
@@ -375,7 +366,6 @@ public class MapRenderer {
 
 		Vector2 waterOriginPoint = calculateWaterOriginPoint();
 
-		// float objectSize = height * SPRITE_SIZE_MULTIPLIER;
 		float itemOffsetX = HEXTILE_WIDTH * 0.0F;
 		float itemOffsetY = HEXTILE_HEIGHT * -0.075F;
 
@@ -444,11 +434,12 @@ public class MapRenderer {
 						tile.mapCoords.y - HEXTILE_HEIGHT, HEXTILE_WIDTH, HEXTILE_HEIGHT);
 			}
 			if (tile.topBeach || tile.topLeftBeach) {
-				spriteBatch.draw(topLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH, tile.mapCoords.y, HEXTILE_WIDTH,
-						HEXTILE_HEIGHT);
+				spriteBatch.draw(topLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH, tile.mapCoords.y,
+						HEXTILE_WIDTH, HEXTILE_HEIGHT);
 			}
 			if (tile.topBeach || tile.topRightBeach) {
-				spriteBatch.draw(topRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+				spriteBatch.draw(topRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH,
+						HEXTILE_HEIGHT);
 			}
 		}
 
@@ -470,7 +461,7 @@ public class MapRenderer {
 		Color darkenedShieldColor = new Color(shieldColor);
 		darkenedShieldColor.mul(0.5F, 0.5F, 0.5F, 1);
 		for (Entry<Vector2, Boolean> shield : shields.entrySet()) {
-			if (shield.getValue()) {
+			if (Boolean.TRUE.equals(shield.getValue())) {
 				spriteBatch.setColor(darkenedShieldColor);
 			} else {
 				spriteBatch.setColor(shieldColor);
@@ -589,17 +580,17 @@ public class MapRenderer {
 	}
 
 	private class DrawTile {
-		public Vector2 mapCoords;
-		public Color color;
-		public boolean darken = false;
-		public boolean topLeftBeach = false;
-		public boolean topBeach = false;
-		public boolean topRightBeach = false;
-		public boolean bottomRightBeach = false;
-		public boolean bottomBeach = false;
-		public boolean bottomLeftBeach = false;
+		Vector2 mapCoords;
+		Color color;
+		boolean darken = false;
+		boolean topLeftBeach = false;
+		boolean topBeach = false;
+		boolean topRightBeach = false;
+		boolean bottomRightBeach = false;
+		boolean bottomBeach = false;
+		boolean bottomLeftBeach = false;
 	}
-	
+
 	private class Line {
 		private Vector2 start;
 		private Vector2 end;

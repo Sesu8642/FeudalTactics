@@ -13,7 +13,7 @@ public class HexMap {
 	private Map<Vector2, HexTile> tiles;
 
 	public HexMap() {
-		this.tiles = new LinkedHashMap<Vector2, HexTile>();
+		this.tiles = new LinkedHashMap<>();
 	}
 
 	public Vector2 hexCoordsToWorldCoords(Vector2 hexCoords) {
