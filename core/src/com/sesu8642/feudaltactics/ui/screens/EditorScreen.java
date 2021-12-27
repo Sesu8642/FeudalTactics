@@ -38,7 +38,6 @@ public class EditorScreen implements Screen {
 	public EditorScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer) {
 		editorController = new EditorController();
 		inputValidator = new EditorInputHandler(editorController);
-		//editorController.setHud(this);
 		this.ingameCamera = ingameCamera;
 		this.menuCamera = menuCamera;
 		this.mapRenderer = mapRenderer;

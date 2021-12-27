@@ -2,9 +2,9 @@ package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
 public class Castle implements MapObject {
 
-	static public final int COST = 15;
-	static public final String SPRITE_NAME = "castle";
-	static public final int STRENGTH = 2;
+	public static final int COST = 15;
+	public static final String SPRITE_NAME = "castle";
+	public static final int STRENGTH = 2;
 
 	@Override
 	public String getSpriteName() {

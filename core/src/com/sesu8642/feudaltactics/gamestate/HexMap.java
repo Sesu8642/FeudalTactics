@@ -2,13 +2,14 @@ package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
 
 public class HexMap {
 
-	public static float HEX_OUTER_RADIUS = 5;
+	public static final float HEX_OUTER_RADIUS = 5;
 
 	private Map<Vector2, HexTile> tiles;
 
@@ -53,8 +54,8 @@ public class HexMap {
 		return new Vector2(x + 0.0F, z + 0.0F);
 	}
 
-	public ArrayList<Vector2> getNeighborCoords(Vector2 tileCoords) {
-		ArrayList<Vector2> neighbors = new ArrayList<Vector2>();
+	public List<Vector2> getNeighborCoords(Vector2 tileCoords) {
+		ArrayList<Vector2> neighbors = new ArrayList<>();
 		neighbors.add(new Vector2(tileCoords.x - 1, tileCoords.y));
 		neighbors.add(new Vector2(tileCoords.x, tileCoords.y - 1));
 		neighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 1));
@@ -64,8 +65,8 @@ public class HexMap {
 		return neighbors;
 	}
 
-	public ArrayList<Vector2> getNeighborsNeighborCoords(Vector2 tileCoords) {
-		ArrayList<Vector2> neighborsNeighbors = new ArrayList<Vector2>();
+	public List<Vector2> getNeighborsNeighborCoords(Vector2 tileCoords) {
+		ArrayList<Vector2> neighborsNeighbors = new ArrayList<>();
 		neighborsNeighbors.add(new Vector2(tileCoords.x, tileCoords.y - 2));
 		neighborsNeighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 2));
 		neighborsNeighbors.add(new Vector2(tileCoords.x + 2, tileCoords.y - 2));
@@ -81,8 +82,8 @@ public class HexMap {
 		return neighborsNeighbors;
 	}
 
-	public ArrayList<HexTile> getNeighborTiles(HexTile tile) {
-		ArrayList<HexTile> cachedNeighbors = tile.getCachedNeighborTiles();
+	public List<HexTile> getNeighborTiles(HexTile tile) {
+		List<HexTile> cachedNeighbors = tile.getCachedNeighborTiles();
 		if (cachedNeighbors == null) {
 			cachedNeighbors = getNeighborTiles(tile.getPosition());
 			tile.setCachedNeighborTiles(cachedNeighbors);
@@ -90,31 +91,31 @@ public class HexMap {
 		return cachedNeighbors;
 	}
 
-	private ArrayList<HexTile> getNeighborTiles(Vector2 tileCoords) {
-		ArrayList<Vector2> neighborCoords = getNeighborCoords(tileCoords);
-		ArrayList<HexTile> neighborTiles = new ArrayList<HexTile>();
+	private List<HexTile> getNeighborTiles(Vector2 tileCoords) {
+		List<Vector2> neighborCoords = getNeighborCoords(tileCoords);
+		List<HexTile> neighborTiles = new ArrayList<>();
 		for (Vector2 coord : neighborCoords) {
 			neighborTiles.add(tiles.get(coord));
 		}
 		return neighborTiles;
 	}
 
-	public ArrayList<HexTile> getNeighborsNeighborTiles(HexTile tile) {
+	public List<HexTile> getNeighborsNeighborTiles(HexTile tile) {
 		return getNeighborsNeighborTiles(tile.getPosition());
 	}
 
-	private ArrayList<HexTile> getNeighborsNeighborTiles(Vector2 tileCoords) {
-		ArrayList<Vector2> neighborsNeighborCoords = getNeighborsNeighborCoords(tileCoords);
-		ArrayList<HexTile> neighborsNeighborTiles = new ArrayList<HexTile>();
+	private List<HexTile> getNeighborsNeighborTiles(Vector2 tileCoords) {
+		List<Vector2> neighborsNeighborCoords = getNeighborsNeighborCoords(tileCoords);
+		List<HexTile> neighborsNeighborTiles = new ArrayList<>();
 		for (Vector2 coord : neighborsNeighborCoords) {
 			neighborsNeighborTiles.add(tiles.get(coord));
 		}
 		return neighborsNeighborTiles;
 	}
 
-	public ArrayList<Vector2> getUnusedNeighborCoords(Vector2 tileCoords) {
-		ArrayList<Vector2> neighbors = getNeighborCoords(tileCoords);
-		ArrayList<Vector2> unusedNeighbors = new ArrayList<Vector2>();
+	public List<Vector2> getUnusedNeighborCoords(Vector2 tileCoords) {
+		List<Vector2> neighbors = getNeighborCoords(tileCoords);
+		List<Vector2> unusedNeighbors = new ArrayList<>();
 		for (Vector2 neighbor : neighbors) {
 			if (!tiles.containsKey(neighbor)) {
 				unusedNeighbors.add(neighbor);
@@ -150,22 +151,15 @@ public class HexMap {
 		maxWorldX += HEX_OUTER_RADIUS;
 		minWorldY -= HEX_OUTER_RADIUS;
 		maxWorldY += HEX_OUTER_RADIUS;
-		dims.width = maxWorldX - minWorldX;
-		dims.height = maxWorldY - minWorldY;
-		dims.center = new Vector2();
-		dims.center.x = minWorldX + (dims.width / 2);
-		dims.center.y = minWorldY + (dims.height / 2);
+		dims.setWidth(maxWorldX - minWorldX);
+		dims.setHeight(maxWorldY - minWorldY);
+		dims.setCenter(new Vector2());
+		dims.getCenter().x = minWorldX + (dims.getWidth() / 2);
+		dims.getCenter().y = minWorldY + (dims.getHeight() / 2);
 		return dims;
 	}
 
 	public Map<Vector2, HexTile> getTiles() {
 		return tiles;
 	}
-
-	public class MapDimensions {
-		public Vector2 center;
-		public float width;
-		public float height;
-	}
-
 }

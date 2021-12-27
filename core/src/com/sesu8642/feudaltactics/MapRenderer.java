@@ -25,7 +25,7 @@ import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.HexMap.MapDimensions;
+import com.sesu8642.feudaltactics.gamestate.MapDimensions;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
@@ -106,7 +106,7 @@ public class MapRenderer {
 			drawTile.mapCoords = mapCoords;
 			drawTile.color = tile.getPlayer().getColor();
 			// create beaches on the edges
-			ArrayList<HexTile> neighbors = gameState.getMap().getNeighborTiles(tile);
+			List<HexTile> neighbors = gameState.getMap().getNeighborTiles(tile);
 			if (neighbors.get(0) == null) {
 				// top left
 				drawTile.topLeftBeach = true;
@@ -557,14 +557,14 @@ public class MapRenderer {
 		// get the factors needed to adjust the camera zoom
 		float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
 		float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
-		float xFactor = (dims.width / camera.zoom) / useViewportWidth; // lol
-		float yFactor = (dims.height / camera.zoom) / useViewportHeight;
+		float xFactor = (dims.getWidth() / camera.zoom) / useViewportWidth; // lol
+		float yFactor = (dims.getHeight() / camera.zoom) / useViewportHeight;
 		// use the bigger factor because both dimensions must fit
 		float scaleFactor = Math.max(xFactor, yFactor);
 		camera.zoom *= scaleFactor;
 		camera.update();
 		// move camera to center
-		camera.position.set(dims.center, 0);
+		camera.position.set(dims.getCenter(), 0);
 		// offset to apply the margin
 		camera.translate(marginRightPx * camera.zoom / 2 - marginLeftPx * camera.zoom / 2,
 				marginTopPx * camera.zoom / 2 - marginBottomPx * camera.zoom / 2);

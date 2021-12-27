@@ -2,7 +2,7 @@ package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
 public class Unit implements MapObject {
 
-	static public final int COST = 10;
+	public static final int COST = 10;
 
 	private boolean canAct = true;
 	private UnitTypes unitType;

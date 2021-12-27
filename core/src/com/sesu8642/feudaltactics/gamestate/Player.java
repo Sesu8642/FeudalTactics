@@ -8,7 +8,7 @@ public class Player {
 	private Type type;
 	private boolean defeated = false;
 
-	public static enum Type {
+	public enum Type {
 		LOCAL_PLAYER, LOCAL_BOT, REMOTE
 	}
 
@@ -42,8 +42,9 @@ public class Player {
 		return type;
 	}
 
-	public Player clone() {
-		return new Player(color, defeated, type);
+	/** @return a deep copy of the original. exception: color field is the same instance */
+	public Player copyOf(Player original) {
+		return new Player(original.getColor(), original.isDefeated(), original.getType());
 	}
 
 }

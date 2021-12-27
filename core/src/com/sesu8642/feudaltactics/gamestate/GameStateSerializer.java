@@ -53,7 +53,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 	@Override
 	public void write(Json json, GameState object, @SuppressWarnings("rawtypes") Class knownType) {
 		lastId = 0;
-		Map<Object, Integer> idMap = new HashMap<Object, Integer>();
+		Map<Object, Integer> idMap = new HashMap<>();
 		json.writeObjectStart();
 		json.writeArrayStart(PLAYERS_NAME);
 		for (Player player : object.getPlayers()) {
@@ -114,10 +114,10 @@ public class GameStateSerializer implements Serializer<GameState> {
 
 	@Override
 	public GameState read(Json json, JsonValue jsonData, @SuppressWarnings("rawtypes") Class type) {
-		Map<Integer, Object> reverseIdMap = new HashMap<Integer, Object>();
+		Map<Integer, Object> reverseIdMap = new HashMap<>();
 
 		GameState result = new GameState();
-		result.setPlayers(new ArrayList<Player>());
+		result.setPlayers(new ArrayList<>());
 		JsonValue playersJson = jsonData.get(PLAYERS_NAME);
 		playersJson.forEach(playerJson -> {
 			int id = playerJson.getInt(ID_NAME);
@@ -151,13 +151,13 @@ public class GameStateSerializer implements Serializer<GameState> {
 			reverseIdMap.put(id, tile);
 			result.getMap().getTiles().put(tile.getPosition(), tile);
 		});
-		result.setKingdoms(new ArrayList<Kingdom>());
+		result.setKingdoms(new ArrayList<>());
 		JsonValue kingdomsJson = jsonData.get(KINGDOMS_NAME);
 		kingdomsJson.forEach(kingdomJson -> {
 			int id = kingdomJson.getInt(ID_NAME);
 			int playerId = kingdomJson.getInt(PLAYER_ID_NAME);
 			JsonValue tileIdsJson = kingdomJson.get(TILE_IDS_NAME);
-			LinkedHashSet<HexTile> kingdomTiles = new LinkedHashSet<HexTile>();
+			LinkedHashSet<HexTile> kingdomTiles = new LinkedHashSet<>();
 			tileIdsJson.forEach(tileIdJson -> {
 				int tileId = tileIdJson.asInt();
 				kingdomTiles.add((HexTile) reverseIdMap.get(tileId));

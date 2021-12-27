@@ -260,7 +260,7 @@ public class BotAI {
 	private List<HexTile> determineNeighboringEnemyTiles(GameState gameState) {
 		List<HexTile> result = new ArrayList<>();
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
+			List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
 			for (HexTile neighborTile : neighborTiles) {
 				if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()) {
 					result.add(neighborTile);
@@ -431,7 +431,7 @@ public class BotAI {
 		}
 		// count the enemy tiles next to the tile and 2 tiles away
 		int score = 0;
-		ArrayList<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
+		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
 		for (HexTile neighborTile : neighborTiles) {
 			if (neighborTile != null && neighborTile.getKingdom() != null) {
 				if (neighborTile.getKingdom() != tile.getKingdom()) {

@@ -79,6 +79,7 @@ public class LocalInputHandler implements AcceptCommonInput {
 			if (InputValidationHelper.checkCombineUnits(gameController.getGameState(), player, tile)) {
 				gameController.combineUnits(tile);
 			}
+			break;
 		case CONQUER:
 			if (InputValidationHelper.checkConquer(gameController.getGameState(), player, tile)) {
 				gameController.conquer(tile);
@@ -111,46 +112,6 @@ public class LocalInputHandler implements AcceptCommonInput {
 			}
 		}
 	}
-
-//	public void inputEndTurn() {
-//		if (!isActivePlayerLocalHuman()) {
-//			// don't accept inputs if its not the human player's turn
-//			return;
-//		}
-//		if (InputValidator.checkEndTurn(gameController.getGameState())) {
-//			gameController.endTurn();
-//		}
-//	}
-//
-//	public void inputBuyPeasant() {
-//		if (!isActivePlayerLocalHuman()) {
-//			// don't accept inputs if its not the human player's turn
-//			return;
-//		}
-//		if (InputValidator.checkBuyObject(gameController.getGameState(), Unit.COST)) {
-//			gameController.buyPeasant();
-//		}
-//	}
-//
-//	public void inputBuyCastle() {
-//		if (!isActivePlayerLocalHuman()) {
-//			// don't accept inputs if its not the human player's turn
-//			return;
-//		}
-//		if (InputValidator.checkBuyObject(gameController.getGameState(), Castle.COST)) {
-//			gameController.buyCastle();
-//		}
-//	}
-//
-//	public void inputUndo() {
-//		if (!isActivePlayerLocalHuman()) {
-//			// don't accept inputs if its not the human player's turn
-//			return;
-//		}
-//		if (InputValidator.checkUndoAction()) {
-//			gameController.undoLastAction();
-//		}
-//	}
 
 	private boolean isActivePlayerLocalHuman() {
 		return (gameController.getGameState().getActivePlayer().getType() == Type.LOCAL_PLAYER);

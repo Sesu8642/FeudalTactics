@@ -2,8 +2,8 @@ package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
 public class Tree implements MapObject {
 
-	static public final String SPRITE_NAME = "tree";
-	static private final int STRENGTH = 0;
+	public static final String SPRITE_NAME = "tree";
+	private static final int STRENGTH = 0;
 
 	@Override
 	public String getSpriteName() {

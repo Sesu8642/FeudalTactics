@@ -16,11 +16,11 @@ public class ValueWithSize extends Value {
 	 * Returns a value that is a percentage of the specified actor's size. The
 	 * context actor is ignored.
 	 */
-	static public Value percentSize(final float percent, final Actor actor) {
+	public static Value percentSize(final float percent, final Actor actor) {
 		Objects.requireNonNull(actor);
 		return new Value() {
 			public float get(Actor context) {
-				return (float) Math.sqrt(((float) actor.getHeight() * actor.getWidth())) * percent;
+				return (float) Math.sqrt(actor.getHeight() * actor.getWidth()) * percent;
 			}
 		};
 	}

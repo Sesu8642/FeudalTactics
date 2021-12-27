@@ -12,6 +12,10 @@ import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 public class InputValidationHelper {
+	
+	private InputValidationHelper() {
+		// static helper class -> prevent instantiation
+	}
 
 	public static boolean checkChangeActiveKingdom(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {

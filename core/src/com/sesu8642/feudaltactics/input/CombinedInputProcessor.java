@@ -13,8 +13,8 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	private OrthographicCamera camera;
 	private AcceptCommonInput inputAcceptor;
 
-	public static float MIN_ZOOM = 0.01F;
-	public static float MAX_ZOOM = 1;
+	public static final float MIN_ZOOM = 0.01F;
+	public static final float MAX_ZOOM = 1;
 
 	public CombinedInputProcessor(AcceptCommonInput inputAcceptor, OrthographicCamera camera) {
 		this.inputAcceptor = inputAcceptor;
@@ -23,7 +23,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean scrolled(float amountX, float amountY) {
-		float adjAmount = ((float) amountY * camera.zoom) / 3;
+		float adjAmount = (amountY * camera.zoom) / 3;
 		if ((adjAmount < 0 && camera.zoom + adjAmount > MIN_ZOOM)
 				|| (adjAmount > 0 && camera.zoom + adjAmount < MAX_ZOOM)) {
 			Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
