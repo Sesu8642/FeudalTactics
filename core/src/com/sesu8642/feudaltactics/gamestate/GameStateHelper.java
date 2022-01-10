@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.gamestate;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,7 +47,7 @@ public class GameStateHelper {
 
 		List<Player> copiedPlayers = new ArrayList<>();
 		for (Player originalPlayer : original.getPlayers()) {
-			Player newPlayer = originalPlayer.clone();
+			Player newPlayer = Player.copyOf(originalPlayer);
 			copiedPlayers.add(newPlayer);
 		}
 		result.setPlayers(copiedPlayers);
@@ -497,7 +498,7 @@ public class GameStateHelper {
 		gameState.getKingdoms().remove(slaveKingdom);
 	}
 
-	private static void updateSplitKingdom(GameState gameState, LinkedHashSet<HexTile> tiles) {
+	private static void updateSplitKingdom(GameState gameState, Collection<HexTile> tiles) {
 		if (tiles.isEmpty()) {
 			return;
 		}

@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 public class Slide {
 
-	private static final float maxResponsiveImageWidth = Gdx.graphics.getDensity() * 1500F;
+	private static final float MAX_RESPONSIVE_IMAGE_WIDTH = Gdx.graphics.getDensity() * 1500F;
 
 	private Skin skin;
 	private Table table = new Table();
@@ -42,7 +42,7 @@ public class Slide {
 		Texture imageTexture = new Texture(Gdx.files.internal(imagePath));
 		Image image = new Image(imageTexture);
 		float aspectRatio = ((float) imageTexture.getHeight()) / ((float) imageTexture.getWidth());
-		table.add(image).prefWidth(0).maxWidth(maxResponsiveImageWidth).height(Value.percentWidth(aspectRatio)).expand().fill();
+		table.add(image).prefWidth(0).maxWidth(MAX_RESPONSIVE_IMAGE_WIDTH).height(Value.percentWidth(aspectRatio)).expand().fill();
 		table.row();
 		return this;
 	}

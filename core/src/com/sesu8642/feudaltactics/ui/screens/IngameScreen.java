@@ -68,9 +68,10 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	@Inject
 	public IngameScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
 			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
-			@MainMenuScreen GameScreen mainMenuScreen, DialogFactory confirmDialogFactory, GameController gameController,
-			@IngameInputProcessor CombinedInputProcessor inputProcessor, InputMultiplexer inputMultiplexer,
-			HudStage hudStage, MenuStage menuStage, ParameterInputStage parameterInputStage) {
+			@MainMenuScreen GameScreen mainMenuScreen, DialogFactory confirmDialogFactory,
+			GameController gameController, @IngameInputProcessor CombinedInputProcessor inputProcessor,
+			InputMultiplexer inputMultiplexer, HudStage hudStage, MenuStage menuStage,
+			ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
 		this.gameController = gameController;
 		this.ingameCamera = ingameCamera;
@@ -110,10 +111,10 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 				gameController.placeCameraForFullMapView(INPUT_WIDTH_PX, BUTTON_HEIGHT_PX, 0, 0);
 			}
 		});
-		parameterInputStage.registerEventListener(EventTypes.CHANGE, () -> {
-			PreferencesHelper.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
-					parameterInputStage.getMapSize(), parameterInputStage.getMapDensity()));
-		});
+		parameterInputStage.registerEventListener(EventTypes.CHANGE,
+				() -> PreferencesHelper
+						.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
+								parameterInputStage.getMapSize(), parameterInputStage.getMapDensity())));
 
 		// hud stage
 		hudStage.registerEventListener(HudStage.EventTypes.UNDO, () -> gameController.undoLastAction());
@@ -123,9 +124,7 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 			if (GameStateHelper.hasActivePlayerlikelyForgottenAKingom(gameController.getGameState())) {
 				Dialog confirmDialog = dialogFactory.createConfirmDialog(
 						"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
-						() -> {
-							gameController.endTurn();
-						});
+						() -> gameController.endTurn());
 				confirmDialog.show(hudStage);
 			} else {
 				gameController.endTurn();
@@ -218,6 +217,7 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	}
 
 	private void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
+		// TODO: make this nicer and display the color of the winning player
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			switch ((byte) result) {
 			case 1:

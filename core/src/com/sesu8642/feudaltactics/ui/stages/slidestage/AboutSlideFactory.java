@@ -27,7 +27,7 @@ public class AboutSlideFactory {
 	}
 
 	public List<Slide> createAllSlides() {
-		List<Slide> slides = new ArrayList<Slide>();
+		List<Slide> slides = new ArrayList<>();
 		slides.add(createAboutSlide1());
 		slides.add(createAboutSlide2());
 		return slides;

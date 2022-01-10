@@ -29,13 +29,14 @@ public class EditorScreen implements Screen {
 	private InputMultiplexer multiplexer;
 	private EditorInputHandler inputValidator;
 	private EditorController editorController;
-	
+
 	private Stage stage;
 	private Table rootTable;
 	private Viewport viewport;
 
 	@Inject
-	public EditorScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer) {
+	public EditorScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuCamera OrthographicCamera menuCamera,
+			@IngameRenderer MapRenderer mapRenderer) {
 		editorController = new EditorController();
 		inputValidator = new EditorInputHandler(editorController);
 		this.ingameCamera = ingameCamera;
@@ -58,7 +59,7 @@ public class EditorScreen implements Screen {
 		rootTable.setFillParent(true);
 		stage.addActor(rootTable);
 	}
-	
+
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(multiplexer);
@@ -81,7 +82,8 @@ public class EditorScreen implements Screen {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		viewport.apply();
-		rootTable.pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup and going fullscreen etc.; took me hours to find out
+		rootTable.pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup and going
+							// fullscreen etc.; took me hours to find out
 		ingameCamera.viewportHeight = height;
 		ingameCamera.viewportWidth = width;
 		ingameCamera.update();
@@ -89,17 +91,17 @@ public class EditorScreen implements Screen {
 
 	@Override
 	public void pause() {
-
+		// noop
 	}
 
 	@Override
 	public void resume() {
-
+		// noop
 	}
 
 	@Override
 	public void hide() {
-
+		// noop
 	}
 
 	@Override

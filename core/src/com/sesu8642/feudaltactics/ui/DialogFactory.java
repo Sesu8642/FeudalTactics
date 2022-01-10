@@ -14,18 +14,21 @@ public class DialogFactory {
 	public DialogFactory(Skin skin) {
 		this.skin = skin;
 	}
-	
+
 	public FeudalTacticsDialog createDialog(Consumer<Object> action) {
 		return new FeudalTacticsDialog(skin) {
+
+			@Override
 			public void result(Object result) {
 				action.accept(result);
 				this.remove();
 			}
+
 		};
 	}
-	
+
 	public ConfirmDialog createConfirmDialog(String message, Runnable action) {
 		return new ConfirmDialog(message, action, skin);
 	}
-	
+
 }

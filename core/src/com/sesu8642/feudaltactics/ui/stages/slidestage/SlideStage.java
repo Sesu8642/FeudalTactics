@@ -25,16 +25,14 @@ public class SlideStage extends ResizableResettableStage {
 
 	private List<Table> slides;
 
-	Set<Disposable> disposables = new HashSet<Disposable>();
+	Set<Disposable> disposables = new HashSet<>();
 	private Skin skin;
 	private OrthographicCamera camera;
 	private Table rootTable;
 	private Table currentSlide;
 	private TextButton backButton;
 	private TextButton nextButton;
-	private ScrollPane scrollPane;
-	private Stack slideAreaStack;
-	private Container<Table> slideContainer = new Container<Table>();
+	private Container<Table> slideContainer = new Container<>();
 
 	public SlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback, OrthographicCamera camera,
 			Skin skin) {
@@ -44,7 +42,7 @@ public class SlideStage extends ResizableResettableStage {
 		}
 		this.camera = camera;
 		this.skin = skin;
-		this.slides = slides.stream().map(s -> s.getTable()).collect(Collectors.toList());
+		this.slides = slides.stream().map(Slide::getTable).collect(Collectors.toList());
 		initUI(this.slides, finishedCallback);
 	}
 
@@ -64,9 +62,9 @@ public class SlideStage extends ResizableResettableStage {
 		slideContainer.pad(20, 25, 20, 20);
 		slideContainer.setActor(currentSlide);
 
-		slideAreaStack = new Stack(backgroundArea, slideContainer);
+		Stack slideAreaStack = new Stack(backgroundArea, slideContainer);
 
-		scrollPane = new ScrollPane(slideAreaStack, skin);
+		ScrollPane scrollPane = new ScrollPane(slideAreaStack, skin);
 		scrollPane.setFadeScrollBars(false);
 		scrollPane.setOverscroll(false, false);
 
@@ -127,7 +125,6 @@ public class SlideStage extends ResizableResettableStage {
 		backButton.setText("");
 		String nextButtonText = slides.size() == 1 ? "Finish" : "Next";
 		nextButton.setText(nextButtonText);
-		System.out.println(slides == null);
 		currentSlide = slides.get(0);
 		slideContainer.setActor(currentSlide);
 	}
@@ -145,11 +142,6 @@ public class SlideStage extends ResizableResettableStage {
 				}
 			});
 		});
-	}
-
-	@Override
-	public void draw() {
-		super.draw();
 	}
 
 	@Override

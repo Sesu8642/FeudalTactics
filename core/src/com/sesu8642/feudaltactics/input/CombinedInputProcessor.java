@@ -120,6 +120,8 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 		case Keys.BACK:
 			inputAcceptor.inputBack();
 			break;
+		default:
+			// noop: ignore all other keys
 		}
 		return true;
 	}

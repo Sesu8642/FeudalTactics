@@ -16,7 +16,7 @@ public class TutorialSlideFactory {
 
 	private Skin skin;
 	
-	private String HEADLINE = "Tutorial";
+	private final static String HEADLINE = "Tutorial";
 
 	@Inject
 	public TutorialSlideFactory(Skin skin) {
@@ -24,7 +24,7 @@ public class TutorialSlideFactory {
 	}
 
 	public List<Slide> createAllSlides() {
-		List<Slide> slides = new ArrayList<Slide>();
+		List<Slide> slides = new ArrayList<>();
 		slides.add(createTutorialSlide1());
 		slides.add(createTutorialSlide2());
 		slides.add(createTutorialSlide3());

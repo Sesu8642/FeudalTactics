@@ -38,17 +38,13 @@ public class ParameterInputStage extends ResizableResettableStage {
 	}
 
 	private Table rootTable;
-	private Label seedLabel;
-	private Label sizeLabel;
-	private Label densityLabel;
-	private Label difficultyLabel;
 	private SelectBox<String> sizeSelect;
 	private SelectBox<String> densitySelect;
 	private SelectBox<String> difficultySelect;
 	private ImageButton randomButton;
 	private TextButton playButton;
 	private TextField seedTextField;
-	private Collection<Runnable> regenListeners = new ArrayList<Runnable>();
+	private Collection<Runnable> regenListeners = new ArrayList<>();
 	private Skin skin;
 	private TextureAtlas textureAtlas;
 
@@ -62,22 +58,22 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private void initUI() {
 		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
-		difficultyLabel = new Label("CPU\nDifficulty", skin);
+		Label difficultyLabel = new Label("CPU\nDifficulty", skin);
 		difficultySelect = new SelectBox<String>(skin);
 		String[] difficulties = { "Easy", "Medium", "Hard" };
 		difficultySelect.setItems(difficulties);
 		difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
-		sizeLabel = new Label("Map\nSize", skin);
+		Label sizeLabel = new Label("Map\nSize", skin);
 		sizeSelect = new SelectBox<String>(skin);
 		String[] sizes = { "Small", "Medium", "Large" };
 		sizeSelect.setItems(sizes);
 		sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
-		densityLabel = new Label("Map\nDensity", skin);
+		Label densityLabel = new Label("Map\nDensity", skin);
 		densitySelect = new SelectBox<String>(skin);
 		String[] densities = { "Dense", "Medium", "Loose" };
 		densitySelect.setItems(densities);
 		densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
-		seedLabel = new Label("Seed", skin);
+		Label seedLabel = new Label("Seed", skin);
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
@@ -90,7 +86,6 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.setFillParent(true);
 		rootTable.defaults().left();
 		rootTable.columnDefaults(0).pad(0, 10, 0, 10);
-//		rootTable.debug();
 		rootTable.add().expandY();
 		rootTable.row();
 		rootTable.add(difficultyLabel);
@@ -120,7 +115,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	}
 
 	public void registerEventListener(EventTypes type, Runnable listener) {
-		Collection<Actor> uIElements = new HashSet<Actor>();
+		Collection<Actor> uIElements = new HashSet<>();
 		switch (type) {
 		case CHANGE:
 			uIElements.add(difficultySelect);
@@ -154,9 +149,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		if (seed != null) {
 			seedTextField.setText(seed.toString());
 		}
-		regenListeners.forEach((Runnable action) -> {
-			action.run();
-		});
+		regenListeners.forEach(Runnable::run);
 	}
 
 	public Long getSeedParam() {
@@ -220,12 +213,14 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	@Override
 	public void updateOnResize(int width, int height) {
-		// VERY IMPORTANT!!! makes everything scale correctly hours to find out
+		// VERY IMPORTANT!!! makes everything scale correctly on startup and going
+		// fullscreen etc.; took me hours to find out
 		rootTable.pack();
 	}
 
 	@Override
 	public void reset() {
+		// nothing to reset
 	}
 
 }

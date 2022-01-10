@@ -128,7 +128,7 @@ public class HudStage extends ResizableResettableStage {
 			uIElement = menuButton;
 			break;
 		default:
-			break;
+			throw new AssertionError("Attempt to register event listener of unknown type: " + type);
 		}
 		uIElement.addListener(new ChangeListener() {
 			@Override
@@ -195,6 +195,7 @@ public class HudStage extends ResizableResettableStage {
 
 	@Override
 	public void reset() {
+		// nothing to reset
 	}
 
 }

@@ -46,17 +46,17 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void pause() {
-
+		// noop
 	}
 
 	@Override
 	public void resume() {
-
+		// noop
 	}
 
 	@Override
 	public void hide() {
-//		dispose();
+		// noop
 	}
 
 	@Override

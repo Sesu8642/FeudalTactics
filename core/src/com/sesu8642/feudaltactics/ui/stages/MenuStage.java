@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -25,9 +26,9 @@ import com.sesu8642.feudaltactics.MapRenderer;
 public class MenuStage extends ResizableResettableStage {
 
 	private Table rootTable;
-	private List<TextButton> buttons = new ArrayList<TextButton>();
+	private List<TextButton> buttons = new ArrayList<>();
 	private Label bottomLabel;
-	Set<Disposable> disposables = new HashSet<Disposable>();
+	Set<Disposable> disposables = new HashSet<>();
 	private MapRenderer mapRenderer;
 	private Skin skin;
 	private OrthographicCamera camera;
@@ -36,7 +37,7 @@ public class MenuStage extends ResizableResettableStage {
 		this(viewport, new LinkedHashMap<>(), camera, mapRenderer, skin);
 	}
 
-	public MenuStage(Viewport viewport, LinkedHashMap<String, Runnable> buttonData, OrthographicCamera camera,
+	public MenuStage(Viewport viewport, Map<String, Runnable> buttonData, OrthographicCamera camera,
 			MapRenderer mapRenderer, Skin skin) {
 		super(viewport);
 		this.camera = camera;
@@ -45,7 +46,7 @@ public class MenuStage extends ResizableResettableStage {
 		initUI(buttonData);
 	}
 
-	private void initUI(LinkedHashMap<String, Runnable> buttonData) {
+	private void initUI(Map<String, Runnable> buttonData) {
 		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
 		disposables.add(logoTexture);
 		Image logo = new Image(logoTexture);
@@ -124,5 +125,6 @@ public class MenuStage extends ResizableResettableStage {
 
 	@Override
 	public void reset() {
+		// nothing to reset
 	}
 }

@@ -26,12 +26,12 @@ public class MainMenuStage extends MenuStage {
 	public MainMenuStage(@MenuViewport Viewport viewport, @MenuBackgroundCamera OrthographicCamera camera,
 			@MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin, @VersionProperty String gameVersion,
 			Provider<IngameScreen> ingameScreenProvider, Provider<EditorScreen> editorScreenProvider,
-			@TutorialScreen Provider<GameScreen> tutorialScreenProvider, @AboutScreen Provider<GameScreen> aboutScreenProvider) {
+			@TutorialScreen Provider<GameScreen> tutorialScreenProvider,
+			@AboutScreen Provider<GameScreen> aboutScreenProvider) {
 		super(viewport, camera, mapRenderer, skin);
 		addButton("Play", () -> FeudalTactics.game.setScreen(ingameScreenProvider.get()));
 		addButton("Tutorial", () -> FeudalTactics.game.setScreen(tutorialScreenProvider.get()));
-		addButton("About", () -> {FeudalTactics.game.setScreen(aboutScreenProvider.get());
-		});
+		addButton("About", () -> FeudalTactics.game.setScreen(aboutScreenProvider.get()));
 		setBottomLabelText(String.format("Version %s", gameVersion));
 	}
 

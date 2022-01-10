@@ -44,9 +44,8 @@ public class SplashScreen extends GameScreen {
 	@Override
 	public void hide() {
 		super.hide();
-		// TODO: causes error "buffer not allocated with newUnsafeByteBuffer or already
+		// TODO: disposing here causes error "buffer not allocated with newUnsafeByteBuffer or already
 		// disposed"; maybe because the call is caused by the render method
-		// dispose();
 	}
 
 }

@@ -43,7 +43,7 @@ public class Player {
 	}
 
 	/** @return a deep copy of the original. exception: color field is the same instance */
-	public Player copyOf(Player original) {
+	public static Player copyOf(Player original) {
 		return new Player(original.getColor(), original.isDefeated(), original.getType());
 	}
 

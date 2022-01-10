@@ -7,15 +7,15 @@ import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
 public abstract class ResizableResettableStage extends Stage implements NeedsUpdateOnResize {
 
-	public ResizableResettableStage() {
+	protected ResizableResettableStage() {
 		super();
 	}
 
-	public ResizableResettableStage(Viewport viewport, Batch batch) {
+	protected ResizableResettableStage(Viewport viewport, Batch batch) {
 		super(viewport, batch);
 	}
 
-	public ResizableResettableStage(Viewport viewport) {
+	protected ResizableResettableStage(Viewport viewport) {
 		super(viewport);
 	}
 	
