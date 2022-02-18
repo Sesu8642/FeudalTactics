@@ -1,3 +1,8 @@
+Acknowledgments
+===============
+
+Many thanks to Amit Patel for his guide to hexagonal grids on redblobgames.com!
+
 Assets
 ======
 
