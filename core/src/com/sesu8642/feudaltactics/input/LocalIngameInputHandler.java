@@ -15,21 +15,25 @@ import com.sesu8642.feudaltactics.ui.screens.IngameScreen;
 
 import dagger.Lazy;
 
+/** {@link InputHandler} for inputs of a local player in-game. **/
 @Singleton
-public class LocalInputHandler implements AcceptCommonInput {
+public class LocalIngameInputHandler implements InputHandler {
 
-	// TODO: when validating multiplayer inputs, make sure that it's the player's
-	// turn before calling check*
-
-	public enum TapAction {
+	private enum TapAction {
 		NONE, PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER
 	}
 
 	private GameController gameController;
 	private Lazy<IngameScreen> ingameScreenLazy;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param gameController   game controller
+	 * @param ingameScreenLazy ingame screen
+	 */
 	@Inject
-	public LocalInputHandler(GameController gameController, Lazy<IngameScreen> ingameScreenLazy) {
+	public LocalIngameInputHandler(GameController gameController, Lazy<IngameScreen> ingameScreenLazy) {
 		this.gameController = gameController;
 		// using lazy because of dependency cycle
 		this.ingameScreenLazy = ingameScreenLazy;
@@ -87,10 +91,12 @@ public class LocalInputHandler implements AcceptCommonInput {
 			break;
 		case NONE:
 			break;
+		default:
+			throw new IllegalStateException("Unknown action " + action);
 		}
 	}
 
-	public TapAction determineTapAction(Player player, HexTile tile) {
+	private TapAction determineTapAction(Player player, HexTile tile) {
 		// determine action
 		if (tile == null) {
 			return TapAction.NONE;

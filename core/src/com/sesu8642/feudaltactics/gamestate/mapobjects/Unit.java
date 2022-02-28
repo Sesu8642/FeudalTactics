@@ -1,15 +1,20 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
+/**
+ * Map object representing a unit. Units are used to conquer enemy tiles. They
+ * need to be paid a salary every turn. There are several tiers of units with
+ * different strength levels and salaries.
+ **/
 public class Unit implements MapObject {
 
 	public static final int COST = 10;
 
 	private boolean canAct = true;
 	private UnitTypes unitType;
-	
+
+	/** Type of a unit determining its strength and sprite. **/
 	public enum UnitTypes {
-		PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"),
-		BARON(4, 54, "baron");
+		PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"), BARON(4, 54, "baron");
 
 		private int strength;
 		private int salary;
@@ -39,7 +44,7 @@ public class Unit implements MapObject {
 	public Unit() {
 		super();
 	}
-	
+
 	public Unit(UnitTypes unitType) {
 		super();
 		this.unitType = unitType;
@@ -73,7 +78,7 @@ public class Unit implements MapObject {
 		newUnit.setCanAct(this.canAct);
 		return newUnit;
 	}
-	
+
 	@Override
 	public String toString() {
 		String superStr = super.toString();

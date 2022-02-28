@@ -20,6 +20,7 @@ import com.sesu8642.feudaltactics.dagger.MenuCamera;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.EditorInputHandler;
 
+/** {@link Screen} for the map editor. Needs to be re-done. */
 @Singleton
 public class EditorScreen implements Screen {
 
@@ -82,8 +83,9 @@ public class EditorScreen implements Screen {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		viewport.apply();
-		rootTable.pack(); // VERY IMPORTANT!!! makes everything scale correctly on startup and going
-							// fullscreen etc.; took me hours to find out
+		// VERY IMPORTANT!!! makes everything scale correctly on startup and going
+		// fullscreen etc.; took me hours to find out
+		rootTable.pack();
 		ingameCamera.viewportHeight = height;
 		ingameCamera.viewportWidth = width;
 		ingameCamera.update();

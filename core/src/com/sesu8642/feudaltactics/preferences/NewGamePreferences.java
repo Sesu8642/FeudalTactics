@@ -3,23 +3,51 @@ package com.sesu8642.feudaltactics.preferences;
 import com.sesu8642.feudaltactics.BotAI;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
 
-/**
- * Preferences for a new game
- */
+/** Preferences for a new game. */
 public class NewGamePreferences {
 
+	/** Map sizes that can be generated. */
 	public enum MapSizes {
-		SMALL, MEDIUM, LARGE
+		SMALL(50), MEDIUM(150), LARGE(250);
+
+		private int amountOfTiles;
+
+		private MapSizes(int amountOfTiles) {
+			this.amountOfTiles = amountOfTiles;
+		}
+
+		public int getAmountOfTiles() {
+			return this.amountOfTiles;
+		}
+
 	}
 
+	/** Map densities that can be generated. */
 	public enum Densities {
-		LOOSE, MEDIUM, DENSE
+		LOOSE(-3), MEDIUM(0), DENSE(3);
+
+		private float densityFloat;
+
+		private Densities(float densityFloat) {
+			this.densityFloat = densityFloat;
+		}
+
+		public float getDensityFloat() {
+			return this.densityFloat;
+		}
 	}
 
 	private BotAI.Intelligence botIntelligence;
 	private MapSizes mapSize;
 	private Densities density;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param botIntelligence intelligence of the bot players for the game
+	 * @param mapSize         size of the map for this game
+	 * @param density         density of the map for this game
+	 */
 	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density) {
 		this.botIntelligence = botIntelligence;
 		this.mapSize = mapSize;

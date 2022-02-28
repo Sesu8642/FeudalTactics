@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
+/** Group of connected tiles that belong to the same player. **/
 public class Kingdom {
 
 	private Set<HexTile> tiles = new LinkedHashSet<>();
@@ -24,26 +25,28 @@ public class Kingdom {
 		this.player = player;
 	}
 
+	/**
+	 * Calculates the income of the kingdom.
+	 * 
+	 * @return income
+	 */
 	public int getIncome() {
-		int income = tiles.size();
-		for (HexTile tile : tiles) {
-			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
-				income -= 1;
-			}
-		}
-		return income;
+		// number of tiles - trees
+		return tiles.size() - (int) tiles.stream().filter(tile -> tile.getContent() != null
+				&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).count();
 	}
 
+	/**
+	 * Calculates the salaries this kingdom has to pay every turn.
+	 * 
+	 * @return salaries
+	 */
 	public int getSalaries() {
-		int salaries = 0;
-		for (HexTile tile : tiles) {
-			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
-				salaries += ((Unit) tile.getContent()).getUnitType().salary();
-			}
-		}
-		return salaries;
+		// sum of the salaries of all the units
+		return tiles.stream()
+				.filter(tile -> tile.getContent() != null
+						&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
+				.mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
 	}
 
 	public Set<HexTile> getTiles() {

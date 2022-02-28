@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -21,6 +22,9 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
+/**
+ * {@link Stage} that can display multiple slides that the user can go through.
+ */
 public class SlideStage extends ResizableResettableStage {
 
 	private List<Table> slides;
@@ -34,6 +38,15 @@ public class SlideStage extends ResizableResettableStage {
 	private TextButton nextButton;
 	private Container<Table> slideContainer = new Container<>();
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param viewport         viewport for the stage
+	 * @param slides           slides that are displayed
+	 * @param finishedCallback callback to be executed when the user is done
+	 * @param camera           camera to use
+	 * @param skin             game skin
+	 */
 	public SlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback, OrthographicCamera camera,
 			Skin skin) {
 		super(viewport);
@@ -43,10 +56,10 @@ public class SlideStage extends ResizableResettableStage {
 		this.camera = camera;
 		this.skin = skin;
 		this.slides = slides.stream().map(Slide::getTable).collect(Collectors.toList());
-		initUI(this.slides, finishedCallback);
+		initUi(this.slides, finishedCallback);
 	}
 
-	private void initUI(List<Table> slides, Runnable finishedCallback) {
+	private void initUi(List<Table> slides, Runnable finishedCallback) {
 		backButton = new TextButton("", skin);
 		backButton.setDisabled(true);
 		backButton.setTouchable(Touchable.disabled);
@@ -119,6 +132,7 @@ public class SlideStage extends ResizableResettableStage {
 		});
 	}
 
+	@Override
 	public void reset() {
 		backButton.setTouchable(Touchable.disabled);
 		backButton.setDisabled(true);
@@ -129,6 +143,7 @@ public class SlideStage extends ResizableResettableStage {
 		slideContainer.setActor(currentSlide);
 	}
 
+	@Override
 	public void updateOnResize(int width, int height) {
 		camera.viewportHeight = height;
 		camera.viewportWidth = width;

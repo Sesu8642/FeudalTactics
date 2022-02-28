@@ -35,11 +35,12 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.ui.DialogFactory;
-import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.HudStage;
+import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
 import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage.EventTypes;
 
+/** {@link Screen} for playing a map. */
 @Singleton
 public class IngameScreen extends GameScreen implements PropertyChangeListener {
 
@@ -57,6 +58,7 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	private Screen mainMenuScreen;
 	private DialogFactory dialogFactory;
 
+	/** Stages that can be displayed. */
 	public enum IngameStages {
 		PARAMETERS, HUD, MENU
 	}
@@ -65,6 +67,24 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	private static final long INPUT_HEIGHT_PX = 79;
 	private static final long INPUT_WIDTH_PX = 419;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param ingameCamera         camera for viewing the map
+	 * @param viewport             viewport for the menus
+	 * @param menuCamera           camera for the menus
+	 * @param mapRenderer          renderer for the map
+	 * @param mainMenuScreen       main menu screen that can be returned to
+	 * @param confirmDialogFactory factory for creating confirm dialogs
+	 * @param gameController       controller for playing the game
+	 * @param inputProcessor       input processor for user inputs that is added to
+	 *                             the input multiplexer
+	 * @param inputMultiplexer     input multiplexer that stages are added to as
+	 *                             processors
+	 * @param hudStage             stage for heads up display UI
+	 * @param menuStage            stage for the pause menu UI
+	 * @param parameterInputStage  stage for the new game parameter input UI
+	 */
 	@Inject
 	public IngameScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
 			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
@@ -202,12 +222,14 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 		}
 	}
 
+	/** Loads the latest autosave and centers the camera. */
 	public void loadAutoSave() {
 		activateStage(IngameStages.HUD);
 		gameController.loadLatestAutosave();
 		gameController.placeCameraForFullMapView(0, 0, 0, 0);
 	}
 
+	/** Toggles the pause menu. */
 	public void togglePause() {
 		if (getActiveStage() == menuStage) {
 			activateStage(IngameStages.HUD);

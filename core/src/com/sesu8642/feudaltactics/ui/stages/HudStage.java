@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -21,8 +22,12 @@ import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.dagger.MenuViewport;
 import com.sesu8642.feudaltactics.libgdx.ValueWithSize;
 
+/**
+ * {@link Stage} that displays the in-game heads up display.
+ */
 public class HudStage extends ResizableResettableStage {
 
+	/** Event types that can be invoked by this stage. */
 	public enum EventTypes {
 		UNDO, END_TURN, BUY_PEASANT, BUY_CASTLE, MENU
 	}
@@ -40,15 +45,22 @@ public class HudStage extends ResizableResettableStage {
 	private TextureAtlas textureAtlas;
 	private Skin skin;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param viewport     viewport for the stage
+	 * @param textureAtlas texture atlas containing the button textures
+	 * @param skin         game skin
+	 */
 	@Inject
 	public HudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
-		initUI();
+		initUi();
 	}
 
-	private void initUI() {
+	private void initUi() {
 		// TODO: put the buttons in a custom skin
 		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
 				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
@@ -109,50 +121,65 @@ public class HudStage extends ResizableResettableStage {
 		this.addActor(rootTable);
 	}
 
+	/** Registers an event listener to an event type. */
 	public void registerEventListener(EventTypes type, Runnable listener) {
-		Actor uIElement = null;
+		Actor uiElement;
 		switch (type) {
 		case UNDO:
-			uIElement = undoButton;
+			uiElement = undoButton;
 			break;
 		case END_TURN:
-			uIElement = endTurnButton;
+			uiElement = endTurnButton;
 			break;
 		case BUY_PEASANT:
-			uIElement = buyPeasantButton;
+			uiElement = buyPeasantButton;
 			break;
 		case BUY_CASTLE:
-			uIElement = buyCastleButton;
+			uiElement = buyCastleButton;
 			break;
 		case MENU:
-			uIElement = menuButton;
+			uiElement = menuButton;
 			break;
 		default:
 			throw new AssertionError("Attempt to register event listener of unknown type: " + type);
 		}
-		uIElement.addListener(new ChangeListener() {
+		uiElement.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				listener.run();
 			}
 		});
 	}
-	
+
 	@Override
 	public void updateOnResize(int width, int height) {
 		rootTable.pack();
 		handContentTable.pack();
 	}
 
-	public void updateHandContent(String spritename) {
-		if (spritename != null) {
+	/**
+	 * Sets the hand content to a given sprite.
+	 * 
+	 * @param spriteName name if the sprite to set the hand content to; can be null
+	 *                   to show an empty hand
+	 */
+	public void updateHandContent(String spriteName) {
+		if (spriteName != null) {
 			handStack.setVisible(true);
-			handContent.setDrawable(new TextureRegionDrawable(textureAtlas.createSprite(spritename)));
+			handContent.setDrawable(new TextureRegionDrawable(textureAtlas.createSprite(spriteName)));
 		} else {
 			handStack.setVisible(false);
 		}
 	}
 
+	/**
+	 * Sets the enabled status of the buttons.
+	 * 
+	 * @param undoButtonState       state of the unto button
+	 * @param buyPeasantButtonState state of the buy peasant button
+	 * @param buyCastleButtonState  state of the buy castle button
+	 * @param endTurnButtonState    state of the end turn button
+	 */
 	public void setButtonEnabledStatus(boolean undoButtonState, boolean buyPeasantButtonState,
 			boolean buyCastleButtonState, boolean endTurnButtonState) {
 		if (undoButtonState) {

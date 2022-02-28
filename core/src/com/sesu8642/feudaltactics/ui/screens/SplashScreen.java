@@ -3,6 +3,7 @@ package com.sesu8642.feudaltactics.ui.screens;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,6 +14,7 @@ import com.sesu8642.feudaltactics.dagger.MenuViewport;
 import com.sesu8642.feudaltactics.dagger.SplashScreenStage;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
+/** {@link Screen} for displaying a splash image. */
 @Singleton
 public class SplashScreen extends GameScreen {
 
@@ -44,7 +46,8 @@ public class SplashScreen extends GameScreen {
 	@Override
 	public void hide() {
 		super.hide();
-		// TODO: disposing here causes error "buffer not allocated with newUnsafeByteBuffer or already
+		// TODO: disposing here causes error "buffer not allocated with
+		// newUnsafeByteBuffer or already
 		// disposed"; maybe because the call is caused by the render method
 	}
 

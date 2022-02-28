@@ -1,5 +1,6 @@
 package com.sesu8642.feudaltactics.input;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamestate.Kingdom;
@@ -9,14 +10,26 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 
+/**
+ * Utility class that checks whether certain user action are allowed according
+ * to the rules.
+ */
 public class InputValidationHelper {
-	
+
 	private InputValidationHelper() {
-		// static helper class -> prevent instantiation
+		// utility class -> prevent instantiation
+		throw new AssertionError();
 	}
 
+	/**
+	 * Checks whether a player is allowed to change the active kingdom.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player that attempts the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkChangeActiveKingdom(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
@@ -36,6 +49,14 @@ public class InputValidationHelper {
 		return true;
 	}
 
+	/**
+	 * Checks whether a player is allowed to pick up an object.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player that attempts the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkPickupObject(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
@@ -61,6 +82,14 @@ public class InputValidationHelper {
 		return true;
 	}
 
+	/**
+	 * Checks whether a player is allowed to place their own object.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player that attempts the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkPlaceOwn(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
@@ -89,6 +118,14 @@ public class InputValidationHelper {
 		return true;
 	}
 
+	/**
+	 * Checks whether a player is allowed to combine units.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player that attempts the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkCombineUnits(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
@@ -127,6 +164,14 @@ public class InputValidationHelper {
 		return true;
 	}
 
+	/**
+	 * Checks whether a player is allowed to conquer a tile.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player that attempts the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkConquer(GameState gameState, Player player, HexTile tile) {
 		if (isWater(tile)) {
 			return false;
@@ -173,6 +218,13 @@ public class InputValidationHelper {
 		return (gameState.getHeldObject() == null);
 	}
 
+	/**
+	 * Checks whether a player is allowed to buy an object.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param cost      cost of the object
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkBuyObject(GameState gameState, int cost) {
 		Kingdom activeKingdom = gameState.getActiveKingdom();
 		if (activeKingdom == null) {
@@ -187,6 +239,11 @@ public class InputValidationHelper {
 		return true;
 	}
 
+	/**
+	 * Checks whether a player is allowed undo the previous action.
+	 * 
+	 * @return whether the action is allowed
+	 */
 	public static boolean checkUndoAction() {
 		return (PreferencesHelper.getNoOfAutoSaves() > 1);
 	}

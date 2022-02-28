@@ -5,6 +5,7 @@ import java.util.List;
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
+/** A tile of land on the map. **/
 public class HexTile {
 
 	private Player player;
@@ -41,6 +42,9 @@ public class HexTile {
 		return kingdom;
 	}
 
+	/**
+	 * Setter for kingdom. Also sets the player to the kingdom's owner.
+	 */
 	public void setKingdom(Kingdom kingdom) {
 		this.kingdom = kingdom;
 		if (kingdom != null) {

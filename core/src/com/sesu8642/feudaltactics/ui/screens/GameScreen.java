@@ -7,12 +7,20 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
+/** Superclass for this game's screens. */
 public class GameScreen implements Screen {
 
 	private OrthographicCamera camera;
 	private Viewport viewport;
 	private ResizableResettableStage activeStage;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param camera   camera to handle resizing with
+	 * @param viewport viewport to handle resizing and rendering with
+	 * @param stage    stage to render and resize
+	 */
 	public GameScreen(OrthographicCamera camera, Viewport viewport, ResizableResettableStage stage) {
 		this.camera = camera;
 		this.viewport = viewport;

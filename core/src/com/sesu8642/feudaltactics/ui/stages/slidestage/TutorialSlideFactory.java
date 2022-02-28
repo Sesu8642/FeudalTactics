@@ -11,18 +11,29 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 
+/** Factory for the slides displayed in the tutorial. */
 @Singleton
 public class TutorialSlideFactory {
 
 	private Skin skin;
-	
-	private final static String HEADLINE = "Tutorial";
 
+	private static final String HEADLINE = "Tutorial";
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param skin game skin
+	 */
 	@Inject
 	public TutorialSlideFactory(Skin skin) {
 		this.skin = skin;
 	}
 
+	/**
+	 * Creates all about slides.
+	 * 
+	 * @return about slides
+	 */
 	public List<Slide> createAllSlides() {
 		List<Slide> slides = new ArrayList<>();
 		slides.add(createTutorialSlide1());
@@ -34,7 +45,7 @@ public class TutorialSlideFactory {
 		slides.add(createTutorialSlide7());
 		return slides;
 	}
-	
+
 	private Slide createTutorialSlide1() {
 		String text = "This game is a turn based strategy game. You play on an island composed of hexagonal tiles. The color of the tile indicates which player it is owned by. The blue tiles are owned by you. Your goal is to conquer the whole island.";
 		String imagePath = "tutorial_island.png";
@@ -50,7 +61,7 @@ public class TutorialSlideFactory {
 	private Slide createTutorialSlide3() {
 		String text = "To conquer enemy tiles, you need to get units. You can buy peasants for 10 coins. To get stronger units, combine a unit with a peasant by placing them on top of each other. Every unit must be paid a salary at the start of your turn. If you cannot pay all of your units, they will vanish.";
 		String imagePath = "tutorial_units.png";
-		List<List<String>> tableData = new ArrayList<List<String>>();
+		List<List<String>> tableData = new ArrayList<>();
 		tableData.add(Arrays.asList("Unit", "Strength", "Salary"));
 		for (UnitTypes unitType : UnitTypes.values()) {
 			tableData.add(Arrays.asList(unitType.name(), String.valueOf(unitType.strength()),
@@ -64,7 +75,7 @@ public class TutorialSlideFactory {
 		String imagePath = "tutorial_unit_movement.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
-	
+
 	private Slide createTutorialSlide5() {
 		String text = "Units will protect the tile they stand on as well as the tiles next to them from being conquered. To conquer protected tiles anyway, you need a unit stronger that the one protecting. Capitals will also protect the neighboring tiles with a strength of 1. Additionaly, you can buy a castle for 15 coins which will protect neighboring tiles with a strength of 2. When you have something picked up, shield icons indicate the protection level of each tile.";
 		String imagePath = "tutorial_protection.png";
@@ -72,15 +83,17 @@ public class TutorialSlideFactory {
 	}
 
 	private Slide createTutorialSlide6() {
-		String text = String.format("Trees may randomly grow on the map. They will prevent the tiles they stand on from generating income. Even worse, there is a %s chance they will spread to a neighboring tile. They can be removed by placing a unit on them but the unit will be unable to be moved again for the rest of that turn.", Math.round(GameStateHelper.TREE_SPREAD_RATE * 100) + "%");
+		String text = String.format(
+				"Trees may randomly grow on the map. They will prevent the tiles they stand on from generating income. Even worse, there is a %s chance they will spread to a neighboring tile. They can be removed by placing a unit on them but the unit will be unable to be moved again for the rest of that turn.",
+				Math.round(GameStateHelper.TREE_SPREAD_RATE * 100) + "%");
 		String imagePath = "tutorial_trees.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
-	
+
 	private Slide createTutorialSlide7() {
 		String text = "The user interface contains the following elements:\n1. Finaces of the selected kingdom. (income in brackets)\n2. Selected kingdom: outlined in white; tiles that can be conquered outlined in red\n3. Picked up object\n4. Pause\n5. Undo action\n6. Buy Peasant for 10 coins\n7. Buy castle for 15 coins\n8. End turn";
 		String imagePath = "tutorial_ui.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
-		
+
 }

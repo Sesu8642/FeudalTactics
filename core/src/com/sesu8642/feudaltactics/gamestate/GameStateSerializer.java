@@ -7,11 +7,12 @@ import java.util.Map;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializer;
+import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
-import com.badlogic.gdx.utils.JsonValue;
 
+/** JSON serializer for the {@link GameState} class. **/
 public class GameStateSerializer implements Serializer<GameState> {
 
 	private static final String KINGDOM_FIELD_NAME = "kingdom";
@@ -129,8 +130,8 @@ public class GameStateSerializer implements Serializer<GameState> {
 		result.setMap(new HexMap());
 		JsonValue tilesJson = jsonData.get(TILES_NAME);
 		tilesJson.forEach(tileJson -> {
-			int id = tileJson.getInt(ID_NAME);
-			int playerId = tileJson.getInt(PLAYER_ID_NAME);
+			final int id = tileJson.getInt(ID_NAME);
+			final int playerId = tileJson.getInt(PLAYER_ID_NAME);
 			tileJson.remove(ID_NAME);
 			tileJson.remove(PLAYER_ID_NAME);
 			JsonValue contentJson = tileJson.get(CONTENT_NAME);
@@ -154,8 +155,8 @@ public class GameStateSerializer implements Serializer<GameState> {
 		result.setKingdoms(new ArrayList<>());
 		JsonValue kingdomsJson = jsonData.get(KINGDOMS_NAME);
 		kingdomsJson.forEach(kingdomJson -> {
-			int id = kingdomJson.getInt(ID_NAME);
-			int playerId = kingdomJson.getInt(PLAYER_ID_NAME);
+			final int id = kingdomJson.getInt(ID_NAME);
+			final int playerId = kingdomJson.getInt(PLAYER_ID_NAME);
 			JsonValue tileIdsJson = kingdomJson.get(TILE_IDS_NAME);
 			LinkedHashSet<HexTile> kingdomTiles = new LinkedHashSet<>();
 			tileIdsJson.forEach(tileIdJson -> {

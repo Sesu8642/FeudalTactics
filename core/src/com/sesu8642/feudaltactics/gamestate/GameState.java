@@ -8,6 +8,7 @@ import com.sesu8642.feudaltactics.BotAI;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
+/** Contains all information about a running game. **/
 public class GameState {
 
 	private List<Player> players = new ArrayList<>();
@@ -24,7 +25,7 @@ public class GameState {
 	public GameState() {
 		// no fields must be set on construction
 	}
-	
+
 	public List<Player> getPlayers() {
 		return players;
 	}

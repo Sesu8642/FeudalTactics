@@ -1,5 +1,6 @@
 package com.sesu8642.feudaltactics.exceptions;
 
+/** Exception for problems loading saved data. **/
 public class SaveLoadingException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;

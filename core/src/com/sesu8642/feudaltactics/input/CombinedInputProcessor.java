@@ -1,22 +1,23 @@
 package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+/** Class that handles touch as well as gesture inputs. **/
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	private OrthographicCamera camera;
-	private AcceptCommonInput inputAcceptor;
+	private InputHandler inputAcceptor;
 
 	public static final float MIN_ZOOM = 0.01F;
 	public static final float MAX_ZOOM = 1;
 
-	public CombinedInputProcessor(AcceptCommonInput inputAcceptor, OrthographicCamera camera) {
+	public CombinedInputProcessor(InputHandler inputAcceptor, OrthographicCamera camera) {
 		this.inputAcceptor = inputAcceptor;
 		this.camera = camera;
 	}
@@ -52,11 +53,6 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean panStop(float x, float y, int pointer, int button) {
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(float x, float y, int pointer, int button) {
 		return false;
 	}
 
@@ -115,7 +111,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.ESCAPE:
-			inputAcceptor.inputEsc();	
+			inputAcceptor.inputEsc();
 			break;
 		case Keys.BACK:
 			inputAcceptor.inputBack();
@@ -128,6 +124,11 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(float x, float y, int pointer, int button) {
 		return false;
 	}
 

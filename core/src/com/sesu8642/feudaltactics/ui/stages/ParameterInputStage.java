@@ -24,9 +24,9 @@ import com.sesu8642.feudaltactics.BotAI;
 import com.sesu8642.feudaltactics.BotAI.Intelligence;
 import com.sesu8642.feudaltactics.dagger.MenuViewport;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
-import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
+import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 
 public class ParameterInputStage extends ResizableResettableStage {
 
@@ -165,16 +165,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	}
 
 	public int getMapSizeParam() {
-		switch (sizeSelect.getSelectedIndex()) {
-		case 0:
-			return 50;
-		case 1:
-			return 150;
-		case 2:
-			return 250;
-		default:
-			return 150;
-		}
+		return MapSizes.values()[sizeSelect.getSelectedIndex()].getAmountOfTiles();
 	}
 
 	public Densities getMapDensity() {
@@ -182,16 +173,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	}
 
 	public float getMapDensityParam() {
-		switch (densitySelect.getSelectedIndex()) {
-		case 0:
-			return -3;
-		case 1:
-			return 0;
-		case 2:
-			return 3;
-		default:
-			return 0;
-		}
+		return Densities.values()[densitySelect.getSelectedIndex()].getDensityFloat();
 	}
 
 	public Intelligence getBotIntelligence() {

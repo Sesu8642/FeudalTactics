@@ -1,5 +1,9 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
+/**
+ * Map object representing a tree. A tree prevent the tile it stands on from
+ * generating income. Trees have a chance to spread to neighboring tiles.
+ **/
 public class Tree implements MapObject {
 
 	public static final String SPRITE_NAME = "tree";

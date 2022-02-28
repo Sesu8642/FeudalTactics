@@ -5,6 +5,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Qualifier;
 
+/** Binding annotation. **/
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TutorialSlideStage {

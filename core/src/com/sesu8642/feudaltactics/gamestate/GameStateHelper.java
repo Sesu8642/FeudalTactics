@@ -22,8 +22,11 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
+/**
+ * Helper class that is used to modify a {@link GameState} in a way that
+ * respects the game rules and guarantees integrity.
+ **/
 public class GameStateHelper {
-	// only class supposed to modify the game state (except the bot AI actually)
 
 	public static final float TREE_SPREAD_RATE = 0.3F;
 	public static final float TREE_SPAWN_RATE = 0.01F;
@@ -39,8 +42,8 @@ public class GameStateHelper {
 	 * Creates a mostly deep copy of the original. Exception: The random uses a seed
 	 * that is derived from the old randoms output.
 	 * 
-	 * @param original
-	 * @return copy
+	 * @param original Original to copy
+	 * @return copy Copy of the original
 	 */
 	public static GameState getCopy(GameState original) {
 		GameState result = new GameState();
@@ -90,6 +93,19 @@ public class GameStateHelper {
 		return result;
 	}
 
+	/**
+	 * Generates a map on a {@link GameState}.
+	 * 
+	 * @param gameState         GameState to generate the map in.
+	 * @param players           Players that own tiles on the map.
+	 * @param landMass          Number of tiles to generate.
+	 * @param density           Higher density means the map will be more clumpy and
+	 *                          lower means it will be more stringy. Values -3 and 3
+	 *                          produce good results.
+	 * @param vegetationDensity Determines how many trees will be generated. 0.5 =
+	 *                          50% of empty tiles will have trees.
+	 * @param mapSeed           Map seed to use for generating the map.
+	 */
 	public static void initializeMap(GameState gameState, List<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
 		if (mapSeed == null) {
@@ -108,7 +124,7 @@ public class GameStateHelper {
 		generateMap(gameState, players, landMass, density, vegetationDensity, mapSeed);
 	}
 
-	public static void generateMap(GameState gameState, List<Player> players, float landMass, float density,
+	private static void generateMap(GameState gameState, List<Player> players, float landMass, float density,
 			float vegetationDensity, Long mapSeed) {
 		// if not every player has at least one kingdom, try again
 		do {
@@ -124,6 +140,7 @@ public class GameStateHelper {
 		createMoney(gameState);
 	}
 
+	@SuppressWarnings("checkstyle:abbreviationaswordinname")
 	private static boolean doesEveryPlayerHaveAKingdom(GameState gameState) {
 		List<Player> playersWithoutKingdoms = new ArrayList<>(gameState.getPlayers());
 		for (Kingdom kingdom : gameState.getKingdoms()) {
@@ -147,7 +164,6 @@ public class GameStateHelper {
 
 	private static void generateTiles(GameState gameState, List<Player> players, float landMass, float density,
 			Long mapSeed) {
-		// density between -3 and 3 produces good results
 		// set seed
 		gameState.getRandom().setSeed(mapSeed);
 		// distribute the land mass evenly to all players

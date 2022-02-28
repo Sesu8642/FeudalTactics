@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
-import com.sesu8642.feudaltactics.input.LocalInputHandler;
+import com.sesu8642.feudaltactics.input.LocalIngameInputHandler;
 import com.sesu8642.feudaltactics.ui.screens.GameScreen;
 import com.sesu8642.feudaltactics.ui.stages.MainMenuStage;
 import com.sesu8642.feudaltactics.ui.stages.MenuStage;
@@ -40,7 +40,8 @@ import dagger.Provides;
 class DaggerModule {
 
 	private DaggerModule() {
-		// static helper class
+		// prevent instantiation
+		throw new AssertionError();
 	}
 
 	@Provides
@@ -140,7 +141,7 @@ class DaggerModule {
 	@Provides
 	@Singleton
 	@IngameInputProcessor
-	static CombinedInputProcessor provideCombinedInputProcessor(LocalInputHandler inputHandler,
+	static CombinedInputProcessor provideCombinedInputProcessor(LocalIngameInputHandler inputHandler,
 			@IngameCamera OrthographicCamera camera) {
 		return new CombinedInputProcessor(inputHandler, camera);
 	}

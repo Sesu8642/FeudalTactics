@@ -1,5 +1,9 @@
 package com.sesu8642.feudaltactics.gamestate.mapobjects;
 
+/**
+ * Map object representing the capital of a kingdom. If the capital is
+ * destroyed, the kingdom's money is lost.
+ **/
 public class Capital implements MapObject {
 
 	public static final String SPRITE_NAME = "capital";

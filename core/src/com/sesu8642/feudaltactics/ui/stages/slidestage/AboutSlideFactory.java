@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.sesu8642.feudaltactics.dagger.DependencyLicenses;
 import com.sesu8642.feudaltactics.dagger.VersionProperty;
 
+/** Factory for the slides displayed in the About Menu Option. */
 @Singleton
 public class AboutSlideFactory {
 
@@ -19,13 +20,26 @@ public class AboutSlideFactory {
 	private String version;
 	private String dependencyLicensesText;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param version                game version
+	 * @param dependencyLicensesText dependency license texts
+	 * @param skin                   game skin
+	 */
 	@Inject
-	public AboutSlideFactory(@VersionProperty String version, @DependencyLicenses String dependencyLicensesText, Skin skin) {
+	public AboutSlideFactory(@VersionProperty String version, @DependencyLicenses String dependencyLicensesText,
+			Skin skin) {
 		this.version = version;
 		this.dependencyLicensesText = dependencyLicensesText;
 		this.skin = skin;
 	}
 
+	/**
+	 * Creates all about slides.
+	 * 
+	 * @return about slides
+	 */
 	public List<Slide> createAllSlides() {
 		List<Slide> slides = new ArrayList<>();
 		slides.add(createAboutSlide1());

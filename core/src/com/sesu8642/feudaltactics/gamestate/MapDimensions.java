@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.badlogic.gdx.math.Vector2;
 
+/** Class containing metadata about the map size and its center. **/
 public class MapDimensions {
 	private Vector2 center;
 	private float width;
