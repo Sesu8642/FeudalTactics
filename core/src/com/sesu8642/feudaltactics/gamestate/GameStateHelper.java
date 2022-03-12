@@ -96,15 +96,15 @@ public class GameStateHelper {
 	/**
 	 * Generates a map on a {@link GameState}.
 	 * 
-	 * @param gameState         GameState to generate the map in.
-	 * @param players           Players that own tiles on the map.
-	 * @param landMass          Number of tiles to generate.
+	 * @param gameState         GameState to generate the map in
+	 * @param players           players that own tiles on the map
+	 * @param landMass          number of tiles to generate
 	 * @param density           Higher density means the map will be more clumpy and
 	 *                          lower means it will be more stringy. Values -3 and 3
 	 *                          produce good results.
-	 * @param vegetationDensity Determines how many trees will be generated. 0.5 =
-	 *                          50% of empty tiles will have trees.
-	 * @param mapSeed           Map seed to use for generating the map.
+	 * @param vegetationDensity determines how many trees will be generated. 0.5 =
+	 *                          50% of empty tiles will have trees
+	 * @param mapSeed           map seed to use for generating the map
 	 */
 	public static void initializeMap(GameState gameState, List<Player> players, float landMass, float density,
 			Float vegetationDensity, Long mapSeed) {
@@ -133,15 +133,14 @@ public class GameStateHelper {
 			// generate a new seed from the seed
 			gameState.getRandom().setSeed(mapSeed);
 			mapSeed = gameState.getRandom().nextLong();
-		} while (!doesEveryPlayerHaveAKingdom(gameState));
+		} while (!doesEveryPlayerHaveKingdom(gameState));
 		createTrees(gameState, vegetationDensity);
 		createCapitals(gameState);
 		sortPlayersByIncome(gameState);
 		createMoney(gameState);
 	}
 
-	@SuppressWarnings("checkstyle:abbreviationaswordinname")
-	private static boolean doesEveryPlayerHaveAKingdom(GameState gameState) {
+	private static boolean doesEveryPlayerHaveKingdom(GameState gameState) {
 		List<Player> playersWithoutKingdoms = new ArrayList<>(gameState.getPlayers());
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (playersWithoutKingdoms.contains(kingdom.getPlayer())) {
@@ -354,16 +353,34 @@ public class GameStateHelper {
 		newCapitalTile.setContent(new Capital());
 	}
 
+	/**
+	 * Activates a kingdom.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param kingdom   kingdom to be activated
+	 */
 	public static void activateKingdom(GameState gameState, Kingdom kingdom) {
 		kingdom.setWasActiveInCurrentTurn(true);
 		gameState.setActiveKingdom(kingdom);
 	}
 
+	/**
+	 * Picks up an object.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param tile      tile that contains the object
+	 */
 	public static void pickupObject(GameState gameState, HexTile tile) {
 		gameState.setHeldObject(tile.getContent());
 		tile.setContent(null);
 	}
 
+	/**
+	 * Places a held object on a tile in the own kingdom.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param tile      tile to place to object on
+	 */
 	public static void placeOwn(GameState gameState, HexTile tile) {
 		// units can't act after removing trees
 		if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
@@ -372,6 +389,12 @@ public class GameStateHelper {
 		placeObject(gameState, tile);
 	}
 
+	/**
+	 * Combines the held unit with a unit on the map.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param tile      tile that contains the unit on the map
+	 */
 	public static void combineUnits(GameState gameState, HexTile tile) {
 		// place resulting unit as held object
 		// the unit that is not the peasant will be upgraded
@@ -401,8 +424,13 @@ public class GameStateHelper {
 		placeObject(gameState, tile);
 	}
 
+	/**
+	 * Conquers an enemy tile.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param tile      tile to conquer
+	 */
 	public static void conquer(GameState gameState, HexTile tile) {
-		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
 		Kingdom oldTileKingdom = tile.getKingdom();
 		// units can't act after conquering
 		((Unit) gameState.getHeldObject()).setCanAct(false);
@@ -421,6 +449,7 @@ public class GameStateHelper {
 		tile.setKingdom(gameState.getActiveKingdom());
 		tile.getKingdom().getTiles().add(tile);
 		ArrayList<HexTile> oldKingdomNeighborTiles = new ArrayList<>();
+		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
 		for (HexTile neighborTile : neighborTiles) {
 			if (neighborTile == null) {
 				// water
@@ -582,6 +611,11 @@ public class GameStateHelper {
 		}
 	}
 
+	/**
+	 * Ends the turn.
+	 * 
+	 * @param gameState GameState to act on
+	 */
 	public static GameState endTurn(GameState gameState) {
 		// check win condition; the winner can change if the human player recovers from
 		// a really bad situation
@@ -667,21 +701,46 @@ public class GameStateHelper {
 		}
 	}
 
+	/**
+	 * Buys a peasant.
+	 * 
+	 * @param gameState GameState to act on
+	 */
 	public static void buyPeasant(GameState gameState) {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Unit.COST);
 		gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 	}
 
+	/**
+	 * Buys a castle.
+	 * 
+	 * @param gameState GameState to act on
+	 */
 	public static void buyCastle(GameState gameState) {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Castle.COST);
 		gameState.setHeldObject(new Castle());
 	}
 
+	/**
+	 * Places a new tile.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param hexCoords coords for the tile
+	 * @param player    player that should own the tile
+	 */
 	public static void placeTile(GameState gameState, Vector2 hexCoords, Player player) {
 		HexTile newTile = new HexTile(player, hexCoords);
 		gameState.getMap().getTiles().put(hexCoords, newTile);
 	}
 
+	/**
+	 * Determines the protection level of a tile (strength of the strongest object
+	 * protecting it).
+	 * 
+	 * @param gameState GameState to analyze
+	 * @param tile      tile to determine the protection level of
+	 * @return protection level
+	 */
 	public static int getProtectionLevel(GameState gameState, HexTile tile) {
 		int protectionLevel = 0;
 		if (tile.getContent() != null) {
@@ -696,7 +755,14 @@ public class GameStateHelper {
 		return protectionLevel;
 	}
 
-	public static boolean hasActivePlayerlikelyForgottenAKingom(GameState gameState) {
+	/**
+	 * Determines whether a player has likely forgotten to do actions for one of
+	 * their kingdoms in the current turn.
+	 * 
+	 * @param gameState GameState to analyze
+	 * @return whether it is the case
+	 */
+	public static boolean hasActivePlayerlikelyForgottenKingom(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
 				// can buy castle or any unit that is more expensive

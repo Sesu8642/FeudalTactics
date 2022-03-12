@@ -6,13 +6,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
+/**
+ * Parent class for all {@link Dialog}s in the game. Applies sane settings and
+ * handles responsiveness.
+ */
 public class FeudalTacticsDialog extends Dialog {
 
 	public static final float DIALOG_PADDING = 20;
 	public static final float DIALOG_LABEL_MAX_WIDTH = 600;
 
 	private Skin skin;
-	
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param skin game skin
+	 */
 	public FeudalTacticsDialog(Skin skin) {
 		super("", skin);
 		this.skin = skin;
@@ -21,7 +30,7 @@ public class FeudalTacticsDialog extends Dialog {
 		setKeepWithinStage(false);
 		pad(DIALOG_PADDING);
 	}
-	
+
 	@Override
 	public Dialog text(String text) {
 		Label responsiveLabel = new Label(text, skin);

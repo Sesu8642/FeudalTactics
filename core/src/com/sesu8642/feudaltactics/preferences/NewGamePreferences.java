@@ -1,7 +1,7 @@
 package com.sesu8642.feudaltactics.preferences;
 
-import com.sesu8642.feudaltactics.BotAI;
-import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAi;
+import com.sesu8642.feudaltactics.BotAi.Intelligence;
 
 /** Preferences for a new game. */
 public class NewGamePreferences {
@@ -37,7 +37,7 @@ public class NewGamePreferences {
 		}
 	}
 
-	private BotAI.Intelligence botIntelligence;
+	private BotAi.Intelligence botIntelligence;
 	private MapSizes mapSize;
 	private Densities density;
 
@@ -54,11 +54,11 @@ public class NewGamePreferences {
 		this.density = density;
 	}
 
-	public BotAI.Intelligence getBotIntelligence() {
+	public BotAi.Intelligence getBotIntelligence() {
 		return botIntelligence;
 	}
 
-	public void setBotIntelligence(BotAI.Intelligence botIntelligence) {
+	public void setBotIntelligence(BotAi.Intelligence botIntelligence) {
 		this.botIntelligence = botIntelligence;
 	}
 

@@ -19,6 +19,7 @@ import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 
+/** Controller for playing the game. */
 @Singleton
 public class GameController {
 
@@ -31,25 +32,32 @@ public class GameController {
 	public static final String GAME_STATE_OBSERVABLE_PROPERTY_NAME = "gameState";
 
 	private MapRenderer mapRenderer;
-	private BotAI botAI;
+	private BotAi botAi;
 	private GameState gameState;
 	// for observing the GameState
 	private PropertyChangeSupport propertyChangeSupport;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param mapRenderer map renderer
+	 * @param botAi       bot AI
+	 */
 	@Inject
-	public GameController(@IngameRenderer MapRenderer mapRenderer, BotAI botAI) {
+	public GameController(@IngameRenderer MapRenderer mapRenderer, BotAi botAi) {
 		this.mapRenderer = mapRenderer;
-		this.botAI = botAI;
+		this.botAi = botAi;
 		// PropertyChangeSupport is not injected because this is a dependency cycle and
 		// there is no benefit really
 		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		gameState = new GameState();
 	}
 
+	/** Starts the game. Bots will do their turns if they are first. */
 	public void startGame() {
 		// if a bot begins, make it act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
-			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
+			gameState = botAi.doTurn(gameState, gameState.getBotIntelligence());
 			endTurn();
 		}
 		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
@@ -61,13 +69,24 @@ public class GameController {
 		PreferencesHelper.autoSaveGameState(gameState);
 	}
 
+	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
 		gameState = PreferencesHelper.getLatestAutoSave();
 		mapRenderer.updateMap(gameState);
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
-	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAI.Intelligence botIntelligence, Long seed,
+	/**
+	 * Generates a map.
+	 * 
+	 * @param humanPlayerNo   number of human players that play
+	 * @param botPlayerNo     number of bot players that play
+	 * @param botIntelligence intelligence of the bot players
+	 * @param seed            map seed to use for generating the map
+	 * @param landMass        number of tiles to generate
+	 * @param density         map density to use for generation
+	 */
+	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAi.Intelligence botIntelligence, Long seed,
 			float landMass, float density) {
 		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
@@ -89,12 +108,22 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/**
+	 * Prints debug info about a tile.
+	 * 
+	 * @param hexCoords coords of the tile
+	 */
 	public void printTileInfo(Vector2 hexCoords) {
 
 		Gdx.app.debug(TAG, String.format("clicked tile position %s: %s", hexCoords,
 				String.valueOf(gameState.getMap().getTiles().get(hexCoords))));
 	}
 
+	/**
+	 * Activates a kingdom.
+	 * 
+	 * @param kingdom kingdom to activate
+	 */
 	public void activateKingdom(Kingdom kingdom) {
 		GameStateHelper.activateKingdom(gameState, kingdom);
 		mapRenderer.updateMap(gameState);
@@ -103,6 +132,11 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/**
+	 * Picks up an object.
+	 * 
+	 * @param tile tile that contains the object
+	 */
 	public void pickupObject(HexTile tile) {
 		GameStateHelper.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
@@ -110,6 +144,11 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/**
+	 * Places a held object on a tile in the own kingdom.
+	 * 
+	 * @param tile tile to place to object on
+	 */
 	public void placeOwn(HexTile tile) {
 		GameStateHelper.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
@@ -117,6 +156,11 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/**
+	 * Combines the held unit with a unit on the map.
+	 * 
+	 * @param tile tile that contains the unit on the map
+	 */
 	public void combineUnits(HexTile tile) {
 		GameStateHelper.combineUnits(gameState, tile);
 		mapRenderer.updateMap(gameState);
@@ -124,6 +168,11 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/**
+	 * Conquers an enemy tile.
+	 * 
+	 * @param tile tile to conquer
+	 */
 	public void conquer(HexTile tile) {
 		GameStateHelper.conquer(gameState, tile);
 		mapRenderer.updateMap(gameState);
@@ -131,6 +180,7 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/** Ends the turn. */
 	public void endTurn() {
 		// remember old state
 		GameState oldState = GameStateHelper.getCopy(gameState);
@@ -139,7 +189,7 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		// make bots act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
-			gameState = botAI.doTurn(gameState, gameState.getBotIntelligence());
+			gameState = botAi.doTurn(gameState, gameState.getBotIntelligence());
 			endTurn();
 		} else {
 			// autosave when a player turn begins
@@ -150,6 +200,7 @@ public class GameController {
 		}
 	}
 
+	/** Buys a peasant. */
 	public void buyPeasant() {
 		GameStateHelper.buyPeasant(gameState);
 		mapRenderer.updateMap(gameState);
@@ -157,6 +208,7 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/** Buys a castle. */
 	public void buyCastle() {
 		GameStateHelper.buyCastle(gameState);
 		mapRenderer.updateMap(gameState);
@@ -164,6 +216,7 @@ public class GameController {
 		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
 	}
 
+	/** Undoes the last action. */
 	public void undoLastAction() {
 		if (PreferencesHelper.getNoOfAutoSaves() > 1) {
 			// 1 means the current state is the only one saved

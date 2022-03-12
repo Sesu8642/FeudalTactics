@@ -5,6 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.ui.NeedsUpdateOnResize;
 
+/**
+ * Parent {@link Stage} for the game's stages. Implements functionality for
+ * resetting and resizing.
+ */
 public abstract class ResizableResettableStage extends Stage implements NeedsUpdateOnResize {
 
 	protected ResizableResettableStage() {
@@ -18,7 +22,7 @@ public abstract class ResizableResettableStage extends Stage implements NeedsUpd
 	protected ResizableResettableStage(Viewport viewport) {
 		super(viewport);
 	}
-	
+
 	public abstract void reset();
 
 }

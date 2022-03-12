@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -20,19 +21,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.BotAI;
-import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAi;
+import com.sesu8642.feudaltactics.BotAi.Intelligence;
 import com.sesu8642.feudaltactics.dagger.MenuViewport;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 
+/**
+ * {@link Stage} for displaying the input mask for a new game.
+ */
 public class ParameterInputStage extends ResizableResettableStage {
 
 	// for map centering calculation
 	public static final int NO_OF_INPUTS = 4;
 
+	/** Event types that can be invoked by this stage. */
 	public enum EventTypes {
 		CHANGE, REGEN, PLAY
 	}
@@ -48,28 +53,36 @@ public class ParameterInputStage extends ResizableResettableStage {
 	private Skin skin;
 	private TextureAtlas textureAtlas;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param viewport     viewport for the stage
+	 * @param textureAtlas texture atlas containing the button textures
+	 * @param skin         game skin
+	 */
 	@Inject
 	public ParameterInputStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
-		initUI();
+		initUi();
 	}
 
-	private void initUI() {
+	private void initUi() {
+		// note about checktyle: widgets are declared in the order they appear in the UI
 		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
 		Label difficultyLabel = new Label("CPU\nDifficulty", skin);
-		difficultySelect = new SelectBox<String>(skin);
+		difficultySelect = new SelectBox<>(skin);
 		String[] difficulties = { "Easy", "Medium", "Hard" };
 		difficultySelect.setItems(difficulties);
 		difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
 		Label sizeLabel = new Label("Map\nSize", skin);
-		sizeSelect = new SelectBox<String>(skin);
+		sizeSelect = new SelectBox<>(skin);
 		String[] sizes = { "Small", "Medium", "Large" };
 		sizeSelect.setItems(sizes);
 		sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
 		Label densityLabel = new Label("Map\nDensity", skin);
-		densitySelect = new SelectBox<String>(skin);
+		densitySelect = new SelectBox<>(skin);
 		String[] densities = { "Dense", "Medium", "Loose" };
 		densitySelect.setItems(densities);
 		densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
@@ -114,29 +127,35 @@ public class ParameterInputStage extends ResizableResettableStage {
 		});
 	}
 
+	/**
+	 * Registers an event listener to an event type.
+	 * 
+	 * @param type     event type to listen to
+	 * @param listener listener to execute
+	 */
 	public void registerEventListener(EventTypes type, Runnable listener) {
-		Collection<Actor> uIElements = new HashSet<>();
+		Collection<Actor> uiElements = new HashSet<>();
 		switch (type) {
 		case CHANGE:
-			uIElements.add(difficultySelect);
-			uIElements.add(sizeSelect);
-			uIElements.add(densitySelect);
+			uiElements.add(difficultySelect);
+			uiElements.add(sizeSelect);
+			uiElements.add(densitySelect);
 			break;
 		case REGEN:
 			regenListeners.add(listener);
-			uIElements.add(seedTextField);
-			uIElements.add(randomButton);
-			uIElements.add(sizeSelect);
-			uIElements.add(densitySelect);
+			uiElements.add(seedTextField);
+			uiElements.add(randomButton);
+			uiElements.add(sizeSelect);
+			uiElements.add(densitySelect);
 			break;
 		case PLAY:
-			uIElements.add(playButton);
+			uiElements.add(playButton);
 			break;
 		default:
 			break;
 		}
-		for (Actor uIElement : uIElements) {
-			uIElement.addListener(new ChangeListener() {
+		for (Actor uiElement : uiElements) {
+			uiElement.addListener(new ChangeListener() {
 				@Override
 				public void changed(ChangeEvent event, Actor actor) {
 					listener.run();
@@ -145,6 +164,16 @@ public class ParameterInputStage extends ResizableResettableStage {
 		}
 	}
 
+	/** Regenerates the map. */
+	public void regenerateMap() {
+		regenerateMap(null);
+	}
+
+	/**
+	 * Regenerates the map.
+	 * 
+	 * @param seed map seed to use
+	 */
 	public void regenerateMap(Long seed) {
 		if (seed != null) {
 			seedTextField.setText(seed.toString());
@@ -152,6 +181,11 @@ public class ParameterInputStage extends ResizableResettableStage {
 		regenListeners.forEach(Runnable::run);
 	}
 
+	/**
+	 * Getter for map seed.
+	 * 
+	 * @return map seed input by the user
+	 */
 	public Long getSeedParam() {
 		try {
 			return Long.valueOf(seedTextField.getText());
@@ -160,18 +194,38 @@ public class ParameterInputStage extends ResizableResettableStage {
 		}
 	}
 
+	/**
+	 * Getter for map size.
+	 * 
+	 * @return map size input by the user
+	 */
 	public MapSizes getMapSize() {
 		return MapSizes.values()[sizeSelect.getSelectedIndex()];
 	}
 
+	/**
+	 * Getter for map size.
+	 * 
+	 * @return map size input by the user converted to the amount of tiles
+	 */
 	public int getMapSizeParam() {
 		return MapSizes.values()[sizeSelect.getSelectedIndex()].getAmountOfTiles();
 	}
 
+	/**
+	 * Getter for map density.
+	 * 
+	 * @return map density input by the user
+	 */
 	public Densities getMapDensity() {
 		return Densities.values()[densitySelect.getSelectedIndex()];
 	}
 
+	/**
+	 * Getter for map density.
+	 * 
+	 * @return map density input by the user converted to int
+	 */
 	public float getMapDensityParam() {
 		return Densities.values()[densitySelect.getSelectedIndex()].getDensityFloat();
 	}
@@ -180,16 +234,21 @@ public class ParameterInputStage extends ResizableResettableStage {
 		return Intelligence.values()[difficultySelect.getSelectedIndex()];
 	}
 
-	public BotAI.Intelligence getBotIntelligenceParam() {
+	/**
+	 * Getter for bot intelligence.
+	 * 
+	 * @return bot intelligence input by the user
+	 */
+	public BotAi.Intelligence getBotIntelligenceParam() {
 		switch (difficultySelect.getSelectedIndex()) {
 		case 0:
-			return BotAI.Intelligence.DUMB;
+			return BotAi.Intelligence.DUMB;
 		case 1:
-			return BotAI.Intelligence.MEDIUM;
+			return BotAi.Intelligence.MEDIUM;
 		case 2:
-			return BotAI.Intelligence.SMART;
+			return BotAi.Intelligence.SMART;
 		default:
-			return BotAI.Intelligence.MEDIUM;
+			return BotAi.Intelligence.MEDIUM;
 		}
 	}
 

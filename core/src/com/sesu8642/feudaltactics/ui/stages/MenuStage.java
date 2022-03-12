@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,6 +24,9 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.MapRenderer;
 
+/**
+ * Generic {@link Stage} for displaying an in-game menu.
+ */
 public class MenuStage extends ResizableResettableStage {
 
 	private Table rootTable;
@@ -37,19 +41,28 @@ public class MenuStage extends ResizableResettableStage {
 		this(viewport, new LinkedHashMap<>(), camera, mapRenderer, skin);
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param viewport    viewport for the stage
+	 * @param buttonData  map of button titles and callbacks that are executed when
+	 *                    the buttons are clicked
+	 * @param camera      camera to use
+	 * @param mapRenderer renderer for the sea background
+	 * @param skin        game skin
+	 */
 	public MenuStage(Viewport viewport, Map<String, Runnable> buttonData, OrthographicCamera camera,
 			MapRenderer mapRenderer, Skin skin) {
 		super(viewport);
 		this.camera = camera;
 		this.mapRenderer = mapRenderer;
 		this.skin = skin;
-		initUI(buttonData);
+		initUi(buttonData);
 	}
 
-	private void initUI(Map<String, Runnable> buttonData) {
+	private void initUi(Map<String, Runnable> buttonData) {
 		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
 		disposables.add(logoTexture);
-		Image logo = new Image(logoTexture);
 		for (Entry<String, Runnable> buttonDataPoint : buttonData.entrySet()) {
 			TextButton button = new TextButton(buttonDataPoint.getKey(), skin);
 			button.addListener(new ChangeListener() {
@@ -65,6 +78,7 @@ public class MenuStage extends ResizableResettableStage {
 		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0).fillX().expandY();
+		Image logo = new Image(logoTexture);
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.95F));
 		rootTable.row();
 		rootTable.defaults().minHeight(100).pad(10);
@@ -78,6 +92,12 @@ public class MenuStage extends ResizableResettableStage {
 		this.addActor(rootTable);
 	}
 
+	/**
+	 * Adds a button to this menu.
+	 * 
+	 * @param text     button text
+	 * @param callback callback that is executed when the button is clicked
+	 */
 	public void addButton(String text, Runnable callback) {
 		TextButton button = new TextButton(text, skin);
 		button.addListener(new ChangeListener() {

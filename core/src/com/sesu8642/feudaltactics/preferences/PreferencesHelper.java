@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAi.Intelligence;
 import com.sesu8642.feudaltactics.exceptions.SaveLoadingException;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateSerializer;

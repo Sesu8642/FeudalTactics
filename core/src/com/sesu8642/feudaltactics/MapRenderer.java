@@ -31,6 +31,7 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
+/** Renderer for the map and the water. */
 public class MapRenderer {
 
 	public static final float SPRITE_SIZE_MULTIPLIER = 1.05F;
@@ -68,6 +69,14 @@ public class MapRenderer {
 	private ArrayList<Vector2> redLineStartPoints = new ArrayList<>();
 	private ArrayList<Vector2> redLineEndPoints = new ArrayList<>();
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param camera        in-game camera
+	 * @param textureAtlas  texture atlas contaiing the sprites
+	 * @param shapeRenderer renderer for shapes
+	 * @param spriteBatch   spriteBatch to use for rendering
+	 */
 	@Inject
 	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas, ShapeRenderer shapeRenderer,
 			SpriteBatch spriteBatch) {
@@ -83,6 +92,11 @@ public class MapRenderer {
 		beachWaterAnimation = getAnimationFromName("beach_water");
 	}
 
+	/**
+	 * Updates the map that is rendered.
+	 * 
+	 * @param gameState game state containing the map
+	 */
 	public void updateMap(GameState gameState) {
 		// create tiles
 		tiles.clear();
@@ -255,9 +269,9 @@ public class MapRenderer {
 							drawTile.darken);
 					break;
 				case 0:
-					// intentional fall-through
-				default:
 					break;
+				default:
+					throw new AssertionError("Unexpected protection level " + protectionLevel);
 				}
 			}
 
@@ -265,16 +279,16 @@ public class MapRenderer {
 	}
 
 	private Collection<Line> lineToDottedLine(Line line) {
-		final int PART_AMOUNT = 3;
+		final int partAmount = 3;
 		Collection<Line> resultLines = new HashSet<>();
-		float lineXDiff = line.end.x - line.start.x;
-		float lineYDiff = line.end.y - line.start.y;
-		for (int i = 1; i <= PART_AMOUNT; i += 2) {
+		float lineDiffX = line.end.x - line.start.x;
+		float lineDiffY = line.end.y - line.start.y;
+		for (int i = 1; i <= partAmount; i += 2) {
 			Line linePart = new Line();
-			linePart.start = new Vector2(line.start.x + (lineXDiff / PART_AMOUNT) * (i - 1),
-					line.start.y + (lineYDiff / PART_AMOUNT) * (i - 1));
-			linePart.end = new Vector2(line.start.x + (lineXDiff / PART_AMOUNT) * i,
-					line.start.y + (lineYDiff / PART_AMOUNT) * i);
+			linePart.start = new Vector2(line.start.x + (lineDiffX / partAmount) * (i - 1),
+					line.start.y + (lineDiffY / partAmount) * (i - 1));
+			linePart.end = new Vector2(line.start.x + (lineDiffX / partAmount) * i,
+					line.start.y + (lineDiffY / partAmount) * i);
 			resultLines.add(linePart);
 		}
 		return resultLines;
@@ -336,6 +350,7 @@ public class MapRenderer {
 		return animations.computeIfAbsent(name, n2 -> new Animation<TextureRegion>(1F, textureAtlas.findRegions(n2)));
 	}
 
+	/** Renders the map. */
 	public void render() {
 		HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
 		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
@@ -370,8 +385,8 @@ public class MapRenderer {
 		float itemOffsetY = HEXTILE_HEIGHT * -0.075F;
 
 		// colors for normal and darkened stuff
-		Color normalColor = new Color(1, 1, 1, 1);
-		Color darkenedColor = new Color(0, 0, 0, 0.4F);
+		final Color normalColor = new Color(1, 1, 1, 1);
+		final Color darkenedColor = new Color(0, 0, 0, 0.4F);
 		spriteBatch.setColor(normalColor);
 
 		spriteBatch.begin();
@@ -517,6 +532,12 @@ public class MapRenderer {
 		shapeRenderer.end();
 	}
 
+	/**
+	 * Calculates map coords from hex coords.
+	 * 
+	 * @param hexCoords hex coords
+	 * @return map coords
+	 */
 	public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
 		float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
 		float y = (float) (HexMap.HEX_OUTER_RADIUS
@@ -537,28 +558,37 @@ public class MapRenderer {
 		if (waterTilesNeededToCoverScreenVertically % 2 != 0) {
 			waterTilesNeededToCoverScreenVertically += 1;
 		}
-		float waterOffsetForZoomXPx = (waterTilesNeededToCoverScreenHorizonally * waterTileSizePx
+		float waterOffsetForZoomInPxX = (waterTilesNeededToCoverScreenHorizonally * waterTileSizePx
 				- camera.viewportWidth) / 2;
-		float waterOffsetForZoomYPx = (waterTilesNeededToCoverScreenVertically * waterTileSizePx
+		float waterOffsetForZoomInPxY = (waterTilesNeededToCoverScreenVertically * waterTileSizePx
 				- camera.viewportHeight) / 2;
 		float waterOffsetForMovementX = camera.position.x % WATER_TILE_SIZE;
 		float waterOffsetForMovementY = camera.position.y % WATER_TILE_SIZE;
 		// bottom left point from where the water is drawn
 		Vector3 waterOriginPoint = camera
-				.unproject(new Vector3(-waterOffsetForZoomXPx, camera.viewportHeight + waterOffsetForZoomYPx, 0));
+				.unproject(new Vector3(-waterOffsetForZoomInPxX, camera.viewportHeight + waterOffsetForZoomInPxY, 0));
 		waterOriginPoint.x -= waterOffsetForMovementX;
 		waterOriginPoint.y -= waterOffsetForMovementY;
 		return new Vector2(waterOriginPoint.x, waterOriginPoint.y);
 	}
 
+	/**
+	 * Places the camera in a way so that the whole map is visible.
+	 * 
+	 * @param gameState      game state containing the map
+	 * @param marginLeftPx   margin to leave on the left in pixel
+	 * @param marginBottomPx margin to leave on the bottom in pixel
+	 * @param marginRightPx  margin to leave on the right in pixel
+	 * @param marginTopPx    margin to leave on the top in pixel
+	 */
 	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
 			long marginRightPx, long marginTopPx) {
 		MapDimensions dims = gameState.getMap().getMapDimensionsInWorldCoords();
 		// get the factors needed to adjust the camera zoom
 		float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
 		float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
-		float xFactor = (dims.getWidth() / camera.zoom) / useViewportWidth; // lol
-		float yFactor = (dims.getHeight() / camera.zoom) / useViewportHeight;
+		final float xFactor = (dims.getWidth() / camera.zoom) / useViewportWidth; // lol
+		final float yFactor = (dims.getHeight() / camera.zoom) / useViewportHeight;
 		// use the bigger factor because both dimensions must fit
 		float scaleFactor = Math.max(xFactor, yFactor);
 		camera.zoom *= scaleFactor;

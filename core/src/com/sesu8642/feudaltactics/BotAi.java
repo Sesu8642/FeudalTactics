@@ -24,21 +24,31 @@ import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
+/** Class that does the turns for bot players. */
 @Singleton
-public class BotAI {
+public class BotAi {
 
 	static final int MUST_PROTECT_SCORE_THRESHOLD = 12;
 	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 3;
 
+	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
 		DUMB, MEDIUM, SMART
 	}
 
 	@Inject
-	public BotAI() {
+	public BotAi() {
 		// no parameters needed currently
+		// could be static right now but I think there might be state later on
 	}
 
+	/**
+	 * Does the current players turn.
+	 * 
+	 * @param gameState    game state to do the turn in
+	 * @param intelligence intelligence level to use for the turn
+	 * @return modified game state with the turn done
+	 */
 	public GameState doTurn(GameState gameState, Intelligence intelligence) {
 		Optional<Kingdom> nextKingdomOptional = getNextKingdom(gameState);
 		while (nextKingdomOptional.isPresent()) {
@@ -96,6 +106,8 @@ public class BotAI {
 			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
+		default:
+			throw new AssertionError("Unknown bot intelligence " + intelligence);
 		}
 		return gameState;
 	}
@@ -192,7 +204,7 @@ public class BotAI {
 
 			// determine how "valuable" the tiles are for conquering
 			Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
-					.newSetFromMap(new ConcurrentHashMap<BotAI.OffenseTileScoreInfo, Boolean>());
+					.newSetFromMap(new ConcurrentHashMap<BotAi.OffenseTileScoreInfo, Boolean>());
 			possibleConquerTiles.parallelStream().forEach((conquerTile) -> {
 				offenseTileScoreInfoSet.add(getOffenseTileScoreInfo(gameState, conquerTile));
 			});
@@ -416,7 +428,7 @@ public class BotAI {
 	}
 
 	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Set<HexTile> interestingProtectionTiles) {
-		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<BotAI.TileScoreInfo, Boolean>());
+		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<BotAi.TileScoreInfo, Boolean>());
 		interestingProtectionTiles.parallelStream().forEach(tile -> {
 			results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, tile)));
 		});

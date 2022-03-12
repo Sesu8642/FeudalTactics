@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Json.Serializer;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAi.Intelligence;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 /** JSON serializer for the {@link GameState} class. **/

@@ -11,7 +11,8 @@ import com.sesu8642.feudaltactics.gamestate.Player;
 import com.sesu8642.feudaltactics.gamestate.Player.Type;
 
 /**
- * this class was used temporarily to create the logo but needs to be refactored to be usable for an actual map editor
+ * This class was used temporarily to create the logo but needs to be refactored
+ * to be usable for an actual map editor.
  */
 public class EditorController {
 
@@ -24,9 +25,10 @@ public class EditorController {
 		this.gameState = new GameState();
 	}
 
+	/** Generates an empty map. */
 	public void generateEmptyMap() {
 		ArrayList<Player> players = new ArrayList<>();
-		gameState.setBotIntelligence(BotAI.Intelligence.MEDIUM);
+		gameState.setBotIntelligence(BotAi.Intelligence.MEDIUM);
 		Player p1 = new Player(new Color(0F, 1F, 1F, 1), Type.LOCAL_PLAYER);
 		Player p2 = new Player(new Color(0.75F, 0.5F, 0F, 1), Type.LOCAL_BOT);
 		Player p3 = new Player(new Color(1F, 0.67F, 0.67F, 1), Type.LOCAL_BOT);
@@ -48,6 +50,7 @@ public class EditorController {
 				gameState.getMap().getTiles().get(hexCoords).toString()));
 	}
 
+	/** Creates a tile of random color. */
 	public void createTile(Vector2 hexCoords) {
 		Player randomPlayer = gameState.getPlayers().get(gameState.getRandom().nextInt(gameState.getPlayers().size()));
 		GameStateHelper.placeTile(gameState, hexCoords, randomPlayer);

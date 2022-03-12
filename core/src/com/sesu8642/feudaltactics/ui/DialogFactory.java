@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+/** Factory for creating dialogs. */
 public class DialogFactory {
 
 	private Skin skin;
@@ -15,6 +16,12 @@ public class DialogFactory {
 		this.skin = skin;
 	}
 
+	/**
+	 * Creates a new dialog.
+	 * 
+	 * @param action action to execute once the dialog is confirmed
+	 * @return the created dialog
+	 */
 	public FeudalTacticsDialog createDialog(Consumer<Object> action) {
 		return new FeudalTacticsDialog(skin) {
 

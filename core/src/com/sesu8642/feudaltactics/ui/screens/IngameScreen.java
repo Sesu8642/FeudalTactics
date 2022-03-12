@@ -141,7 +141,7 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 		hudStage.registerEventListener(HudStage.EventTypes.BUY_PEASANT, () -> gameController.buyPeasant());
 		hudStage.registerEventListener(HudStage.EventTypes.BUY_CASTLE, () -> gameController.buyCastle());
 		hudStage.registerEventListener(HudStage.EventTypes.END_TURN, () -> {
-			if (GameStateHelper.hasActivePlayerlikelyForgottenAKingom(gameController.getGameState())) {
+			if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(gameController.getGameState())) {
 				Dialog confirmDialog = dialogFactory.createConfirmDialog(
 						"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
 						() -> gameController.endTurn());
@@ -307,7 +307,7 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 			setActiveStage(parameterInputStage);
 			break;
 		default:
-			break;
+			throw new IllegalStateException("Unknown stage " + ingameStage);
 		}
 		// the super class only applies the resizing to the active stage
 		resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

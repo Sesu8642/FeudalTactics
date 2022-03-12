@@ -121,7 +121,12 @@ public class HudStage extends ResizableResettableStage {
 		this.addActor(rootTable);
 	}
 
-	/** Registers an event listener to an event type. */
+	/**
+	 * Registers an event listener to an event type.
+	 * 
+	 * @param type     event type to listen to
+	 * @param listener listener to execute
+	 */
 	public void registerEventListener(EventTypes type, Runnable listener) {
 		Actor uiElement;
 		switch (type) {

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.sesu8642.feudaltactics.BotAI;
-import com.sesu8642.feudaltactics.BotAI.Intelligence;
+import com.sesu8642.feudaltactics.BotAi;
+import com.sesu8642.feudaltactics.BotAi.Intelligence;
 import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 /** Contains all information about a running game. **/
@@ -19,7 +19,7 @@ public class GameState {
 	private Kingdom activeKingdom = null;
 	private MapObject heldObject = null;
 	private Random random = new Random();
-	private BotAI.Intelligence botIntelligence = Intelligence.DUMB;
+	private BotAi.Intelligence botIntelligence = Intelligence.DUMB;
 	private Long seed = 0L;
 
 	public GameState() {
@@ -90,11 +90,11 @@ public class GameState {
 		return random;
 	}
 
-	public BotAI.Intelligence getBotIntelligence() {
+	public BotAi.Intelligence getBotIntelligence() {
 		return botIntelligence;
 	}
 
-	public void setBotIntelligence(BotAI.Intelligence botIntelligence) {
+	public void setBotIntelligence(BotAi.Intelligence botIntelligence) {
 		this.botIntelligence = botIntelligence;
 	}
 
