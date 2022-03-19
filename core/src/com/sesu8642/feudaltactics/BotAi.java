@@ -365,7 +365,8 @@ public class BotAi {
 			}
 			break;
 		default:
-			throw new IllegalArgumentException("No known unit with strength " + strength);
+			// the requested strength is greater than the strongest unit --> do nothing
+			break;
 		}
 		return false;
 	}
