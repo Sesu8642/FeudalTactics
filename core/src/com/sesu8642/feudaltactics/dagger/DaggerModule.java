@@ -52,8 +52,8 @@ class DaggerModule {
 		try (InputStream inputStream = classLoader.getResourceAsStream("gameconfig.properties")) {
 			config.load(inputStream);
 		} catch (IOException e) {
-			// modules can only throw unchecked exceptions to this needs to be converted
-			throw new RuntimeException("Config cannot be read!");
+			// modules can only throw unchecked exceptions so this needs to be converted
+			throw new RuntimeException("Config cannot be read!", e);
 		}
 		return config;
 	}
@@ -64,17 +64,14 @@ class DaggerModule {
 	static String provideDependencyLicensesText() {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		StringBuilder resultBuilder = new StringBuilder();
-		String[] filesToRead = { "licenses_pre.txt", "licenses.txt" };
-		for (String file : filesToRead) {
-			try (InputStream inputStream = classLoader.getResourceAsStream(file)) {
-				try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-						BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-					resultBuilder.append(bufferedReader.lines().collect(Collectors.joining(System.lineSeparator())));
-				}
-			} catch (IOException e) {
-				// modules can only throw unchecked exceptions to this needs to be converted
-				throw new RuntimeException("Dependency licenses cannot be read!");
+		try (InputStream inputStream = classLoader.getResourceAsStream("licenses.txt")) {
+			try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+					BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+				resultBuilder.append(bufferedReader.lines().collect(Collectors.joining(System.lineSeparator())));
 			}
+		} catch (IOException e) {
+			// modules can only throw unchecked exceptions so this needs to be converted
+			throw new RuntimeException("Dependency licenses cannot be read!", e);
 		}
 		return resultBuilder.toString();
 	}

@@ -10,12 +10,27 @@ sourceSets.main.resources.srcDirs = [ "resources/", "$buildDir/generated/resourc
 
 eclipse.project.name = appName + "-core"
 
-copy {
-    from "$buildDir/../../licenses_pre.txt"
-    into "$buildDir/generated/resources"
-}
-
 processResources {
 	from "$sourceSets.main.resources.srcDirs"
 	filter(ReplaceTokens, tokens: [version: project.version])
 }
+
+// build license info text file
+	def license_texts = ''
+	// read prefix text
+	license_texts += file('../dependency_licenses/licenses_pre.txt').text
+	// iterate directories containing the dependency licenses
+	def base_dir = file("../dependency_licenses")
+	fileTree(dir: "../dependency_licenses").visit { FileVisitDetails dirDetails -> 
+		if (dirDetails.directory) {
+			license_texts += "\n" + dirDetails.file.name
+			license_texts += "\n" + "-".multiply(dirDetails.file.name.length() * 1.2)
+			fileTree(dir: dirDetails.file.path).visit { FileVisitDetails fileDetails -> 
+				license_texts += "\n\n" + fileDetails.file.name
+				license_texts += "\n" + fileDetails.file.text
+			}
+		}
+	}
+	// write the result
+	mkdir("$buildDir/generated/resources")
+	new File("$buildDir/generated/resources/licenses.txt").text = license_texts
