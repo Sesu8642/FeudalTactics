@@ -28,8 +28,8 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 @Singleton
 public class BotAi {
 
-	static final int MUST_PROTECT_SCORE_THRESHOLD = 12;
-	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 3;
+	static final int MUST_PROTECT_SCORE_THRESHOLD = 20;
+	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 10;
 
 	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
@@ -442,36 +442,49 @@ public class BotAi {
 			// already occupied
 			return -1;
 		}
-		// count the enemy tiles next to the tile and 2 tiles away
+		// count the tiles that will be protected
+		boolean tileIsBorder = false;
+		boolean tileIsProtected = false;
 		int score = 0;
 		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
 		for (HexTile neighborTile : neighborTiles) {
+			boolean neighborIsBorder = false;
+			boolean neighborIsProtected = false;
 			if (neighborTile != null && neighborTile.getKingdom() != null) {
 				if (neighborTile.getKingdom() != tile.getKingdom()) {
-					score++;
+					// the tile itself is worth protecting
+					tileIsBorder = true;
 				} else {
 					if (neighborTile.getContent() != null && neighborTile.getContent().getStrength() > 0) {
-						// already (somewhat) protected
-						return 0;
+						// the tile is already (somewhat) protected
+						tileIsProtected = true;
+						neighborIsProtected = true;
 					}
-					Collection<HexTile> neighborsNeighbors = gameState.getMap().getNeighborsNeighborTiles(tile);
-					int neighborBonus = 0;
+					Collection<HexTile> neighborsNeighbors = gameState.getMap().getNeighborTiles(neighborTile);
 					for (HexTile neighborsNeighbor : neighborsNeighbors) {
 						if (neighborsNeighbor != null) {
-							if (neighborsNeighbor.getKingdom() != tile.getKingdom()) {
-								neighborBonus++;
-							} else if (neighborsNeighbor.getContent() != null
+							if (neighborsNeighbor.getKingdom() != null
+									&& neighborsNeighbor.getKingdom() != tile.getKingdom()) {
+								neighborIsBorder = true;
+							} else if (neighborsNeighbor.getKingdom() == tile.getKingdom()
+									&& neighborsNeighbor.getContent() != null
 									&& neighborsNeighbor.getContent().getStrength() > 0) {
-								// neighbor tile is already protected
-								score = 0;
-								neighborBonus = 0;
-								break;
+								neighborIsProtected = true;
 							}
 						}
 					}
-					score += neighborBonus;
 				}
 			}
+			if (neighborIsBorder) {
+				// the 1 ist there because it is better to protect a tile twice than to place
+				// the unit somewhere useless
+				score += neighborIsProtected ? 1 : 10;
+			}
+		}
+		if (tileIsBorder) {
+			// only 5 because it should be preferred to place the unit not directly at the
+			// border
+			score += tileIsProtected ? 1 : 5;
 		}
 		return score;
 	}
