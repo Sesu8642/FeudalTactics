@@ -20,7 +20,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.dagger.IngameCamera;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamestate.HexMap;

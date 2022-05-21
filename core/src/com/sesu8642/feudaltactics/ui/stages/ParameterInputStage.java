@@ -23,7 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.BotAi;
 import com.sesu8642.feudaltactics.BotAi.Intelligence;
-import com.sesu8642.feudaltactics.dagger.MenuViewport;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;

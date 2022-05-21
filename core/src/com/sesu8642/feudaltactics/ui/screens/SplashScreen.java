@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.dagger.MainMenuScreen;
-import com.sesu8642.feudaltactics.dagger.MenuCamera;
-import com.sesu8642.feudaltactics.dagger.MenuViewport;
-import com.sesu8642.feudaltactics.dagger.SplashScreenStage;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.SplashScreenStage;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
 /** {@link Screen} for displaying a splash image. */

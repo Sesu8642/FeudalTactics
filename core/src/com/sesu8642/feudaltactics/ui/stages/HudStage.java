@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.dagger.MenuViewport;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
 import com.sesu8642.feudaltactics.libgdx.ValueWithSize;
 
 /**

@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.dagger.IngameRenderer;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamestate.HexTile;

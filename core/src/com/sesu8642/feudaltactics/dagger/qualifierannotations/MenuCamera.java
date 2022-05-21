@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.dagger;
+package com.sesu8642.feudaltactics.dagger.qualifierannotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
