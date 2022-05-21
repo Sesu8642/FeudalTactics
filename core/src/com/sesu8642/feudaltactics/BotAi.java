@@ -28,8 +28,8 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
 @Singleton
 public class BotAi {
 
-	static final int MUST_PROTECT_SCORE_THRESHOLD = 20;
-	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 10;
+	static final int MUST_PROTECT_SCORE_THRESHOLD = 25;
+	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 20;
 
 	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
