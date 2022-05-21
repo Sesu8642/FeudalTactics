@@ -1,7 +1,5 @@
-package com.sesu8642.feudaltactics;
+package com.sesu8642.feudaltactics.gamelogic;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -10,13 +8,17 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.google.common.eventbus.EventBus;
+import com.sesu8642.feudaltactics.BotAi;
+import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-import com.sesu8642.feudaltactics.gamestate.Player;
-import com.sesu8642.feudaltactics.gamestate.Player.Type;
+import com.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Player;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 
 /** Controller for playing the game. */
@@ -29,27 +31,23 @@ public class GameController {
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
 			new Color(0F, 1F, 0F, 1) };
 
-	public static final String GAME_STATE_OBSERVABLE_PROPERTY_NAME = "gameState";
-
+	private EventBus eventBus;
 	private MapRenderer mapRenderer;
 	private BotAi botAi;
 	private GameState gameState;
-	// for observing the GameState
-	private PropertyChangeSupport propertyChangeSupport;
 
 	/**
 	 * Constructor.
 	 * 
+	 * @param eventBus    event bus
 	 * @param mapRenderer map renderer
 	 * @param botAi       bot AI
 	 */
 	@Inject
-	public GameController(@IngameRenderer MapRenderer mapRenderer, BotAi botAi) {
+	public GameController(EventBus eventBus, @IngameRenderer MapRenderer mapRenderer, BotAi botAi) {
+		this.eventBus = eventBus;
 		this.mapRenderer = mapRenderer;
 		this.botAi = botAi;
-		// PropertyChangeSupport is not injected because this is a dependency cycle and
-		// there is no benefit really
-		this.propertyChangeSupport = new PropertyChangeSupport(this);
 		gameState = new GameState();
 	}
 
@@ -62,7 +60,7 @@ public class GameController {
 		}
 		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	private void autosave() {
@@ -73,7 +71,7 @@ public class GameController {
 	public void loadLatestAutosave() {
 		gameState = PreferencesHelper.getLatestAutoSave();
 		mapRenderer.updateMap(gameState);
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -105,7 +103,7 @@ public class GameController {
 		}
 		GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
 		mapRenderer.updateMap(gameState);
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -129,7 +127,7 @@ public class GameController {
 		mapRenderer.updateMap(gameState);
 		autosave();
 		// save first because is is relevant for the undo button status
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -141,7 +139,7 @@ public class GameController {
 		GameStateHelper.pickupObject(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -153,7 +151,7 @@ public class GameController {
 		GameStateHelper.placeOwn(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -165,7 +163,7 @@ public class GameController {
 		GameStateHelper.combineUnits(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -177,13 +175,13 @@ public class GameController {
 		GameStateHelper.conquer(gameState, tile);
 		mapRenderer.updateMap(gameState);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/** Ends the turn. */
 	public void endTurn() {
-		// remember old state
-		GameState oldState = GameStateHelper.getCopy(gameState);
+		// remember old winner
+		Player oldWinner = gameState.getWinner();
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
 		mapRenderer.updateMap(gameState);
@@ -196,7 +194,7 @@ public class GameController {
 			autosave();
 			// clear autosaves from previous turn
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(1);
-			propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, oldState, gameState);
+			eventBus.post(new GameStateChangeEvent(gameState, gameState.getWinner() != oldWinner));
 		}
 	}
 
@@ -205,7 +203,7 @@ public class GameController {
 		GameStateHelper.buyPeasant(gameState);
 		mapRenderer.updateMap(gameState);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/** Buys a castle. */
@@ -213,7 +211,7 @@ public class GameController {
 		GameStateHelper.buyCastle(gameState);
 		mapRenderer.updateMap(gameState);
 		autosave();
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/** Undoes the last action. */
@@ -227,16 +225,12 @@ public class GameController {
 			gameState = loaded;
 			mapRenderer.updateMap(gameState);
 		}
-		propertyChangeSupport.firePropertyChange(GAME_STATE_OBSERVABLE_PROPERTY_NAME, null, gameState);
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	public void placeCameraForFullMapView(long marginLeftPx, long marginBottomPx, long marginRightPx,
 			long marginTopPx) {
 		mapRenderer.placeCameraForFullMapView(gameState, marginLeftPx, marginBottomPx, marginRightPx, marginTopPx);
-	}
-
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-		propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 	}
 
 	public MapRenderer getMapRenderer() {

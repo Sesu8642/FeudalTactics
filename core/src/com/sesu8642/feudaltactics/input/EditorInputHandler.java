@@ -2,7 +2,7 @@ package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.EditorController;
-import com.sesu8642.feudaltactics.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
 
 /** {@link InputHandler} for the level editor. **/
 public class EditorInputHandler implements InputHandler {

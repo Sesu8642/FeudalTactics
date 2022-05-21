@@ -1,14 +1,14 @@
 package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-import com.sesu8642.feudaltactics.gamestate.Player;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Player;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 
 /**

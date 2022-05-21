@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamestate.mapobjects;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 /** Everything that can be the content of a tile is a map object. **/
 public interface MapObject {

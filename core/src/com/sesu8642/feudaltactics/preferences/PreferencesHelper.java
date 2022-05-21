@@ -11,8 +11,8 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.sesu8642.feudaltactics.BotAi.Intelligence;
 import com.sesu8642.feudaltactics.exceptions.SaveLoadingException;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.GameStateSerializer;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateSerializer;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
 

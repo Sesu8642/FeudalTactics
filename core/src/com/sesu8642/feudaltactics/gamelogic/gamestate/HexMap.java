@@ -3,7 +3,7 @@
  * His code is licensed under CC0 as specified in one of his comments on the page as well as the header in the generated java code linked on the page.
  */
 
-package com.sesu8642.feudaltactics.gamestate;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

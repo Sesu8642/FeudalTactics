@@ -1,5 +1,7 @@
 package com.sesu8642.feudaltactics.input;
 
+import javax.inject.Inject;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
@@ -7,18 +9,24 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.google.common.eventbus.EventBus;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
+import com.sesu8642.feudaltactics.events.BackInputEvent;
+import com.sesu8642.feudaltactics.events.EscInputEvent;
+import com.sesu8642.feudaltactics.events.TapInputEvent;
 
 /** Class that handles touch as well as gesture inputs. **/
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
+	private EventBus eventBus;
 	private OrthographicCamera camera;
-	private InputHandler inputAcceptor;
 
 	public static final float MIN_ZOOM = 0.01F;
 	public static final float MAX_ZOOM = 1;
 
-	public CombinedInputProcessor(InputHandler inputAcceptor, OrthographicCamera camera) {
-		this.inputAcceptor = inputAcceptor;
+	@Inject
+	public CombinedInputProcessor(EventBus eventBus, @IngameCamera OrthographicCamera camera) {
+		this.eventBus = eventBus;
 		this.camera = camera;
 	}
 
@@ -56,11 +64,12 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 		return false;
 	}
 
+	// TODO: move this logic somwhere else
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
 		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
-		inputAcceptor.inputTap(worldCoords);
+		eventBus.post(new TapInputEvent(worldCoords));
 		return true;
 	}
 
@@ -76,6 +85,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	Float cameraZoomBeforePinch = null;
 
+	// TODO: move this logic somwhere else
 	@Override
 	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
 		if (cameraZoomBeforePinch == null) {
@@ -111,10 +121,10 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	public boolean keyUp(int keycode) {
 		switch (keycode) {
 		case Keys.ESCAPE:
-			inputAcceptor.inputEsc();
+			eventBus.post(new EscInputEvent());
 			break;
 		case Keys.BACK:
-			inputAcceptor.inputBack();
+			eventBus.post(new BackInputEvent());
 			break;
 		default:
 			// noop: ignore all other keys

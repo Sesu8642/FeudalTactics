@@ -1,9 +1,5 @@
 package com.sesu8642.feudaltactics.ui.screens;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Optional;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -15,21 +11,25 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.GameController;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
-import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameInputProcessor;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-import com.sesu8642.feudaltactics.gamestate.Player.Type;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
+import com.sesu8642.feudaltactics.events.EscInputEvent;
+import com.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import com.sesu8642.feudaltactics.gamelogic.GameController;
+import com.sesu8642.feudaltactics.gamelogic.LocalIngameInputHandler;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
@@ -42,13 +42,15 @@ import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage.EventTypes;
 
 /** {@link Screen} for playing a map. */
 @Singleton
-public class IngameScreen extends GameScreen implements PropertyChangeListener {
+public class IngameScreen extends GameScreen {
 
 	private OrthographicCamera ingameCamera;
 
 	private MapRenderer mapRenderer;
 	private InputMultiplexer inputMultiplexer;
+	private EventBus eventBus;
 	private CombinedInputProcessor inputProcessor;
+	private LocalIngameInputHandler inputHandler;
 	private GameController gameController;
 
 	private ParameterInputStage parameterInputStage;
@@ -77,10 +79,12 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	 * @param mainMenuScreen       main menu screen that can be returned to
 	 * @param confirmDialogFactory factory for creating confirm dialogs
 	 * @param gameController       controller for playing the game
+	 * @param eventBus             event bus
 	 * @param inputProcessor       input processor for user inputs that is added to
 	 *                             the input multiplexer
 	 * @param inputMultiplexer     input multiplexer that stages are added to as
 	 *                             processors
+	 * @param inputHandler         input handler to be registered to the event bus
 	 * @param hudStage             stage for heads up display UI
 	 * @param menuStage            stage for the pause menu UI
 	 * @param parameterInputStage  stage for the new game parameter input UI
@@ -89,9 +93,9 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	public IngameScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
 			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
 			@MainMenuScreen GameScreen mainMenuScreen, DialogFactory confirmDialogFactory,
-			GameController gameController, @IngameInputProcessor CombinedInputProcessor inputProcessor,
-			InputMultiplexer inputMultiplexer, HudStage hudStage, MenuStage menuStage,
-			ParameterInputStage parameterInputStage) {
+			GameController gameController, EventBus eventBus, CombinedInputProcessor inputProcessor,
+			InputMultiplexer inputMultiplexer, LocalIngameInputHandler inputHandler, HudStage hudStage,
+			MenuStage menuStage, ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
 		this.gameController = gameController;
 		this.ingameCamera = ingameCamera;
@@ -99,11 +103,12 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 		this.mainMenuScreen = mainMenuScreen;
 		this.dialogFactory = confirmDialogFactory;
 		this.inputMultiplexer = inputMultiplexer;
+		this.eventBus = eventBus;
 		this.inputProcessor = inputProcessor;
+		this.inputHandler = inputHandler;
 		this.hudStage = hudStage;
 		this.menuStage = menuStage;
 		this.parameterInputStage = parameterInputStage;
-		gameController.addPropertyChangeListener(GameController.GAME_STATE_OBSERVABLE_PROPERTY_NAME, this);
 		registerEventListeners();
 	}
 
@@ -172,52 +177,58 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 		menuStage.addButton("Continue", () -> activateStage(IngameStages.HUD));
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(GameController.GAME_STATE_OBSERVABLE_PROPERTY_NAME)) {
-			// update the UI when there is a gameState change
-			Optional<GameState> optionalOldGameState = Optional.ofNullable((GameState) evt.getOldValue());
-			GameState newGameState = (GameState) evt.getNewValue();
-			// hand content
-			if (newGameState.getHeldObject() != null) {
-				hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
-			} else {
-				hudStage.updateHandContent(null);
-			}
-			// info text
-			Kingdom kingdom = newGameState.getActiveKingdom();
-			if (kingdom == null) {
-				hudStage.setInfoText("");
-			} else {
-				int income = kingdom.getIncome();
-				int salaries = kingdom.getSalaries();
-				int result = income - salaries;
-				int savings = kingdom.getSavings();
-				String resultText = result < 0 ? String.valueOf(result) : "+" + result;
-				String infoText = "Savings: " + savings + " (" + resultText + ")";
-				hudStage.setInfoText(infoText);
-			}
-			// seed
-			menuStage.setBottomLabelText("Seed: " + newGameState.getSeed().toString());
-			// buttons
-			boolean canUndo = InputValidationHelper.checkUndoAction();
-			boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, Unit.COST);
-			boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, Castle.COST);
-			boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState);
-			hudStage.setButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
-			// display messages
-			// check if player lost
-			if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
-					&& newGameState.getActivePlayer().isDefeated()) {
-				showLostMessage();
-			} else {
-				// check if winner changed
-				optionalOldGameState.ifPresent(oldGameState -> {
-					if (oldGameState.getWinner() != newGameState.getWinner()) {
-						showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
-								newGameState.getWinner().getColor());
-					}
-				});
+	@Subscribe
+	public void handleEscInput(EscInputEvent event) {
+		togglePause();
+	}
+
+	/**
+	 * Event handler for gameState change. Adjusts all the UI elements that need to
+	 * be adjusted and displays dialogs if appropriate.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleGameStateChange(GameStateChangeEvent event) {
+		// update the UI when there is a gameState change
+		GameState newGameState = event.getGameState();
+		// hand content
+		if (newGameState.getHeldObject() != null) {
+			hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
+		} else {
+			hudStage.updateHandContent(null);
+		}
+		// info text
+		Kingdom kingdom = newGameState.getActiveKingdom();
+		if (kingdom == null) {
+			hudStage.setInfoText("");
+		} else {
+			int income = kingdom.getIncome();
+			int salaries = kingdom.getSalaries();
+			int result = income - salaries;
+			int savings = kingdom.getSavings();
+			String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+			String infoText = "Savings: " + savings + " (" + resultText + ")";
+			hudStage.setInfoText(infoText);
+		}
+		// seed
+		menuStage.setBottomLabelText("Seed: " + newGameState.getSeed().toString());
+		// buttons
+		boolean canUndo = InputValidationHelper.checkUndoAction();
+		boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, Unit.COST);
+		boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, Castle.COST);
+		boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState);
+		hudStage.setButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+		// display messages
+		// check if player lost
+		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
+				&& newGameState.getActivePlayer().isDefeated()) {
+			showLostMessage();
+		} else {
+			// check if winner changed
+			if (event.isWinnerChanged()) {
+				showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
+						newGameState.getWinner().getColor());
 			}
 		}
 	}
@@ -316,8 +327,16 @@ public class IngameScreen extends GameScreen implements PropertyChangeListener {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(inputMultiplexer);
+		eventBus.register(this);
+		eventBus.register(inputHandler);
 		activateStage(IngameStages.PARAMETERS);
 		parameterInputStage.regenerateMap(System.currentTimeMillis());
+	}
+
+	@Override
+	public void hide() {
+		eventBus.unregister(this);
+		eventBus.unregister(inputHandler);
 	}
 
 	@Override

@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 
 /** Factory for the slides displayed in the tutorial. */
 @Singleton

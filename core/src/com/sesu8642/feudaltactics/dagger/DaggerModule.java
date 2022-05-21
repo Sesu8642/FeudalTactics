@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.eventbus.EventBus;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.AboutScreen;
@@ -28,7 +29,6 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.AboutSlideStage;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.AboutSlides;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.DependencyLicenses;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
-import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameInputProcessor;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuStage;
@@ -41,8 +41,6 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlideStage;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlides;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.VersionProperty;
-import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
-import com.sesu8642.feudaltactics.input.LocalIngameInputHandler;
 import com.sesu8642.feudaltactics.ui.screens.EditorScreen;
 import com.sesu8642.feudaltactics.ui.screens.GameScreen;
 import com.sesu8642.feudaltactics.ui.screens.IngameScreen;
@@ -62,6 +60,12 @@ class DaggerModule {
 	private DaggerModule() {
 		// prevent instantiation
 		throw new AssertionError();
+	}
+
+	@Provides
+	@Singleton
+	static EventBus provideEventBus() {
+		return new EventBus();
 	}
 
 	@Provides
@@ -152,15 +156,6 @@ class DaggerModule {
 	static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera,
 			TextureAtlas textureAtlas, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
 		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch);
-	}
-
-	// will need the same for the editor later with a different input handler
-	@Provides
-	@Singleton
-	@IngameInputProcessor
-	static CombinedInputProcessor provideCombinedInputProcessor(LocalIngameInputHandler inputHandler,
-			@IngameCamera OrthographicCamera camera) {
-		return new CombinedInputProcessor(inputHandler, camera);
 	}
 
 	@Provides

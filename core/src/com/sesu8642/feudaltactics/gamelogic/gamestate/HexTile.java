@@ -1,9 +1,8 @@
-package com.sesu8642.feudaltactics.gamestate;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 /** A tile of land on the map. **/
 public class HexTile {

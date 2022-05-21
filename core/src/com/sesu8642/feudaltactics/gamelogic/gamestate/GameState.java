@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamestate;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,6 @@ import java.util.Random;
 
 import com.sesu8642.feudaltactics.BotAi;
 import com.sesu8642.feudaltactics.BotAi.Intelligence;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 /** Contains all information about a running game. **/
 public class GameState {

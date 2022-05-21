@@ -1,64 +1,65 @@
-package com.sesu8642.feudaltactics.input;
+package com.sesu8642.feudaltactics.gamelogic;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.GameController;
-import com.sesu8642.feudaltactics.gamestate.HexMap;
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Player;
-import com.sesu8642.feudaltactics.gamestate.Player.Type;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
-import com.sesu8642.feudaltactics.ui.screens.IngameScreen;
-
-import dagger.Lazy;
+import com.google.common.eventbus.Subscribe;
+import com.sesu8642.feudaltactics.events.BackInputEvent;
+import com.sesu8642.feudaltactics.events.TapInputEvent;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Player;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
+import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 /** {@link InputHandler} for inputs of a local player in-game. **/
 @Singleton
-public class LocalIngameInputHandler implements InputHandler {
+public class LocalIngameInputHandler {
 
 	private enum TapAction {
 		NONE, PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER
 	}
 
 	private GameController gameController;
-	private Lazy<IngameScreen> ingameScreenLazy;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param gameController   game controller
-	 * @param ingameScreenLazy ingame screen
+	 * @param gameController game controller
 	 */
 	@Inject
-	public LocalIngameInputHandler(GameController gameController, Lazy<IngameScreen> ingameScreenLazy) {
+	public LocalIngameInputHandler(GameController gameController) {
 		this.gameController = gameController;
-		// using lazy because of dependency cycle
-		this.ingameScreenLazy = ingameScreenLazy;
 	}
 
-	@Override
-	public void inputEsc() {
-		ingameScreenLazy.get().togglePause();
-	}
-
-	@Override
-	public void inputBack() {
+	/**
+	 * Event handler for back button input events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBackInput(BackInputEvent event) {
 		if (InputValidationHelper.checkUndoAction()) {
 			gameController.undoLastAction();
 		}
 	}
 
-	@Override
-	public void inputTap(Vector2 worldCoords) {
+	/**
+	 * Event handler for tap input events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleTapInput(TapInputEvent event) {
 		if (!isActivePlayerLocalHuman()) {
 			// don't accept inputs if its not the human player's turn
 			return;
 		}
 		HexMap map = gameController.getGameState().getMap();
-		Vector2 hexCoords = map.worldCoordsToHexCoords(worldCoords);
+		Vector2 hexCoords = map.worldCoordsToHexCoords(event.getWorldCoords());
 		Player player = gameController.getGameState().getActivePlayer();
 		HexTile tile = map.getTiles().get(hexCoords);
 		// print info

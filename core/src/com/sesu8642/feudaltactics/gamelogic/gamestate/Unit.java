@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamestate.mapobjects;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 /**
  * Map object representing a unit. Units are used to conquer enemy tiles. They

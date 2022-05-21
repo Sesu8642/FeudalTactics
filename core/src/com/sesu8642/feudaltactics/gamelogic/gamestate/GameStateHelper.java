@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamestate;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,12 +14,7 @@ import java.util.Optional;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 /**
@@ -54,6 +49,9 @@ public class GameStateHelper {
 			copiedPlayers.add(newPlayer);
 		}
 		result.setPlayers(copiedPlayers);
+		if (original.getWinner() != null) {
+			result.setWinner(copiedPlayers.get(original.getPlayers().indexOf(original.getWinner())));
+		}
 
 		List<Kingdom> copiedKingdoms = new ArrayList<>();
 		for (Kingdom originalKingdom : original.getKingdoms()) {

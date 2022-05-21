@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamestate.mapobjects;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 /**
  * Map object representing the capital of a kingdom. If the capital is

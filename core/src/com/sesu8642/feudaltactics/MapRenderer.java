@@ -21,14 +21,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
-import com.sesu8642.feudaltactics.gamestate.HexMap;
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.MapDimensions;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.MapDimensions;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 /** Renderer for the map and the water. */

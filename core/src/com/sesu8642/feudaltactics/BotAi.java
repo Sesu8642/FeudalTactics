@@ -13,15 +13,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.gamestate.GameState;
-import com.sesu8642.feudaltactics.gamestate.GameStateHelper;
-import com.sesu8642.feudaltactics.gamestate.HexTile;
-import com.sesu8642.feudaltactics.gamestate.Kingdom;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Capital;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Castle;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit.UnitTypes;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
 /** Class that does the turns for bot players. */

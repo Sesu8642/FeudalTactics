@@ -1,11 +1,9 @@
-package com.sesu8642.feudaltactics.gamestate;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Tree;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.Unit;
 
 /** Group of connected tiles that belong to the same player. **/
 public class Kingdom {

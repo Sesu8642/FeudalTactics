@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -17,7 +16,6 @@ import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
-import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.EditorInputHandler;
 
 /** {@link Screen} for the map editor. Needs to be re-done. */
@@ -38,18 +36,18 @@ public class EditorScreen implements Screen {
 	@Inject
 	public EditorScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuCamera OrthographicCamera menuCamera,
 			@IngameRenderer MapRenderer mapRenderer) {
-		editorController = new EditorController();
-		inputValidator = new EditorInputHandler(editorController);
-		this.ingameCamera = ingameCamera;
-		this.menuCamera = menuCamera;
-		this.mapRenderer = mapRenderer;
-		editorController.setMapRenderer(mapRenderer);
-		initUI();
-		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(inputValidator, ingameCamera);
-		multiplexer = new InputMultiplexer();
-		multiplexer.addProcessor(stage);
-		multiplexer.addProcessor(new GestureDetector(inputProcessor));
-		multiplexer.addProcessor(inputProcessor);
+//		editorController = new EditorController();
+//		inputValidator = new EditorInputHandler(editorController);
+//		this.ingameCamera = ingameCamera;
+//		this.menuCamera = menuCamera;
+//		this.mapRenderer = mapRenderer;
+//		editorController.setMapRenderer(mapRenderer);
+//		initUI();
+//		CombinedInputProcessor inputProcessor = new CombinedInputProcessor(inputValidator, ingameCamera);
+//		multiplexer = new InputMultiplexer();
+//		multiplexer.addProcessor(stage);
+//		multiplexer.addProcessor(new GestureDetector(inputProcessor));
+//		multiplexer.addProcessor(inputProcessor);
 	}
 
 	private void initUI() {

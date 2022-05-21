@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamestate;
+package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,13 +10,12 @@ import com.badlogic.gdx.utils.Json.Serializer;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.sesu8642.feudaltactics.BotAi.Intelligence;
-import com.sesu8642.feudaltactics.gamestate.mapobjects.MapObject;
 
 /** JSON serializer for the {@link GameState} class. **/
 public class GameStateSerializer implements Serializer<GameState> {
 
 	private static final String KINGDOM_FIELD_NAME = "kingdom";
-	private static final String MAPOBJECTS_CLASS_BASE_NAME = "com.sesu8642.feudaltactics.gamestate.mapobjects.";
+	private static final String MAPOBJECTS_CLASS_BASE_NAME = "com.sesu8642.feudaltactics.gamelogic.gamestate.";
 	private static final String ACTIVE_KINGDOM_ID_NAME = "active_kingdom_id";
 	private static final String WINNER_ID_NAME = "winner_id";
 	private static final String BOT_INTELLIGENCE_NAME = "bot_intelligence";
