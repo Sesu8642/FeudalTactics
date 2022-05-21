@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
@@ -30,6 +31,7 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameInputProcessor;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
+import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuStage;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuBackgroundCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuBackgroundRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
@@ -41,8 +43,9 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlides;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.VersionProperty;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.LocalIngameInputHandler;
+import com.sesu8642.feudaltactics.ui.screens.EditorScreen;
 import com.sesu8642.feudaltactics.ui.screens.GameScreen;
-import com.sesu8642.feudaltactics.ui.stages.MainMenuStage;
+import com.sesu8642.feudaltactics.ui.screens.IngameScreen;
 import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.AboutSlideFactory;
@@ -204,6 +207,22 @@ class DaggerModule {
 	}
 
 	@Provides
+	@Singleton
+	@MainMenuStage
+	static MenuStage provideMainMenuWithVersion(@MenuViewport Viewport viewport,
+			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
+			@VersionProperty String gameVersion, Provider<IngameScreen> ingameScreenProvider,
+			Provider<EditorScreen> editorScreenProvider, @TutorialScreen Provider<GameScreen> tutorialScreenProvider,
+			@AboutScreen Provider<GameScreen> aboutScreenProvider) {
+		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
+		stage.addButton("Play", () -> FeudalTactics.game.setScreen(ingameScreenProvider.get()));
+		stage.addButton("Tutorial", () -> FeudalTactics.game.setScreen(tutorialScreenProvider.get()));
+		stage.addButton("About", () -> FeudalTactics.game.setScreen(aboutScreenProvider.get()));
+		stage.setBottomLabelText(String.format("Version %s", gameVersion));
+		return stage;
+	}
+
+	@Provides
 	@TutorialSlides
 	static List<Slide> provideTutorialSlides(TutorialSlideFactory slideFactory) {
 		return slideFactory.createAllSlides();
@@ -253,7 +272,7 @@ class DaggerModule {
 	@Singleton
 	@MainMenuScreen
 	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-			MainMenuStage menuStage) {
+			@MainMenuStage MenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
 	}
 
