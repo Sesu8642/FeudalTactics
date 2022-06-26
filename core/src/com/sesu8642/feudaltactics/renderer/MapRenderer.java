@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics;
+package com.sesu8642.feudaltactics.renderer;
 
 import java.util.ArrayList;
 import java.util.Collection;

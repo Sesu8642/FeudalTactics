@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
@@ -22,8 +21,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.AboutScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.AboutSlideStage;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.AboutSlides;
@@ -41,9 +38,13 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlideStage;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlides;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.VersionProperty;
-import com.sesu8642.feudaltactics.ui.screens.EditorScreen;
+import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
+import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import com.sesu8642.feudaltactics.renderer.MapRenderer;
+import com.sesu8642.feudaltactics.ui.events.CloseMenuEvent;
+import com.sesu8642.feudaltactics.ui.events.ExitGameUiEvent;
+import com.sesu8642.feudaltactics.ui.events.RetryGameUnconfirmedUiEvent;
 import com.sesu8642.feudaltactics.ui.screens.GameScreen;
-import com.sesu8642.feudaltactics.ui.screens.IngameScreen;
 import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 import com.sesu8642.feudaltactics.ui.stages.slidestage.AboutSlideFactory;
@@ -193,10 +194,13 @@ class DaggerModule {
 	}
 
 	@Provides
-	static MenuStage provideMenuStageWithVersion(@MenuViewport Viewport viewport,
+	static MenuStage provideMenuStageWithVersion(EventBus eventBus, @MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
 			@VersionProperty String gameVersion) {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
+		stage.addButton("Exit", () -> eventBus.post(new ExitGameUiEvent()));
+		stage.addButton("Retry", () -> eventBus.post(new RetryGameUnconfirmedUiEvent()));
+		stage.addButton("Continue", () -> eventBus.post(new CloseMenuEvent()));
 		stage.setBottomLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
@@ -204,15 +208,16 @@ class DaggerModule {
 	@Provides
 	@Singleton
 	@MainMenuStage
-	static MenuStage provideMainMenuWithVersion(@MenuViewport Viewport viewport,
+	static MenuStage provideMainMenuWithVersion(EventBus eventBus, @MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
-			@VersionProperty String gameVersion, Provider<IngameScreen> ingameScreenProvider,
-			Provider<EditorScreen> editorScreenProvider, @TutorialScreen Provider<GameScreen> tutorialScreenProvider,
-			@AboutScreen Provider<GameScreen> aboutScreenProvider) {
+			@VersionProperty String gameVersion) {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
-		stage.addButton("Play", () -> FeudalTactics.game.setScreen(ingameScreenProvider.get()));
-		stage.addButton("Tutorial", () -> FeudalTactics.game.setScreen(tutorialScreenProvider.get()));
-		stage.addButton("About", () -> FeudalTactics.game.setScreen(aboutScreenProvider.get()));
+		stage.addButton("Play",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN)));
+		stage.addButton("Tutorial",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN)));
+		stage.addButton("About",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN)));
 		stage.setBottomLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
@@ -226,10 +231,11 @@ class DaggerModule {
 	@Provides
 	@Singleton
 	@TutorialSlideStage
-	static SlideStage provideTutorialSlideStage(@MenuViewport Viewport viewport,
+	static SlideStage provideTutorialSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
 			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera,
 			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
-		return new SlideStage(viewport, tutorialSlides, () -> FeudalTactics.game.setScreen(mainMenuScreen), camera,
+		return new SlideStage(viewport, tutorialSlides,
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
 				skin);
 	}
 
@@ -250,9 +256,12 @@ class DaggerModule {
 	@Provides
 	@Singleton
 	@AboutSlideStage
-	static SlideStage provideAboutSlideStage(@MenuViewport Viewport viewport, @AboutSlides List<Slide> aboutSlides,
-			@MenuBackgroundCamera OrthographicCamera camera, @MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
-		return new SlideStage(viewport, aboutSlides, () -> FeudalTactics.game.setScreen(mainMenuScreen), camera, skin);
+	static SlideStage provideAboutSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
+			@AboutSlides List<Slide> aboutSlides, @MenuBackgroundCamera OrthographicCamera camera,
+			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
+		return new SlideStage(viewport, aboutSlides,
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
+				skin);
 	}
 
 	@Provides

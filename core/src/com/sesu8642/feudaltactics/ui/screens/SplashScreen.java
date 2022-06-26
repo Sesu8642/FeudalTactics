@@ -7,11 +7,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
+import com.google.common.eventbus.EventBus;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.SplashScreenStage;
+import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
+import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 
 /** {@link Screen} for displaying a splash image. */
@@ -19,20 +20,20 @@ import com.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 public class SplashScreen extends GameScreen {
 
 	private long startTime;
-	private GameScreen nextScreen;
+	private EventBus eventBus;
 
 	@Inject
-	public SplashScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-			@SplashScreenStage ResizableResettableStage stage, @MainMenuScreen GameScreen nextScreen) {
+	public SplashScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			@SplashScreenStage ResizableResettableStage stage) {
 		super(camera, viewport, stage);
-		this.nextScreen = nextScreen;
+		this.eventBus = eventBus;
 	}
 
 	@Override
 	public void render(float delta) {
 		super.render(delta);
 		if (TimeUtils.timeSinceMillis(startTime) > 1000) {
-			FeudalTactics.game.setScreen(nextScreen);
+			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 			this.hide();
 		}
 	}

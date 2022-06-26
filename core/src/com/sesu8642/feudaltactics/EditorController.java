@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.sesu8642.feudaltactics.gamelogic.BotAi;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
+import com.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
  * This class was used temporarily to create the logo but needs to be refactored

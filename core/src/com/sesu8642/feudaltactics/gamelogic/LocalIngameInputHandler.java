@@ -6,8 +6,9 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.Subscribe;
-import com.sesu8642.feudaltactics.events.BackInputEvent;
-import com.sesu8642.feudaltactics.events.TapInputEvent;
+import com.sesu8642.feudaltactics.events.input.BackInputEvent;
+import com.sesu8642.feudaltactics.events.input.TapInputEvent;
+import com.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Player;
@@ -15,7 +16,7 @@ import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
 
-/** {@link InputHandler} for inputs of a local player in-game. **/
+/** Handles inputs of a local player in-game. **/
 @Singleton
 public class LocalIngameInputHandler {
 
@@ -95,6 +96,16 @@ public class LocalIngameInputHandler {
 		default:
 			throw new IllegalStateException("Unknown action " + action);
 		}
+	}
+
+	/**
+	 * Event handler for game start events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleGameStart(GameStartEvent event) {
+		gameController.startGame();
 	}
 
 	private TapAction determineTapAction(Player player, HexTile tile) {

@@ -9,9 +9,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
-import com.sesu8642.feudaltactics.BotAi;
-import com.sesu8642.feudaltactics.MapRenderer;
-import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
@@ -32,21 +29,18 @@ public class GameController {
 			new Color(0F, 1F, 0F, 1) };
 
 	private EventBus eventBus;
-	private MapRenderer mapRenderer;
 	private BotAi botAi;
 	private GameState gameState;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param eventBus    event bus
-	 * @param mapRenderer map renderer
-	 * @param botAi       bot AI
+	 * @param eventBus event bus
+	 * @param botAi    bot AI
 	 */
 	@Inject
-	public GameController(EventBus eventBus, @IngameRenderer MapRenderer mapRenderer, BotAi botAi) {
+	public GameController(EventBus eventBus, BotAi botAi) {
 		this.eventBus = eventBus;
-		this.mapRenderer = mapRenderer;
 		this.botAi = botAi;
 		gameState = new GameState();
 	}
@@ -70,27 +64,21 @@ public class GameController {
 	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
 		gameState = PreferencesHelper.getLatestAutoSave();
-		mapRenderer.updateMap(gameState);
-		eventBus.post(new GameStateChangeEvent(gameState));
+		eventBus.post(new GameStateChangeEvent(gameState, false, true));
 	}
 
 	/**
 	 * Generates a map.
 	 * 
-	 * @param humanPlayerNo   number of human players that play
-	 * @param botPlayerNo     number of bot players that play
 	 * @param botIntelligence intelligence of the bot players
-	 * @param seed            map seed to use for generating the map
-	 * @param landMass        number of tiles to generate
-	 * @param density         map density to use for generation
+	 * @param mapParams       map generation parameters
 	 */
-	public void generateMap(int humanPlayerNo, int botPlayerNo, BotAi.Intelligence botIntelligence, Long seed,
-			float landMass, float density) {
+	public void generateGameState(BotAi.Intelligence botIntelligence, MapParameters mapParams) {
 		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
 		ArrayList<Player> players = new ArrayList<>();
-		int remainingHumanPlayers = humanPlayerNo;
-		int remainingBotPlayers = botPlayerNo;
+		int remainingHumanPlayers = mapParams.getHumanPlayerNo();
+		int remainingBotPlayers = mapParams.getBotPlayerNo();
 		for (Color color : PLAYER_COLORS) {
 			if (remainingHumanPlayers > 0) {
 				remainingHumanPlayers--;
@@ -101,9 +89,9 @@ public class GameController {
 				break;
 			}
 		}
-		GameStateHelper.initializeMap(gameState, players, landMass, density, null, seed);
-		mapRenderer.updateMap(gameState);
-		eventBus.post(new GameStateChangeEvent(gameState));
+		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass().getAmountOfTiles(),
+				mapParams.getDensity().getDensityFloat(), null, mapParams.getSeed());
+		eventBus.post(new GameStateChangeEvent(gameState, false, true));
 	}
 
 	/**
@@ -124,7 +112,6 @@ public class GameController {
 	 */
 	public void activateKingdom(Kingdom kingdom) {
 		GameStateHelper.activateKingdom(gameState, kingdom);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		// save first because is is relevant for the undo button status
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -137,7 +124,6 @@ public class GameController {
 	 */
 	public void pickupObject(HexTile tile) {
 		GameStateHelper.pickupObject(gameState, tile);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
@@ -149,7 +135,6 @@ public class GameController {
 	 */
 	public void placeOwn(HexTile tile) {
 		GameStateHelper.placeOwn(gameState, tile);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
@@ -161,7 +146,6 @@ public class GameController {
 	 */
 	public void combineUnits(HexTile tile) {
 		GameStateHelper.combineUnits(gameState, tile);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
@@ -173,18 +157,17 @@ public class GameController {
 	 */
 	public void conquer(HexTile tile) {
 		GameStateHelper.conquer(gameState, tile);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/** Ends the turn. */
 	public void endTurn() {
+		// TODO: need to pass the old winner as a parameter when calling recursively
 		// remember old winner
 		Player oldWinner = gameState.getWinner();
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
-		mapRenderer.updateMap(gameState);
 		// make bots act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			gameState = botAi.doTurn(gameState, gameState.getBotIntelligence());
@@ -194,14 +177,13 @@ public class GameController {
 			autosave();
 			// clear autosaves from previous turn
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(1);
-			eventBus.post(new GameStateChangeEvent(gameState, gameState.getWinner() != oldWinner));
+			eventBus.post(new GameStateChangeEvent(gameState, gameState.getWinner() != oldWinner, false));
 		}
 	}
 
 	/** Buys a peasant. */
 	public void buyPeasant() {
 		GameStateHelper.buyPeasant(gameState);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
@@ -209,7 +191,6 @@ public class GameController {
 	/** Buys a castle. */
 	public void buyCastle() {
 		GameStateHelper.buyCastle(gameState);
-		mapRenderer.updateMap(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
@@ -223,21 +204,11 @@ public class GameController {
 			// load the previous state
 			GameState loaded = PreferencesHelper.getLatestAutoSave();
 			gameState = loaded;
-			mapRenderer.updateMap(gameState);
 		}
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
-	public void placeCameraForFullMapView(long marginLeftPx, long marginBottomPx, long marginRightPx,
-			long marginTopPx) {
-		mapRenderer.placeCameraForFullMapView(gameState, marginLeftPx, marginBottomPx, marginRightPx, marginTopPx);
-	}
-
-	public MapRenderer getMapRenderer() {
-		return mapRenderer;
-	}
-
-	public GameState getGameState() {
+	GameState getGameState() {
 		return gameState;
 	}
 }

@@ -1,9 +1,9 @@
 package com.sesu8642.feudaltactics.preferences;
 
-import com.sesu8642.feudaltactics.BotAi;
-import com.sesu8642.feudaltactics.BotAi.Intelligence;
+import com.sesu8642.feudaltactics.gamelogic.BotAi;
+import com.sesu8642.feudaltactics.gamelogic.BotAi.Intelligence;
 
-/** Preferences for a new game. */
+/** Value object: preferences for a new game. */
 public class NewGamePreferences {
 
 	/** Map sizes that can be generated. */

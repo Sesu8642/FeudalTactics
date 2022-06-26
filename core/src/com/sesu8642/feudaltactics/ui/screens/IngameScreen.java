@@ -13,17 +13,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-import com.sesu8642.feudaltactics.FeudalTactics;
-import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
-import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
-import com.sesu8642.feudaltactics.events.EscInputEvent;
+import com.sesu8642.feudaltactics.events.GameResumedEvent;
 import com.sesu8642.feudaltactics.events.GameStateChangeEvent;
-import com.sesu8642.feudaltactics.gamelogic.GameController;
-import com.sesu8642.feudaltactics.gamelogic.LocalIngameInputHandler;
+import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
+import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import com.sesu8642.feudaltactics.events.input.EscInputEvent;
+import com.sesu8642.feudaltactics.events.moves.EndTurnEvent;
+import com.sesu8642.feudaltactics.events.moves.GameStartEvent;
+import com.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
+import com.sesu8642.feudaltactics.gamelogic.MapParameters;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
@@ -32,13 +34,18 @@ import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import com.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import com.sesu8642.feudaltactics.input.InputValidationHelper;
-import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import com.sesu8642.feudaltactics.renderer.MapRenderer;
 import com.sesu8642.feudaltactics.ui.DialogFactory;
+import com.sesu8642.feudaltactics.ui.Margin;
+import com.sesu8642.feudaltactics.ui.events.CloseMenuEvent;
+import com.sesu8642.feudaltactics.ui.events.EndTurnUnconfirmedUiEvent;
+import com.sesu8642.feudaltactics.ui.events.ExitGameUiEvent;
+import com.sesu8642.feudaltactics.ui.events.OpenMenuUiEvent;
+import com.sesu8642.feudaltactics.ui.events.RetryGameUnconfirmedUiEvent;
 import com.sesu8642.feudaltactics.ui.stages.HudStage;
 import com.sesu8642.feudaltactics.ui.stages.MenuStage;
 import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
-import com.sesu8642.feudaltactics.ui.stages.ParameterInputStage.EventTypes;
 
 /** {@link Screen} for playing a map. */
 @Singleton
@@ -50,15 +57,15 @@ public class IngameScreen extends GameScreen {
 	private InputMultiplexer inputMultiplexer;
 	private EventBus eventBus;
 	private CombinedInputProcessor inputProcessor;
-	private LocalIngameInputHandler inputHandler;
-	private GameController gameController;
 
 	private ParameterInputStage parameterInputStage;
 	private HudStage hudStage;
 	private MenuStage menuStage;
 
-	private Screen mainMenuScreen;
 	private DialogFactory dialogFactory;
+
+	/** Cached version of the game state from the game controller. */
+	private GameState cachedGameState;
 
 	/** Stages that can be displayed. */
 	public enum IngameStages {
@@ -76,15 +83,12 @@ public class IngameScreen extends GameScreen {
 	 * @param viewport             viewport for the menus
 	 * @param menuCamera           camera for the menus
 	 * @param mapRenderer          renderer for the map
-	 * @param mainMenuScreen       main menu screen that can be returned to
 	 * @param confirmDialogFactory factory for creating confirm dialogs
-	 * @param gameController       controller for playing the game
 	 * @param eventBus             event bus
 	 * @param inputProcessor       input processor for user inputs that is added to
 	 *                             the input multiplexer
 	 * @param inputMultiplexer     input multiplexer that stages are added to as
 	 *                             processors
-	 * @param inputHandler         input handler to be registered to the event bus
 	 * @param hudStage             stage for heads up display UI
 	 * @param menuStage            stage for the pause menu UI
 	 * @param parameterInputStage  stage for the new game parameter input UI
@@ -92,94 +96,110 @@ public class IngameScreen extends GameScreen {
 	@Inject
 	public IngameScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
 			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
-			@MainMenuScreen GameScreen mainMenuScreen, DialogFactory confirmDialogFactory,
-			GameController gameController, EventBus eventBus, CombinedInputProcessor inputProcessor,
-			InputMultiplexer inputMultiplexer, LocalIngameInputHandler inputHandler, HudStage hudStage,
-			MenuStage menuStage, ParameterInputStage parameterInputStage) {
+			DialogFactory confirmDialogFactory, EventBus eventBus, CombinedInputProcessor inputProcessor,
+			InputMultiplexer inputMultiplexer, HudStage hudStage, MenuStage menuStage,
+			ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
-		this.gameController = gameController;
 		this.ingameCamera = ingameCamera;
 		this.mapRenderer = mapRenderer;
-		this.mainMenuScreen = mainMenuScreen;
 		this.dialogFactory = confirmDialogFactory;
 		this.inputMultiplexer = inputMultiplexer;
 		this.eventBus = eventBus;
 		this.inputProcessor = inputProcessor;
-		this.inputHandler = inputHandler;
 		this.hudStage = hudStage;
 		this.menuStage = menuStage;
 		this.parameterInputStage = parameterInputStage;
-		registerEventListeners();
 	}
 
-	private void registerEventListeners() {
-		// parameter input stage
-		parameterInputStage.registerEventListener(EventTypes.PLAY, () -> {
-			activateStage(IngameStages.HUD);
-			gameController.startGame();
-		});
-		parameterInputStage.registerEventListener(EventTypes.REGEN, () -> {
-			gameController.generateMap(1, 5, parameterInputStage.getBotIntelligenceParam(),
-					parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-					parameterInputStage.getMapDensityParam());
-			// place the camera for full map view
-			// calculate what is the bigger rectangular area for the map to fit: above the
-			// inputs or to their right
-			float aboveArea = ingameCamera.viewportWidth * (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX
-					- ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX);
-			float rightArea = (ingameCamera.viewportWidth - INPUT_WIDTH_PX)
-					* (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX);
-			if (aboveArea > rightArea) {
-				gameController.placeCameraForFullMapView(0,
-						BUTTON_HEIGHT_PX + ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX, 0, 0);
-			} else {
-				gameController.placeCameraForFullMapView(INPUT_WIDTH_PX, BUTTON_HEIGHT_PX, 0, 0);
-			}
-		});
-		parameterInputStage.registerEventListener(EventTypes.CHANGE,
-				() -> PreferencesHelper
-						.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
-								parameterInputStage.getMapSize(), parameterInputStage.getMapDensity())));
-
-		// hud stage
-		hudStage.registerEventListener(HudStage.EventTypes.UNDO, () -> gameController.undoLastAction());
-		hudStage.registerEventListener(HudStage.EventTypes.BUY_PEASANT, () -> gameController.buyPeasant());
-		hudStage.registerEventListener(HudStage.EventTypes.BUY_CASTLE, () -> gameController.buyCastle());
-		hudStage.registerEventListener(HudStage.EventTypes.END_TURN, () -> {
-			if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(gameController.getGameState())) {
-				Dialog confirmDialog = dialogFactory.createConfirmDialog(
-						"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
-						() -> gameController.endTurn());
-				confirmDialog.show(hudStage);
-			} else {
-				gameController.endTurn();
-			}
-		});
-		hudStage.registerEventListener(HudStage.EventTypes.MENU, () -> activateStage(IngameStages.MENU));
-
-		// menu stage
-		menuStage.addButton("Exit", () -> {
-			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-					() -> {
-						PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
-						FeudalTactics.game.setScreen(mainMenuScreen);
-					});
-			confirmDialog.show(menuStage);
-		});
-		menuStage.addButton("Retry", () -> {
-			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-					() -> {
-						parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
-						activateStage(IngameStages.PARAMETERS);
-					});
-			confirmDialog.show(menuStage);
-		});
-		menuStage.addButton("Continue", () -> activateStage(IngameStages.HUD));
-	}
-
+	/**
+	 * Event handler for ESC key events.
+	 * 
+	 * @param event event to handle
+	 */
 	@Subscribe
 	public void handleEscInput(EscInputEvent event) {
 		togglePause();
+	}
+
+	/**
+	 * Event handler for end turn attempt events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleEndTurnAttempt(EndTurnUnconfirmedUiEvent event) {
+		if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)) {
+			Dialog confirmDialog = dialogFactory.createConfirmDialog(
+					"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
+					() -> eventBus.post(new EndTurnEvent()));
+			confirmDialog.show(hudStage);
+		} else {
+			eventBus.post(new EndTurnEvent());
+		}
+	}
+
+	/**
+	 * Event handler for open menu events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleOpenMenuAttempt(OpenMenuUiEvent event) {
+		activateStage(IngameStages.MENU);
+	}
+
+	/**
+	 * Event handler for close menu events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleCloseMenuAttempt(CloseMenuEvent event) {
+		activateStage(IngameStages.HUD);
+	}
+
+	/**
+	 * Event handler for unconfirmed retry game events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleUnconfirmedRetryGame(RetryGameUnconfirmedUiEvent event) {
+		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
+			resetGame();
+		});
+		confirmDialog.show(menuStage);
+	}
+
+	private void resetGame() {
+		eventBus.post(new RegenerateMapUiEvent(parameterInputStage.getBotIntelligence(),
+				new MapParameters(parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
+						parameterInputStage.getMapDensityParam())));
+		activateStage(IngameStages.PARAMETERS);
+	}
+
+	/**
+	 * Event handler for exit game events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleExitGameAttempt(ExitGameUiEvent event) {
+		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
+			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+		});
+		confirmDialog.show(menuStage);
+	}
+
+	/**
+	 * Event handler for game start events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleGameStart(GameStartEvent event) {
+		activateStage(IngameStages.HUD);
 	}
 
 	/**
@@ -190,6 +210,8 @@ public class IngameScreen extends GameScreen {
 	 */
 	@Subscribe
 	public void handleGameStateChange(GameStateChangeEvent event) {
+		// cache the new state
+		cachedGameState = event.getGameState();
 		// update the UI when there is a gameState change
 		GameState newGameState = event.getGameState();
 		// hand content
@@ -231,13 +253,20 @@ public class IngameScreen extends GameScreen {
 						newGameState.getWinner().getColor());
 			}
 		}
+		if (event.isMapDimensionsChanged()) {
+			// dimensions changed means that the seed also changed
+			parameterInputStage.updateSeed(event.getGameState().getSeed());
+		}
 	}
 
-	/** Loads the latest autosave and centers the camera. */
-	public void loadAutoSave() {
+	/**
+	 * Event handler for game resumed events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleGameResumed(GameResumedEvent event) {
 		activateStage(IngameStages.HUD);
-		gameController.loadLatestAutosave();
-		gameController.placeCameraForFullMapView(0, 0, 0, 0);
 	}
 
 	/** Toggles the pause menu. */
@@ -249,19 +278,39 @@ public class IngameScreen extends GameScreen {
 		}
 	}
 
+	/**
+	 * Calculates where the map should be placed to have the most room while not
+	 * being behind the UI elements.
+	 * 
+	 * @return Vector of margin to the left and margin to the bottom where the map
+	 *         should not be rendered. The rest of the screen can be used.
+	 */
+	public Margin calculateMapScreenArea() {
+		// calculate what is the bigger rectangular area for the map to fit: above the
+		// inputs or to their right
+		float aboveArea = ingameCamera.viewportWidth
+				* (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX - ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX);
+		float rightArea = (ingameCamera.viewportWidth - INPUT_WIDTH_PX)
+				* (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX);
+		if (aboveArea > rightArea) {
+			return new Margin(0, BUTTON_HEIGHT_PX + ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX, 0, 0);
+		} else {
+			return new Margin(INPUT_WIDTH_PX, BUTTON_HEIGHT_PX, 0, 0);
+		}
+	}
+
 	private void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
 		// TODO: make this nicer and display the color of the winning player
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			switch ((byte) result) {
 			case 1:
 				// exit button
-				FeudalTactics.game.setScreen(mainMenuScreen);
+				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 				break;
 			case 2:
 				// retry button
-				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
-				activateStage(IngameStages.PARAMETERS);
+				resetGame();
 				break;
 			case 0:
 				// do nothing on continue button
@@ -284,11 +333,10 @@ public class IngameScreen extends GameScreen {
 	private void showLostMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			if ((boolean) result) {
-				FeudalTactics.game.setScreen(mainMenuScreen);
+				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 			} else {
-				parameterInputStage.regenerateMap(gameController.getGameState().getSeed());
-				activateStage(IngameStages.PARAMETERS);
+				resetGame();
 			}
 		});
 		endDialog.button("Exit", true);
@@ -327,16 +375,7 @@ public class IngameScreen extends GameScreen {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(inputMultiplexer);
-		eventBus.register(this);
-		eventBus.register(inputHandler);
 		activateStage(IngameStages.PARAMETERS);
-		parameterInputStage.regenerateMap(System.currentTimeMillis());
-	}
-
-	@Override
-	public void hide() {
-		eventBus.unregister(this);
-		eventBus.unregister(inputHandler);
 	}
 
 	@Override

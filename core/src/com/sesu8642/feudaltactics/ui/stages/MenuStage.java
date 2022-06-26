@@ -22,7 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.MapRenderer;
+import com.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
  * Generic {@link Stage} for displaying an in-game menu.

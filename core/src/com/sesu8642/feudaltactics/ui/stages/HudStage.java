@@ -18,19 +18,24 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.eventbus.EventBus;
 import com.sesu8642.feudaltactics.FeudalTactics;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
+import com.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
+import com.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
+import com.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
 import com.sesu8642.feudaltactics.libgdx.ValueWithSize;
+import com.sesu8642.feudaltactics.ui.events.EndTurnUnconfirmedUiEvent;
+import com.sesu8642.feudaltactics.ui.events.OpenMenuUiEvent;
 
 /**
  * {@link Stage} that displays the in-game heads up display.
  */
 public class HudStage extends ResizableResettableStage {
 
-	/** Event types that can be invoked by this stage. */
-	public enum EventTypes {
-		UNDO, END_TURN, BUY_PEASANT, BUY_CASTLE, MENU
-	}
+	private EventBus eventBus;
+	private TextureAtlas textureAtlas;
+	private Skin skin;
 
 	private Table rootTable;
 	private Stack handStack;
@@ -42,8 +47,6 @@ public class HudStage extends ResizableResettableStage {
 	private ImageButton buyPeasantButton;
 	private ImageButton buyCastleButton;
 	private ImageButton menuButton;
-	private TextureAtlas textureAtlas;
-	private Skin skin;
 
 	/**
 	 * Constructor.
@@ -53,8 +56,9 @@ public class HudStage extends ResizableResettableStage {
 	 * @param skin         game skin
 	 */
 	@Inject
-	public HudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+	public HudStage(EventBus eventBus, @MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
+		this.eventBus = eventBus;
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
@@ -119,39 +123,42 @@ public class HudStage extends ResizableResettableStage {
 		handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
 				.width(Value.percentHeight(1.16F));
 		this.addActor(rootTable);
+		registerEventListeners();
 	}
 
-	/**
-	 * Registers an event listener to an event type.
-	 * 
-	 * @param type     event type to listen to
-	 * @param listener listener to execute
-	 */
-	public void registerEventListener(EventTypes type, Runnable listener) {
-		Actor uiElement;
-		switch (type) {
-		case UNDO:
-			uiElement = undoButton;
-			break;
-		case END_TURN:
-			uiElement = endTurnButton;
-			break;
-		case BUY_PEASANT:
-			uiElement = buyPeasantButton;
-			break;
-		case BUY_CASTLE:
-			uiElement = buyCastleButton;
-			break;
-		case MENU:
-			uiElement = menuButton;
-			break;
-		default:
-			throw new AssertionError("Attempt to register event listener of unknown type: " + type);
-		}
-		uiElement.addListener(new ChangeListener() {
+	private void registerEventListeners() {
+		undoButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				listener.run();
+				eventBus.post(new UndoMoveEvent());
+			}
+		});
+
+		endTurnButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new EndTurnUnconfirmedUiEvent());
+			}
+		});
+
+		buyPeasantButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new BuyPeasantEvent());
+			}
+		});
+
+		buyCastleButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new BuyCastleEvent());
+			}
+		});
+
+		menuButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new OpenMenuUiEvent());
 			}
 		});
 	}

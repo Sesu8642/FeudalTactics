@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.events;
+package com.sesu8642.feudaltactics.events.input;
 
 import com.badlogic.gdx.math.Vector2;
 

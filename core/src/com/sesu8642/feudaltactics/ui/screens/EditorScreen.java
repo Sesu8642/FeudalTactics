@@ -12,11 +12,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.EditorController;
-import com.sesu8642.feudaltactics.MapRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import com.sesu8642.feudaltactics.input.EditorInputHandler;
+import com.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /** {@link Screen} for the map editor. Needs to be re-done. */
 @Singleton

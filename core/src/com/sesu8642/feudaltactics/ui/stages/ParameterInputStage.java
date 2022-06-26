@@ -1,8 +1,6 @@
 package com.sesu8642.feudaltactics.ui.stages;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -21,9 +19,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sesu8642.feudaltactics.BotAi;
-import com.sesu8642.feudaltactics.BotAi.Intelligence;
+import com.google.common.eventbus.EventBus;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
+import com.sesu8642.feudaltactics.events.moves.GameStartEvent;
+import com.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
+import com.sesu8642.feudaltactics.gamelogic.BotAi.Intelligence;
+import com.sesu8642.feudaltactics.gamelogic.MapParameters;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
@@ -37,10 +38,9 @@ public class ParameterInputStage extends ResizableResettableStage {
 	// for map centering calculation
 	public static final int NO_OF_INPUTS = 4;
 
-	/** Event types that can be invoked by this stage. */
-	public enum EventTypes {
-		CHANGE, REGEN, PLAY
-	}
+	private EventBus eventBus;
+	private TextureAtlas textureAtlas;
+	private Skin skin;
 
 	private Table rootTable;
 	private SelectBox<String> sizeSelect;
@@ -49,20 +49,20 @@ public class ParameterInputStage extends ResizableResettableStage {
 	private ImageButton randomButton;
 	private TextButton playButton;
 	private TextField seedTextField;
-	private Collection<Runnable> regenListeners = new ArrayList<>();
-	private Skin skin;
-	private TextureAtlas textureAtlas;
 
 	/**
 	 * Constructor.
 	 * 
+	 * @param eventBus     event bus
 	 * @param viewport     viewport for the stage
 	 * @param textureAtlas texture atlas containing the button textures
 	 * @param skin         game skin
 	 */
 	@Inject
-	public ParameterInputStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+	public ParameterInputStage(EventBus eventBus, @MenuViewport Viewport viewport, TextureAtlas textureAtlas,
+			Skin skin) {
 		super(viewport);
+		this.eventBus = eventBus;
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
@@ -119,66 +119,42 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(playButton).colspan(4).fillX();
 		this.addActor(rootTable);
 
+		registerEventListeners();
+	}
+
+	private void registerEventListeners() {
+
 		randomButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				seedTextField.setText(String.valueOf(System.currentTimeMillis()));
 			}
 		});
+
+		Stream.of(seedTextField, randomButton, difficultySelect, sizeSelect, densitySelect)
+				.forEach(actor -> actor.addListener(new ChangeListener() {
+					@Override
+					public void changed(ChangeEvent event, Actor actor) {
+						eventBus.post(new RegenerateMapUiEvent(getBotIntelligence(),
+								new MapParameters(getSeedParam(), getMapSizeParam(), getMapDensityParam())));
+					}
+				}));
+
+		playButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new GameStartEvent());
+			}
+		});
 	}
 
 	/**
-	 * Registers an event listener to an event type.
+	 * Updates the seed.
 	 * 
-	 * @param type     event type to listen to
-	 * @param listener listener to execute
+	 * @param seed map seed to display
 	 */
-	public void registerEventListener(EventTypes type, Runnable listener) {
-		Collection<Actor> uiElements = new HashSet<>();
-		switch (type) {
-		case CHANGE:
-			uiElements.add(difficultySelect);
-			uiElements.add(sizeSelect);
-			uiElements.add(densitySelect);
-			break;
-		case REGEN:
-			regenListeners.add(listener);
-			uiElements.add(seedTextField);
-			uiElements.add(randomButton);
-			uiElements.add(sizeSelect);
-			uiElements.add(densitySelect);
-			break;
-		case PLAY:
-			uiElements.add(playButton);
-			break;
-		default:
-			break;
-		}
-		for (Actor uiElement : uiElements) {
-			uiElement.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					listener.run();
-				}
-			});
-		}
-	}
-
-	/** Regenerates the map. */
-	public void regenerateMap() {
-		regenerateMap(null);
-	}
-
-	/**
-	 * Regenerates the map.
-	 * 
-	 * @param seed map seed to use
-	 */
-	public void regenerateMap(Long seed) {
-		if (seed != null) {
-			seedTextField.setText(seed.toString());
-		}
-		regenListeners.forEach(Runnable::run);
+	public void updateSeed(Long seed) {
+		seedTextField.setText(seed.toString());
 	}
 
 	/**
@@ -194,62 +170,16 @@ public class ParameterInputStage extends ResizableResettableStage {
 		}
 	}
 
-	/**
-	 * Getter for map size.
-	 * 
-	 * @return map size input by the user
-	 */
-	public MapSizes getMapSize() {
+	public MapSizes getMapSizeParam() {
 		return MapSizes.values()[sizeSelect.getSelectedIndex()];
 	}
 
-	/**
-	 * Getter for map size.
-	 * 
-	 * @return map size input by the user converted to the amount of tiles
-	 */
-	public int getMapSizeParam() {
-		return MapSizes.values()[sizeSelect.getSelectedIndex()].getAmountOfTiles();
-	}
-
-	/**
-	 * Getter for map density.
-	 * 
-	 * @return map density input by the user
-	 */
-	public Densities getMapDensity() {
+	public Densities getMapDensityParam() {
 		return Densities.values()[densitySelect.getSelectedIndex()];
-	}
-
-	/**
-	 * Getter for map density.
-	 * 
-	 * @return map density input by the user converted to int
-	 */
-	public float getMapDensityParam() {
-		return Densities.values()[densitySelect.getSelectedIndex()].getDensityFloat();
 	}
 
 	public Intelligence getBotIntelligence() {
 		return Intelligence.values()[difficultySelect.getSelectedIndex()];
-	}
-
-	/**
-	 * Getter for bot intelligence.
-	 * 
-	 * @return bot intelligence input by the user
-	 */
-	public BotAi.Intelligence getBotIntelligenceParam() {
-		switch (difficultySelect.getSelectedIndex()) {
-		case 0:
-			return BotAi.Intelligence.DUMB;
-		case 1:
-			return BotAi.Intelligence.MEDIUM;
-		case 2:
-			return BotAi.Intelligence.SMART;
-		default:
-			return BotAi.Intelligence.MEDIUM;
-		}
 	}
 
 	@Override

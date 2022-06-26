@@ -11,9 +11,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.google.common.eventbus.EventBus;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
-import com.sesu8642.feudaltactics.events.BackInputEvent;
-import com.sesu8642.feudaltactics.events.EscInputEvent;
-import com.sesu8642.feudaltactics.events.TapInputEvent;
+import com.sesu8642.feudaltactics.events.input.BackInputEvent;
+import com.sesu8642.feudaltactics.events.input.EscInputEvent;
+import com.sesu8642.feudaltactics.events.input.TapInputEvent;
 
 /** Class that handles touch as well as gesture inputs. **/
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
