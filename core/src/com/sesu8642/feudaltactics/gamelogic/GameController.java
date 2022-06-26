@@ -163,15 +163,23 @@ public class GameController {
 
 	/** Ends the turn. */
 	public void endTurn() {
-		// TODO: need to pass the old winner as a parameter when calling recursively
 		// remember old winner
-		Player oldWinner = gameState.getWinner();
+		endTurn(gameState.getWinner());
+	}
+
+	/**
+	 * Ends the turn. Takes the winner at the time when the player ended their turn
+	 * to determine whether it changed in the meantime.
+	 * 
+	 * @param oldWinner winner of the game when the last player ended their turn
+	 */
+	void endTurn(Player oldWinner) {
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
 		// make bots act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			gameState = botAi.doTurn(gameState, gameState.getBotIntelligence());
-			endTurn();
+			endTurn(oldWinner);
 		} else {
 			// autosave when a player turn begins
 			autosave();
