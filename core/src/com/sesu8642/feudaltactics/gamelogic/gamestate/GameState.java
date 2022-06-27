@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.sesu8642.feudaltactics.gamelogic.BotAi;
-import com.sesu8642.feudaltactics.gamelogic.BotAi.Intelligence;
+import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
+import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
 
 /** Contains all information about a running game. **/
 public class GameState {

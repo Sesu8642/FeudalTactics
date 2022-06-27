@@ -124,7 +124,10 @@ class DaggerModule {
 	@Singleton
 	@IngameCamera
 	static OrthographicCamera provideIngameCamera() {
-		return new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		OrthographicCamera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		// rotate if making art like the logo
+//		camera.rotate(30);
+		return camera;
 	}
 
 	@Provides
@@ -214,6 +217,8 @@ class DaggerModule {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
 		stage.addButton("Play",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN)));
+		stage.addButton("Level Editor",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN)));
 		stage.addButton("Tutorial",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN)));
 		stage.addButton("About",

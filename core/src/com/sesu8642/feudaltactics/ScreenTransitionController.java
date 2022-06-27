@@ -12,8 +12,9 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
 import com.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
 import com.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import com.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
-import com.sesu8642.feudaltactics.gamelogic.LocalIngameInputHandler;
 import com.sesu8642.feudaltactics.gamelogic.MapParameters;
+import com.sesu8642.feudaltactics.gamelogic.editor.EditorInputHandler;
+import com.sesu8642.feudaltactics.gamelogic.ingame.LocalIngameInputHandler;
 import com.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import com.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import com.sesu8642.feudaltactics.ui.screens.GameScreen;
@@ -28,12 +29,14 @@ public class ScreenTransitionController {
 
 	private EventBus eventBus;
 	private LocalIngameInputHandler localIngameInputHandler;
-	private com.sesu8642.feudaltactics.gamelogic.EventHandler gameLogicEventHandler;
+	private EditorInputHandler editorInputHandler;
 	private SplashScreen splashScreen;
 	private IngameScreen ingameScreen;
 	private GameScreen mainMenuScreen;
 	private GameScreen tutorialScreen;
 	private GameScreen aboutScreen;
+	private com.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler;
+	private com.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler;
 	private com.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler;
 	private com.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler;
 
@@ -51,19 +54,23 @@ public class ScreenTransitionController {
 	 */
 	@Inject
 	public ScreenTransitionController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
-			com.sesu8642.feudaltactics.gamelogic.EventHandler gameLogicEventHandler, SplashScreen splashScreen,
-			IngameScreen ingameScreen, @MainMenuScreen GameScreen mainMenuScreen,
-			@TutorialScreen GameScreen tutorialScreen, @AboutScreen GameScreen aboutScreen,
+			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
+			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
+			@AboutScreen GameScreen aboutScreen,
+			com.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler,
+			com.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler,
 			com.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler,
 			com.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler) {
 		this.eventBus = eventBus;
 		this.localIngameInputHandler = localIngameInputHandler;
-		this.gameLogicEventHandler = gameLogicEventHandler;
+		this.editorInputHandler = editorInputHandler;
 		this.splashScreen = splashScreen;
 		this.ingameScreen = ingameScreen;
 		this.mainMenuScreen = mainMenuScreen;
 		this.tutorialScreen = tutorialScreen;
 		this.aboutScreen = aboutScreen;
+		this.gameLogicEventHandler = gameLogicEventHandler;
+		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
 		this.preferencesEventHandler = preferencesEventHandler;
 	}
@@ -95,6 +102,9 @@ public class ScreenTransitionController {
 			break;
 		case INGAME_SCREEN:
 			transitionToIngameScreen();
+			break;
+		case EDITOR_SCREEN:
+			transitionToEditorScreen();
 			break;
 		case TUTORIAL_SCREEN:
 			transitionToTutorialScreen();
@@ -129,6 +139,15 @@ public class ScreenTransitionController {
 		NewGamePreferences savedPrefs = PreferencesHelper.getNewGamePreferences();
 		eventBus.post(new RegenerateMapUiEvent(savedPrefs.getBotIntelligence(),
 				new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize(), savedPrefs.getDensity())));
+		FeudalTactics.game.setScreen(ingameScreen);
+	}
+
+	/** Transitions to the editor screen. */
+	public void transitionToEditorScreen() {
+		unregisterAllEventHandlers();
+		Stream.of(editorInputHandler, editorEventHandler, ingameScreen, rendererEventHandler)
+				.forEach(object -> eventBus.register(object));
+		eventBus.post(new RegenerateMapUiEvent(null, null));
 		FeudalTactics.game.setScreen(ingameScreen);
 	}
 

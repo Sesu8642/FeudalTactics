@@ -732,6 +732,16 @@ public class GameStateHelper {
 	}
 
 	/**
+	 * Deletes a tile.
+	 * 
+	 * @param gameState GameState to act on
+	 * @param hexCoords coords of the tile
+	 */
+	public static void deleteTile(GameState gameState, Vector2 hexCoords) {
+		gameState.getMap().getTiles().remove(hexCoords);
+	}
+
+	/**
 	 * Determines the protection level of a tile (strength of the strongest object
 	 * protecting it).
 	 * 

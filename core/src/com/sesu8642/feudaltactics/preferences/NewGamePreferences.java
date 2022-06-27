@@ -1,7 +1,7 @@
 package com.sesu8642.feudaltactics.preferences;
 
-import com.sesu8642.feudaltactics.gamelogic.BotAi;
-import com.sesu8642.feudaltactics.gamelogic.BotAi.Intelligence;
+import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
+import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
 
 /** Value object: preferences for a new game. */
 public class NewGamePreferences {

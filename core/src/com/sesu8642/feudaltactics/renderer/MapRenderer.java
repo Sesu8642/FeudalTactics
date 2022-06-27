@@ -407,6 +407,10 @@ public class MapRenderer {
 			}
 		}
 
+		// when making art like the logo, use black background instead of water
+//		Gdx.gl.glClearColor(0, 0, 0, 1);
+//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
 		// draw all the beaches first because they would cover some of the tiles
 		// otherwise
 		// beach water first (should not cover any sand)

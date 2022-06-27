@@ -5,7 +5,7 @@ public class ScreenTransitionTriggerEvent {
 
 	/** Possible screens that can be transitioned to. */
 	public enum ScreenTransitionTarget {
-		SPLASH_SCREEN, MAIN_MENU_SCREEN, INGAME_SCREEN, TUTORIAL_SCREEN, ABOUT_SCREEN
+		SPLASH_SCREEN, MAIN_MENU_SCREEN, INGAME_SCREEN, EDITOR_SCREEN, TUTORIAL_SCREEN, ABOUT_SCREEN
 	}
 
 	private ScreenTransitionTarget transitionTarget;

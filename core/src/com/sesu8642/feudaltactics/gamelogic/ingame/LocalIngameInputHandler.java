@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamelogic;
+package com.sesu8642.feudaltactics.gamelogic.ingame;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamelogic;
+package com.sesu8642.feudaltactics.gamelogic.ingame;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
 import com.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import com.sesu8642.feudaltactics.gamelogic.MapParameters;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
@@ -24,7 +25,7 @@ public class GameController {
 
 	private static final String TAG = GameController.class.getName();
 
-	private static final Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
+	public static final Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
 			new Color(0F, 1F, 0F, 1) };
 
@@ -216,7 +217,7 @@ public class GameController {
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
-	GameState getGameState() {
+	public GameState getGameState() {
 		return gameState;
 	}
 }

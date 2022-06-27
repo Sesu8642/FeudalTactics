@@ -1,4 +1,4 @@
-package com.sesu8642.feudaltactics.gamelogic;
+package com.sesu8642.feudaltactics.gamelogic.ingame;
 
 import java.util.ArrayList;
 import java.util.Collection;
