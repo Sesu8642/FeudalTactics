@@ -103,7 +103,7 @@ project(":core") {
     	implementation('com.google.guava:guava:31.1-jre') {
     	// exclude transitive dependencies mainly to avoid dealing with their licenses
     	// these dependencies are optional https://github.com/google/guava/issues/2824#issuecomment-544171665
-    	//exclude group:"com.google.guava", module: "failureaccess"
+    	// failureaccess is apparently needed
     	exclude group:"com.google.guava", module: "listenablefuture"
     	// these dependencies are seemingly only needed at compile time of Guava
     	exclude group:"com.google.code.findbugs", module: "jsr305"
