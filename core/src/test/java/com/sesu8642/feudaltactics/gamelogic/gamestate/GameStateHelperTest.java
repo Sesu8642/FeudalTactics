@@ -19,7 +19,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 
 /** Tests for GameStateHelper class. */
-class GameStateHelperMapInitializationTest {
+class GameStateHelperTest {
 
 	List<Player> players;
 
