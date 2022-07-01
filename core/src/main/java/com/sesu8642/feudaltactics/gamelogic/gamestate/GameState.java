@@ -2,6 +2,7 @@ package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
@@ -19,7 +20,7 @@ public class GameState {
 	private MapObject heldObject = null;
 	private Random random = new Random();
 	private BotAi.Intelligence botIntelligence = Intelligence.DUMB;
-	private Long seed = 0L;
+	private Long seed;
 
 	public GameState() {
 		// no fields must be set on construction
@@ -103,6 +104,31 @@ public class GameState {
 
 	public void setSeed(Long seed) {
 		this.seed = seed;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(activeKingdom, botIntelligence, heldObject, kingdoms, map, playerTurn, players, seed,
+				winner);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		GameState other = (GameState) obj;
+		return Objects.equals(activeKingdom, other.activeKingdom) && botIntelligence == other.botIntelligence
+				&& Objects.equals(heldObject, other.heldObject) && Objects.equals(kingdoms, other.kingdoms)
+				&& Objects.equals(map, other.map) && playerTurn == other.playerTurn
+				&& Objects.equals(players, other.players) && Objects.equals(seed, other.seed)
+				&& Objects.equals(winner, other.winner);
 	}
 
 }

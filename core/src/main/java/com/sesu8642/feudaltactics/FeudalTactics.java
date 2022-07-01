@@ -34,6 +34,9 @@ public class FeudalTactics extends Game {
 		EventBus eventBus = component.getEventBus();
 		eventBus.register(component.getScreenTransitionController());
 
+		String gameVersion = component.getGameVersion();
+		PreferencesHelper.saveGameVersion(gameVersion);
+
 		if (PreferencesHelper.getNoOfAutoSaves() > 0) {
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 			eventBus.post(new GameResumedEvent());

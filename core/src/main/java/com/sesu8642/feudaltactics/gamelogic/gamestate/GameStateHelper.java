@@ -88,6 +88,10 @@ public class GameStateHelper {
 			result.setHeldObject(original.getHeldObject().getCopy());
 		}
 
+		if (original.getSeed() != null) {
+			result.setSeed(original.getSeed());
+		}
+
 		return result;
 	}
 

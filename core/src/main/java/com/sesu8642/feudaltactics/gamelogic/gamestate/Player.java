@@ -1,5 +1,7 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
+import java.util.Objects;
+
 import com.badlogic.gdx.graphics.Color;
 
 /** A human or bot player participating in a game. **/
@@ -59,6 +61,26 @@ public class Player {
 	 */
 	public static Player copyOf(Player original) {
 		return new Player(original.getColor(), original.isDefeated(), original.getType());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(color, defeated, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Player other = (Player) obj;
+		return Objects.equals(color, other.color) && defeated == other.defeated && type == other.type;
 	}
 
 }

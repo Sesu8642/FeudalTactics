@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.badlogic.gdx.math.Vector2;
 
@@ -70,4 +71,26 @@ public class HexTile {
 		return "Position: " + position.toString() + " Color: " + player.getColor().toString() + ", Kingdom: "
 				+ kingdomStr + ", Content: " + contentStr;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(content, player, position);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		HexTile other = (HexTile) obj;
+		return Objects.equals(content, other.content) && Objects.equals(player, other.player)
+				&& Objects.equals(position, other.position);
+	}
+
 }

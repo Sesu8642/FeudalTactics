@@ -101,7 +101,6 @@ public class GameController {
 	 * @param hexCoords coords of the tile
 	 */
 	public void printTileInfo(Vector2 hexCoords) {
-
 		Gdx.app.debug(TAG, String.format("clicked tile position %s: %s", hexCoords,
 				String.valueOf(gameState.getMap().getTiles().get(hexCoords))));
 	}

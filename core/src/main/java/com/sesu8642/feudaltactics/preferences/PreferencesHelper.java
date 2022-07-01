@@ -18,6 +18,8 @@ import com.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
 
 /** Helper class for saving and loading preferences. */
 public class PreferencesHelper {
+	private static final String VERSION_PREFERENCES_NAME = "versionPreferences";
+	private static final String VERSION_GAME_VERSION_NAME = "gameVersion";
 	private static final String AUTO_SAVE_PREFERENCES_NAME = "autoSavePreferences";
 	private static final String NEW_GAME_PREFERENCES_DENSITY_NAME = "density";
 	private static final String NEW_GAME_PREFERENCES_MAP_SIZE_NAME = "mapSize";
@@ -28,6 +30,17 @@ public class PreferencesHelper {
 	private PreferencesHelper() {
 		// utility class -> prevent instantiation
 		throw new AssertionError();
+	}
+
+	/**
+	 * Saves the given game version.
+	 * 
+	 * @param version version to save
+	 */
+	public static void saveGameVersion(String version) {
+		Preferences versionPrefs = Gdx.app.getPreferences(VERSION_PREFERENCES_NAME);
+		versionPrefs.putString(VERSION_GAME_VERSION_NAME, version);
+		versionPrefs.flush();
 	}
 
 	/**

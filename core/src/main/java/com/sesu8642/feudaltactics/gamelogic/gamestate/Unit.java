@@ -1,5 +1,7 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
+import java.util.Objects;
+
 /**
  * Map object representing a unit. Units are used to conquer enemy tiles. They
  * need to be paid a salary every turn. There are several tiers of units with
@@ -83,6 +85,26 @@ public class Unit implements MapObject {
 	public String toString() {
 		String superStr = super.toString();
 		return superStr + ", Type: " + unitType.toString() + ", CanAct: " + canAct;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(canAct, unitType);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Unit other = (Unit) obj;
+		return canAct == other.canAct && unitType == other.unitType;
 	}
 
 }

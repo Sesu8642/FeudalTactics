@@ -1,6 +1,7 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -91,6 +92,27 @@ public class Kingdom {
 	public String toString() {
 		return super.toString() + "; savings: " + getSavings() + ", income: " + getIncome() + ", salaries: "
 				+ getSalaries();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(doneMoving, player, savings, tiles, wasActiveInCurrentTurn);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		Kingdom other = (Kingdom) obj;
+		return doneMoving == other.doneMoving && Objects.equals(player, other.player) && savings == other.savings
+				&& Objects.equals(tiles, other.tiles) && wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
 	}
 
 }
