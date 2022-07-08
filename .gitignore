@@ -127,3 +127,4 @@ Thumbs.db
 
 # build script
 release/*
+packr_work/*
