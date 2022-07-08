@@ -2,7 +2,6 @@ package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 import com.badlogic.gdx.utils.Json;
@@ -157,7 +156,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 			final int id = kingdomJson.getInt(ID_NAME);
 			final int playerId = kingdomJson.getInt(PLAYER_ID_NAME);
 			JsonValue tileIdsJson = kingdomJson.get(TILE_IDS_NAME);
-			LinkedHashSet<HexTile> kingdomTiles = new LinkedHashSet<>();
+			ArrayList<HexTile> kingdomTiles = new ArrayList<>();
 			tileIdsJson.forEach(tileIdJson -> {
 				int tileId = tileIdJson.asInt();
 				kingdomTiles.add((HexTile) reverseIdMap.get(tileId));

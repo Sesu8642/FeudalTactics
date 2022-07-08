@@ -1,15 +1,17 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 /** Group of connected tiles that belong to the same player. **/
 public class Kingdom {
 
-	private Set<HexTile> tiles = new LinkedHashSet<>();
+	// need a list to have consistent iteration order; LinkedHashSet doesn't work
+	// because the tiles can change
+	private List<HexTile> tiles = new ArrayList<>();
 	private Player player;
 	private int savings = 0;
 	// only used by ai
@@ -48,11 +50,11 @@ public class Kingdom {
 				.mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
 	}
 
-	public Set<HexTile> getTiles() {
+	public List<HexTile> getTiles() {
 		return tiles;
 	}
 
-	public void setTiles(Set<HexTile> tiles) {
+	public void setTiles(List<HexTile> tiles) {
 		this.tiles = tiles;
 	}
 

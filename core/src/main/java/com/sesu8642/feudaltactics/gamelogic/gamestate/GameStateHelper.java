@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
@@ -22,6 +22,8 @@ import com.sesu8642.feudaltactics.input.InputValidationHelper;
  * respects the game rules and guarantees integrity.
  **/
 public class GameStateHelper {
+
+	private static final String TAG = GameStateHelper.class.getName();
 
 	public static final float TREE_SPREAD_RATE = 0.3F;
 	public static final float TREE_SPAWN_RATE = 0.01F;
@@ -102,8 +104,8 @@ public class GameStateHelper {
 	 * @param players           players that own tiles on the map
 	 * @param landMass          number of tiles to generate
 	 * @param density           Higher density means the map will be more clumpy and
-	 *                          lower means it will be more stringy. Values -3 and 3
-	 *                          produce good results.
+	 *                          lower means it will be more stringy. Values between
+	 *                          -3 and 3 produce good results.
 	 * @param vegetationDensity determines how many trees will be generated. 0.5 =
 	 *                          50% of empty tiles will have trees
 	 * @param mapSeed           map seed to use for generating the map
@@ -235,7 +237,6 @@ public class GameStateHelper {
 		gameState.getKingdoms().clear();
 		for (Entry<Vector2, HexTile> tileEntry : gameState.getMap().getTiles().entrySet()) {
 			HexTile tile = tileEntry.getValue();
-			tile.setKingdom(null);
 			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
 				if (neighborTile == null || neighborTile.getPlayer() != tile.getPlayer()) {
 					// water or tile of a different player
@@ -446,7 +447,11 @@ public class GameStateHelper {
 				tile.getKingdom().setSavings(0);
 				createCapital(gameState, tile);
 			}
-			tile.getKingdom().getTiles().remove(tile);
+			boolean removeResult = tile.getKingdom().getTiles().remove(tile);
+			if (!removeResult) {
+				Gdx.app.error(TAG, String.format("tile could not be removed from it's kingdom: '%s'", tile));
+			}
+
 		}
 		tile.setKingdom(gameState.getActiveKingdom());
 		tile.getKingdom().getTiles().add(tile);
@@ -529,12 +534,15 @@ public class GameStateHelper {
 
 	private static void combineKingdoms(GameState gameState, Kingdom masterKingdom, Kingdom slaveKingdom) {
 		// master kingdom will determine the new capital
-		masterKingdom.getTiles().addAll(slaveKingdom.getTiles());
 		masterKingdom.setSavings(masterKingdom.getSavings() + slaveKingdom.getSavings());
 		if (!slaveKingdom.isDoneMoving()) {
 			masterKingdom.setDoneMoving(false);
 		}
 		for (HexTile slaveKingdomTile : slaveKingdom.getTiles()) {
+			// add all the absent tiles of the slave kingdom to the master one
+			if (!masterKingdom.getTiles().contains(slaveKingdomTile)) {
+				masterKingdom.getTiles().add(slaveKingdomTile);
+			}
 			slaveKingdomTile.setKingdom(masterKingdom);
 			MapObject content = slaveKingdomTile.getContent();
 			if (content != null && ClassReflection.isAssignableFrom(Capital.class, content.getClass())) {
@@ -565,7 +573,7 @@ public class GameStateHelper {
 			// capital exists --> keep it's kingdom
 			startTile = capitalTile;
 			newKingdom = startTile.getKingdom();
-			newKingdom.setTiles(new LinkedHashSet<>());
+			newKingdom.setTiles(new ArrayList<>());
 		} else {
 			// no capital exists --> create new kingdom
 			// start from some other tile
