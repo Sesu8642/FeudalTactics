@@ -296,7 +296,8 @@ public class BotAi {
 		switch (strength) {
 		case 1:
 			// buy peasant
-			if (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.PEASANT.salary() >= 0
+			if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+					- UnitTypes.PEASANT.salary() >= 0 || kingdom.getSavings() > UnitTypes.PEASANT.salary() * 3)
 					&& kingdom.getSavings() >= Unit.COST) {
 				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
 				pickedUpUnits.availablePeasants++;
@@ -310,16 +311,18 @@ public class BotAi {
 				pickedUpUnits.availableSpearmen++;
 				return true;
 			} else if (pickedUpUnits.availablePeasants >= 1
-					&& kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+					&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
 							- UnitTypes.SPEARMAN.salary() + UnitTypes.PEASANT.salary() >= 0
-					&& kingdom.getSavings() >= Unit.COST) { //
+							|| kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
+					&& kingdom.getSavings() >= Unit.COST) {
 				// buy 1 peasant and combine with an existing one
 				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
 				pickedUpUnits.availableSpearmen++;
 				pickedUpUnits.availablePeasants--;
 				return true;
-			} else if (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.SPEARMAN.salary() >= 0 && kingdom.getSavings() >= Unit.COST * 2) {
+			} else if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+					- UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
+					&& kingdom.getSavings() >= Unit.COST * 2) {
 				// buy 2 peasants = 1 spearman
 				kingdom.setSavings(kingdom.getSavings() - 2 * Unit.COST);
 				pickedUpUnits.availableSpearmen++;
@@ -334,16 +337,18 @@ public class BotAi {
 				pickedUpUnits.availableKnights++;
 				return true;
 			} else if (pickedUpUnits.availableSpearmen >= 1
-					&& kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+					&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
 							- UnitTypes.KNIGHT.salary() + UnitTypes.SPEARMAN.salary() >= 0
-					&& kingdom.getSavings() > Unit.COST) { //
+							|| kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
+					&& kingdom.getSavings() > Unit.COST) {
 				// buy 1 peasant and combine with an existing spearman
 				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
 				pickedUpUnits.availableSpearmen--;
 				pickedUpUnits.availableKnights++;
 				return true;
-			} else if (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.KNIGHT.salary() >= 0 && kingdom.getSavings() >= Unit.COST * 3) {
+			} else if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+					- UnitTypes.KNIGHT.salary() >= 0 || kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
+					&& kingdom.getSavings() >= Unit.COST * 3) {
 				// buy 3 peasants = 1 knight
 				kingdom.setSavings(kingdom.getSavings() - 3 * Unit.COST);
 				pickedUpUnits.availableKnights++;
@@ -358,16 +363,18 @@ public class BotAi {
 				pickedUpUnits.availableBarons++;
 				return true;
 			} else if (pickedUpUnits.availableKnights >= 1
-					&& kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
-							+ UnitTypes.KNIGHT.salary() >= 0
+					&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+							- UnitTypes.BARON.salary() + UnitTypes.KNIGHT.salary() >= 0
+							|| kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
 					&& kingdom.getSavings() >= Unit.COST) {
 				// buy 1 peasant and combine with an existing knight
 				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
 				pickedUpUnits.availableKnights--;
 				pickedUpUnits.availableBarons++;
 				return true;
-			} else if (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.BARON.salary() >= 0 && kingdom.getSavings() >= Unit.COST * 4) {
+			} else if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
+					- UnitTypes.BARON.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
+					&& kingdom.getSavings() >= Unit.COST * 4) {
 				// buy 4 peasants = 1 baron
 				kingdom.setSavings(kingdom.getSavings() - 4 * Unit.COST);
 				pickedUpUnits.availableBarons++;
