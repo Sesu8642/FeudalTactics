@@ -1,7 +1,6 @@
 package com.sesu8642.feudaltactics.gamelogic.ingame;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -214,9 +213,8 @@ public class BotAi {
 			// determine how "valuable" the tiles are for conquering
 			Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
 					.newSetFromMap(new ConcurrentHashMap<BotAi.OffenseTileScoreInfo, Boolean>());
-			possibleConquerTiles.parallelStream().forEach((conquerTile) -> {
-				offenseTileScoreInfoSet.add(getOffenseTileScoreInfo(gameState, conquerTile));
-			});
+			possibleConquerTiles.parallelStream().forEach(
+					conquerTile -> offenseTileScoreInfoSet.add(getOffenseTileScoreInfo(gameState, conquerTile)));
 			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
 			offenseTileScoreInfos.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
 				int result = Integer.compare(o2.score, o1.score);
@@ -436,7 +434,7 @@ public class BotAi {
 		HashSet<HexTile> interestingPlacementTiles = new HashSet<>();
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
 			// tile is interesting for placement if it is close to another kingdom
-			Collection<HexTile> neighborsNeighbors = gameState.getMap().getNeighborsNeighborTiles(tile);
+			List<HexTile> neighborsNeighbors = gameState.getMap().getNeighborsNeighborTiles(tile);
 			for (HexTile neighborsNeighbor : neighborsNeighbors) {
 				if (neighborsNeighbor != null && neighborsNeighbor.getKingdom() != gameState.getActiveKingdom()) {
 					interestingPlacementTiles.add(tile);
@@ -449,11 +447,19 @@ public class BotAi {
 
 	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Set<HexTile> interestingProtectionTiles) {
 		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<BotAi.TileScoreInfo, Boolean>());
-		interestingProtectionTiles.parallelStream().forEach(tile -> {
-			results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, tile)));
-		});
-		return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> Integer.compare(t1.score, t2.score))
-				.orElse(new TileScoreInfo(null, -1));
+		interestingProtectionTiles.parallelStream()
+				.forEach(tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, tile))));
+		return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
+			int result = Integer.compare(t1.score, t2.score);
+			// if the score is the same, use the coordinates to eliminate randomness
+			if (result == 0) {
+				result = Float.compare(t2.tile.getPosition().x, t1.tile.getPosition().x);
+			}
+			if (result == 0) {
+				result = Float.compare(t2.tile.getPosition().y, t1.tile.getPosition().y);
+			}
+			return result;
+		}).orElse(new TileScoreInfo(null, -1));
 	}
 
 	private int getTileDefenseScore(GameState gameState, HexTile tile) {
@@ -479,7 +485,7 @@ public class BotAi {
 						tileIsProtected = true;
 						neighborIsProtected = true;
 					}
-					Collection<HexTile> neighborsNeighbors = gameState.getMap().getNeighborTiles(neighborTile);
+					List<HexTile> neighborsNeighbors = gameState.getMap().getNeighborTiles(neighborTile);
 					for (HexTile neighborsNeighbor : neighborsNeighbors) {
 						if (neighborsNeighbor != null) {
 							if (neighborsNeighbor.getKingdom() != null

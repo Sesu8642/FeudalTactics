@@ -1,7 +1,6 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -553,11 +552,11 @@ public class GameStateHelper {
 		gameState.getKingdoms().remove(slaveKingdom);
 	}
 
-	private static void updateSplitKingdom(GameState gameState, Collection<HexTile> tiles) {
+	private static void updateSplitKingdom(GameState gameState, List<HexTile> tiles) {
 		if (tiles.isEmpty()) {
 			return;
 		}
-		Kingdom oldKingdom = ((HexTile) tiles.toArray()[0]).getKingdom();
+		Kingdom oldKingdom = tiles.get(0).getKingdom();
 		// try to find a capital
 		HexTile capitalTile = null;
 		for (HexTile kingdomTile : tiles) {
@@ -577,7 +576,7 @@ public class GameStateHelper {
 		} else {
 			// no capital exists --> create new kingdom
 			// start from some other tile
-			startTile = (HexTile) tiles.toArray()[0];
+			startTile = tiles.get(0);
 			newKingdom = new Kingdom(startTile.getPlayer());
 			gameState.getKingdoms().add(newKingdom);
 		}
