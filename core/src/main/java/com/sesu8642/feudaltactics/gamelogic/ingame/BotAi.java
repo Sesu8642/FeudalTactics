@@ -229,6 +229,8 @@ public class BotAi {
 			});
 
 			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
+				// could be optimized to not iterate all the tiles even when there are no picked
+				// up units at all
 				switch (offenseTileScoreInfo.requiredStrength) {
 				case 1:
 					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.PEASANT,
@@ -412,6 +414,53 @@ public class BotAi {
 			}
 			bestDefenseTileScore = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		}
+		placeLeftOverUnitsSomeWhere(gameState, pickedUpUnits);
+	}
+
+	private void placeLeftOverUnitsSomeWhere(GameState gameState, PickedUpUnits pickedUpUnits) {
+		// this could be way more elegant if pickedUpUnits was a map with the unit type
+		// as key
+		for (int i = 0; i < pickedUpUnits.availablePeasants; i++) {
+			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
+			if (emptyOrTreeTileOptional.isPresent()) {
+				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
+				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
+			} else {
+				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+			}
+		}
+		for (int i = 0; i < pickedUpUnits.availableSpearmen; i++) {
+			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
+			if (emptyOrTreeTileOptional.isPresent()) {
+				gameState.setHeldObject(new Unit(UnitTypes.SPEARMAN));
+				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
+			} else {
+				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+			}
+		}
+		for (int i = 0; i < pickedUpUnits.availableKnights; i++) {
+			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
+			if (emptyOrTreeTileOptional.isPresent()) {
+				gameState.setHeldObject(new Unit(UnitTypes.KNIGHT));
+				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
+			} else {
+				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+			}
+		}
+		for (int i = 0; i < pickedUpUnits.availableBarons; i++) {
+			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
+			if (emptyOrTreeTileOptional.isPresent()) {
+				gameState.setHeldObject(new Unit(UnitTypes.BARON));
+				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
+			} else {
+				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+			}
+		}
+	}
+
+	private Optional<HexTile> findEmptyOrTreeTileInActiveKingdom(GameState gameState) {
+		return gameState.getActiveKingdom().getTiles().stream().filter(tile -> tile.getContent() == null
+				|| ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).findFirst();
 	}
 
 	private void sellCastles(Kingdom kingdom, Set<HexTile> placedCastleTiles) {
@@ -501,7 +550,7 @@ public class BotAi {
 				}
 			}
 			if (neighborIsBorder) {
-				// the 1 ist there because it is better to protect a tile twice than to place
+				// the 1 is there because it is better to protect a tile twice than to place
 				// the unit somewhere useless
 				score += neighborIsProtected ? 1 : 10;
 			}
