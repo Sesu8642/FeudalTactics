@@ -69,6 +69,26 @@ class BotAiTest {
 		throw new AssertionError("Game did not terminate.");
 	}
 
+	@ParameterizedTest
+	@MethodSource("provideMapParameters")
+	void botsActConsistentWithTheSameSeed(BotAi.Intelligence botIntelligence, Float landMass, Float density,
+			Long seed) {
+		GameState gameState1 = createGameState(landMass, density, seed);
+		GameState gameState2 = createGameState(landMass, density, seed);
+
+		for (int i = 1; i <= 1000; i++) {
+			if (gameState1.getKingdoms().size() == 1) {
+				return;
+			}
+			gameState1 = systemUnderTest.doTurn(gameState1, botIntelligence);
+			gameState2 = systemUnderTest.doTurn(gameState2, botIntelligence);
+			assertEquals(gameState1, gameState2);
+
+			GameStateHelper.endTurn(gameState1);
+			GameStateHelper.endTurn(gameState2);
+		}
+	}
+
 	private String gameStateToJson(GameState gameState) {
 		Json json = new Json(OutputType.json);
 		json.setSerializer(GameState.class, new GameStateSerializer());
