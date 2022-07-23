@@ -228,8 +228,10 @@ public class BotAi {
 			});
 
 			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
-				// could be optimized to not iterate all the tiles even when there are no picked
-				// up units at all
+				if (pickedUpUnits.availableBarons + pickedUpUnits.availableKnights + pickedUpUnits.availableSpearmen
+						+ pickedUpUnits.availablePeasants == 0) {
+					break;
+				}
 				switch (offenseTileScoreInfo.requiredStrength) {
 				case 1:
 					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.PEASANT,
