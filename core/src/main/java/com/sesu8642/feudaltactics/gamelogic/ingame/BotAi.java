@@ -105,8 +105,8 @@ public class BotAi {
 			chopTrees(gameState, pickedUpUnits, 1F);
 			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
-			sellCastles(kingdom, placedCastleTiles);
-			pickUpAllAvailableUnits(kingdom, pickedUpUnits);
+			sellCastles(gameState.getActiveKingdom(), placedCastleTiles);
+			pickUpAllAvailableUnits(gameState.getActiveKingdom(), pickedUpUnits);
 			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
@@ -200,7 +200,6 @@ public class BotAi {
 
 	private void conquerAsMuchAsPossible(GameState gameState, PickedUpUnits pickedUpUnits) {
 		Gdx.app.log(TAG, "conquering as much as possible");
-		Kingdom kingdom = gameState.getActiveKingdom();
 		boolean unableToConquerAnyMore = false;
 		whileloop: while (!unableToConquerAnyMore) {
 			// need a list here to be deterministic
@@ -272,7 +271,7 @@ public class BotAi {
 					.stream().min((OffenseTileScoreInfo t1, OffenseTileScoreInfo t2) -> Integer
 							.compare(t1.requiredStrength, t2.requiredStrength))
 					.orElse(new OffenseTileScoreInfo(null, -1, -1)).requiredStrength;
-			if (!acquireUnit(kingdom, pickedUpUnits, minimumRequiredStrengthForConquering)) {
+			if (!acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, minimumRequiredStrengthForConquering)) {
 				unableToConquerAnyMore = true;
 			}
 		}
