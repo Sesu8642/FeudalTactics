@@ -1,10 +1,13 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
 import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
 
@@ -14,7 +17,7 @@ public class GameState {
 	private List<Player> players = new ArrayList<>();
 	private Player winner = null;
 	private int playerTurn = 0;
-	private HexMap map = new HexMap();
+	private Map<Vector2, HexTile> map = new HashMap<>();
 	private List<Kingdom> kingdoms;
 	private Kingdom activeKingdom = null;
 	private MapObject heldObject = null;
@@ -50,11 +53,11 @@ public class GameState {
 		this.playerTurn = playerTurn;
 	}
 
-	public HexMap getMap() {
+	public Map<Vector2, HexTile> getMap() {
 		return map;
 	}
 
-	public void setMap(HexMap map) {
+	public void setMap(Map<Vector2, HexTile> map) {
 		this.map = map;
 	}
 

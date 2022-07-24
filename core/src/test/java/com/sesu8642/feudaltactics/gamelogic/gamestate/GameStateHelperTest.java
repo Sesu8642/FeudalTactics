@@ -49,7 +49,7 @@ class GameStateHelperTest {
 
 		GameStateHelper.initializeMap(gameState, players, landMass, 2, 0.2F, seed);
 
-		assertEquals(landMass, gameState.getMap().getTiles().size());
+		assertEquals(landMass, gameState.getMap().size());
 	}
 
 	@ParameterizedTest
@@ -75,12 +75,12 @@ class GameStateHelperTest {
 		GameStateHelper.initializeMap(gameState, players, 6, 2, 0.2F, seed);
 
 		Player firstPlayer = gameState.getPlayers().get(0);
-		long firstPlayerTileAmount = gameState.getMap().getTiles().values().stream()
+		long firstPlayerTileAmount = gameState.getMap().values().stream()
 				.filter(tile -> tile.getPlayer().equals(firstPlayer)).count();
 		gameState.getPlayers().forEach(player -> {
 			// the difference between the tiles of any player and the first one should not
 			// be larger than 1
-			long otherPlayerTileAmount = gameState.getMap().getTiles().values().stream()
+			long otherPlayerTileAmount = gameState.getMap().values().stream()
 					.filter(tile -> tile.getPlayer().equals(player)).count();
 			long tileDifference = Math.abs(firstPlayerTileAmount - otherPlayerTileAmount);
 			assertTrue(tileDifference <= 1);

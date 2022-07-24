@@ -22,6 +22,7 @@ import com.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
@@ -245,7 +246,7 @@ public class BotAi {
 	private List<HexTile> determineNeighboringEnemyTiles(GameState gameState) {
 		List<HexTile> result = new ArrayList<>();
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
+			List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
 			for (HexTile neighborTile : neighborTiles) {
 				if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()) {
 					result.add(neighborTile);
@@ -432,7 +433,7 @@ public class BotAi {
 		HashSet<HexTile> interestingPlacementTiles = new HashSet<>();
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
 			// tile is interesting for placement if it is close to another kingdom
-			List<HexTile> neighborsNeighbors = gameState.getMap().getNeighborsNeighborTiles(tile);
+			List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborsNeighborTiles(gameState.getMap(), tile);
 			for (HexTile neighborsNeighbor : neighborsNeighbors) {
 				if (neighborsNeighbor != null && neighborsNeighbor.getKingdom() != gameState.getActiveKingdom()) {
 					interestingPlacementTiles.add(tile);
@@ -469,7 +470,7 @@ public class BotAi {
 		boolean tileIsBorder = false;
 		boolean tileIsProtected = false;
 		int score = 0;
-		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
+		List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
 		for (HexTile neighborTile : neighborTiles) {
 			boolean neighborIsBorder = false;
 			boolean neighborIsProtected = false;
@@ -483,7 +484,7 @@ public class BotAi {
 						tileIsProtected = true;
 						neighborIsProtected = true;
 					}
-					List<HexTile> neighborsNeighbors = gameState.getMap().getNeighborTiles(neighborTile);
+					List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), neighborTile);
 					for (HexTile neighborsNeighbor : neighborsNeighbors) {
 						if (neighborsNeighbor != null) {
 							if (neighborsNeighbor.getKingdom() != null
@@ -537,7 +538,7 @@ public class BotAi {
 			}
 			// find out required strength and add some bonus for tiles next to multiple
 			// tiles of the own kingdom
-			ArrayList<HexTile> neighborTiles = new ArrayList<>(gameState.getMap().getNeighborTiles(tile));
+			ArrayList<HexTile> neighborTiles = new ArrayList<>(HexMapHelper.getNeighborTiles(gameState.getMap(), tile));
 			neighborTiles.add(tile);
 			for (HexTile neighborTile : neighborTiles) {
 				if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()

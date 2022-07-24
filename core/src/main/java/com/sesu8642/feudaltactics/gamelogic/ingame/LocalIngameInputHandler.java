@@ -1,5 +1,7 @@
 package com.sesu8642.feudaltactics.gamelogic.ingame;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -9,7 +11,7 @@ import com.google.common.eventbus.Subscribe;
 import com.sesu8642.feudaltactics.events.input.BackInputEvent;
 import com.sesu8642.feudaltactics.events.input.TapInputEvent;
 import com.sesu8642.feudaltactics.events.moves.GameStartEvent;
-import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
@@ -59,10 +61,10 @@ public class LocalIngameInputHandler {
 			// don't accept inputs if its not the human player's turn
 			return;
 		}
-		HexMap map = gameController.getGameState().getMap();
-		Vector2 hexCoords = map.worldCoordsToHexCoords(event.getWorldCoords());
+		Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
 		Player player = gameController.getGameState().getActivePlayer();
-		HexTile tile = map.getTiles().get(hexCoords);
+		Map<Vector2, HexTile> map = gameController.getGameState().getMap();
+		HexTile tile = map.get(hexCoords);
 		// print info
 		gameController.printTileInfo(hexCoords);
 		if (InputValidationHelper.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {

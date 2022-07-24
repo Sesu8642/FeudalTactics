@@ -103,7 +103,7 @@ class BotAiTest {
 	 */
 	private int calculateActivePlayerCapital(GameState gameState) {
 		// first sum up the value of all map objects the player owns
-		int result = gameState.getMap().getTiles().values().stream()
+		int result = gameState.getMap().values().stream()
 				.filter(tile -> tile.getPlayer().equals(gameState.getActivePlayer())).mapToInt(tile -> {
 					if (tile.getContent() == null) {
 						return 0;

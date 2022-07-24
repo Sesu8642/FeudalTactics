@@ -47,7 +47,7 @@ public class EditorController {
 
 	/** Creates a tile. */
 	public void createTile(Vector2 hexCoords) {
-		HexTile existingTile = gameState.getMap().getTiles().get(hexCoords);
+		HexTile existingTile = gameState.getMap().get(hexCoords);
 		int newTilePlayerIndex = 0;
 		if (existingTile != null) {
 			newTilePlayerIndex = gameState.getPlayers().indexOf(existingTile.getPlayer()) + 1;

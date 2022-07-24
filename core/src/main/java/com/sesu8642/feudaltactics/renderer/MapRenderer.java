@@ -24,7 +24,7 @@ import com.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
-import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.MapDimensions;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
@@ -39,8 +39,8 @@ public class MapRenderer {
 	public static final float WATER_TILE_SIZE = 12;
 	public static final float SHIELD_SIZE = 2;
 	public static final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
-	public static final float HEXTILE_WIDTH = HexMap.HEX_OUTER_RADIUS * 2;
-	public static final float HEXTILE_HEIGHT = HexMap.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
+	public static final float HEXTILE_WIDTH = HexMapHelper.HEX_OUTER_RADIUS * 2;
+	public static final float HEXTILE_HEIGHT = HexMapHelper.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 
 	private final ShapeRenderer shapeRenderer;
 	private final OrthographicCamera camera;
@@ -110,7 +110,7 @@ public class MapRenderer {
 		redLineStartPoints.clear();
 		redLineEndPoints.clear();
 		darkenBeaches = gameState.getHeldObject() != null;
-		for (Entry<Vector2, HexTile> hexTileEntry : (gameState.getMap().getTiles()).entrySet()) {
+		for (Entry<Vector2, HexTile> hexTileEntry : gameState.getMap().entrySet()) {
 			Vector2 hexCoords = hexTileEntry.getKey();
 			Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
 			HexTile tile = hexTileEntry.getValue();
@@ -120,7 +120,7 @@ public class MapRenderer {
 			drawTile.mapCoords = mapCoords;
 			drawTile.color = tile.getPlayer().getColor();
 			// create beaches on the edges
-			List<HexTile> neighbors = gameState.getMap().getNeighborTiles(tile);
+			List<HexTile> neighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
 			if (neighbors.get(0) == null) {
 				// top left
 				drawTile.topLeftBeach = true;
@@ -170,13 +170,13 @@ public class MapRenderer {
 											tile))) {
 						// darkened content
 						darkenedAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
 								getAnimationFromName(tileContent.getSpriteName()));
 					} else {
 						animatedContents.put(
-								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
 								getAnimationFromName(tileContent.getSpriteName()));
 					}
 				} else {
@@ -187,13 +187,13 @@ public class MapRenderer {
 											tile))) {
 						// darkened content
 						darkenedNonAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
 								getTextureRegionFromName(tileContent.getSpriteName()));
 					} else {
 						nonAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMap.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMap.HEX_OUTER_RADIUS),
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
 								getTextureRegionFromName(tileContent.getSpriteName()));
 					}
 				}
@@ -203,7 +203,7 @@ public class MapRenderer {
 			if (gameState.getActiveKingdom() != null && tile.getKingdom() != null
 					&& tile.getKingdom() == gameState.getActiveKingdom()) {
 				int index = 0;
-				for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+				for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 					if (neighborTile == null || neighborTile.getKingdom() == null
 							|| neighborTile.getKingdom() != tile.getKingdom()) {
 						Line line = getNeighborLine(mapCoords, index);
@@ -222,7 +222,7 @@ public class MapRenderer {
 				// red lines for indicating if able to conquer
 				if (InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
 					int index = 0;
-					for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+					for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 						if (neighborTile == null
 								|| (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidationHelper
 										.checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
@@ -544,7 +544,7 @@ public class MapRenderer {
 	 */
 	public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
 		float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
-		float y = (float) (HexMap.HEX_OUTER_RADIUS
+		float y = (float) (HexMapHelper.HEX_OUTER_RADIUS
 				* (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
 		return new Vector2(x, y);
 	}
@@ -587,7 +587,7 @@ public class MapRenderer {
 	 */
 	public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
 			long marginRightPx, long marginTopPx) {
-		MapDimensions dims = gameState.getMap().getMapDimensionsInWorldCoords();
+		MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(gameState.getMap());
 		// get the factors needed to adjust the camera zoom
 		float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
 		float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);

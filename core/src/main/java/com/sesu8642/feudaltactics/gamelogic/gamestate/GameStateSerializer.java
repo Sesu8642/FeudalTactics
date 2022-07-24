@@ -63,7 +63,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 		}
 		json.writeArrayEnd();
 		json.writeArrayStart(TILES_NAME);
-		for (HexTile tile : object.getMap().getTiles().values()) {
+		for (HexTile tile : object.getMap().values()) {
 			json.writeObjectStart();
 			json.writeValue(ID_NAME, getId(idMap, tile));
 			json.writeValue(PLAYER_ID_NAME, getId(idMap, tile.getPlayer()));
@@ -125,7 +125,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 			reverseIdMap.put(id, player);
 			result.getPlayers().add(player);
 		});
-		result.setMap(new HexMap());
+		result.setMap(new HashMap<>());
 		JsonValue tilesJson = jsonData.get(TILES_NAME);
 		tilesJson.forEach(tileJson -> {
 			final int id = tileJson.getInt(ID_NAME);
@@ -148,7 +148,7 @@ public class GameStateSerializer implements Serializer<GameState> {
 			}
 			tile.setPlayer((Player) reverseIdMap.get(playerId));
 			reverseIdMap.put(id, tile);
-			result.getMap().getTiles().put(tile.getPosition(), tile);
+			result.getMap().put(tile.getPosition(), tile);
 		});
 		result.setKingdoms(new ArrayList<>());
 		JsonValue kingdomsJson = jsonData.get(KINGDOMS_NAME);

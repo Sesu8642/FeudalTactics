@@ -2,6 +2,7 @@ package com.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
 import com.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
@@ -191,7 +192,7 @@ public class InputValidationHelper {
 			return false;
 		}
 		boolean isNextoToOwnKingdom = false;
-		for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+		for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 			if (isWater(neighborTile)) {
 				// skip water
 				continue;

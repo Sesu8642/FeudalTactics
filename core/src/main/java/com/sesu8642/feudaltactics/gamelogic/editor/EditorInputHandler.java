@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.Subscribe;
 import com.sesu8642.feudaltactics.events.input.TapInputEvent;
-import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMap;
+import com.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 
 /** Handles inputs in the editor. **/
 @Singleton
@@ -31,8 +31,7 @@ public class EditorInputHandler {
 	 */
 	@Subscribe
 	public void handleTapInput(TapInputEvent event) {
-		HexMap map = editorController.getGameState().getMap();
-		Vector2 hexCoords = map.worldCoordsToHexCoords(event.getWorldCoords());
+		Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
 		editorController.createTile(hexCoords);
 	}
 

@@ -65,8 +65,8 @@ public class GameStateHelper {
 		}
 		result.setKingdoms(copiedKingdoms);
 
-		HexMap copiedMap = new HexMap();
-		for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().getTiles().entrySet()) {
+		Map<Vector2, HexTile> copiedMap = new HashMap<>();
+		for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().entrySet()) {
 			HexTile originalTile = originalTileEntry.getValue();
 			HexTile newTile = new HexTile(copiedPlayers.get(original.getPlayers().indexOf(originalTile.getPlayer())),
 					new Vector2(originalTileEntry.getKey()));
@@ -77,7 +77,7 @@ public class GameStateHelper {
 			if (originalTile.getContent() != null) {
 				newTile.setContent(originalTile.getContent().getCopy());
 			}
-			copiedMap.getTiles().put(newTile.getPosition(), newTile);
+			copiedMap.put(newTile.getPosition(), newTile);
 		}
 		result.setMap(copiedMap);
 
@@ -119,7 +119,7 @@ public class GameStateHelper {
 		}
 		gameState.setSeed(mapSeed);
 		gameState.setPlayers(players);
-		gameState.setMap(new HexMap());
+		gameState.setMap(new HashMap<>());
 		gameState.setKingdoms(new ArrayList<>());
 		if (landMass == 0) {
 			return;
@@ -184,7 +184,7 @@ public class GameStateHelper {
 		// keep track of the players that still have tiles left to generate in a list
 		// (because a random one can be selected)
 		ArrayList<Player> remainingPlayers = new ArrayList<>(players);
-		gameState.getMap().getTiles().clear();
+		gameState.getMap().clear();
 		// could be done recursively but stack size is uncertain
 		Vector2 nextTilePos = new Vector2(0, 0);
 		ArrayList<Vector2> positionHistory = new ArrayList<>(); // for backtracking
@@ -193,7 +193,7 @@ public class GameStateHelper {
 			// place tile
 			Player player = remainingPlayers.get(gameState.getRandom().nextInt(remainingPlayers.size()));
 			HexTile tile = new HexTile(player, currentTilePos);
-			gameState.getMap().getTiles().put(currentTilePos, tile);
+			gameState.getMap().put(currentTilePos, tile);
 			// remove player if no tiles are left
 			if (tileAmountsToGenerate.get(player) == 1) {
 				remainingPlayers.remove(player);
@@ -203,19 +203,21 @@ public class GameStateHelper {
 			// add to history
 			positionHistory.add(currentTilePos);
 			// get next tile position with empty neighboring tiles
-			List<Vector2> usableCoords = gameState.getMap().getUnusedNeighborCoords(currentTilePos);
+			List<Vector2> usableCoords = HexMapHelper.getUnusedNeighborCoords(gameState.getMap(), currentTilePos);
 			while (usableCoords.isEmpty()) {
 				// backtrack until able to place a tile again
 				positionHistory.remove(positionHistory.size() - 1);
 				currentTilePos = positionHistory.get(positionHistory.size() - 1);
-				usableCoords = new ArrayList<>(gameState.getMap().getUnusedNeighborCoords(currentTilePos));
+				usableCoords = new ArrayList<>(
+						HexMapHelper.getUnusedNeighborCoords(gameState.getMap(), currentTilePos));
 			}
 			// calculate a score for each neighboring tile for choosing the next one
 			ArrayList<Float> scores = new ArrayList<>();
 			float scoreSum = 0;
 			for (Vector2 candidate : usableCoords) {
 				// factor in density
-				int usableCoordsCountFromCandidate = gameState.getMap().getUnusedNeighborCoords(candidate).size();
+				int usableCoordsCountFromCandidate = HexMapHelper.getUnusedNeighborCoords(gameState.getMap(), candidate)
+						.size();
 				float score = (float) Math.pow(usableCoordsCountFromCandidate, density);
 				scores.add(score);
 				scoreSum += score;
@@ -234,9 +236,9 @@ public class GameStateHelper {
 
 	private static void createInitialKingdoms(GameState gameState) {
 		gameState.getKingdoms().clear();
-		for (Entry<Vector2, HexTile> tileEntry : gameState.getMap().getTiles().entrySet()) {
+		for (Entry<Vector2, HexTile> tileEntry : gameState.getMap().entrySet()) {
 			HexTile tile = tileEntry.getValue();
-			for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+			for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 				if (neighborTile == null || neighborTile.getPlayer() != tile.getPlayer()) {
 					// water or tile of a different player
 					continue;
@@ -291,7 +293,7 @@ public class GameStateHelper {
 	}
 
 	private static void createTrees(GameState gameState, float vegetationDensity) {
-		for (HexTile tile : gameState.getMap().getTiles().values()) {
+		for (HexTile tile : gameState.getMap().values()) {
 			if (gameState.getRandom().nextFloat() <= vegetationDensity) {
 				tile.setContent(new Tree());
 			}
@@ -301,7 +303,7 @@ public class GameStateHelper {
 	private static void createCapital(GameState gameState, HexTile oldCapitalTile) {
 		HexTile newCapitalTile;
 		// try to find empty neighbor tile
-		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(oldCapitalTile);
+		List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), oldCapitalTile);
 		Optional<HexTile> emptyTileOptional = neighborTiles.stream()
 				.filter((HexTile neighborTile) -> neighborTile != null
 						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
@@ -455,7 +457,7 @@ public class GameStateHelper {
 		tile.setKingdom(gameState.getActiveKingdom());
 		tile.getKingdom().getTiles().add(tile);
 		ArrayList<HexTile> oldKingdomNeighborTiles = new ArrayList<>();
-		List<HexTile> neighborTiles = gameState.getMap().getNeighborTiles(tile);
+		List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
 		for (HexTile neighborTile : neighborTiles) {
 			if (neighborTile == null) {
 				// water
@@ -485,7 +487,7 @@ public class GameStateHelper {
 		switch (oldKingdomNeighborTiles.size()) {
 		case 2:
 			// both tiles next to to each other --> no split possible
-			if (gameState.getMap().getNeighborTiles(oldKingdomNeighborTiles.get(0))
+			if (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
 					.contains(oldKingdomNeighborTiles.get(1))) {
 				potentiallySplit = false;
 			}
@@ -493,13 +495,13 @@ public class GameStateHelper {
 		case 3:
 			// if the first or the second tile is next to both of the other ones, they are
 			// all next to each other --> no split possible
-			if (((gameState.getMap().getNeighborTiles(oldKingdomNeighborTiles.get(0))
+			if (((HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
 					.contains(oldKingdomNeighborTiles.get(1)))
-					&& (gameState.getMap().getNeighborTiles(oldKingdomNeighborTiles.get(0))
+					&& (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
 							.contains(oldKingdomNeighborTiles.get(2))))
-					|| ((gameState.getMap().getNeighborTiles(oldKingdomNeighborTiles.get(1))
+					|| ((HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(1))
 							.contains(oldKingdomNeighborTiles.get(0)))
-							&& (gameState.getMap().getNeighborTiles(oldKingdomNeighborTiles.get(1))
+							&& (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(1))
 									.contains(oldKingdomNeighborTiles.get(2))))) {
 				potentiallySplit = false;
 			}
@@ -507,10 +509,11 @@ public class GameStateHelper {
 		case 4:
 			// if the other tiles are next to each other, the 4 oldKingdomNeighborTiles must
 			// also be next to each other --> no split possible
-			ArrayList<HexTile> notOldKingdomNeighborTiles = new ArrayList<>(gameState.getMap().getNeighborTiles(tile));
+			ArrayList<HexTile> notOldKingdomNeighborTiles = new ArrayList<>(
+					HexMapHelper.getNeighborTiles(gameState.getMap(), tile));
 			notOldKingdomNeighborTiles.removeAll(oldKingdomNeighborTiles);
 			if (notOldKingdomNeighborTiles.get(0) != null && notOldKingdomNeighborTiles.get(1) != null
-					&& gameState.getMap().getNeighborTiles(notOldKingdomNeighborTiles.get(0))
+					&& HexMapHelper.getNeighborTiles(gameState.getMap(), notOldKingdomNeighborTiles.get(0))
 							.contains(notOldKingdomNeighborTiles.get(1))) {
 				potentiallySplit = false;
 			}
@@ -589,7 +592,7 @@ public class GameStateHelper {
 			newKingdom.getTiles().add(currentTile);
 			currentTile.setKingdom(newKingdom);
 			doneTiles.add(currentTile);
-			for (HexTile expandTile : gameState.getMap().getNeighborTiles(currentTile)) {
+			for (HexTile expandTile : HexMapHelper.getNeighborTiles(gameState.getMap(), currentTile)) {
 				if (!doneTiles.contains(expandTile) && !todoTiles.contains(expandTile)
 						&& (expandTile != null && expandTile.getKingdom() == oldKingdom)) {
 					todoTiles.add(expandTile);
@@ -630,7 +633,7 @@ public class GameStateHelper {
 		// a really bad situation
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (kingdom.getPlayer() == gameState.getActivePlayer()
-					&& kingdom.getTiles().size() >= gameState.getMap().getTiles().size() * WIN_LANDMASS_PERCENTAGE) {
+					&& kingdom.getTiles().size() >= gameState.getMap().size() * WIN_LANDMASS_PERCENTAGE) {
 				gameState.setWinner(kingdom.getPlayer());
 			}
 		}
@@ -686,12 +689,12 @@ public class GameStateHelper {
 
 	private static void spreadTrees(GameState gameState) {
 		HashSet<HexTile> newTreeTiles = new HashSet<>();
-		for (HexTile tile : gameState.getMap().getTiles().values()) {
+		for (HexTile tile : gameState.getMap().values()) {
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 				if (gameState.getRandom().nextFloat() <= TREE_SPREAD_RATE) {
 					ArrayList<HexTile> candidates = new ArrayList<>();
-					for (HexTile neighbor : gameState.getMap().getNeighborTiles(tile)) {
+					for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 						if (neighbor != null && neighbor.getContent() == null) {
 							candidates.add(neighbor);
 						}
@@ -739,7 +742,7 @@ public class GameStateHelper {
 	 */
 	public static void placeTile(GameState gameState, Vector2 hexCoords, Player player) {
 		HexTile newTile = new HexTile(player, hexCoords);
-		gameState.getMap().getTiles().put(hexCoords, newTile);
+		gameState.getMap().put(hexCoords, newTile);
 	}
 
 	/**
@@ -749,7 +752,7 @@ public class GameStateHelper {
 	 * @param hexCoords coords of the tile
 	 */
 	public static void deleteTile(GameState gameState, Vector2 hexCoords) {
-		gameState.getMap().getTiles().remove(hexCoords);
+		gameState.getMap().remove(hexCoords);
 	}
 
 	/**
@@ -765,7 +768,7 @@ public class GameStateHelper {
 		if (tile.getContent() != null) {
 			protectionLevel = tile.getContent().getStrength();
 		}
-		for (HexTile neighbor : gameState.getMap().getNeighborTiles(tile)) {
+		for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 			if (neighbor != null && neighbor.getKingdom() != null && tile.getKingdom() == neighbor.getKingdom()
 					&& neighbor.getContent() != null && neighbor.getContent().getStrength() > protectionLevel) {
 				protectionLevel = neighbor.getContent().getStrength();
@@ -812,7 +815,7 @@ public class GameStateHelper {
 					}
 					// there is a neighbor tile which can be conquered by the peasant
 					for (HexTile tile : kingdom.getTiles()) {
-						for (HexTile neighborTile : gameState.getMap().getNeighborTiles(tile)) {
+						for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 							if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()
 									&& getProtectionLevel(gameState, neighborTile) == 0) {
 								return true;
