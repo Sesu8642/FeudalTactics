@@ -1,5 +1,6 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -38,6 +39,15 @@ public class Unit implements MapObject {
 
 		public String spriteName() {
 			return spriteName;
+		}
+
+		public static UnitTypes ofStrength(int strength) {
+			return Arrays.stream(UnitTypes.values()).filter(unitType -> unitType.strength() == strength).findAny()
+					.orElseThrow(() -> new AssertionError("Cannot find unit with requested strength " + strength));
+		}
+
+		public static UnitTypes strongest() {
+			return UnitTypes.BARON;
 		}
 	}
 

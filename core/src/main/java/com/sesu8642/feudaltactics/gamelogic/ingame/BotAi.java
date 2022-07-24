@@ -1,12 +1,17 @@
 package com.sesu8642.feudaltactics.gamelogic.ingame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -122,22 +127,7 @@ public class BotAi {
 			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
 					&& ((Unit) tile.getContent()).isCanAct()) {
 				int strength = ((Unit) tile.getContent()).getStrength();
-				switch (strength) {
-				case 1:
-					pickedUpUnits.availablePeasants++;
-					break;
-				case 2:
-					pickedUpUnits.availableSpearmen++;
-					break;
-				case 3:
-					pickedUpUnits.availableKnights++;
-					break;
-				case 4:
-					pickedUpUnits.availableBarons++;
-					break;
-				default:
-					throw new AssertionError("Found unit with unexpected strength: " + strength);
-				}
+				pickedUpUnits.addUnitOfStrength(strength);
 				tile.setContent(null);
 			}
 		}
@@ -148,9 +138,9 @@ public class BotAi {
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
 			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
 					&& gameState.getRandom().nextFloat() <= chance) {
-				if (pickedUpUnits.availablePeasants >= 1
-						|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
-					pickedUpUnits.availablePeasants--;
+				if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1
+						|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, UnitTypes.PEASANT.strength())) {
+					pickedUpUnits.removeUnit(UnitTypes.PEASANT);
 					gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 					GameStateHelper.placeOwn(gameState, tile);
 				} else {
@@ -171,9 +161,9 @@ public class BotAi {
 				GameStateHelper.buyCastle(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 				placedCastleTiles.add(bestProtectionCandidate.tile);
-			} else if (pickedUpUnits.availablePeasants > 0) {
+			} else if (pickedUpUnits.ofType(UnitTypes.PEASANT) > 0) {
 				// protect with existing peasant
-				pickedUpUnits.availablePeasants--;
+				pickedUpUnits.removeUnit(UnitTypes.PEASANT);
 				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else if (InputValidationHelper.checkBuyObject(gameState, Unit.COST)) {
@@ -186,9 +176,10 @@ public class BotAi {
 			bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		}
 		while (bestProtectionCandidate.score >= SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD) {
-			if (pickedUpUnits.availablePeasants > 0 || acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, 1)) {
+			if (pickedUpUnits.ofType(UnitTypes.PEASANT) > 0
+					|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, UnitTypes.PEASANT.strength())) {
 				// protect with existing peasant
-				pickedUpUnits.availablePeasants--;
+				pickedUpUnits.removeUnit(UnitTypes.PEASANT);
 				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 			} else {
@@ -228,44 +219,16 @@ public class BotAi {
 			});
 
 			for (OffenseTileScoreInfo offenseTileScoreInfo : offenseTileScoreInfos) {
-				if (pickedUpUnits.availableBarons + pickedUpUnits.availableKnights + pickedUpUnits.availableSpearmen
-						+ pickedUpUnits.availablePeasants == 0) {
+				if (pickedUpUnits.getTotalNoOfUnits() == 0) {
 					break;
 				}
-				switch (offenseTileScoreInfo.requiredStrength) {
-				case 1:
-					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.PEASANT,
-							pickedUpUnits.availablePeasants)) {
-						pickedUpUnits.availablePeasants--;
+				for (int i = offenseTileScoreInfo.requiredStrength; i <= UnitTypes.strongest().strength(); i++) {
+					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.ofStrength(i),
+							pickedUpUnits.ofStrength(i))) {
+						pickedUpUnits.removeUnitOfStrength(i);
 						continue whileloop;
 					}
-					break;
-				case 2:
-					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.SPEARMAN,
-							pickedUpUnits.availableSpearmen)) {
-						pickedUpUnits.availableSpearmen--;
-						continue whileloop;
-					}
-					break;
-				case 3:
-					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.KNIGHT,
-							pickedUpUnits.availableKnights)) {
-						pickedUpUnits.availableKnights--;
-						continue whileloop;
-					}
-					break;
-				case 4:
-					if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.BARON,
-							pickedUpUnits.availableBarons)) {
-						pickedUpUnits.availableBarons--;
-						continue whileloop;
-					}
-					break;
-				default:
-					// cannot be conquered
-					break;
 				}
-
 			}
 			// at this point no more tiles can be conquered with the existing units --> buy
 			// some more or combine
@@ -294,99 +257,114 @@ public class BotAi {
 
 	private boolean acquireUnit(Kingdom kingdom, PickedUpUnits pickedUpUnits, int strength) {
 		Gdx.app.log(TAG, "acquiring a new unit");
+		// this could probably be done in much less lines but be 5x less readable
+		// could try with recursion: acquire the next weaker unit first
 		switch (strength) {
 		case 1:
-			// buy peasant
-			if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.PEASANT.salary() >= 0 || kingdom.getSavings() > UnitTypes.PEASANT.salary() * 3)
-					&& kingdom.getSavings() >= Unit.COST) {
-				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
-				pickedUpUnits.availablePeasants++;
-				return true;
-			}
-			break;
+			return acquirePeasant(kingdom, pickedUpUnits);
 		case 2:
-			if (pickedUpUnits.availablePeasants >= 2) {
-				// combine 2 existing peasants
-				pickedUpUnits.availablePeasants -= 2;
-				pickedUpUnits.availableSpearmen++;
-				return true;
-			} else if (pickedUpUnits.availablePeasants >= 1
-					&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-							- UnitTypes.SPEARMAN.salary() + UnitTypes.PEASANT.salary() >= 0
-							|| kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
-					&& kingdom.getSavings() >= Unit.COST) {
-				// buy 1 peasant and combine with an existing one
-				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
-				pickedUpUnits.availableSpearmen++;
-				pickedUpUnits.availablePeasants--;
-				return true;
-			} else if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
-					&& kingdom.getSavings() >= Unit.COST * 2) {
-				// buy 2 peasants = 1 spearman
-				kingdom.setSavings(kingdom.getSavings() - 2 * Unit.COST);
-				pickedUpUnits.availableSpearmen++;
-				return true;
-			}
-			break;
+			return acquireSpearman(kingdom, pickedUpUnits);
 		case 3:
-			if (pickedUpUnits.availablePeasants >= 1 && pickedUpUnits.availableSpearmen >= 1) {
-				// combine spearman and peasant
-				pickedUpUnits.availablePeasants--;
-				pickedUpUnits.availableSpearmen--;
-				pickedUpUnits.availableKnights++;
-				return true;
-			} else if (pickedUpUnits.availableSpearmen >= 1
-					&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-							- UnitTypes.KNIGHT.salary() + UnitTypes.SPEARMAN.salary() >= 0
-							|| kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
-					&& kingdom.getSavings() > Unit.COST) {
-				// buy 1 peasant and combine with an existing spearman
-				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
-				pickedUpUnits.availableSpearmen--;
-				pickedUpUnits.availableKnights++;
-				return true;
-			} else if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.KNIGHT.salary() >= 0 || kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
-					&& kingdom.getSavings() >= Unit.COST * 3) {
-				// buy 3 peasants = 1 knight
-				kingdom.setSavings(kingdom.getSavings() - 3 * Unit.COST);
-				pickedUpUnits.availableKnights++;
-				return true;
-			}
-			break;
+			return acquireKnight(kingdom, pickedUpUnits);
 		case 4:
-			if (pickedUpUnits.availablePeasants >= 1 && pickedUpUnits.availableKnights >= 1) {
-				// combine knight and peasant
-				pickedUpUnits.availablePeasants--;
-				pickedUpUnits.availableKnights--;
-				pickedUpUnits.availableBarons++;
-				return true;
-			} else if (pickedUpUnits.availableKnights >= 1
-					&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-							- UnitTypes.BARON.salary() + UnitTypes.KNIGHT.salary() >= 0
-							|| kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
-					&& kingdom.getSavings() >= Unit.COST) {
-				// buy 1 peasant and combine with an existing knight
-				kingdom.setSavings(kingdom.getSavings() - Unit.COST);
-				pickedUpUnits.availableKnights--;
-				pickedUpUnits.availableBarons++;
-				return true;
-			} else if ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits)
-					- UnitTypes.BARON.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
-					&& kingdom.getSavings() >= Unit.COST * 4) {
-				// buy 4 peasants = 1 baron
-				kingdom.setSavings(kingdom.getSavings() - 4 * Unit.COST);
-				pickedUpUnits.availableBarons++;
-				return true;
-			}
-			break;
+			return acquireBaron(kingdom, pickedUpUnits);
 		default:
-			// the requested strength is greater than the strongest unit --> do nothing
-			break;
+			// the requested strength is greater than the strongest unit --> not possible
+			return false;
+		}
+	}
+
+	private boolean acquirePeasant(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
+		if (canKingdomSustainNewUnit(kingdom, pickedUpUnits, UnitTypes.PEASANT)) {
+			buyUnitDirectly(kingdom, pickedUpUnits, UnitTypes.PEASANT);
+			return true;
 		}
 		return false;
+	}
+
+	private boolean acquireSpearman(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
+		if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 2) {
+			// combine 2 existing peasants
+			pickedUpUnits.removeUnit(UnitTypes.PEASANT, 2);
+			pickedUpUnits.addUnit(UnitTypes.SPEARMAN);
+			return true;
+		} else if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1
+				&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.SPEARMAN.salary()
+						+ UnitTypes.PEASANT.salary() >= 0 || kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
+				&& kingdom.getSavings() >= Unit.COST) {
+			// buy 1 peasant and combine with an existing one
+			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
+			pickedUpUnits.addUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.removeUnit(UnitTypes.PEASANT);
+			return true;
+		} else if (canKingdomSustainNewUnit(kingdom, pickedUpUnits, UnitTypes.SPEARMAN)) {
+			// buy 2 peasants = 1 spearman
+			buyUnitDirectly(kingdom, pickedUpUnits, UnitTypes.SPEARMAN);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean acquireKnight(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
+		if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 && pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 1) {
+			// combine spearman and peasant
+			pickedUpUnits.removeUnit(UnitTypes.PEASANT);
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.addUnit(UnitTypes.KNIGHT);
+			return true;
+		} else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 1
+				&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.KNIGHT.salary()
+						+ UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
+				&& kingdom.getSavings() > Unit.COST) {
+			// buy 1 peasant and combine with an existing spearman
+			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.addUnit(UnitTypes.KNIGHT);
+			return true;
+		} else if (canKingdomSustainNewUnit(kingdom, pickedUpUnits, UnitTypes.KNIGHT)) {
+			// buy 3 peasants = 1 knight
+			buyUnitDirectly(kingdom, pickedUpUnits, UnitTypes.KNIGHT);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean acquireBaron(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
+		// this does not have all possible combination options to get a baron
+		if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 && pickedUpUnits.ofType(UnitTypes.KNIGHT) >= 1) {
+			// combine knight and peasant
+			pickedUpUnits.removeUnit(UnitTypes.PEASANT);
+			pickedUpUnits.removeUnit(UnitTypes.KNIGHT);
+			pickedUpUnits.addUnit(UnitTypes.BARON);
+			return true;
+		} else if (pickedUpUnits.ofType(UnitTypes.KNIGHT) >= 1
+				&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
+						+ UnitTypes.KNIGHT.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
+				&& kingdom.getSavings() >= Unit.COST) {
+			// buy 1 peasant and combine with an existing knight
+			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
+			pickedUpUnits.removeUnit(UnitTypes.KNIGHT);
+			pickedUpUnits.addUnit(UnitTypes.BARON);
+			return true;
+		} else if (canKingdomSustainNewUnit(kingdom, pickedUpUnits, UnitTypes.BARON)) {
+			// buy 4 peasants = 1 baron
+			buyUnitDirectly(kingdom, pickedUpUnits, UnitTypes.BARON);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean canKingdomSustainNewUnit(Kingdom kingdom, PickedUpUnits pickedUpUnits, UnitTypes unitType) {
+		// this does not account for units that will no longer be there after combining
+		// them to get the new one
+		return ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - unitType.salary() >= 0
+				|| kingdom.getSavings() > unitType.salary() * 3)
+				&& kingdom.getSavings() >= Unit.COST * unitType.strength());
+	}
+
+	private void buyUnitDirectly(Kingdom kingdom, PickedUpUnits pickedUpUnits, UnitTypes unitType) {
+		kingdom.setSavings(kingdom.getSavings() - Unit.COST * unitType.strength());
+		pickedUpUnits.addUnit(unitType);
 	}
 
 	private void protectWithLeftoverUnits(GameState gameState, PickedUpUnits pickedUpUnits) {
@@ -394,24 +372,20 @@ public class BotAi {
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
 		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		while (bestDefenseTileScore.score >= 0) {
-			if (pickedUpUnits.availableBarons > 0) {
-				gameState.setHeldObject(new Unit(UnitTypes.BARON));
-				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
-				pickedUpUnits.availableBarons--;
-			} else if (pickedUpUnits.availableKnights > 0) {
-				gameState.setHeldObject(new Unit(UnitTypes.KNIGHT));
-				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
-				pickedUpUnits.availableKnights--;
-			} else if (pickedUpUnits.availableSpearmen > 0) {
-				gameState.setHeldObject(new Unit(UnitTypes.SPEARMAN));
-				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
-				pickedUpUnits.availableSpearmen--;
-			} else if (pickedUpUnits.availablePeasants > 0) {
-				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
-				GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
-				pickedUpUnits.availablePeasants--;
-			} else {
+			if (pickedUpUnits.getTotalNoOfUnits() == 0) {
 				break;
+			}
+			// use the strongest units to protect the most important tiles --> use negative
+			// strength to get strongest units first
+			List<UnitTypes> orderedUnitTypes = Arrays.stream(UnitTypes.values())
+					.sorted(Comparator.comparingInt(type -> type.strength() * -1)).collect(Collectors.toList());
+			for (UnitTypes type : orderedUnitTypes) {
+				if (pickedUpUnits.ofType(type) > 0) {
+					gameState.setHeldObject(new Unit(type));
+					GameStateHelper.placeOwn(gameState, bestDefenseTileScore.tile);
+					pickedUpUnits.removeUnit(type);
+					break;
+				}
 			}
 			bestDefenseTileScore = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		}
@@ -419,42 +393,15 @@ public class BotAi {
 	}
 
 	private void placeLeftOverUnitsSomeWhere(GameState gameState, PickedUpUnits pickedUpUnits) {
-		// this could be way more elegant if pickedUpUnits was a map with the unit type
-		// as key
-		for (int i = 0; i < pickedUpUnits.availablePeasants; i++) {
-			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
-			if (emptyOrTreeTileOptional.isPresent()) {
-				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
-				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
-			} else {
-				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
-			}
-		}
-		for (int i = 0; i < pickedUpUnits.availableSpearmen; i++) {
-			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
-			if (emptyOrTreeTileOptional.isPresent()) {
-				gameState.setHeldObject(new Unit(UnitTypes.SPEARMAN));
-				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
-			} else {
-				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
-			}
-		}
-		for (int i = 0; i < pickedUpUnits.availableKnights; i++) {
-			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
-			if (emptyOrTreeTileOptional.isPresent()) {
-				gameState.setHeldObject(new Unit(UnitTypes.KNIGHT));
-				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
-			} else {
-				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
-			}
-		}
-		for (int i = 0; i < pickedUpUnits.availableBarons; i++) {
-			Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
-			if (emptyOrTreeTileOptional.isPresent()) {
-				gameState.setHeldObject(new Unit(UnitTypes.BARON));
-				GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
-			} else {
-				Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+		for (UnitTypes type : UnitTypes.values()) {
+			for (int i = 0; i < pickedUpUnits.ofType(type); i++) {
+				Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
+				if (emptyOrTreeTileOptional.isPresent()) {
+					gameState.setHeldObject(new Unit(type));
+					GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
+				} else {
+					Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+				}
 			}
 		}
 	}
@@ -474,10 +421,11 @@ public class BotAi {
 	}
 
 	private int getActualKingdomSalaries(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
-		return kingdom.getSalaries() + pickedUpUnits.availablePeasants * UnitTypes.PEASANT.salary()
-				+ pickedUpUnits.availableSpearmen * UnitTypes.SPEARMAN.salary()
-				+ pickedUpUnits.availableKnights * UnitTypes.KNIGHT.salary()
-				+ pickedUpUnits.availableBarons * UnitTypes.BARON.salary();
+		int result = kingdom.getSalaries();
+		for (UnitTypes type : UnitTypes.values()) {
+			result += pickedUpUnits.ofType(type) * type.salary();
+		}
+		return result;
 	}
 
 	private Set<HexTile> getInterestingProtectionTiles(GameState gameState) {
@@ -589,7 +537,7 @@ public class BotAi {
 			}
 			// find out required strength and add some bonus for tiles next to multiple
 			// tiles of the own kingdom
-			ArrayList<HexTile> neighborTiles = new ArrayList<HexTile>(gameState.getMap().getNeighborTiles(tile));
+			ArrayList<HexTile> neighborTiles = new ArrayList<>(gameState.getMap().getNeighborTiles(tile));
 			neighborTiles.add(tile);
 			for (HexTile neighborTile : neighborTiles) {
 				if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()
@@ -638,9 +586,51 @@ public class BotAi {
 	}
 
 	private class PickedUpUnits {
-		Integer availablePeasants = 0;
-		Integer availableSpearmen = 0;
-		Integer availableKnights = 0;
-		Integer availableBarons = 0;
+
+		/** key = strength of the unit; value: number of picked up units. */
+		private Map<Integer, Integer> internalPickedUpUnits = new HashMap<>();
+
+		public PickedUpUnits() {
+			for (UnitTypes type : UnitTypes.values()) {
+				internalPickedUpUnits.put(type.strength(), 0);
+			}
+		}
+
+		public Integer ofType(UnitTypes type) {
+			return ofStrength(type.strength());
+		}
+
+		public Integer ofStrength(int strength) {
+			return internalPickedUpUnits.get(strength);
+		}
+
+		public void addUnit(UnitTypes type) {
+			addUnitOfStrength(type.strength());
+		}
+
+		public void addUnitOfStrength(int strength) {
+			internalPickedUpUnits.put(strength, internalPickedUpUnits.get(strength) + 1);
+		}
+
+		public void removeUnit(UnitTypes type) {
+			removeUnit(type, 1);
+		}
+
+		public void removeUnit(UnitTypes type, int amount) {
+			removeUnitOfStrength(type.strength(), amount);
+		}
+
+		public void removeUnitOfStrength(int strength) {
+			removeUnitOfStrength(strength, 1);
+		}
+
+		public void removeUnitOfStrength(int strength, int amount) {
+			internalPickedUpUnits.put(strength, internalPickedUpUnits.get(strength) - amount);
+		}
+
+		public int getTotalNoOfUnits() {
+			return internalPickedUpUnits.values().stream().mapToInt(Integer::intValue).sum();
+		}
+
 	}
 }
