@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -59,11 +60,12 @@ public class BotAi {
 	public GameState doTurn(GameState gameState, Intelligence intelligence) {
 		Gdx.app.log(TAG, String.format("doing the turn for bot player '%s' with intelligence level '%s'",
 				gameState.getActivePlayer(), intelligence));
+		Random random = new Random(gameState.hashCode());
 		Optional<Kingdom> nextKingdomOptional = getNextKingdom(gameState);
 		while (nextKingdomOptional.isPresent()) {
 			Kingdom nextKingdom = nextKingdomOptional.get();
 			nextKingdom.setDoneMoving(true);
-			doKingdomMove(gameState, nextKingdom, intelligence);
+			doKingdomMove(gameState, nextKingdom, intelligence, random);
 			nextKingdomOptional = getNextKingdom(gameState);
 		}
 		// reset kingdom done moving state
@@ -84,7 +86,7 @@ public class BotAi {
 		return Optional.empty();
 	}
 
-	private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence) {
+	private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence, Random random) {
 		Gdx.app.log(TAG, String.format("doing moves in kingdom '%s'", kingdom));
 		gameState.setActiveKingdom(kingdom);
 		// pick up all units
@@ -95,20 +97,20 @@ public class BotAi {
 		Set<HexTile> placedCastleTiles = new HashSet<>();
 		switch (intelligence) {
 		case DUMB:
-			chopTrees(gameState, pickedUpUnits, 0.3F);
+			chopTrees(gameState, pickedUpUnits, 0.3F, random);
 			// only 50% chance to conquer anything
-			if (gameState.getRandom().nextFloat() <= 0.5F) {
+			if (random.nextFloat() <= 0.5F) {
 				conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			}
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
 		case MEDIUM:
-			chopTrees(gameState, pickedUpUnits, 0.7F);
+			chopTrees(gameState, pickedUpUnits, 0.7F, random);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
 		case SMART:
-			chopTrees(gameState, pickedUpUnits, 1F);
+			chopTrees(gameState, pickedUpUnits, 1F, random);
 			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			sellCastles(gameState.getActiveKingdom(), placedCastleTiles);
@@ -134,11 +136,11 @@ public class BotAi {
 		}
 	}
 
-	private void chopTrees(GameState gameState, PickedUpUnits pickedUpUnits, float chance) {
+	private void chopTrees(GameState gameState, PickedUpUnits pickedUpUnits, float chance, Random random) {
 		Gdx.app.log(TAG, "chopping trees");
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
 			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
-					&& gameState.getRandom().nextFloat() <= chance) {
+					&& random.nextFloat() <= chance) {
 				if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1
 						|| acquireUnit(gameState.getActiveKingdom(), pickedUpUnits, UnitTypes.PEASANT.strength())) {
 					pickedUpUnits.removeUnit(UnitTypes.PEASANT);

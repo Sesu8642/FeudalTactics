@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 
 import com.badlogic.gdx.math.Vector2;
 import com.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
@@ -21,7 +20,6 @@ public class GameState {
 	private List<Kingdom> kingdoms;
 	private Kingdom activeKingdom = null;
 	private MapObject heldObject = null;
-	private Random random = new Random();
 	private BotAi.Intelligence botIntelligence = Intelligence.DUMB;
 	private Long seed;
 
@@ -87,10 +85,6 @@ public class GameState {
 
 	public Player getActivePlayer() {
 		return players.get(playerTurn);
-	}
-
-	public Random getRandom() {
-		return random;
 	}
 
 	public BotAi.Intelligence getBotIntelligence() {

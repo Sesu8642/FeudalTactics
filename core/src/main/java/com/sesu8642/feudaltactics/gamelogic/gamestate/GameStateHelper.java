@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -124,20 +125,18 @@ public class GameStateHelper {
 		if (landMass == 0) {
 			return;
 		}
-		generateMap(gameState, players, landMass, density, vegetationDensity, mapSeed);
+		Random random = new Random(mapSeed);
+		generateMap(gameState, players, landMass, density, vegetationDensity, random);
 	}
 
 	private static void generateMap(GameState gameState, List<Player> players, float landMass, float density,
-			float vegetationDensity, Long mapSeed) {
+			float vegetationDensity, Random random) {
 		// if not every player has at least one kingdom, try again
 		do {
-			generateTiles(gameState, players, landMass, density, mapSeed);
+			generateTiles(gameState, players, landMass, density, random);
 			createInitialKingdoms(gameState);
-			// generate a new seed from the seed
-			gameState.getRandom().setSeed(mapSeed);
-			mapSeed = gameState.getRandom().nextLong();
 		} while (!doesEveryPlayerHaveKingdom(gameState));
-		createTrees(gameState, vegetationDensity);
+		createTrees(gameState, vegetationDensity, random);
 		createCapitals(gameState);
 		sortPlayersByIncome(gameState);
 		createMoney(gameState);
@@ -165,13 +164,11 @@ public class GameStateHelper {
 	}
 
 	private static void generateTiles(GameState gameState, List<Player> players, float landMass, float density,
-			Long mapSeed) {
-		// set seed
-		gameState.getRandom().setSeed(mapSeed);
+			Random random) {
 		// distribute the land mass evenly to all players
 		Map<Player, Integer> tileAmountsToGenerate = new HashMap<>();
 		// if there are tiles left, distribute them to random players
-		Collections.shuffle(players, gameState.getRandom());
+		Collections.shuffle(players, random);
 		int remainingLandMass = (int) (landMass % players.size());
 		for (Player player : players) {
 			int additionalTiles = 0;
@@ -191,7 +188,7 @@ public class GameStateHelper {
 		while (!remainingPlayers.isEmpty()) {
 			Vector2 currentTilePos = nextTilePos;
 			// place tile
-			Player player = remainingPlayers.get(gameState.getRandom().nextInt(remainingPlayers.size()));
+			Player player = remainingPlayers.get(random.nextInt(remainingPlayers.size()));
 			HexTile tile = new HexTile(player, currentTilePos);
 			gameState.getMap().put(currentTilePos, tile);
 			// remove player if no tiles are left
@@ -223,7 +220,7 @@ public class GameStateHelper {
 				scoreSum += score;
 			}
 			// select tile based on score and random
-			float randomScore = gameState.getRandom().nextFloat() * scoreSum;
+			float randomScore = random.nextFloat() * scoreSum;
 			int index = 0;
 			float countedScore = scores.get(0);
 			while (countedScore < randomScore) {
@@ -292,9 +289,9 @@ public class GameStateHelper {
 		}
 	}
 
-	private static void createTrees(GameState gameState, float vegetationDensity) {
+	private static void createTrees(GameState gameState, float vegetationDensity, Random random) {
 		for (HexTile tile : gameState.getMap().values()) {
-			if (gameState.getRandom().nextFloat() <= vegetationDensity) {
+			if (random.nextFloat() <= vegetationDensity) {
 				tile.setContent(new Tree());
 			}
 		}
@@ -688,11 +685,12 @@ public class GameStateHelper {
 	}
 
 	private static void spreadTrees(GameState gameState) {
+		Random random = new Random(gameState.hashCode());
 		HashSet<HexTile> newTreeTiles = new HashSet<>();
 		for (HexTile tile : gameState.getMap().values()) {
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
-				if (gameState.getRandom().nextFloat() <= TREE_SPREAD_RATE) {
+				if (random.nextFloat() <= TREE_SPREAD_RATE) {
 					ArrayList<HexTile> candidates = new ArrayList<>();
 					for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 						if (neighbor != null && neighbor.getContent() == null) {
@@ -700,11 +698,11 @@ public class GameStateHelper {
 						}
 					}
 					if (!candidates.isEmpty()) {
-						newTreeTiles.add(candidates.get(gameState.getRandom().nextInt(candidates.size())));
+						newTreeTiles.add(candidates.get(random.nextInt(candidates.size())));
 						candidates.clear();
 					}
 				}
-			} else if (tile.getContent() == null && gameState.getRandom().nextFloat() <= TREE_SPAWN_RATE) {
+			} else if (tile.getContent() == null && random.nextFloat() <= TREE_SPAWN_RATE) {
 				newTreeTiles.add(tile);
 			}
 		}
