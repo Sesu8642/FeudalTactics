@@ -1,9 +1,8 @@
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import com.badlogic.gdx.math.Vector2;
@@ -16,7 +15,8 @@ public class GameState {
 	private List<Player> players = new ArrayList<>();
 	private Player winner = null;
 	private int playerTurn = 0;
-	private Map<Vector2, HexTile> map = new HashMap<>();
+	// need a map with fix iteration order to avoid randomness
+	private LinkedHashMap<Vector2, HexTile> map = new LinkedHashMap<>();
 	private List<Kingdom> kingdoms;
 	private Kingdom activeKingdom = null;
 	private MapObject heldObject = null;
@@ -51,11 +51,11 @@ public class GameState {
 		this.playerTurn = playerTurn;
 	}
 
-	public Map<Vector2, HexTile> getMap() {
+	public LinkedHashMap<Vector2, HexTile> getMap() {
 		return map;
 	}
 
-	public void setMap(Map<Vector2, HexTile> map) {
+	public void setMap(LinkedHashMap<Vector2, HexTile> map) {
 		this.map = map;
 	}
 
