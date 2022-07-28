@@ -217,8 +217,9 @@ class DaggerModule {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
 		stage.addButton("Play",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN)));
-		stage.addButton("Level Editor",
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN)));
+		// level editor was only used for creating the logo
+//		stage.addButton("Level Editor",
+//				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN)));
 		stage.addButton("Tutorial",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN)));
 		stage.addButton("About",
