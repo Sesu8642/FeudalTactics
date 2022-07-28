@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package com.sesu8642.feudaltactics.gamelogic.ingame;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

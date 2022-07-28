@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package com.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Game;

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package com.sesu8642.feudaltactics.gamelogic.gamestate;
 
 /** Map object representing a castle. Castles are defensive structures. **/
