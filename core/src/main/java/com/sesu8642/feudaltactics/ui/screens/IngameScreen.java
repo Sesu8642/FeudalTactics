@@ -236,7 +236,7 @@ public class IngameScreen extends GameScreen {
 			hudStage.setInfoText(infoText);
 		}
 		// seed
-		menuStage.setBottomLabelText("Seed: " + newGameState.getSeed().toString());
+		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
 		// buttons
 		boolean canUndo = InputValidationHelper.checkUndoAction();
 		boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, Unit.COST);

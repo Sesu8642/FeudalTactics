@@ -14,6 +14,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -33,7 +35,9 @@ public class MenuStage extends ResizableResettableStage {
 
 	private Table rootTable;
 	private List<TextButton> buttons = new ArrayList<>();
-	private Label bottomLabel;
+	private Label bottomLeftLabel;
+	private Label bottomRightLabel;
+	private Table bottomLabelTable;
 	Set<Disposable> disposables = new HashSet<>();
 	private MapRenderer mapRenderer;
 	private Skin skin;
@@ -75,7 +79,8 @@ public class MenuStage extends ResizableResettableStage {
 			});
 			buttons.add(button);
 		}
-		bottomLabel = new Label("", skin);
+		bottomLeftLabel = new Label("", skin);
+		bottomRightLabel = new Label("", skin);
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
@@ -89,7 +94,10 @@ public class MenuStage extends ResizableResettableStage {
 			rootTable.row();
 		}
 		rootTable.row();
-		rootTable.add(bottomLabel).fill(false).right().bottom().pad(10).minHeight(0);
+		bottomLabelTable = new Table();
+		bottomLabelTable.add(bottomLeftLabel).expand().fill(false).left().bottom();
+		bottomLabelTable.add(bottomRightLabel).expand().fill(false).right().bottom();
+		rootTable.add(bottomLabelTable).pad(10).minHeight(0);
 
 		this.addActor(rootTable);
 	}
@@ -108,15 +116,29 @@ public class MenuStage extends ResizableResettableStage {
 				callback.run();
 			}
 		});
-		rootTable.removeActor(bottomLabel);
+		rootTable.removeActor(bottomLabelTable);
 		rootTable.row();
 		rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
 		rootTable.row();
-		rootTable.add(bottomLabel).fill(false).right().bottom().pad(10).minHeight(0);
+		rootTable.add(bottomLabelTable).pad(10).minHeight(0);
+
 	}
 
-	public void setBottomLabelText(String text) {
-		bottomLabel.setText(text);
+	public void setBottomLeftLabelText(String text) {
+		bottomLeftLabel.setText(text);
+	}
+
+	public void setBottomLeftLabelLink(String uri) {
+		bottomLeftLabel.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.net.openURI(uri);
+			}
+		});
+	}
+
+	public void setBottomRightLabelText(String text) {
+		bottomRightLabel.setText(text);
 	}
 
 	public List<TextButton> getButtons() {

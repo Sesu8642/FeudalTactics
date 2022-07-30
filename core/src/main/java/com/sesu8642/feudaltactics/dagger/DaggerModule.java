@@ -194,7 +194,7 @@ class DaggerModule {
 			@MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
 		// using a menu stage without buttons here
 		MenuStage menuStage = new MenuStage(viewport, camera, mapRenderer, skin);
-		menuStage.setBottomLabelText("By Sesu8642");
+		menuStage.setBottomRightLabelText("By Sesu8642");
 		return menuStage;
 	}
 
@@ -206,7 +206,7 @@ class DaggerModule {
 		stage.addButton("Exit", () -> eventBus.post(new ExitGameUiEvent()));
 		stage.addButton("Retry", () -> eventBus.post(new RetryGameUnconfirmedUiEvent()));
 		stage.addButton("Continue", () -> eventBus.post(new CloseMenuEvent()));
-		stage.setBottomLabelText(String.format("Version %s", gameVersion));
+		stage.setBottomRightLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
 
@@ -226,7 +226,10 @@ class DaggerModule {
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN)));
 		stage.addButton("About",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN)));
-		stage.setBottomLabelText(String.format("Version %s", gameVersion));
+		stage.setBottomLeftLabelText("Open Privacy Policy");
+		stage.setBottomLeftLabelLink(
+				"https://raw.githubusercontent.com/Sesu8642/FeudalTactics/blob/master/privacy_policy.txt");
+		stage.setBottomRightLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
 
