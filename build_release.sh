@@ -6,12 +6,12 @@ PACKR_EXE_NAME="packr-all-$PACKR_VERSION.jar"
 PACKR_DL_LINK="https://github.com/libgdx/packr/releases/download/$PACKR_VERSION/$PACKR_EXE_NAME"
 PACKR_WORK_DIR="packr_work"
 PACKR_BUNDLE_JRE_VERSION="8u332-b09"
-PACKR_JRE_CACHE_DIR="jre_cache_$PACKR_BUNDLE_JRE_VERSION"
+# "OS_HERE" is a placeholder for the os name
+PACKR_JRE_CACHE_DIR="jre_cache_$PACKR_BUNDLE_JRE_VERSION"_OS_HERE
 # probably need to delete jre cache if changing this
-PACKR_JDK_BUNDLE_DL_LINK="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$PACKR_BUNDLE_JRE_VERSION/OpenJDK8U-jdk_x64_linux_hotspot_${PACKR_BUNDLE_JRE_VERSION/-/}.tar.gz"
-# minimizejre hard causes an exception on startup
-PACKR_MAIN_ARGS="--jdk $PACKR_JDK_BUNDLE_DL_LINK --cachejre $PACKR_JRE_CACHE_DIR --executable $BINARY_ARTIFACT_NAME --classpath ../desktop/build/libs/*.jar --mainclass com.sesu8642.feudaltactics.desktop.DesktopLauncher --minimizejre soft"
-PACKR_PLATFORMS="linux64 windows64"
+PACKR_JDK_BUNDLE_DL_LINK_LINUX="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$PACKR_BUNDLE_JRE_VERSION/OpenJDK8U-jre_x64_linux_hotspot_${PACKR_BUNDLE_JRE_VERSION/-/}.tar.gz"
+PACKR_JDK_BUNDLE_DL_LINK_WINDOWS="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$PACKR_BUNDLE_JRE_VERSION/OpenJDK8U-jre_x64_windows_hotspot_${PACKR_BUNDLE_JRE_VERSION/-/}.zip"
+PACKR_PLATFORMS="LINUX WINDOWS"
 SCRIPT_DIR=$(dirname "$0")
 
 # for debugging
@@ -39,9 +39,11 @@ fi
 for platform in $PACKR_PLATFORMS
 do
     echo "Running Packr to generate bundle for platform $platform."
-    mkdir -p "$PACKR_JRE_CACHE_DIR"
+    mkdir -p "${PACKR_JRE_CACHE_DIR/OS_HERE/${platform}}"
     target_dir="$BINARY_ARTIFACT_NAME-$platform"
-    java -jar ./$PACKR_EXE_NAME --platform $platform --output $target_dir $PACKR_MAIN_ARGS
+    jre_link=PACKR_JDK_BUNDLE_DL_LINK_$platform
+    # minimizejre hard causes an exception on startup
+    java -jar ./$PACKR_EXE_NAME --platform ${platform}64 --output $target_dir --jdk ${!jre_link} --cachejre ${PACKR_JRE_CACHE_DIR/OS_HERE/${platform}} --executable $BINARY_ARTIFACT_NAME --classpath ../desktop/build/libs/*.jar --mainclass com.sesu8642.feudaltactics.desktop.DesktopLauncher --minimizejre soft
     cd "$target_dir"
     zip -r - ./* > "../$target_dir.zip"
     cd ..
