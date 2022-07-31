@@ -1,0 +1,3 @@
+Ein mittelalterliches Strategiespiel, das einfach zu lernen, aber schwierig zu meistern ist.
+
+Du spielst auf einer zufällig generierten Insel aus Hexagons. Dein Ziel ist es, diese komplett zu erobern. Dazu greifst Du Feinde mit deinen Einheiten an, während Du deine eigenen Königreiche verteidigst.
