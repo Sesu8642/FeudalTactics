@@ -37,7 +37,6 @@ public class MenuStage extends ResizableResettableStage {
 	private List<TextButton> buttons = new ArrayList<>();
 	private Label bottomLeftLabel;
 	private Label bottomRightLabel;
-	private Table bottomLabelTable;
 	Set<Disposable> disposables = new HashSet<>();
 	private MapRenderer mapRenderer;
 	private Skin skin;
@@ -84,7 +83,7 @@ public class MenuStage extends ResizableResettableStage {
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
-		rootTable.defaults().minSize(0).fillX().expandY();
+		rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
 		Image logo = new Image(logoTexture);
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.91F));
 		rootTable.row();
@@ -94,10 +93,8 @@ public class MenuStage extends ResizableResettableStage {
 			rootTable.row();
 		}
 		rootTable.row();
-		bottomLabelTable = new Table();
-		bottomLabelTable.add(bottomLeftLabel).expand().fill(false).left().bottom();
-		bottomLabelTable.add(bottomRightLabel).expand().fill(false).right().bottom();
-		rootTable.add(bottomLabelTable).pad(10).minHeight(0);
+		rootTable.add(bottomLeftLabel).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
+		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 
 		this.addActor(rootTable);
 	}
@@ -116,18 +113,24 @@ public class MenuStage extends ResizableResettableStage {
 				callback.run();
 			}
 		});
-		rootTable.removeActor(bottomLabelTable);
+		rootTable.removeActor(bottomLeftLabel);
+		rootTable.removeActor(bottomRightLabel);
 		rootTable.row();
 		rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
 		rootTable.row();
-		rootTable.add(bottomLabelTable).pad(10).minHeight(0);
-
+		rootTable.add(bottomLeftLabel).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
+		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 	}
 
 	public void setBottomLeftLabelText(String text) {
 		bottomLeftLabel.setText(text);
 	}
 
+	/**
+	 * Makes the bottom label a clickable link to the given URI.
+	 * 
+	 * @param uri link target
+	 */
 	public void setBottomLeftLabelLink(String uri) {
 		bottomLeftLabel.addListener(new ClickListener() {
 			@Override
