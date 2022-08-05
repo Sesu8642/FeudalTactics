@@ -115,8 +115,11 @@ public class Kingdom {
 			return false;
 		}
 		Kingdom other = (Kingdom) obj;
+		// ignore order of the tiles; not a perfect method but good enough since there
+		// shouldnt be duplicates
 		return doneMoving == other.doneMoving && Objects.equals(player, other.player) && savings == other.savings
-				&& Objects.equals(tiles, other.tiles) && wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
+				&& tiles.size() == other.tiles.size() && tiles.containsAll(other.tiles)
+				&& wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
 	}
 
 }

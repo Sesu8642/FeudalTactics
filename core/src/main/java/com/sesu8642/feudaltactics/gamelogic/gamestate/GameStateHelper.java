@@ -70,6 +70,8 @@ public class GameStateHelper {
 		result.setKingdoms(copiedKingdoms);
 
 		LinkedHashMap<Vector2, HexTile> copiedMap = new LinkedHashMap<>();
+		// note: this potentially results in a different tile order in the new kingdom
+		// vs the other
 		for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().entrySet()) {
 			HexTile originalTile = originalTileEntry.getValue();
 			HexTile newTile = new HexTile(copiedPlayers.get(original.getPlayers().indexOf(originalTile.getPlayer())),
