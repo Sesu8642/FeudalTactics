@@ -215,10 +215,7 @@ public class BotAi {
 				int result = Integer.compare(o2.score, o1.score);
 				// if the score is the same, use the coordinates to eliminate randomness
 				if (result == 0) {
-					result = Float.compare(o2.tile.getPosition().x, o1.tile.getPosition().x);
-				}
-				if (result == 0) {
-					result = Float.compare(o2.tile.getPosition().y, o1.tile.getPosition().y);
+					result = o1.tile.compareTo(o2.tile);
 				}
 				return result;
 			});
@@ -456,10 +453,7 @@ public class BotAi {
 			int result = Integer.compare(t1.score, t2.score);
 			// if the score is the same, use the coordinates to eliminate randomness
 			if (result == 0) {
-				result = Float.compare(t2.tile.getPosition().x, t1.tile.getPosition().x);
-			}
-			if (result == 0) {
-				result = Float.compare(t2.tile.getPosition().y, t1.tile.getPosition().y);
+				result = t1.tile.compareTo(t2.tile);
 			}
 			return result;
 		}).orElse(new TileScoreInfo(null, -1));

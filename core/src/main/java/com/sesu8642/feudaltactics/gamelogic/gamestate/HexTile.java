@@ -8,7 +8,7 @@ import java.util.Objects;
 import com.badlogic.gdx.math.Vector2;
 
 /** A tile of land on the map. **/
-public class HexTile {
+public class HexTile implements Comparable<HexTile> {
 
 	private Player player;
 	private MapObject content;
@@ -93,6 +93,18 @@ public class HexTile {
 		HexTile other = (HexTile) obj;
 		return Objects.equals(content, other.content) && Objects.equals(player, other.player)
 				&& Objects.equals(position, other.position);
+	}
+
+	// compare using the coordinates; a fix order is needed in some places to avoid
+	// unwanted randomness
+	@Override
+	public int compareTo(HexTile o) {
+		int result = Float.compare(this.getPosition().x, o.getPosition().x);
+		if (result == 0) {
+			// both x and y cannot be the same for different tiles
+			result = Float.compare(this.getPosition().y, o.getPosition().y);
+		}
+		return result;
 	}
 
 }
