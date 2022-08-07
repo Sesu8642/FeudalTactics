@@ -100,7 +100,7 @@ project(":core") {
 
 
     dependencies {
-    	implementation('com.google.guava:guava:31.1-jre') {
+    	implementation('com.google.guava:guava:31.1-android') {
     	// exclude transitive dependencies mainly to avoid dealing with their licenses
     	// these dependencies are optional https://github.com/google/guava/issues/2824#issuecomment-544171665
     	// failureaccess is apparently needed
