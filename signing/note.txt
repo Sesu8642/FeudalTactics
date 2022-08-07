@@ -1,0 +1,7 @@
+put the following files here to have your apk signed by the release script
+- build_tools_path.txt:
+	contains one line which is the path to the build tools directory, e.g. ~/Android/Sdk/build-tools/33.0.0
+- upload-keystore.jks:
+	upload keystore containing the signing certificate with the alias "upload"
+- password.txt:
+	contains one line which is the password to the keystore

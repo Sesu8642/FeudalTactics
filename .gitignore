@@ -128,3 +128,6 @@ Thumbs.db
 # build script
 release/*
 packr_work/*
+signing/password.txt
+signing/upload-keystore.jks
+signing/build_tools_path.txt

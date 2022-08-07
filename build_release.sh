@@ -1,6 +1,12 @@
 #!/bin/bash
 RELEASE_DIR="release"
 BINARY_ARTIFACT_NAME="FeudalTactics"
+SIGNING_DIR="signing"
+KEYSTORE_PATH="$SIGNING_DIR/upload-keystore.jks"
+KEYSTORE_PASSWORD_PATH="$SIGNING_DIR/password.txt"
+BUILD_TOOLS_PATH_CONTAINING_FILE="$SIGNING_DIR/build_tools_path.txt"
+UNSIGNED_APK_PATH="android/build/outputs/apk/release/android-release-unsigned.apk"
+SIGNED_APK_PATH="android/build/outputs/apk/release/android-release-signed.apk"
 PACKR_VERSION=4.0.0
 PACKR_EXE_NAME="packr-all-$PACKR_VERSION.jar"
 PACKR_DL_LINK="https://github.com/libgdx/packr/releases/download/$PACKR_VERSION/$PACKR_EXE_NAME"
@@ -26,6 +32,15 @@ rm -rf "$RELEASE_DIR"/*
 echo "Generating Desktop and Android releases."
 # --rerun-tasks to make sure version number changes are reflected
 ./gradlew --rerun-tasks desktop:dist android:assembleRelease
+
+# sign apk
+if !(test -f "$KEYSTORE_PATH" && test -f "$KEYSTORE_PASSWORD_PATH" && test -f "$BUILD_TOOLS_PATH_CONTAINING_FILE"); then
+	echo "Not signing apk because keystore, password and/or apksigner path containing files are missing."
+else
+	build_tools_path=$(cat "$BUILD_TOOLS_PATH_CONTAINING_FILE")
+	apksigner_bin=$build_tools_path/apksigner
+	eval $apksigner_bin sign --ks-key-alias upload --ks "$KEYSTORE_PATH" --in "$UNSIGNED_APK_PATH" --out "$SIGNED_APK_PATH" --ks-pass "file:$KEYSTORE_PASSWORD_PATH"
+fi
 
 mkdir -p "$PACKR_WORK_DIR"
 cd "$PACKR_WORK_DIR"
@@ -53,5 +68,9 @@ cd ..
 echo "Copying release artifacts to $RELEASE_DIR."
 mkdir -p "$RELEASE_DIR"
 cp desktop/build/libs/*.jar "$RELEASE_DIR"/$BINARY_ARTIFACT_NAME-desktop.jar
-cp android/build/outputs/apk/release/*.apk "$RELEASE_DIR"/$BINARY_ARTIFACT_NAME-android.apk
+if test -f "$SIGNED_APK_PATH"; then
+	cp "$SIGNED_APK_PATH" "$RELEASE_DIR"/$BINARY_ARTIFACT_NAME-android.apk
+else
+	cp "$UNSIGNED_APK_PATH" "$RELEASE_DIR"/$BINARY_ARTIFACT_NAME-android-UNSIGNED.apk
+fi
 cp "$PACKR_WORK_DIR"/*.zip "$RELEASE_DIR"
