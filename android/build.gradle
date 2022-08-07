@@ -22,8 +22,8 @@ android {
     }
     defaultConfig {
         applicationId "com.sesu8642.feudaltactics"
-        targetSdkVersion 30
         minSdkVersion 24
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
     }
