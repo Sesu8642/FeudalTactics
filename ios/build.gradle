@@ -4,7 +4,7 @@ sourceCompatibility = '1.8'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "com.sesu8642.feudaltactics.IOSLauncher"
+	mainClassName = "de.sesu8642.feudaltactics.IOSLauncher"
 }
 
 launchIPhoneSimulator.dependsOn build

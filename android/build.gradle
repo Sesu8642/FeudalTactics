@@ -21,7 +21,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "com.sesu8642.feudaltactics"
+        applicationId "de.sesu8642.feudaltactics"
         minSdkVersion 24
         targetSdkVersion 32
         versionCode 1
@@ -90,7 +90,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.sesu8642.feudaltactics/com.sesu8642.feudaltactics.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'de.sesu8642.feudaltactics/de.sesu8642.feudaltactics.AndroidLauncher'
 }
 
 eclipse.project.name = appName + "-android"

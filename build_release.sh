@@ -58,7 +58,7 @@ do
     target_dir="$BINARY_ARTIFACT_NAME-$platform"
     jre_link=PACKR_JDK_BUNDLE_DL_LINK_$platform
     # minimizejre hard causes an exception on startup
-    java -jar ./$PACKR_EXE_NAME --platform ${platform}64 --output $target_dir --jdk ${!jre_link} --cachejre ${PACKR_JRE_CACHE_DIR/OS_HERE/${platform}} --executable $BINARY_ARTIFACT_NAME --classpath ../desktop/build/libs/*.jar --mainclass com.sesu8642.feudaltactics.desktop.DesktopLauncher --minimizejre soft
+    java -jar ./$PACKR_EXE_NAME --platform ${platform}64 --output $target_dir --jdk ${!jre_link} --cachejre ${PACKR_JRE_CACHE_DIR/OS_HERE/${platform}} --executable $BINARY_ARTIFACT_NAME --classpath ../desktop/build/libs/*.jar --mainclass de.sesu8642.feudaltactics.desktop.DesktopLauncher --minimizejre soft
     cd "$target_dir"
     # use lower-case for platform in file name
     zip -r - ./* > "../$BINARY_ARTIFACT_NAME-${platform,,}.zip"
