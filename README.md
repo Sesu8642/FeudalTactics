@@ -1,6 +1,8 @@
 # Feudal Tactics - Medieval Strategy Game
 
-A medieval strategy game that is easy to learn but hard to master. You play on an randomly generated island made of hexagons. Your goal is to conquer all of it. To do so, you attack the enemy with your units while trying to protect your own kingdoms.
+A medieval strategy game with countless unique and challenging levels.
+
+You play on an randomly generated island made of hexagons. Your goal is to conquer all of it. To do so, you attack the enemy with your units while trying to protect your own kingdoms.
 
 The game mechanics are heavily inspired by Sean O'Connor's Slay.
 
