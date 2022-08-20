@@ -4,9 +4,18 @@ A medieval strategy game with countless unique and challenging levels.
 
 You play on an randomly generated island made of hexagons. Your goal is to conquer all of it. To do so, you attack the enemy with your units while trying to protect your own kingdoms.
 
-The game mechanics are heavily inspired by Sean O'Connor's Slay.
+Made with libGDX. The game mechanics are heavily inspired by Sean O'Connor's Slay.
 
 ![Ingame Screenshot](metadata/en-US/images/sevenInchScreenshots/1.png)
+
+## Roadmap
+I would like to implement the following features. It might happen soon, in a few years or never.
+- playable tutorial
+- sound
+- scenario maps
+- map editor
+- local multiplayer
+- online multiplayer
 
 ## Licensing
 
