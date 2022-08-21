@@ -23,6 +23,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+
+import dagger.Module;
+import dagger.Provides;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.AboutSlideStage;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.AboutSlides;
@@ -53,9 +56,6 @@ import de.sesu8642.feudaltactics.ui.stages.slidestage.AboutSlideFactory;
 import de.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
 import de.sesu8642.feudaltactics.ui.stages.slidestage.SlideStage;
 import de.sesu8642.feudaltactics.ui.stages.slidestage.TutorialSlideFactory;
-
-import dagger.Module;
-import dagger.Provides;
 
 @Module
 class DaggerModule {
@@ -228,7 +228,7 @@ class DaggerModule {
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN)));
 		stage.setBottomLeftLabelText("Open Privacy Policy");
 		stage.setBottomLeftLabelLink(
-				"https://raw.githubusercontent.com/Sesu8642/FeudalTactics/blob/master/privacy_policy.txt");
+				"https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt");
 		stage.setBottomRightLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
