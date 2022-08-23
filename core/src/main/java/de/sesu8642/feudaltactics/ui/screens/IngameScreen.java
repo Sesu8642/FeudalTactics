@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
@@ -227,8 +228,8 @@ public class IngameScreen extends GameScreen {
 		if (kingdom == null) {
 			hudStage.setInfoText("");
 		} else {
-			int income = kingdom.getIncome();
-			int salaries = kingdom.getSalaries();
+			int income = GameStateHelper.getKingdomIncome(kingdom);
+			int salaries = GameStateHelper.getKingdomSalaries(kingdom);
 			int result = income - salaries;
 			int savings = kingdom.getSavings();
 			String resultText = result < 0 ? String.valueOf(result) : "+" + result;

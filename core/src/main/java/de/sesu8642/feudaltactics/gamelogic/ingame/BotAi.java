@@ -21,6 +21,7 @@ import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
@@ -291,8 +292,9 @@ public class BotAi {
 			pickedUpUnits.addUnit(UnitTypes.SPEARMAN);
 			return true;
 		} else if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1
-				&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.SPEARMAN.salary()
-						+ UnitTypes.PEASANT.salary() >= 0 || kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
+				&& (GameStateHelper.getKingdomIncome(kingdom) - getActualKingdomSalaries(kingdom, pickedUpUnits)
+						- UnitTypes.SPEARMAN.salary() + UnitTypes.PEASANT.salary() >= 0
+						|| kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
 				&& kingdom.getSavings() >= Unit.COST) {
 			// buy 1 peasant and combine with an existing one
 			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
@@ -315,8 +317,9 @@ public class BotAi {
 			pickedUpUnits.addUnit(UnitTypes.KNIGHT);
 			return true;
 		} else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 1
-				&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.KNIGHT.salary()
-						+ UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
+				&& (GameStateHelper.getKingdomIncome(kingdom) - getActualKingdomSalaries(kingdom, pickedUpUnits)
+						- UnitTypes.KNIGHT.salary() + UnitTypes.SPEARMAN.salary() >= 0
+						|| kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
 				&& kingdom.getSavings() > Unit.COST) {
 			// buy 1 peasant and combine with an existing spearman
 			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
@@ -340,8 +343,9 @@ public class BotAi {
 			pickedUpUnits.addUnit(UnitTypes.BARON);
 			return true;
 		} else if (pickedUpUnits.ofType(UnitTypes.KNIGHT) >= 1
-				&& (kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
-						+ UnitTypes.KNIGHT.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
+				&& (GameStateHelper.getKingdomIncome(kingdom) - getActualKingdomSalaries(kingdom, pickedUpUnits)
+						- UnitTypes.BARON.salary() + UnitTypes.KNIGHT.salary() >= 0
+						|| kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
 				&& kingdom.getSavings() >= Unit.COST) {
 			// buy 1 peasant and combine with an existing knight
 			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
@@ -359,8 +363,8 @@ public class BotAi {
 	private boolean canKingdomSustainNewUnit(Kingdom kingdom, PickedUpUnits pickedUpUnits, UnitTypes unitType) {
 		// this does not account for units that will no longer be there after combining
 		// them to get the new one
-		return ((kingdom.getIncome() - getActualKingdomSalaries(kingdom, pickedUpUnits) - unitType.salary() >= 0
-				|| kingdom.getSavings() > unitType.salary() * 3)
+		return ((GameStateHelper.getKingdomIncome(kingdom) - getActualKingdomSalaries(kingdom, pickedUpUnits)
+				- unitType.salary() >= 0 || kingdom.getSavings() > unitType.salary() * 3)
 				&& kingdom.getSavings() >= Unit.COST * unitType.strength());
 	}
 
@@ -423,7 +427,7 @@ public class BotAi {
 	}
 
 	private int getActualKingdomSalaries(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
-		int result = kingdom.getSalaries();
+		int result = GameStateHelper.getKingdomSalaries(kingdom);
 		for (UnitTypes type : UnitTypes.values()) {
 			result += pickedUpUnits.ofType(type) * type.salary();
 		}

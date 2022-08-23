@@ -17,6 +17,7 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.input.InputValidationHelper;
 
@@ -161,9 +162,9 @@ public class GameStateHelper {
 		gameState.getPlayers().sort((a, b) -> {
 			// if they are the same, it doesn't matter
 			int incomeA = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == a)
-					.mapToInt(Kingdom::getIncome).sum();
+					.mapToInt(GameStateHelper::getKingdomIncome).sum();
 			int incomeB = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == b)
-					.mapToInt(Kingdom::getIncome).sum();
+					.mapToInt(GameStateHelper::getKingdomIncome).sum();
 			return incomeA > incomeB ? 1 : -1;
 		});
 	}
@@ -288,7 +289,7 @@ public class GameStateHelper {
 			int savings = kingdom.getTiles().size() * 5;
 			// players other than the first one will earn some money once their turn starts
 			if (gameState.getActivePlayer() != kingdom.getPlayer()) {
-				savings -= kingdom.getIncome();
+				savings -= getKingdomIncome(kingdom);
 			}
 			kingdom.setSavings(savings);
 		}
@@ -663,8 +664,8 @@ public class GameStateHelper {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			// update savings
 			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
-				kingdom.setSavings(kingdom.getSavings() + kingdom.getIncome());
-				if (kingdom.getSavings() < kingdom.getSalaries()) {
+				kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
+				if (kingdom.getSavings() < getKingdomSalaries(kingdom)) {
 					// destroy all units if they cannot get paid
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
@@ -673,7 +674,7 @@ public class GameStateHelper {
 						}
 					}
 				} else {
-					kingdom.setSavings(kingdom.getSavings() - kingdom.getSalaries());
+					kingdom.setSavings(kingdom.getSavings() - getKingdomSalaries(kingdom));
 					// reset canAct and hasActed state
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
@@ -778,6 +779,32 @@ public class GameStateHelper {
 			}
 		}
 		return protectionLevel;
+	}
+
+	/**
+	 * Calculates the income of a kingdom.
+	 * 
+	 * @param kingdom relevant kingdom
+	 * @return income
+	 */
+	public static int getKingdomIncome(Kingdom kingdom) {
+		// number of tiles - trees
+		return kingdom.getTiles().size() - (int) kingdom.getTiles().stream().filter(tile -> tile.getContent() != null
+				&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).count();
+	}
+
+	/**
+	 * Calculates the salaries a kingdom has to pay every turn.
+	 * 
+	 * @param kingdom relevant kingdom
+	 * @return salaries
+	 */
+	public static int getKingdomSalaries(Kingdom kingdom) {
+		// sum of the salaries of all the units
+		return kingdom.getTiles().stream()
+				.filter(tile -> tile.getContent() != null
+						&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
+				.mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
 	}
 
 	/**

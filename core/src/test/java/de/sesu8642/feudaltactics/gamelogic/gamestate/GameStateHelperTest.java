@@ -18,6 +18,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.badlogic.gdx.graphics.Color;
+
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 
 /** Tests for GameStateHelper class. */
@@ -101,9 +102,10 @@ class GameStateHelperTest {
 			Player playerI = gameState.getPlayers().get(i);
 			Player prevPlayer = gameState.getPlayers().get(i - 1);
 			int playerIncome = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer().equals(playerI))
-					.mapToInt(Kingdom::getIncome).sum();
+					.mapToInt(GameStateHelper::getKingdomIncome).sum();
 			int prevPlayerIncome = gameState.getKingdoms().stream()
-					.filter(kingdom -> kingdom.getPlayer().equals(prevPlayer)).mapToInt(Kingdom::getIncome).sum();
+					.filter(kingdom -> kingdom.getPlayer().equals(prevPlayer))
+					.mapToInt(GameStateHelper::getKingdomIncome).sum();
 			assertTrue(prevPlayerIncome <= playerIncome);
 		}
 	}

@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-
 /** Group of connected tiles that belong to the same player. **/
 public class Kingdom {
 
@@ -26,30 +24,6 @@ public class Kingdom {
 
 	public Kingdom(Player player) {
 		this.player = player;
-	}
-
-	/**
-	 * Calculates the income of the kingdom.
-	 * 
-	 * @return income
-	 */
-	public int getIncome() {
-		// number of tiles - trees
-		return tiles.size() - (int) tiles.stream().filter(tile -> tile.getContent() != null
-				&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).count();
-	}
-
-	/**
-	 * Calculates the salaries this kingdom has to pay every turn.
-	 * 
-	 * @return salaries
-	 */
-	public int getSalaries() {
-		// sum of the salaries of all the units
-		return tiles.stream()
-				.filter(tile -> tile.getContent() != null
-						&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
-				.mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
 	}
 
 	public List<HexTile> getTiles() {
@@ -94,8 +68,7 @@ public class Kingdom {
 
 	@Override
 	public String toString() {
-		return super.toString() + "; savings: " + getSavings() + ", income: " + getIncome() + ", salaries: "
-				+ getSalaries();
+		return super.toString() + "; savings: " + getSavings();
 	}
 
 	@Override
