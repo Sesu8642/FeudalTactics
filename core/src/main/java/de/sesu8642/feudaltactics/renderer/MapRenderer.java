@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
@@ -182,11 +183,16 @@ public class MapRenderer {
 								getAnimationFromName(tileContent.getSpriteName()));
 					}
 				} else {
-					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
+					if (gameState.getActiveKingdom() != null && ((gameState.getHeldObject() != null
 							&& (!InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
 									&& !InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)
 									&& !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(),
-											tile))) {
+											tile)))
+							// darken own units that have already acted
+							|| (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
+									&& tile.getContent() != null
+									&& ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
+									&& !((Unit) tile.getContent()).isCanAct()))) {
 						// darkened content
 						darkenedNonAnimatedContents.put(
 								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
