@@ -20,7 +20,7 @@ allprojects {
     version = '1.0.0'
     ext {
         appName = "Feudal Tactics"
-        gdxVersion = '1.10.0'
+        gdxVersion = '1.11.0'
         roboVMVersion = '2.3.12'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
