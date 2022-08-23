@@ -665,7 +665,7 @@ public class GameStateHelper {
 			// update savings
 			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
 				kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
-				if (kingdom.getSavings() < getKingdomSalaries(kingdom)) {
+				if (kingdom.getSavings() < getKingdomSalaries(gameState, kingdom)) {
 					// destroy all units if they cannot get paid
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
@@ -674,7 +674,7 @@ public class GameStateHelper {
 						}
 					}
 				} else {
-					kingdom.setSavings(kingdom.getSavings() - getKingdomSalaries(kingdom));
+					kingdom.setSavings(kingdom.getSavings() - getKingdomSalaries(gameState, kingdom));
 					// reset canAct and hasActed state
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
@@ -799,12 +799,18 @@ public class GameStateHelper {
 	 * @param kingdom relevant kingdom
 	 * @return salaries
 	 */
-	public static int getKingdomSalaries(Kingdom kingdom) {
+	public static int getKingdomSalaries(GameState gameState, Kingdom kingdom) {
 		// sum of the salaries of all the units
-		return kingdom.getTiles().stream()
+		int result = kingdom.getTiles().stream()
 				.filter(tile -> tile.getContent() != null
 						&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
 				.mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
+		// if there is a held unit, subtract their salary
+		if (gameState.getHeldObject() != null
+				&& ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
+			result += ((Unit) gameState.getHeldObject()).getUnitType().salary();
+		}
+		return result;
 	}
 
 	/**

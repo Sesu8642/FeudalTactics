@@ -229,7 +229,7 @@ public class IngameScreen extends GameScreen {
 			hudStage.setInfoText("");
 		} else {
 			int income = GameStateHelper.getKingdomIncome(kingdom);
-			int salaries = GameStateHelper.getKingdomSalaries(kingdom);
+			int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
 			int result = income - salaries;
 			int savings = kingdom.getSavings();
 			String resultText = result < 0 ? String.valueOf(result) : "+" + result;
