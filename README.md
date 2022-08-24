@@ -17,6 +17,14 @@ I would like to implement the following features. It might happen soon, in a few
 - local multiplayer
 - online multiplayer
 
+## Download
+
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/soko.ekibun.stitch/)
+
+or get the APK from the [Releases section](https://github.com/Sesu8642/FeudalTactics/releases/latest).
+
 ## Licensing
 
 Copyright (C) 2022  Sesu8642
