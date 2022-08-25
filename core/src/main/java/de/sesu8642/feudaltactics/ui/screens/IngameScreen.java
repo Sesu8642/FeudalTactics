@@ -20,6 +20,7 @@ import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
+import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
@@ -175,6 +176,7 @@ public class IngameScreen extends GameScreen {
 	}
 
 	private void resetGame() {
+		eventBus.post(new GameExitedEvent());
 		eventBus.post(new RegenerateMapUiEvent(parameterInputStage.getBotIntelligence(),
 				new MapParameters(parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
 						parameterInputStage.getMapDensityParam())));
@@ -190,6 +192,7 @@ public class IngameScreen extends GameScreen {
 	public void handleExitGameAttempt(ExitGameUiEvent event) {
 		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+			eventBus.post(new GameExitedEvent());
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 		});
 		confirmDialog.show(menuStage);
@@ -239,10 +242,14 @@ public class IngameScreen extends GameScreen {
 		// seed
 		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
 		// buttons
-		boolean canUndo = InputValidationHelper.checkUndoAction();
-		boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, Unit.COST);
-		boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, Castle.COST);
-		boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState);
+		boolean canUndo = InputValidationHelper.checkUndoAction(newGameState,
+				GameStateHelper.determineActingLocalPlayer(newGameState));
+		boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState,
+				GameStateHelper.determineActingLocalPlayer(newGameState), Unit.COST);
+		boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState,
+				GameStateHelper.determineActingLocalPlayer(newGameState), Castle.COST);
+		boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState,
+				GameStateHelper.determineActingLocalPlayer(newGameState));
 		hudStage.setButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
 		// display messages
 		// check if player lost
@@ -308,6 +315,7 @@ public class IngameScreen extends GameScreen {
 			switch ((byte) result) {
 			case 1:
 				// exit button
+				eventBus.post(new GameExitedEvent());
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 				break;
@@ -336,6 +344,7 @@ public class IngameScreen extends GameScreen {
 	private void showLostMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			if ((boolean) result) {
+				eventBus.post(new GameExitedEvent());
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 			} else {

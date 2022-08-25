@@ -10,14 +10,22 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.Subscribe;
+
 import de.sesu8642.feudaltactics.events.input.BackInputEvent;
 import de.sesu8642.feudaltactics.events.input.TapInputEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
+import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
+import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
+import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
-import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.input.InputValidationHelper;
 
 /** Handles inputs of a local player in-game. **/
@@ -47,7 +55,8 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleBackInput(BackInputEvent event) {
-		if (InputValidationHelper.checkUndoAction()) {
+		if (InputValidationHelper.checkUndoAction(gameController.getGameState(),
+				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()))) {
 			gameController.undoLastAction();
 		}
 	}
@@ -59,12 +68,8 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleTapInput(TapInputEvent event) {
-		if (!isActivePlayerLocalHuman()) {
-			// don't accept inputs if its not the human player's turn
-			return;
-		}
 		Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
-		Player player = gameController.getGameState().getActivePlayer();
+		Player player = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
 		Map<Vector2, HexTile> map = gameController.getGameState().getMap();
 		HexTile tile = map.get(hexCoords);
 		// print info
@@ -103,6 +108,68 @@ public class LocalIngameInputHandler {
 	}
 
 	/**
+	 * Event handler for map re-generation events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleRegenerateMap(RegenerateMapUiEvent event) {
+		gameController.generateGameState(event.getBotIntelligence(), event.getMapParams());
+	}
+
+	/**
+	 * Event handler for undo move events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleUndoMove(UndoMoveEvent event) {
+		if (InputValidationHelper.checkUndoAction(gameController.getGameState(),
+				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()))) {
+			gameController.undoLastAction();
+		}
+	}
+
+	/**
+	 * Event handler for buy peasant events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBuyPeasant(BuyPeasantEvent event) {
+		if (InputValidationHelper.checkBuyObject(gameController.getGameState(),
+				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()), Unit.COST)) {
+			gameController.buyPeasant();
+		}
+	}
+
+	/**
+	 * Event handler for buy castle events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBuyCastle(BuyCastleEvent event) {
+		if (InputValidationHelper.checkBuyObject(gameController.getGameState(),
+				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()), Castle.COST)) {
+			gameController.buyCastle();
+		}
+	}
+
+	/**
+	 * Event handler for confirmed end turn events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleEndTurn(EndTurnEvent event) {
+		if (InputValidationHelper.checkEndTurn(gameController.getGameState(),
+				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()))) {
+			gameController.endTurn();
+		}
+	}
+
+	/**
 	 * Event handler for game start events.
 	 * 
 	 * @param event event to handle
@@ -133,10 +200,6 @@ public class LocalIngameInputHandler {
 				return TapAction.CONQUER;
 			}
 		}
-	}
-
-	private boolean isActivePlayerLocalHuman() {
-		return (gameController.getGameState().getActivePlayer().getType() == Type.LOCAL_PLAYER);
 	}
 
 }

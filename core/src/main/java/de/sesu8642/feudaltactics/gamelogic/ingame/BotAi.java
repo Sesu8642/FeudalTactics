@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -21,7 +22,10 @@ import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.google.common.eventbus.EventBus;
 
+import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
+import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
@@ -42,15 +46,25 @@ public class BotAi {
 	static final int MUST_PROTECT_SCORE_THRESHOLD = 25;
 	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 20;
 
+	/** Default tick delay. */
+	public static final int DEFAULT_TICK_DELAY_MS = 100;
+
 	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
 		DUMB, MEDIUM, SMART
 	}
 
+	private EventBus eventBus;
+
+	/**
+	 * Time to wait after activating each kingdom as well as after doing the moves
+	 * for each one. For the player to see what is happening.
+	 */
+	private AtomicInteger tickDelayMs = new AtomicInteger(DEFAULT_TICK_DELAY_MS);
+
 	@Inject
-	public BotAi() {
-		// no parameters needed currently
-		// could be static right now but I think there might be state later on
+	public BotAi(EventBus eventBus) {
+		this.eventBus = eventBus;
 	}
 
 	/**
@@ -58,9 +72,9 @@ public class BotAi {
 	 * 
 	 * @param gameState    game state to do the turn in
 	 * @param intelligence intelligence level to use for the turn
-	 * @return modified game state with the turn done
+	 * @throws InterruptedException if interrupted
 	 */
-	public GameState doTurn(GameState gameState, Intelligence intelligence) {
+	public void doTurn(GameState gameState, Intelligence intelligence) throws InterruptedException {
 		Gdx.app.log(TAG, String.format("doing the turn for bot player '%s' with intelligence level '%s'",
 				gameState.getActivePlayer(), intelligence));
 		Random random = new Random(gameState.hashCode());
@@ -77,7 +91,7 @@ public class BotAi {
 				kingdom.setDoneMoving(false);
 			}
 		}
-		return gameState;
+		eventBus.post(new BotTurnFinishedEvent(gameState));
 	}
 
 	private Optional<Kingdom> getNextKingdom(GameState gameState) {
@@ -89,9 +103,11 @@ public class BotAi {
 		return Optional.empty();
 	}
 
-	private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence, Random random) {
+	private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence, Random random)
+			throws InterruptedException {
 		Gdx.app.log(TAG, String.format("doing moves in kingdom '%s'", kingdom));
 		gameState.setActiveKingdom(kingdom);
+		delayForPreview(gameState);
 		// pick up all units
 		PickedUpUnits pickedUpUnits = new PickedUpUnits();
 		pickUpAllAvailableUnits(kingdom, pickedUpUnits);
@@ -124,7 +140,23 @@ public class BotAi {
 		default:
 			throw new AssertionError("Unknown bot intelligence " + intelligence);
 		}
+		delayForPreview(gameState);
 		return gameState;
+	}
+
+	/**
+	 * Delays a little for the user to see what is happening.
+	 * 
+	 * @param gameState intermediate gameState to display as a preview
+	 * @throws InterruptedException if interrupted
+	 */
+	private void delayForPreview(GameState gameState) throws InterruptedException {
+		// no need to update the game state if there is no delay to see it anyway
+		if (tickDelayMs.get() == 0) {
+			return;
+		}
+		eventBus.post(new GameStateChangeEvent(gameState));
+		Thread.sleep(tickDelayMs.get());
 	}
 
 	private void pickUpAllAvailableUnits(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
@@ -163,7 +195,7 @@ public class BotAi {
 		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		while (bestProtectionCandidate.score >= MUST_PROTECT_SCORE_THRESHOLD) {
 			// if enough money buy castle
-			if (InputValidationHelper.checkBuyObject(gameState, Castle.COST)) {
+			if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.COST)) {
 				GameStateHelper.buyCastle(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 				placedCastleTiles.add(bestProtectionCandidate.tile);
@@ -172,7 +204,7 @@ public class BotAi {
 				pickedUpUnits.removeUnit(UnitTypes.PEASANT);
 				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
-			} else if (InputValidationHelper.checkBuyObject(gameState, Unit.COST)) {
+			} else if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Unit.COST)) {
 				// protect with new peasant
 				GameStateHelper.buyPeasant(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
@@ -568,6 +600,15 @@ public class BotAi {
 		return false;
 	}
 
+	public int getTickDelayMs() {
+		return tickDelayMs.get();
+	}
+
+	public void setTickDelayMs(int tickDelayMs) {
+		this.tickDelayMs.set(tickDelayMs);
+		;
+	}
+
 	private class TileScoreInfo {
 
 		HexTile tile;
@@ -636,6 +677,5 @@ public class BotAi {
 		public int getTotalNoOfUnits() {
 			return internalPickedUpUnits.values().stream().mapToInt(Integer::intValue).sum();
 		}
-
 	}
 }

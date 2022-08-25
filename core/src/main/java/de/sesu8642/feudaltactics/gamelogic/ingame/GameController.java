@@ -3,6 +3,8 @@
 package de.sesu8642.feudaltactics.gamelogic.ingame;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -11,6 +13,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.gamelogic.MapParameters;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
@@ -33,7 +36,15 @@ public class GameController {
 
 	private EventBus eventBus;
 	private BotAi botAi;
+	private ExecutorService botTurnExecutor;
 	private GameState gameState;
+	private Future<?> botTurnFuture;
+
+	/**
+	 * Winner of the game before the bot players acted. Used to determine whether
+	 * the winner changed in order to display a message.
+	 */
+	private Player lastWinner;
 
 	/**
 	 * Constructor.
@@ -42,8 +53,9 @@ public class GameController {
 	 * @param botAi    bot AI
 	 */
 	@Inject
-	public GameController(EventBus eventBus, BotAi botAi) {
+	public GameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi) {
 		this.eventBus = eventBus;
+		this.botTurnExecutor = botTurnExecutor;
 		this.botAi = botAi;
 		gameState = new GameState();
 	}
@@ -52,8 +64,7 @@ public class GameController {
 	public void startGame() {
 		// if a bot begins, make it act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
-			gameState = botAi.doTurn(gameState, gameState.getBotIntelligence());
-			endTurn();
+			startBotTurn();
 		}
 		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 		autosave();
@@ -163,32 +174,52 @@ public class GameController {
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
-	/** Ends the turn. */
-	public void endTurn() {
-		// remember old winner
-		endTurn(gameState.getWinner());
-	}
-
 	/**
 	 * Ends the turn. Takes the winner at the time when the player ended their turn
 	 * to determine whether it changed in the meantime.
 	 * 
 	 * @param oldWinner winner of the game when the last player ended their turn
 	 */
-	void endTurn(Player oldWinner) {
+	void endTurn() {
+		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+			// remember the winner as it might change during bot turns
+			lastWinner = gameState.getWinner();
+		}
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
-		// make bots act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
-			gameState = botAi.doTurn(gameState, gameState.getBotIntelligence());
-			endTurn(oldWinner);
+			// make bots act
+			startBotTurn();
 		} else {
+			// reset bot tick delay for the next time
+			botAi.setTickDelayMs(BotAi.DEFAULT_TICK_DELAY_MS);
 			// autosave when a player turn begins
 			autosave();
 			// clear autosaves from previous turn
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(1);
-			eventBus.post(new GameStateChangeEvent(gameState, gameState.getWinner() != oldWinner, false));
+			eventBus.post(new GameStateChangeEvent(gameState,
+					!(lastWinner != null && lastWinner.equals(gameState.getWinner())), false));
 		}
+	}
+
+	private void startBotTurn() {
+		botTurnFuture = botTurnExecutor.submit(() -> {
+			try {
+				botAi.doTurn(gameState, gameState.getBotIntelligence());
+			} catch (InterruptedException e) {
+				Gdx.app.log(TAG, "Bot turn was canceled.");
+				Thread.currentThread().interrupt();
+			}
+		});
+	}
+
+	public void fastForwardBotTurn() {
+		botAi.setTickDelayMs(0);
+		Gdx.app.log(TAG, "Bot turn is being fast forwarded.");
+	}
+
+	public void cancelBotTurn() {
+		botTurnFuture.cancel(true);
 	}
 
 	/** Buys a peasant. */
@@ -221,4 +252,9 @@ public class GameController {
 	public GameState getGameState() {
 		return gameState;
 	}
+
+	public void setGameState(GameState gameState) {
+		this.gameState = gameState;
+	}
+
 }

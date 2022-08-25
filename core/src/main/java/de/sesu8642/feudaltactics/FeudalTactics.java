@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
@@ -26,12 +27,14 @@ public class FeudalTactics extends Game {
 	public static final Color disabledButtonIconColor = new Color(0.75F, 0.75F, 0.75F, 1);
 	public static final Color backgroundColor = new Color(0, 0.2f, 0.8f, 1);
 
+	private FeudalTacticsComponent component;
+
 	@Override
 	public void create() {
 		game = this;
 		// if Eclipse cannot resolve this: https://stackoverflow.com/a/31669111 (note:
 		// too lazy to try it)
-		FeudalTacticsComponent component = DaggerFeudalTacticsComponent.create();
+		component = DaggerFeudalTacticsComponent.create();
 
 		EventBus eventBus = component.getEventBus();
 		eventBus.register(component.getScreenTransitionController());
@@ -47,6 +50,13 @@ public class FeudalTactics extends Game {
 		}
 		// do not close on android back key
 		Gdx.input.setCatchKey(Keys.BACK, true);
+	}
+
+	@Override
+	public void dispose() {
+		// shutdown executor services to kill all background threads
+		component.getBotAiExecutor().shutdownNow();
+		super.dispose();
 	}
 
 }

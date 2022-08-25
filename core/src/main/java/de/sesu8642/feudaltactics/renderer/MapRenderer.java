@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -31,6 +32,7 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.MapDimensions;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.input.InputValidationHelper;
 
@@ -45,6 +47,17 @@ public class MapRenderer {
 	public static final float HEXTILE_WIDTH = HexMapHelper.HEX_OUTER_RADIUS * 2;
 	public static final float HEXTILE_HEIGHT = HexMapHelper.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
 
+	/**
+	 * Map of sprite names and their sprites. Functions as cache to avoid frequent
+	 * lookups.
+	 */
+	private Map<String, TextureRegion> textureRegions = new HashMap<>();
+
+	/**
+	 * Map of sprite names and their animations. Functions as cache to avoid
+	 * frequent lookups.
+	 */
+	private Map<String, Animation<TextureRegion>> animations = new HashMap<>();
 	private final ShapeRenderer shapeRenderer;
 	private final OrthographicCamera camera;
 	private final SpriteBatch spriteBatch;
@@ -59,18 +72,17 @@ public class MapRenderer {
 	private boolean darkenBeaches;
 
 	// stuff that is to be drawn
-	private List<DrawTile> tiles = new ArrayList<>();
-	private HashMap<String, TextureRegion> textureRegions = new HashMap<>();
-	private HashMap<String, Animation<TextureRegion>> animations = new HashMap<>();
-	private HashMap<Vector2, TextureRegion> nonAnimatedContents = new HashMap<>();
-	private HashMap<Vector2, TextureRegion> darkenedNonAnimatedContents = new HashMap<>();
-	private HashMap<Vector2, Animation<TextureRegion>> animatedContents = new HashMap<>();
-	private HashMap<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<>();
-	private HashMap<Vector2, Boolean> shields = new HashMap<>();
-	private ArrayList<Vector2> whiteLineStartPoints = new ArrayList<>();
-	private ArrayList<Vector2> whiteLineEndPoints = new ArrayList<>();
-	private ArrayList<Vector2> redLineStartPoints = new ArrayList<>();
-	private ArrayList<Vector2> redLineEndPoints = new ArrayList<>();
+	// keeping those in separate, flat collections is more efficient when rendering
+	private Map<Vector2, DrawTile> tiles = new HashMap<>();
+	private Map<Vector2, TextureRegion> nonAnimatedContents = new HashMap<>();
+	private Map<Vector2, TextureRegion> darkenedNonAnimatedContents = new HashMap<>();
+	private Map<Vector2, Animation<TextureRegion>> animatedContents = new HashMap<>();
+	private Map<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<>();
+	private Map<Vector2, Boolean> shields = new HashMap<>();
+	private List<Vector2> whiteLineStartPoints = new ArrayList<>();
+	private List<Vector2> whiteLineEndPoints = new ArrayList<>();
+	private List<Vector2> redLineStartPoints = new ArrayList<>();
+	private List<Vector2> redLineEndPoints = new ArrayList<>();
 
 	/**
 	 * Constructor.
@@ -100,7 +112,8 @@ public class MapRenderer {
 	 * 
 	 * @param gameState game state containing the map
 	 */
-	public void updateMap(GameState gameState) {
+	// this method and rendering must be synchronized to not happen at the same time
+	public synchronized void updateMap(GameState gameState) {
 		// create tiles
 		tiles.clear();
 		nonAnimatedContents.clear();
@@ -149,64 +162,6 @@ public class MapRenderer {
 				drawTile.bottomLeftBeach = true;
 			}
 
-			// create content (units etc)
-			MapObject tileContent = tile.getContent();
-			if (tileContent != null) {
-				boolean animate = false;
-				if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
-					if (ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
-							&& ((Unit) tileContent).isCanAct()) {
-						// animate units that can act
-						animate = true;
-					} else if (ClassReflection.isAssignableFrom(Capital.class, tileContent.getClass())
-							&& gameState.getActivePlayer() == tile.getKingdom().getPlayer()
-							&& tile.getKingdom().getSavings() > Unit.COST) {
-						// animate capitals if they can buy something
-						animate = true;
-					}
-				}
-				if (animate) {
-					if (gameState.getActiveKingdom() != null && gameState.getHeldObject() != null
-							&& (!InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(),
-											tile))) {
-						// darkened content
-						darkenedAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-								getAnimationFromName(tileContent.getSpriteName()));
-					} else {
-						animatedContents.put(
-								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-								getAnimationFromName(tileContent.getSpriteName()));
-					}
-				} else {
-					if (gameState.getActiveKingdom() != null && ((gameState.getHeldObject() != null
-							&& (!InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)
-									&& !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(),
-											tile)))
-							// darken own units that have already acted
-							|| (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
-									&& tile.getContent() != null
-									&& ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
-									&& !((Unit) tile.getContent()).isCanAct()))) {
-						// darkened content
-						darkenedNonAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-								getTextureRegionFromName(tileContent.getSpriteName()));
-					} else {
-						nonAnimatedContents.put(
-								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-								getTextureRegionFromName(tileContent.getSpriteName()));
-					}
-				}
-
-			}
 			// create lines for highlighting active kingdom
 			if (gameState.getActiveKingdom() != null && tile.getKingdom() != null
 					&& tile.getKingdom() == gameState.getActiveKingdom()) {
@@ -246,8 +201,62 @@ public class MapRenderer {
 				} else {
 					drawTile.darken = true;
 				}
+			} else if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT
+					&& gameState.getActiveKingdom() != null) {
+				drawTile.darken = true;
 			}
-			tiles.add(drawTile);
+			tiles.put(tile.getPosition(), drawTile);
+
+			// create content (units etc)
+			MapObject tileContent = tile.getContent();
+			if (tileContent != null) {
+				boolean animate = false;
+				if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
+					if (ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
+							&& ((Unit) tileContent).isCanAct()) {
+						// animate units that can act
+						animate = true;
+					} else if (ClassReflection.isAssignableFrom(Capital.class, tileContent.getClass())
+							&& gameState.getActivePlayer() == tile.getKingdom().getPlayer()
+							&& tile.getKingdom().getSavings() > Unit.COST) {
+						// animate capitals if they can buy something
+						animate = true;
+					}
+				}
+				if (animate) {
+					if (drawTile.darken) {
+						// darkened content
+						darkenedAnimatedContents.put(
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+								getAnimationFromName(tileContent.getSpriteName()));
+					} else {
+						animatedContents.put(
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+								getAnimationFromName(tileContent.getSpriteName()));
+					}
+				} else {
+					if (drawTile.darken
+							// darken own units that have already acted
+							|| (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
+									&& tile.getContent() != null
+									&& ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
+									&& !((Unit) tile.getContent()).isCanAct())) {
+						// darkened content
+						darkenedNonAnimatedContents.put(
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+								getTextureRegionFromName(tileContent.getSpriteName()));
+					} else {
+						nonAnimatedContents.put(
+								new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+										mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+								getTextureRegionFromName(tileContent.getSpriteName()));
+					}
+				}
+
+			}
 
 			if (gameState.getHeldObject() != null) {
 				// create protection indicators
@@ -359,7 +368,7 @@ public class MapRenderer {
 	}
 
 	/** Renders the map. */
-	public void render() {
+	public synchronized void render() {
 		HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
 		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
 		spriteBatch.setProjectionMatrix(camera.combined);
@@ -427,7 +436,7 @@ public class MapRenderer {
 			beachWaterColor.mul(0.75F, 0.75F, 0.75F, 1);
 		}
 		spriteBatch.setColor(beachWaterColor);
-		for (DrawTile tile : tiles) {
+		for (DrawTile tile : tiles.values()) {
 			if (tile.bottomBeach || tile.bottomRightBeach) {
 				spriteBatch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT * 2,
 						HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
@@ -451,7 +460,7 @@ public class MapRenderer {
 			beachSandColor.mul(0.5F, 0.5F, 0.5F, 1);
 		}
 		spriteBatch.setColor(beachSandColor);
-		for (DrawTile tile : tiles) {
+		for (DrawTile tile : tiles.values()) {
 			if (tile.bottomBeach || tile.bottomRightBeach) {
 				spriteBatch.draw(bottomRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT,
 						HEXTILE_WIDTH, HEXTILE_HEIGHT);
@@ -471,7 +480,7 @@ public class MapRenderer {
 		}
 
 		// draw all the tiles
-		for (DrawTile tile : tiles) {
+		for (DrawTile tile : tiles.values()) {
 			Color color = new Color(tile.color);
 			// darken tile
 			if (tile.darken) {

@@ -18,6 +18,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.input.InputValidationHelper;
 
@@ -824,7 +825,7 @@ public class GameStateHelper {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
 				// can buy castle or any unit that is more expensive
-				if (InputValidationHelper.checkBuyObject(gameState, Castle.COST)) {
+				if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.COST)) {
 					return true;
 				}
 				// has unit stronger than peasant
@@ -862,5 +863,19 @@ public class GameStateHelper {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Determines which local player is responsible for any inputs.
+	 * 
+	 * @return acting player
+	 */
+	public static Player determineActingLocalPlayer(GameState gameState) {
+		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+			return gameState.getActivePlayer();
+		}
+		// if it is a bot's turn, assume the first human player attemted the action
+		return gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER)
+				.findFirst().get();
 	}
 }

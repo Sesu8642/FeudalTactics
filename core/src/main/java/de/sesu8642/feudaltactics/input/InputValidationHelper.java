@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
@@ -29,11 +30,14 @@ public class InputValidationHelper {
 	 * Checks whether a player is allowed to change the active kingdom.
 	 * 
 	 * @param gameState game state of the current game
-	 * @param player    player that attempts the action
+	 * @param player    player attempting the action
 	 * @param tile      tile that was clicked
 	 * @return whether the action is allowed
 	 */
 	public static boolean checkChangeActiveKingdom(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		if (isWater(tile)) {
 			return false;
 		}
@@ -56,11 +60,14 @@ public class InputValidationHelper {
 	 * Checks whether a player is allowed to pick up an object.
 	 * 
 	 * @param gameState game state of the current game
-	 * @param player    player that attempts the action
+	 * @param player    player attempting the action
 	 * @param tile      tile that was clicked
 	 * @return whether the action is allowed
 	 */
 	public static boolean checkPickupObject(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		if (isWater(tile)) {
 			return false;
 		}
@@ -89,11 +96,14 @@ public class InputValidationHelper {
 	 * Checks whether a player is allowed to place their own object.
 	 * 
 	 * @param gameState game state of the current game
-	 * @param player    player that attempts the action
+	 * @param player    player attempting the action
 	 * @param tile      tile that was clicked
 	 * @return whether the action is allowed
 	 */
 	public static boolean checkPlaceOwn(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		if (isWater(tile)) {
 			return false;
 		}
@@ -125,11 +135,14 @@ public class InputValidationHelper {
 	 * Checks whether a player is allowed to combine units.
 	 * 
 	 * @param gameState game state of the current game
-	 * @param player    player that attempts the action
+	 * @param player    player attempting the action
 	 * @param tile      tile that was clicked
 	 * @return whether the action is allowed
 	 */
 	public static boolean checkCombineUnits(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		if (isWater(tile)) {
 			return false;
 		}
@@ -171,11 +184,14 @@ public class InputValidationHelper {
 	 * Checks whether a player is allowed to conquer a tile.
 	 * 
 	 * @param gameState game state of the current game
-	 * @param player    player that attempts the action
+	 * @param player    player attempting the action
 	 * @param tile      tile that was clicked
 	 * @return whether the action is allowed
 	 */
 	public static boolean checkConquer(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		if (isWater(tile)) {
 			return false;
 		}
@@ -217,7 +233,17 @@ public class InputValidationHelper {
 		return true;
 	}
 
-	public static boolean checkEndTurn(GameState gameState) {
+	/**
+	 * Checks whether the player is allowed to end the current turn.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player attempting the action
+	 * @return whether the action is allowed
+	 */
+	public static boolean checkEndTurn(GameState gameState, Player player) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		return (gameState.getHeldObject() == null);
 	}
 
@@ -225,10 +251,14 @@ public class InputValidationHelper {
 	 * Checks whether a player is allowed to buy an object.
 	 * 
 	 * @param gameState game state of the current game
+	 * @param player    player attempting the action
 	 * @param cost      cost of the object
 	 * @return whether the action is allowed
 	 */
-	public static boolean checkBuyObject(GameState gameState, int cost) {
+	public static boolean checkBuyObject(GameState gameState, Player player, int cost) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		Kingdom activeKingdom = gameState.getActiveKingdom();
 		if (activeKingdom == null) {
 			return false;
@@ -245,14 +275,23 @@ public class InputValidationHelper {
 	/**
 	 * Checks whether a player is allowed undo the previous action.
 	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player attempting the action
 	 * @return whether the action is allowed
 	 */
-	public static boolean checkUndoAction() {
+	public static boolean checkUndoAction(GameState gameState, Player player) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
 		return (PreferencesHelper.getNoOfAutoSaves() > 1);
 	}
 
 	private static boolean isWater(HexTile tile) {
 		return (tile == null);
+	}
+
+	private static boolean isCorrectPlayersTurn(GameState gameState, Player actingPlayer) {
+		return gameState.getActivePlayer() == actingPlayer;
 	}
 
 }

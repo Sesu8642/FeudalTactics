@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -23,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import dagger.Module;
 import dagger.Provides;
@@ -289,6 +292,12 @@ class DaggerModule {
 	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
 			@MainMenuStage MenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
+	}
+
+	@Provides
+	@Singleton
+	static ExecutorService provideBotAiExecutor() {
+		return Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("botai-%d").build());
 	}
 
 }
