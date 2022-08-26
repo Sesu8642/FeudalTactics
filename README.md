@@ -6,6 +6,9 @@ You play on an randomly generated island made of hexagons. Your goal is to conqu
 
 Made with libGDX. The game mechanics are heavily inspired by Sean O'Connor's Slay.
 
+| [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/de.sesu8642.feudaltactics/) | [<img src="https://static.itch.io/images/badge.svg" alt="Available on itch.io" height="60">](https://sesu8642.itch.io/feudal-tactics) |
+|---	|---	|
+
 ![Ingame Screenshot](metadata/en-US/images/sevenInchScreenshots/1.png)
 
 ## Roadmap
@@ -16,14 +19,6 @@ I would like to implement the following features. It might happen soon, in a few
 - map editor
 - local multiplayer
 - online multiplayer
-
-## Download
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-     alt="Get it on F-Droid"
-     height="80">](https://f-droid.org/packages/soko.ekibun.stitch/)
-
-or get the APK from the [Releases section](https://github.com/Sesu8642/FeudalTactics/releases/latest).
 
 ## Licensing
 
