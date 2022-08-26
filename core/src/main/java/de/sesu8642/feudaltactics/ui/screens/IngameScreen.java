@@ -227,18 +227,23 @@ public class IngameScreen extends GameScreen {
 			hudStage.updateHandContent(null);
 		}
 		// info text
+		String infoText;
 		Kingdom kingdom = newGameState.getActiveKingdom();
-		if (kingdom == null) {
-			hudStage.setInfoText("");
+		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+			if (kingdom != null) {
+				int income = GameStateHelper.getKingdomIncome(kingdom);
+				int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
+				int result = income - salaries;
+				int savings = kingdom.getSavings();
+				String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+				infoText = "Savings: " + savings + " (" + resultText + ")";
+			} else {
+				infoText = "Your turn";
+			}
 		} else {
-			int income = GameStateHelper.getKingdomIncome(kingdom);
-			int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
-			int result = income - salaries;
-			int savings = kingdom.getSavings();
-			String resultText = result < 0 ? String.valueOf(result) : "+" + result;
-			String infoText = "Savings: " + savings + " (" + resultText + ")";
-			hudStage.setInfoText(infoText);
+			infoText = "Enemy turn";
 		}
+		hudStage.setInfoText(infoText);
 		// seed
 		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
 		// buttons
