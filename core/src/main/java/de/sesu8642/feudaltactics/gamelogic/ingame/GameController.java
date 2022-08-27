@@ -198,7 +198,7 @@ public class GameController {
 			// clear autosaves from previous turn
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(1);
 			eventBus.post(new GameStateChangeEvent(gameState,
-					!(lastWinner != null && lastWinner.equals(gameState.getWinner())), false));
+					(lastWinner != null && !lastWinner.equals(gameState.getWinner())), false));
 		}
 	}
 
