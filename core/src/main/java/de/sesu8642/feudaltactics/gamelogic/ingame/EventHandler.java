@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
+import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 
@@ -14,6 +15,7 @@ import de.sesu8642.feudaltactics.events.GameResumedEvent;
 public class EventHandler {
 
 	private GameController gameController;
+	private BotAi botAi;
 
 	/**
 	 * Constructor.
@@ -21,8 +23,9 @@ public class EventHandler {
 	 * @param gameController game controller
 	 */
 	@Inject
-	public EventHandler(GameController gameController) {
+	public EventHandler(GameController gameController, BotAi botAi) {
 		this.gameController = gameController;
+		this.botAi = botAi;
 	}
 
 	/**
@@ -54,6 +57,16 @@ public class EventHandler {
 	public void handleBotTurnFinished(BotTurnFinishedEvent event) {
 		gameController.setGameState(event.getGameState());
 		gameController.endTurn();
+	}
+
+	/**
+	 * Event handler for bot speed change events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBotTurnFinished(BotTurnSpeedChangedEvent event) {
+		botAi.setCurrentSpeed(event.getSpeed());
 	}
 
 }

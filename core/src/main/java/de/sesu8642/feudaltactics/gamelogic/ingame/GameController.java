@@ -191,8 +191,6 @@ public class GameController {
 			// make bots act
 			startBotTurn();
 		} else {
-			// reset bot tick delay for the next time
-			botAi.setTickDelayMs(BotAi.DEFAULT_TICK_DELAY_MS);
 			// autosave when a player turn begins
 			autosave();
 			// clear autosaves from previous turn
@@ -213,13 +211,11 @@ public class GameController {
 		});
 	}
 
-	public void fastForwardBotTurn() {
-		botAi.setTickDelayMs(0);
-		Gdx.app.log(TAG, "Bot turn is being fast forwarded.");
-	}
-
+	/** Cancels a bot turn by canceling the future. */
 	public void cancelBotTurn() {
-		botTurnFuture.cancel(true);
+		if (botTurnFuture != null) {
+			botTurnFuture.cancel(true);
+		}
 	}
 
 	/** Buys a peasant. */

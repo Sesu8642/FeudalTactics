@@ -226,10 +226,12 @@ public class IngameScreen extends GameScreen {
 		} else {
 			hudStage.updateHandContent(null);
 		}
-		// info text
-		String infoText;
-		Kingdom kingdom = newGameState.getActiveKingdom();
+		// seed
+		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
+		String infoText = "";
 		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+			// info text
+			Kingdom kingdom = newGameState.getActiveKingdom();
 			if (kingdom != null) {
 				int income = GameStateHelper.getKingdomIncome(kingdom);
 				int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
@@ -239,35 +241,41 @@ public class IngameScreen extends GameScreen {
 				infoText = "Savings: " + savings + " (" + resultText + ")";
 			} else {
 				infoText = "Your turn";
+				System.out.println("YOUR TURN");
+			}
+			// buttons
+			if (hudStage.isEnemyTurnButtonsShown()) {
+				hudStage.showPlayerTurnButtons();
+			}
+			boolean canUndo = InputValidationHelper.checkUndoAction(newGameState,
+					GameStateHelper.determineActingLocalPlayer(newGameState));
+			boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState,
+					GameStateHelper.determineActingLocalPlayer(newGameState), Unit.COST);
+			boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState,
+					GameStateHelper.determineActingLocalPlayer(newGameState), Castle.COST);
+			boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState,
+					GameStateHelper.determineActingLocalPlayer(newGameState));
+			hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+			// display messages
+			// check if player lost
+			if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
+					&& newGameState.getActivePlayer().isDefeated()) {
+				showLostMessage();
+			} else {
+				// check if winner changed
+				if (event.isWinnerChanged()) {
+					showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
+							newGameState.getWinner().getColor());
+				}
 			}
 		} else {
 			infoText = "Enemy turn";
-		}
-		hudStage.setInfoText(infoText);
-		// seed
-		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
-		// buttons
-		boolean canUndo = InputValidationHelper.checkUndoAction(newGameState,
-				GameStateHelper.determineActingLocalPlayer(newGameState));
-		boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState,
-				GameStateHelper.determineActingLocalPlayer(newGameState), Unit.COST);
-		boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState,
-				GameStateHelper.determineActingLocalPlayer(newGameState), Castle.COST);
-		boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState,
-				GameStateHelper.determineActingLocalPlayer(newGameState));
-		hudStage.setButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
-		// display messages
-		// check if player lost
-		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
-				&& newGameState.getActivePlayer().isDefeated()) {
-			showLostMessage();
-		} else {
-			// check if winner changed
-			if (event.isWinnerChanged()) {
-				showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
-						newGameState.getWinner().getColor());
+			if (!hudStage.isEnemyTurnButtonsShown()) {
+				hudStage.showEnemyTurnButtons();
 			}
 		}
+		hudStage.setInfoText(infoText);
+
 		if (event.isMapDimensionsChanged()) {
 			// dimensions changed means that the seed also changed
 			parameterInputStage.updateSeed(event.getGameState().getSeed());

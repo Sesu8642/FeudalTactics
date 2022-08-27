@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -46,21 +45,30 @@ public class BotAi {
 	static final int MUST_PROTECT_SCORE_THRESHOLD = 25;
 	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 20;
 
-	/** Default tick delay. */
-	public static final int DEFAULT_TICK_DELAY_MS = 100;
-
 	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
 		DUMB, MEDIUM, SMART
 	}
 
+	/** Possible speeds for the preview. */
+	public enum Speed {
+		HALF(600), NORMAL(300), TIMES_TWO(150), INSTANT(0);
+
+		/**
+		 * Time to wait after activating each kingdom as well as after doing the moves
+		 * for each one. For the player to see what is happening.
+		 */
+		public final int tickDelayMs;
+
+		private Speed(int tickDelayMs) {
+			this.tickDelayMs = tickDelayMs;
+		}
+	}
+
 	private EventBus eventBus;
 
-	/**
-	 * Time to wait after activating each kingdom as well as after doing the moves
-	 * for each one. For the player to see what is happening.
-	 */
-	private AtomicInteger tickDelayMs = new AtomicInteger(DEFAULT_TICK_DELAY_MS);
+	/** Current speed. */
+	private Speed currentSpeed = Speed.NORMAL;
 
 	@Inject
 	public BotAi(EventBus eventBus) {
@@ -152,11 +160,11 @@ public class BotAi {
 	 */
 	private void delayForPreview(GameState gameState) throws InterruptedException {
 		// no need to update the game state if there is no delay to see it anyway
-		if (tickDelayMs.get() == 0) {
+		if (currentSpeed == Speed.INSTANT) {
 			return;
 		}
 		eventBus.post(new GameStateChangeEvent(gameState));
-		Thread.sleep(tickDelayMs.get());
+		Thread.sleep(currentSpeed.tickDelayMs);
 	}
 
 	private void pickUpAllAvailableUnits(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
@@ -600,13 +608,13 @@ public class BotAi {
 		return false;
 	}
 
-	public int getTickDelayMs() {
-		return tickDelayMs.get();
+	public Speed getCurrentSpeed() {
+		return currentSpeed;
 	}
 
-	public void setTickDelayMs(int tickDelayMs) {
-		this.tickDelayMs.set(tickDelayMs);
-		;
+	public void setCurrentSpeed(Speed currentSpeed) {
+		this.currentSpeed = currentSpeed;
+		Gdx.app.log(TAG, "Bot turn speed set to " + currentSpeed);
 	}
 
 	private class TileScoreInfo {
