@@ -36,3 +36,44 @@ No data is collected at all. See [privacy policy](https://raw.githubusercontent.
 
 ## Contributing
 If you would like to contribute, please contact me first.
+
+## Building the project - Steps for Ubuntu 22.04
+
+1. Install JDK
+```
+sudo apt install openjdk-8-jdk
+```
+
+2. Download and install the Android SDK (Can alternatively be done using Android Studio)
+    1. Go to this page: https://developer.android.com/studio/index.html#command-tools
+    2. Download the zip file for your OS (here: Linux)
+```
+mkdir Android
+unzip ./Downloads/commandlinetools-linux-8512546_latest.zip -d ./Android
+```
+
+3. Clone this repository
+```
+git clone https://github.com/Sesu8642/FeudalTactics
+```
+
+4. Configure the SDK for Gradle
+```
+cd FeudalTactics/
+echo 'sdk.dir=/path/to/Android/sdk' > local.properties
+```
+
+5. Build
+```
+// run desktop version
+./gradlew desktop:run
+
+// build jar (lands in FeudalTactics/desktop/build/libs/)
+./gradlew desktop:dist
+
+// run Android version on device or emulator
+./gradlew android:installDebug android:run
+
+// build apk
+./gradlew android:assembleRelease
+```
