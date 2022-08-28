@@ -10,7 +10,7 @@ public class NewGamePreferences {
 
 	/** Map sizes that can be generated. */
 	public enum MapSizes {
-		SMALL(50), MEDIUM(150), LARGE(250);
+		SMALL(50), MEDIUM(150), LARGE(250), XLARGE(500), XXLARGE(1000);
 
 		private int amountOfTiles;
 
