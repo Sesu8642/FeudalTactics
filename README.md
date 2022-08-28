@@ -44,7 +44,7 @@ If you would like to contribute, please contact me first.
 sudo apt install openjdk-8-jdk
 ```
 
-2. Download and install the Android SDK (Can alternatively be done using Android Studio)
+2. OPTIONAL if you want to build the Android app: Download and install the Android SDK (Can alternatively be done using Android Studio)
     1. Go to this page: https://developer.android.com/studio/index.html#command-tools
     2. Download the zip file for your OS (here: Linux)
 ```
@@ -57,7 +57,7 @@ unzip ./Downloads/commandlinetools-linux-8512546_latest.zip -d ./Android
 git clone https://github.com/Sesu8642/FeudalTactics
 ```
 
-4. Configure the SDK for Gradle
+4. Configure the Android SDK for Gradle (If you didn't do step 2, just put some empty directory here.)
 ```
 cd FeudalTactics/
 echo 'sdk.dir=/path/to/Android/sdk' > local.properties
