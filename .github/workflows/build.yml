@@ -11,4 +11,4 @@ jobs:
       - name: Build Desktop
         run: ./gradlew desktop:dist
       - name: Build Android
-        run: ./gradelw android:assembleRelease
+        run: ./gradlew android:assembleRelease
