@@ -1,0 +1,12 @@
+name: Build CI
+on: [push]
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    container:
+      image: cangol/android-gradle
+    steps:
+      - name: Build Desktop
+        run: ./gradlew desktop:dist
+      - name: Build Android
+        run: ./gradelw android:assembleRelease
