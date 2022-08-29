@@ -6,6 +6,8 @@ jobs:
     container:
       image: cangol/android-gradle
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
       - name: Build Desktop
         run: ./gradlew desktop:dist
       - name: Build Android
