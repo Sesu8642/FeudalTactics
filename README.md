@@ -30,12 +30,21 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+## Licensing of Contributions
+Contributions are multi-licensed under __GPL-3.0-or-later or MIT__. See [CLA](CLA.md).
+
+This allows me to potentially release versions that contain propriatary libraries, e.g. for integrating third party multiplayer services or receiving payments. The F-Droid version will never contain any proprietary components, of course.
+
+Why not just license contributions under MIT? All files somebody contributes to would be licensed under GPL-3.0-or-later __and__ MIT. While the MIT license is compatible with the GPL-3.0, it does add the additional requirement to include the MIT license text in the software. This would make it complicated if anyone wanted to use some file in a different project. With the multi-licensing, every file can simply be used under GPL-3.0-or-later.
+
+## Contributing
+Before starting any work, please propose your changes in a GitHub issue.
+
+Before a merge request can be accepted, you must sign the [CLA](CLA.md) by adding your name to the table.
+
 ## Privacy
 
 No data is collected at all. See [privacy policy](https://raw.githubusercontent.com/Sesu8642/FeudalTactics/blob/master/privacy_policy.txt). It is based on [the one from the Catima Website](https://github.com/CatimaLoyalty/Website/blob/master/_pages/privacy-policy.md).
-
-## Contributing
-If you would like to contribute, please contact me first.
 
 ## Building the project - Steps for Ubuntu 22.04
 
