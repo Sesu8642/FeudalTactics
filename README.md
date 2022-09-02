@@ -40,7 +40,7 @@ Why not just license contributions under MIT? All files somebody contributes to 
 ## Contributing
 Before starting any work, please propose your changes in a GitHub issue.
 
-Before a merge request can be accepted, you must sign the [CLA](CLA.md) by adding your name to the table.
+Before a pull request can be accepted, you must sign the [CLA](CLA.md) by adding your name to the table.
 
 ## Privacy
 
