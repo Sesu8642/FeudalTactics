@@ -6,8 +6,8 @@ You play on an randomly generated island made of hexagons. Your goal is to conqu
 
 Made with libGDX. The game mechanics are heavily inspired by Sean O'Connor's Slay.
 
-| [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/de.sesu8642.feudaltactics/) | [<img src="https://static.itch.io/images/badge.svg" alt="Available on itch.io" height="60">](https://sesu8642.itch.io/feudal-tactics) |
-|---	|---	|
+| [<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/de.sesu8642.feudaltactics/) | [<img src="https://static.itch.io/images/badge.svg" alt="Available on itch.io" height="55">](https://sesu8642.itch.io/feudal-tactics) | [<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=de.sesu8642.feudaltactics) |
+|---	|---	|---	|
 
 ![Ingame Screenshot](metadata/en-US/images/sevenInchScreenshots/1.png)
 
