@@ -85,4 +85,9 @@ public class Player {
 		return Objects.equals(color, other.color) && defeated == other.defeated && type == other.type;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("Player [color=%s, type=%s, defeated=%s]", color, type, defeated);
+	}
+
 }

@@ -241,7 +241,6 @@ public class IngameScreen extends GameScreen {
 				infoText = "Savings: " + savings + " (" + resultText + ")";
 			} else {
 				infoText = "Your turn";
-				System.out.println("YOUR TURN");
 			}
 			// buttons
 			if (hudStage.isEnemyTurnButtonsShown()) {

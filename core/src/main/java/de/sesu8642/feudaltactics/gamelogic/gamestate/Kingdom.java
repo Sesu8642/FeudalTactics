@@ -67,11 +67,6 @@ public class Kingdom {
 	}
 
 	@Override
-	public String toString() {
-		return super.toString() + "; savings: " + getSavings();
-	}
-
-	@Override
 	public int hashCode() {
 		return Objects.hash(doneMoving, player, savings, tiles, wasActiveInCurrentTurn);
 	}
@@ -93,6 +88,12 @@ public class Kingdom {
 		return doneMoving == other.doneMoving && Objects.equals(player, other.player) && savings == other.savings
 				&& tiles.size() == other.tiles.size() && tiles.containsAll(other.tiles)
 				&& wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Kingdom [tiles=%s, player=%s, savings=%s, doneMoving=%s, wasActiveInCurrentTurn=%s]",
+				tiles, player, savings, doneMoving, wasActiveInCurrentTurn);
 	}
 
 }

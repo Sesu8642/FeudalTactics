@@ -62,6 +62,7 @@ public class GameController {
 
 	/** Starts the game. Bots will do their turns if they are first. */
 	public void startGame() {
+		Gdx.app.log(TAG, "starting game");
 		// if a bot begins, make it act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
@@ -77,6 +78,7 @@ public class GameController {
 
 	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
+		Gdx.app.log(TAG, "loading latest autosave");
 		gameState = PreferencesHelper.getLatestAutoSave();
 		eventBus.post(new GameStateChangeEvent(gameState, false, true));
 	}
@@ -88,6 +90,8 @@ public class GameController {
 	 * @param mapParams       map generation parameters
 	 */
 	public void generateGameState(BotAi.Intelligence botIntelligence, MapParameters mapParams) {
+		Gdx.app.log(TAG, String.format("generating a new game state with bot intelligence %s and %s", botIntelligence,
+				mapParams));
 		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
 		ArrayList<Player> players = new ArrayList<>();
@@ -114,8 +118,7 @@ public class GameController {
 	 * @param hexCoords coords of the tile
 	 */
 	public void printTileInfo(Vector2 hexCoords) {
-		Gdx.app.debug(TAG, String.format("clicked tile position %s: %s", hexCoords,
-				String.valueOf(gameState.getMap().get(hexCoords))));
+		Gdx.app.debug(TAG, String.format("clicked: %s", gameState.getMap().get(hexCoords)));
 	}
 
 	/**
@@ -124,6 +127,7 @@ public class GameController {
 	 * @param kingdom kingdom to activate
 	 */
 	public void activateKingdom(Kingdom kingdom) {
+		Gdx.app.debug(TAG, String.format("activating %s", kingdom));
 		GameStateHelper.activateKingdom(gameState, kingdom);
 		autosave();
 		// save first because is is relevant for the undo button status
@@ -136,6 +140,7 @@ public class GameController {
 	 * @param tile tile that contains the object
 	 */
 	public void pickupObject(HexTile tile) {
+		Gdx.app.debug(TAG, String.format("picking up object from %s", tile));
 		GameStateHelper.pickupObject(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -147,6 +152,7 @@ public class GameController {
 	 * @param tile tile to place to object on
 	 */
 	public void placeOwn(HexTile tile) {
+		Gdx.app.debug(TAG, String.format("placing held object on own %s", tile));
 		GameStateHelper.placeOwn(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -158,6 +164,7 @@ public class GameController {
 	 * @param tile tile that contains the unit on the map
 	 */
 	public void combineUnits(HexTile tile) {
+		Gdx.app.debug(TAG, String.format("combining held unit with unit on %s", tile));
 		GameStateHelper.combineUnits(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -169,6 +176,7 @@ public class GameController {
 	 * @param tile tile to conquer
 	 */
 	public void conquer(HexTile tile) {
+		Gdx.app.debug(TAG, String.format("conquering %s", tile));
 		GameStateHelper.conquer(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -181,6 +189,7 @@ public class GameController {
 	 * @param oldWinner winner of the game when the last player ended their turn
 	 */
 	void endTurn() {
+		Gdx.app.debug(TAG, String.format("ending turn of %s", gameState.getActivePlayer()));
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
 			// remember the winner as it might change during bot turns
 			lastWinner = gameState.getWinner();
@@ -191,6 +200,7 @@ public class GameController {
 			// make bots act
 			startBotTurn();
 		} else {
+			Gdx.app.log(TAG, "player turn begins");
 			// autosave when a player turn begins
 			autosave();
 			// clear autosaves from previous turn
@@ -205,7 +215,7 @@ public class GameController {
 			try {
 				botAi.doTurn(gameState, gameState.getBotIntelligence());
 			} catch (InterruptedException e) {
-				Gdx.app.log(TAG, "Bot turn was canceled.");
+				Gdx.app.log(TAG, "bot turn was canceled");
 				Thread.currentThread().interrupt();
 			}
 		});
@@ -220,6 +230,7 @@ public class GameController {
 
 	/** Buys a peasant. */
 	public void buyPeasant() {
+		Gdx.app.debug(TAG, "buying peasant");
 		GameStateHelper.buyPeasant(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -227,6 +238,7 @@ public class GameController {
 
 	/** Buys a castle. */
 	public void buyCastle() {
+		Gdx.app.debug(TAG, "buying castle");
 		GameStateHelper.buyCastle(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -234,6 +246,7 @@ public class GameController {
 
 	/** Undoes the last action. */
 	public void undoLastAction() {
+		Gdx.app.debug(TAG, "undoing last action");
 		if (PreferencesHelper.getNoOfAutoSaves() > 1) {
 			// 1 means the current state is the only one saved
 			// remove the current state from autosaves

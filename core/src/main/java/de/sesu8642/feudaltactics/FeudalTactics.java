@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -31,6 +32,9 @@ public class FeudalTactics extends Game {
 
 	@Override
 	public void create() {
+		// enable debug logging to console
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+
 		game = this;
 		// if Eclipse cannot resolve this: https://stackoverflow.com/a/31669111 (note:
 		// too lazy to try it)
