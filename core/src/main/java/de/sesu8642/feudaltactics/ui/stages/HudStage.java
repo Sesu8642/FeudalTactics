@@ -2,6 +2,10 @@
 
 package de.sesu8642.feudaltactics.ui.stages;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
@@ -20,12 +25,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
+import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
 import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
+import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
+import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Speed;
 import de.sesu8642.feudaltactics.libgdx.ValueWithSize;
 import de.sesu8642.feudaltactics.ui.events.EndTurnUnconfirmedUiEvent;
 import de.sesu8642.feudaltactics.ui.events.OpenMenuUiEvent;
@@ -34,6 +44,9 @@ import de.sesu8642.feudaltactics.ui.events.OpenMenuUiEvent;
  * {@link Stage} that displays the in-game heads up display.
  */
 public class HudStage extends ResizableResettableStage {
+
+	private static final Map<Speed, String> SPEED_BUTTON_TEXTURE_NAMES = ImmutableMap.of(Speed.HALF, "0.5x",
+			Speed.NORMAL, "1x", Speed.TIMES_TWO, "2x");
 
 	private EventBus eventBus;
 	private TextureAtlas textureAtlas;
@@ -48,7 +61,15 @@ public class HudStage extends ResizableResettableStage {
 	private ImageButton endTurnButton;
 	private ImageButton buyPeasantButton;
 	private ImageButton buyCastleButton;
+	private ImageButton speedButton;
+	private ImageButton skipButton;
 	private ImageButton menuButton;
+	private Table bottomTable;
+	private List<ImageButton> playerTurnButtons = new ArrayList<>();
+	private List<ImageButton> enemyTurnButtons = new ArrayList<>();
+
+	private Speed currentBotSpeed = Speed.NORMAL;
+	private boolean enemyTurnButtonsShown = false;
 
 	/**
 	 * Constructor.
@@ -68,22 +89,38 @@ public class HudStage extends ResizableResettableStage {
 
 	private void initUi() {
 		// TODO: put the buttons in a custom skin
-		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
-				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
-		undoButton.getImageCell().expand().fill();
-		endTurnButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("end_turn")),
-				new SpriteDrawable(textureAtlas.createSprite("end_turn_pressed")));
-		endTurnButton.getImageCell().expand().fill();
-		buyPeasantButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_peasant")),
-				new SpriteDrawable(textureAtlas.createSprite("buy_peasant_pressed")));
-		buyPeasantButton.getImageCell().expand().fill();
-		buyCastleButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_castle")),
-				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
-		buyCastleButton.getImageCell().expand().fill();
 		menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
 				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
-		menuButton.getImageCell().expand().fill();
+
+		// buttons visible during the local player turn
+		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
+				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
+		buyPeasantButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_peasant")),
+				new SpriteDrawable(textureAtlas.createSprite("buy_peasant_pressed")));
+		buyCastleButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_castle")),
+				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
+		endTurnButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("end_turn")),
+				new SpriteDrawable(textureAtlas.createSprite("end_turn_pressed")));
 		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		playerTurnButtons.add(undoButton);
+		playerTurnButtons.add(buyPeasantButton);
+		playerTurnButtons.add(buyCastleButton);
+		playerTurnButtons.add(endTurnButton);
+		for (ImageButton button : playerTurnButtons) {
+			button.getImageCell().expand().fill();
+		}
+
+		// buttons visible during enemies' turns
+		speedButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("1x")),
+				new SpriteDrawable(textureAtlas.createSprite("1x_pressed")));
+		skipButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("skip_turn")),
+				new SpriteDrawable(textureAtlas.createSprite("skip_turn_pressed")));
+		enemyTurnButtons.add(speedButton);
+		enemyTurnButtons.add(skipButton);
+		for (ImageButton button : enemyTurnButtons) {
+			button.getImageCell().expand().fill();
+			button.getImage().setColor(FeudalTactics.buttonIconColor);
+		}
 
 		handStack = new Stack();
 		handContentTable = new Table();
@@ -108,7 +145,7 @@ public class HudStage extends ResizableResettableStage {
 		rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
 		rootTable.row();
 
-		Table bottomTable = new Table();
+		bottomTable = new Table();
 		bottomTable.defaults().fill().expand().minSize(0);
 		bottomTable.add(undoButton);
 		bottomTable.add(buyPeasantButton);
@@ -139,6 +176,9 @@ public class HudStage extends ResizableResettableStage {
 		endTurnButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
+				// sync the speed of the ai component; it might be instant if the last turn was
+				// skipped
+				eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
 				eventBus.post(new EndTurnUnconfirmedUiEvent());
 			}
 		});
@@ -163,6 +203,35 @@ public class HudStage extends ResizableResettableStage {
 				eventBus.post(new OpenMenuUiEvent());
 			}
 		});
+
+		speedButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				// determine the next speed level with overflow, skipping Speed.INSTANT which is
+				// used for the other button
+				int currentSpeedIndex = currentBotSpeed.ordinal();
+				int nextSpeedIndex = currentSpeedIndex + 1;
+				if (nextSpeedIndex >= BotAi.Speed.values().length
+						|| BotAi.Speed.values()[nextSpeedIndex] == Speed.INSTANT) {
+					nextSpeedIndex = 0;
+				}
+				currentBotSpeed = Speed.values()[nextSpeedIndex];
+				eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
+				speedButton.setStyle(new ImageButtonStyle(null, null, null,
+						new SpriteDrawable(textureAtlas.createSprite(SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed))),
+						new SpriteDrawable(textureAtlas
+								.createSprite(SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed) + "_pressed")),
+						null));
+			}
+		});
+
+		skipButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new BotTurnSpeedChangedEvent(Speed.INSTANT));
+			}
+		});
+
 	}
 
 	@Override
@@ -187,42 +256,47 @@ public class HudStage extends ResizableResettableStage {
 	}
 
 	/**
-	 * Sets the enabled status of the buttons.
+	 * Sets the enabled status of the buttons that are visible during the player
+	 * turn.
 	 * 
 	 * @param undoButtonState       state of the unto button
 	 * @param buyPeasantButtonState state of the buy peasant button
 	 * @param buyCastleButtonState  state of the buy castle button
 	 * @param endTurnButtonState    state of the end turn button
 	 */
-	public void setButtonEnabledStatus(boolean undoButtonState, boolean buyPeasantButtonState,
+	public void setActiveTurnButtonEnabledStatus(boolean undoButtonState, boolean buyPeasantButtonState,
 			boolean buyCastleButtonState, boolean endTurnButtonState) {
-		if (undoButtonState) {
-			undoButton.setTouchable(Touchable.enabled);
-			undoButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		setButtonEnabledStatus(undoButtonState, undoButton);
+		setButtonEnabledStatus(buyPeasantButtonState, buyPeasantButton);
+		setButtonEnabledStatus(buyCastleButtonState, buyCastleButton);
+		setButtonEnabledStatus(endTurnButtonState, endTurnButton);
+	}
+
+	private void setButtonEnabledStatus(boolean enabled, ImageButton button) {
+		if (enabled) {
+			button.setTouchable(Touchable.enabled);
+			button.getImage().setColor(FeudalTactics.buttonIconColor);
 		} else {
-			undoButton.setTouchable(Touchable.disabled);
-			undoButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+			button.setTouchable(Touchable.disabled);
+			button.getImage().setColor(FeudalTactics.disabledButtonIconColor);
 		}
-		if (buyPeasantButtonState) {
-			buyPeasantButton.setTouchable(Touchable.enabled);
-			buyPeasantButton.getImage().setColor(FeudalTactics.buttonIconColor);
-		} else {
-			buyPeasantButton.setTouchable(Touchable.disabled);
-			buyPeasantButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+	}
+
+	/** Shows the buttons for the local player to do their turn. */
+	public void showPlayerTurnButtons() {
+		enemyTurnButtonsShown = false;
+		bottomTable.clear();
+		for (ImageButton button : playerTurnButtons) {
+			bottomTable.add(button);
 		}
-		if (buyCastleButtonState) {
-			buyCastleButton.setTouchable(Touchable.enabled);
-			buyCastleButton.getImage().setColor(FeudalTactics.buttonIconColor);
-		} else {
-			buyCastleButton.setTouchable(Touchable.disabled);
-			buyCastleButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
-		}
-		if (endTurnButtonState) {
-			endTurnButton.setTouchable(Touchable.enabled);
-			endTurnButton.getImage().setColor(FeudalTactics.buttonIconColor);
-		} else {
-			endTurnButton.setTouchable(Touchable.disabled);
-			endTurnButton.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+	}
+
+	/** Shows the buttons to monitor the other players' turns. */
+	public void showEnemyTurnButtons() {
+		enemyTurnButtonsShown = true;
+		bottomTable.clear();
+		for (ImageButton button : enemyTurnButtons) {
+			bottomTable.add(button);
 		}
 	}
 
@@ -237,6 +311,14 @@ public class HudStage extends ResizableResettableStage {
 	@Override
 	public void reset() {
 		// nothing to reset
+	}
+
+	public boolean isEnemyTurnButtonsShown() {
+		return enemyTurnButtonsShown;
+	}
+
+	public void setEnemyTurnButtonsShown(boolean enemyTurnButtonsShown) {
+		this.enemyTurnButtonsShown = enemyTurnButtonsShown;
 	}
 
 }

@@ -65,4 +65,10 @@ public class MapParameters {
 		return density;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("MapParameters [humanPlayerNo=%s, botPlayerNo=%s, seed=%s, landMass=%s, density=%s]",
+				humanPlayerNo, botPlayerNo, seed, landMass, density);
+	}
+
 }

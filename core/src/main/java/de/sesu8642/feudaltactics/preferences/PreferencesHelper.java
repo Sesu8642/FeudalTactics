@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
+
 import de.sesu8642.feudaltactics.exceptions.SaveLoadingException;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateSerializer;
@@ -28,6 +29,8 @@ public class PreferencesHelper {
 	private static final String NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME = "botIntelligence";
 	private static final String NEW_GAME_PREFERENCES_NAME = "newGamePreferences";
 	private static final int MAX_AUTOSAVES = 50;
+
+	private static final String TAG = PreferencesHelper.class.getName();
 
 	private PreferencesHelper() {
 		// utility class -> prevent instantiation
@@ -78,6 +81,7 @@ public class PreferencesHelper {
 	 * @param gameState game state to save
 	 */
 	public static void autoSaveGameState(GameState gameState) {
+		Gdx.app.debug(TAG, "autosaving");
 		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
 		String saveString = null;
 		Json json = new Json(OutputType.json);
