@@ -67,14 +67,6 @@ public class HexTile implements Comparable<HexTile> {
 	}
 
 	@Override
-	public String toString() {
-		String kingdomStr = kingdom == null ? "null" : kingdom.toString();
-		String contentStr = content == null ? "null" : content.toString();
-		return "Position: " + position.toString() + " Color: " + player.getColor().toString() + ", Kingdom: "
-				+ kingdomStr + ", Content: " + contentStr;
-	}
-
-	@Override
 	public int hashCode() {
 		return Objects.hash(content, player, position);
 	}
@@ -105,6 +97,11 @@ public class HexTile implements Comparable<HexTile> {
 			result = Float.compare(this.getPosition().y, o.getPosition().y);
 		}
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("HexTile [player=%s, content=%s, position=%s]", player, content, position);
 	}
 
 }

@@ -3,21 +3,33 @@
 package de.sesu8642.feudaltactics.gamelogic.ingame;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.ApplicationStub;
+import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
@@ -28,19 +40,40 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
 
 /** Tests for BotAi class. */
+@ExtendWith(MockitoExtension.class)
 class BotAiTest {
 
-	private BotAi systemUnderTest = new BotAi();
+	@Mock
+	EventBus eventBusStub;
+
+	@InjectMocks
+	private BotAi systemUnderTest;
 
 	@BeforeAll
-	static void init() {
+	static void initAll() {
 		Gdx.app = new ApplicationStub();
+	}
+
+	private GameState resultingGameState;
+
+	@BeforeEach
+	void init() {
+		// set tick delay to 0 have it run as fast as possible
+		systemUnderTest.setTickDelayMs(0);
+		doAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) {
+				BotTurnFinishedEvent event = invocation.getArgument(0);
+				resultingGameState = event.getGameState();
+				return null;
+			}
+		}).when(eventBusStub).post(any(BotTurnFinishedEvent.class));
 	}
 
 	@ParameterizedTest
 	@MethodSource("provideMapParameters")
 	void botsDoNotGainOrLoseValueDuringTurn(BotAi.Intelligence botIntelligence, Float landMass, Float density,
-			Long seed) {
+			Long seed) throws Exception {
 		GameState gameState = createGameState(landMass, density, seed);
 
 		for (int i = 1; i <= 1000; i++) {
@@ -49,7 +82,8 @@ class BotAiTest {
 			}
 			int activePlayerCapitalBeforeTurn = calculateActivePlayerCapital(gameState);
 			String beforeJson = gameStateToJson(gameState);
-			gameState = systemUnderTest.doTurn(gameState, botIntelligence);
+			systemUnderTest.doTurn(gameState, botIntelligence);
+			gameState = resultingGameState;
 			String afterJson = gameStateToJson(gameState);
 			int activePlayerCapitalAfterTurn = calculateActivePlayerCapital(gameState);
 			if (gameState.getKingdoms().size() > 1) {
@@ -73,8 +107,8 @@ class BotAiTest {
 
 	@ParameterizedTest
 	@MethodSource("provideMapParameters")
-	void botsActConsistentWithTheSameSeed(BotAi.Intelligence botIntelligence, Float landMass, Float density,
-			Long seed) {
+	void botsActConsistentWithTheSameSeed(BotAi.Intelligence botIntelligence, Float landMass, Float density, Long seed)
+			throws Exception {
 		GameState gameState1 = createGameState(landMass, density, seed);
 		GameState gameState2 = createGameState(landMass, density, seed);
 
@@ -82,8 +116,10 @@ class BotAiTest {
 			if (gameState1.getKingdoms().size() == 1) {
 				return;
 			}
-			gameState1 = systemUnderTest.doTurn(gameState1, botIntelligence);
-			gameState2 = systemUnderTest.doTurn(gameState2, botIntelligence);
+			systemUnderTest.doTurn(gameState1, botIntelligence);
+			gameState1 = resultingGameState;
+			systemUnderTest.doTurn(gameState2, botIntelligence);
+			gameState2 = resultingGameState;
 			assertEquals(gameState1, gameState2);
 
 			GameStateHelper.endTurn(gameState1);

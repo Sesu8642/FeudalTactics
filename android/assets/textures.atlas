@@ -1,9 +1,51 @@
 
 textures.png
-size: 1024,256
+size: 1024, 256
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Nearest, Nearest
 repeat: none
+0.5x
+  rotate: false
+  xy: 592, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+0.5x_pressed
+  rotate: false
+  xy: 724, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+1x
+  rotate: false
+  xy: 266, 57
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+1x_pressed
+  rotate: false
+  xy: 658, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+2x
+  rotate: false
+  xy: 328, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+2x_pressed
+  rotate: false
+  xy: 790, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 baron
   rotate: false
   xy: 2, 2
@@ -13,21 +55,21 @@ baron
   index: 1
 baron
   rotate: false
-  xy: 790, 132
+  xy: 530, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 2
 beach_sand
   rotate: false
-  xy: 526, 189
+  xy: 856, 189
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 beach_sand
   rotate: false
-  xy: 328, 123
+  xy: 790, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -48,70 +90,70 @@ beach_water
   index: 2
 buy_castle
   rotate: false
-  xy: 856, 189
+  xy: 460, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 buy_castle_pressed
   rotate: false
-  xy: 328, 189
+  xy: 394, 189
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 buy_peasant
   rotate: false
-  xy: 790, 189
+  xy: 394, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 buy_peasant_pressed
   rotate: false
-  xy: 724, 189
+  xy: 328, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 capital
   rotate: false
-  xy: 724, 132
+  xy: 464, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: -1
 castle
   rotate: false
-  xy: 658, 75
+  xy: 794, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: -1
 die
   rotate: false
-  xy: 134, 59
+  xy: 460, 189
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 die_pressed
   rotate: false
-  xy: 262, 123
+  xy: 592, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 end_turn
   rotate: false
-  xy: 394, 123
+  xy: 856, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 end_turn_pressed
   rotate: false
-  xy: 658, 189
+  xy: 262, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -125,49 +167,49 @@ hand
   index: -1
 hand_thumb
   rotate: false
-  xy: 68, 59
+  xy: 134, 59
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 knight
   rotate: false
-  xy: 592, 132
+  xy: 68, 2
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 1
 knight
   rotate: false
-  xy: 922, 132
+  xy: 662, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 2
 pause
   rotate: false
-  xy: 460, 189
+  xy: 658, 189
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 pause_pressed
   rotate: false
-  xy: 526, 123
+  xy: 200, 57
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 peasant
   rotate: false
-  xy: 134, 2
+  xy: 398, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 2
 peasant
   rotate: false
-  xy: 856, 132
+  xy: 596, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -179,37 +221,51 @@ shield
   orig: 16, 16
   offset: 0, 0
   index: -1
+skip_turn
+  rotate: false
+  xy: 724, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
+skip_turn_pressed
+  rotate: false
+  xy: 68, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 spearman
   rotate: false
-  xy: 68, 2
+  xy: 134, 2
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 1
 spearman
   rotate: false
-  xy: 592, 75
+  xy: 728, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 2
 tile_bw
   rotate: false
-  xy: 394, 189
+  xy: 526, 189
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: -1
 tree
   rotate: false
-  xy: 658, 132
+  xy: 332, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: -1
 undo
   rotate: false
-  xy: 592, 189
+  xy: 922, 189
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
@@ -223,14 +279,14 @@ undo_pressed
   index: -1
 water
   rotate: false
-  xy: 922, 189
+  xy: 526, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
   index: 2
 water
   rotate: false
-  xy: 460, 123
+  xy: 922, 123
   size: 64, 64
   orig: 64, 64
   offset: 0, 0
