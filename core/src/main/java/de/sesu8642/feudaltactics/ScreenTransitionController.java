@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
@@ -21,6 +22,7 @@ import de.sesu8642.feudaltactics.preferences.NewGamePreferences;
 import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import de.sesu8642.feudaltactics.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.ui.screens.IngameScreen;
+import de.sesu8642.feudaltactics.ui.screens.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.ui.screens.SplashScreen;
 
 /**
@@ -41,18 +43,20 @@ public class ScreenTransitionController {
 	private de.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler;
 	private de.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler;
+	private IngameScreenEventHandler ingameScreenEventHandler;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param eventBus                event bus to register and unregister to/with
-	 * @param localIngameInputHandler local ingame input handler
-	 * @param gameLogicEventHandler   game logic event handler
-	 * @param splashScreen            splash screen
-	 * @param ingameScreen            ingame screen
-	 * @param mainMenuScreen          main menu screen
-	 * @param rendererEventHandler    renderer event handler
-	 * @param preferencesEventHandler preferences event handler
+	 * @param eventBus                 event bus to register and unregister to/with
+	 * @param localIngameInputHandler  local ingame input handler
+	 * @param gameLogicEventHandler    game logic event handler
+	 * @param splashScreen             splash screen
+	 * @param ingameScreen             ingame screen
+	 * @param mainMenuScreen           main menu screen
+	 * @param rendererEventHandler     renderer event handler
+	 * @param preferencesEventHandler  preferences event handler
+	 * @param ingameScreenEventHandler ingame screen event handler
 	 */
 	@Inject
 	public ScreenTransitionController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
@@ -62,7 +66,8 @@ public class ScreenTransitionController {
 			de.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler,
-			de.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler) {
+			de.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler,
+			IngameScreenEventHandler ingameScreenEventHandler) {
 		this.eventBus = eventBus;
 		this.localIngameInputHandler = localIngameInputHandler;
 		this.editorInputHandler = editorInputHandler;
@@ -75,10 +80,11 @@ public class ScreenTransitionController {
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
 		this.preferencesEventHandler = preferencesEventHandler;
+		this.ingameScreenEventHandler = ingameScreenEventHandler;
 	}
 
 	private void unregisterAllEventHandlers() {
-		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreen, rendererEventHandler,
+		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
 				preferencesEventHandler).forEach(object -> {
 					try {
 						eventBus.unregister(object);
@@ -136,7 +142,7 @@ public class ScreenTransitionController {
 	/** Transitions to the ingame screen. */
 	public void transitionToIngameScreen() {
 		unregisterAllEventHandlers();
-		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreen, rendererEventHandler,
+		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
 				preferencesEventHandler).forEach(object -> eventBus.register(object));
 		NewGamePreferences savedPrefs = PreferencesHelper.getNewGamePreferences();
 		eventBus.post(new RegenerateMapUiEvent(savedPrefs.getBotIntelligence(),

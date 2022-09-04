@@ -16,20 +16,15 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
-import de.sesu8642.feudaltactics.events.input.EscInputEvent;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
-import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
 import de.sesu8642.feudaltactics.gamelogic.MapParameters;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
@@ -45,11 +40,6 @@ import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.ui.DialogFactory;
 import de.sesu8642.feudaltactics.ui.Margin;
-import de.sesu8642.feudaltactics.ui.events.CloseMenuEvent;
-import de.sesu8642.feudaltactics.ui.events.EndTurnUnconfirmedUiEvent;
-import de.sesu8642.feudaltactics.ui.events.ExitGameUiEvent;
-import de.sesu8642.feudaltactics.ui.events.OpenMenuUiEvent;
-import de.sesu8642.feudaltactics.ui.events.RetryGameUnconfirmedUiEvent;
 import de.sesu8642.feudaltactics.ui.stages.HudStage;
 import de.sesu8642.feudaltactics.ui.stages.MenuStage;
 import de.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
@@ -119,22 +109,10 @@ public class IngameScreen extends GameScreen {
 	}
 
 	/**
-	 * Event handler for ESC key events.
-	 * 
-	 * @param event event to handle
+	 * Checks if there should be some warning before ending the turn, potentially
+	 * displays it and then ends the turn if confirmed.
 	 */
-	@Subscribe
-	public void handleEscInput(EscInputEvent event) {
-		togglePause();
-	}
-
-	/**
-	 * Event handler for end turn attempt events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleEndTurnAttempt(EndTurnUnconfirmedUiEvent event) {
+	public void handleEndTurnAttempt() {
 		if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)) {
 			Dialog confirmDialog = dialogFactory.createConfirmDialog(
 					"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
@@ -145,33 +123,8 @@ public class IngameScreen extends GameScreen {
 		}
 	}
 
-	/**
-	 * Event handler for open menu events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleOpenMenuAttempt(OpenMenuUiEvent event) {
-		activateStage(IngameStages.MENU);
-	}
-
-	/**
-	 * Event handler for close menu events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleCloseMenuAttempt(CloseMenuEvent event) {
-		activateStage(IngameStages.HUD);
-	}
-
-	/**
-	 * Event handler for unconfirmed retry game events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleUnconfirmedRetryGame(RetryGameUnconfirmedUiEvent event) {
+	/** Displays a warning about lost progress and resets the game if confirmed. */
+	void handleUnconfirmedRetryGame() {
 		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
 			resetGame();
 		});
@@ -186,13 +139,8 @@ public class IngameScreen extends GameScreen {
 		activateStage(IngameStages.PARAMETERS);
 	}
 
-	/**
-	 * Event handler for exit game events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleExitGameAttempt(ExitGameUiEvent event) {
+	/** Displays a warning about lost progress and exits the game if confirmed. */
+	public void handleExitGameAttempt() {
 		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
 			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 			eventBus.post(new GameExitedEvent());
@@ -202,27 +150,19 @@ public class IngameScreen extends GameScreen {
 	}
 
 	/**
-	 * Event handler for game start events.
+	 * Adjusts all the UI elements that need to be adjusted and displays dialogs if
+	 * appropriate.
 	 * 
-	 * @param event event to handle
+	 * @param gameState            new game state
+	 * @param winnerChanged        whether the winner changed compared to the
+	 *                             previous GameState
+	 * @param mapDimensionsChanged whether the map dimensions changed
 	 */
-	@Subscribe
-	public void handleGameStart(GameStartEvent event) {
-		activateStage(IngameStages.HUD);
-	}
-
-	/**
-	 * Event handler for gameState change. Adjusts all the UI elements that need to
-	 * be adjusted and displays dialogs if appropriate.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleGameStateChange(GameStateChangeEvent event) {
+	public void handleGameStateChange(GameState gameState, boolean winnerChanged, boolean mapDimensionsChanged) {
 		// cache the new state
-		cachedGameState = event.getGameState();
+		cachedGameState = gameState;
 		// update the UI when there is a gameState change
-		GameState newGameState = event.getGameState();
+		GameState newGameState = gameState;
 		// hand content
 		if (newGameState.getHeldObject() != null) {
 			hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
@@ -265,7 +205,9 @@ public class IngameScreen extends GameScreen {
 				showLostMessage();
 			} else {
 				// check if winner changed
-				if (event.isWinnerChanged()) {
+				// this cannot be determined by this class itself because it is not determined
+				// by comparing to the very last state but an earlier one
+				if (winnerChanged) {
 					showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
 							newGameState.getWinner().getColor());
 				}
@@ -278,20 +220,10 @@ public class IngameScreen extends GameScreen {
 		}
 		hudStage.setInfoText(infoText);
 
-		if (event.isMapDimensionsChanged()) {
+		if (mapDimensionsChanged) {
 			// dimensions changed means that the seed also changed
-			parameterInputStage.updateSeed(event.getGameState().getSeed());
+			parameterInputStage.updateSeed(newGameState.getSeed());
 		}
-	}
-
-	/**
-	 * Event handler for game resumed events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleGameResumed(GameResumedEvent event) {
-		activateStage(IngameStages.HUD);
 	}
 
 	/** Toggles the pause menu. */
@@ -372,7 +304,7 @@ public class IngameScreen extends GameScreen {
 		endDialog.show(hudStage);
 	}
 
-	private void activateStage(IngameStages ingameStage) {
+	void activateStage(IngameStages ingameStage) {
 		inputMultiplexer.clear();
 		switch (ingameStage) {
 		case MENU:
