@@ -38,6 +38,7 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Speed;
 
 /** Tests for BotAi class. */
 @ExtendWith(MockitoExtension.class)
@@ -59,7 +60,7 @@ class BotAiTest {
 	@BeforeEach
 	void init() {
 		// set tick delay to 0 have it run as fast as possible
-		systemUnderTest.setTickDelayMs(0);
+		systemUnderTest.setCurrentSpeed(Speed.INSTANT);
 		doAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) {
