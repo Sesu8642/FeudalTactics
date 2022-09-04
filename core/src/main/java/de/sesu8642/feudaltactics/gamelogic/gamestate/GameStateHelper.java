@@ -868,14 +868,15 @@ public class GameStateHelper {
 	/**
 	 * Determines which local player is responsible for any inputs.
 	 * 
-	 * @return acting player
+	 * @return optional containing acting player or empty optional if there is no
+	 *         human player
 	 */
-	public static Player determineActingLocalPlayer(GameState gameState) {
+	public static Optional<Player> determineActingLocalPlayer(GameState gameState) {
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
-			return gameState.getActivePlayer();
+			return Optional.of(gameState.getActivePlayer());
 		}
 		// if it is a bot's turn, assume the first human player attemted the action
 		return gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER)
-				.findFirst().get();
+				.findFirst();
 	}
 }

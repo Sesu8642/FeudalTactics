@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.gamelogic.ingame;
 
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -55,8 +56,11 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleBackInput(BackInputEvent event) {
-		if (InputValidationHelper.checkUndoAction(gameController.getGameState(),
-				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()))) {
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get())) {
 			gameController.undoLastAction();
 		}
 	}
@@ -69,7 +73,11 @@ public class LocalIngameInputHandler {
 	@Subscribe
 	public void handleTapInput(TapInputEvent event) {
 		Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
-		Player player = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		Player player = playerOptional.get();
 		Map<Vector2, HexTile> map = gameController.getGameState().getMap();
 		HexTile tile = map.get(hexCoords);
 		// print info
@@ -124,8 +132,11 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleUndoMove(UndoMoveEvent event) {
-		if (InputValidationHelper.checkUndoAction(gameController.getGameState(),
-				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()))) {
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get())) {
 			gameController.undoLastAction();
 		}
 	}
@@ -137,8 +148,11 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleBuyPeasant(BuyPeasantEvent event) {
-		if (InputValidationHelper.checkBuyObject(gameController.getGameState(),
-				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()), Unit.COST)) {
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Unit.COST)) {
 			gameController.buyPeasant();
 		}
 	}
@@ -150,8 +164,11 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleBuyCastle(BuyCastleEvent event) {
-		if (InputValidationHelper.checkBuyObject(gameController.getGameState(),
-				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()), Castle.COST)) {
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Castle.COST)) {
 			gameController.buyCastle();
 		}
 	}
@@ -163,8 +180,11 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleEndTurn(EndTurnEvent event) {
-		if (InputValidationHelper.checkEndTurn(gameController.getGameState(),
-				GameStateHelper.determineActingLocalPlayer(gameController.getGameState()))) {
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		if (InputValidationHelper.checkEndTurn(gameController.getGameState(), playerOptional.get())) {
 			gameController.endTurn();
 		}
 	}

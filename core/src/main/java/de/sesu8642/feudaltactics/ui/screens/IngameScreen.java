@@ -2,6 +2,8 @@
 
 package de.sesu8642.feudaltactics.ui.screens;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -34,6 +36,7 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
@@ -246,15 +249,15 @@ public class IngameScreen extends GameScreen {
 			if (hudStage.isEnemyTurnButtonsShown()) {
 				hudStage.showPlayerTurnButtons();
 			}
-			boolean canUndo = InputValidationHelper.checkUndoAction(newGameState,
-					GameStateHelper.determineActingLocalPlayer(newGameState));
-			boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState,
-					GameStateHelper.determineActingLocalPlayer(newGameState), Unit.COST);
-			boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState,
-					GameStateHelper.determineActingLocalPlayer(newGameState), Castle.COST);
-			boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState,
-					GameStateHelper.determineActingLocalPlayer(newGameState));
-			hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
+			if (playerOptional.isPresent()) {
+				Player player = playerOptional.get();
+				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player);
+				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.COST);
+				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.COST);
+				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
+				hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+			}
 			// display messages
 			// check if player lost
 			if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
