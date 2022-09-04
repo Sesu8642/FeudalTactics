@@ -6,9 +6,24 @@ jobs:
     container:
       image: cangol/android-gradle
     steps:
+
       - name: Check out repository code
         uses: actions/checkout@v3
+
       - name: Build Desktop
         run: ./gradlew desktop:dist
+
+      - name: Upload desktop jar
+        uses: actions/upload-artifact@v3
+        with:
+          name: Desktop jar
+          path: ./desktop//build/libs/*.jar
+
       - name: Build Android
         run: ./gradlew android:assembleRelease
+
+      - name: Upload Android apk
+        uses: actions/upload-artifact@v3
+        with:
+          name: Android apk
+          path: ./android/build/outputs/apk/release/android-release-unsigned.apk
