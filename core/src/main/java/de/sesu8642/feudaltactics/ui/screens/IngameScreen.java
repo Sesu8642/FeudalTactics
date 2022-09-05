@@ -48,6 +48,10 @@ import de.sesu8642.feudaltactics.ui.stages.ParameterInputStage;
 @Singleton
 public class IngameScreen extends GameScreen {
 
+	private static final long BUTTON_HEIGHT_PX = 110;
+	private static final long INPUT_HEIGHT_PX = 79;
+	private static final long INPUT_WIDTH_PX = 419;
+
 	private OrthographicCamera ingameCamera;
 
 	private MapRenderer mapRenderer;
@@ -64,14 +68,17 @@ public class IngameScreen extends GameScreen {
 	/** Cached version of the game state from the game controller. */
 	private GameState cachedGameState;
 
+	/**
+	 * Switching the buttons must happen in the same thread that does the rendering
+	 * because the UI libs aren't thread-safe. To do that, a Runnable can be placed
+	 * here and will be executed when the next render happens.
+	 */
+	private Runnable hudStageButtonSwitchAction = null;
+
 	/** Stages that can be displayed. */
 	public enum IngameStages {
 		PARAMETERS, HUD, MENU
 	}
-
-	private static final long BUTTON_HEIGHT_PX = 110;
-	private static final long INPUT_HEIGHT_PX = 79;
-	private static final long INPUT_WIDTH_PX = 419;
 
 	/**
 	 * Constructor.
@@ -187,7 +194,7 @@ public class IngameScreen extends GameScreen {
 			}
 			// buttons
 			if (hudStage.isEnemyTurnButtonsShown()) {
-				hudStage.showPlayerTurnButtons();
+				hudStageButtonSwitchAction = () -> hudStage.showPlayerTurnButtons();
 			}
 			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
 			if (playerOptional.isPresent()) {
@@ -215,7 +222,7 @@ public class IngameScreen extends GameScreen {
 		} else {
 			infoText = "Enemy turn";
 			if (!hudStage.isEnemyTurnButtonsShown()) {
-				hudStage.showEnemyTurnButtons();
+				hudStageButtonSwitchAction = () -> hudStage.showEnemyTurnButtons();
 			}
 		}
 		hudStage.setInfoText(infoText);
@@ -339,6 +346,10 @@ public class IngameScreen extends GameScreen {
 
 	@Override
 	public void render(float delta) {
+		if (hudStageButtonSwitchAction != null) {
+			hudStageButtonSwitchAction.run();
+			hudStageButtonSwitchAction = null;
+		}
 		getViewport().apply();
 		mapRenderer.render();
 		ingameCamera.update();
