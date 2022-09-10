@@ -390,8 +390,9 @@ public class GameStateHelper {
 	 * @param tile      tile to place to object on
 	 */
 	public static void placeOwn(GameState gameState, HexTile tile) {
-		// units can't act after removing trees
-		if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
+		// units can't act after removing blocking stuff
+		if (tile.getContent() != null
+				&& ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
 			((Unit) gameState.getHeldObject()).setCanAct(false);
 		}
 		placeObject(gameState, tile);
@@ -609,7 +610,8 @@ public class GameStateHelper {
 			// delete capital, units and kingdom if too small
 			for (HexTile tile : newKingdom.getTiles()) {
 				if (tile.getContent() != null
-						&& !ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
+						&& !ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+						&& !ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
 					tile.setContent(null);
 				}
 			}
@@ -667,11 +669,12 @@ public class GameStateHelper {
 			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
 				kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
 				if (kingdom.getSavings() < getKingdomSalaries(gameState, kingdom)) {
-					// destroy all units if they cannot get paid
+					// kill all units if they cannot get paid
 					for (HexTile tile : kingdom.getTiles()) {
 						if (tile.getContent() != null
 								&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
-							tile.setContent(null);
+							// spawn a gravestone
+							tile.setContent(new Gravestone());
 						}
 					}
 				} else {
@@ -709,6 +712,9 @@ public class GameStateHelper {
 						candidates.clear();
 					}
 				}
+			} else if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
+				newTreeTiles.add(tile);
 			} else if (tile.getContent() == null && random.nextFloat() <= TREE_SPAWN_RATE) {
 				newTreeTiles.add(tile);
 			}

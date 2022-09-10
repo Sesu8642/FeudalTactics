@@ -3,12 +3,13 @@
 package de.sesu8642.feudaltactics.gamelogic.gamestate;
 
 /**
- * Map object representing a tree. A tree prevent the tile it stands on from
- * generating income. Trees have a chance to spread to neighboring tiles.
+ * Map object representing a gravestone. A gravestone spawns when a unit dies
+ * because it cannot be paid. After one turn, a gravestone will turn into a
+ * tree.
  **/
-public class Tree implements MapObject, Blocking {
+public class Gravestone implements MapObject, Blocking {
 
-	public static final String SPRITE_NAME = "tree";
+	public static final String SPRITE_NAME = "gravestone";
 	private static final int STRENGTH = 0;
 
 	@Override
@@ -22,8 +23,8 @@ public class Tree implements MapObject, Blocking {
 	}
 
 	@Override
-	public Tree getCopy() {
-		return new Tree();
+	public Gravestone getCopy() {
+		return new Gravestone();
 	}
 
 	@Override

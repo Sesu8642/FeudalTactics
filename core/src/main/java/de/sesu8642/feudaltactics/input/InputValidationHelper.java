@@ -4,13 +4,13 @@ package de.sesu8642.feudaltactics.input;
 
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Blocking;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
-import de.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
@@ -119,13 +119,14 @@ public class InputValidationHelper {
 		if (gameState.getActiveKingdom() != tile.getKingdom()) {
 			return false;
 		}
-		if (tile.getContent() != null && !ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
-			// not empty or a tree
+		if (tile.getContent() != null && ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())
+				&& !ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
+			// non-unit on blocking object
 			return false;
 		}
-		if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
-				&& !ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
-			// non-unit on tree
+		if (tile.getContent() != null
+				&& !ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
+			// not empty or blocking object
 			return false;
 		}
 		return true;

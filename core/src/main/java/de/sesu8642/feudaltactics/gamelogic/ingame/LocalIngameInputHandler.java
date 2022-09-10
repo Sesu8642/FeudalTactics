@@ -20,12 +20,12 @@ import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
 import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Blocking;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
-import de.sesu8642.feudaltactics.gamelogic.gamestate.Tree;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.input.InputValidationHelper;
 
@@ -211,7 +211,7 @@ public class LocalIngameInputHandler {
 			// place object
 			if (tile.getPlayer() != null && tile.getPlayer() == player) {
 				if (tile.getContent() == null
-						|| ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
+						|| ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
 					return TapAction.PLACE_OWN;
 				} else {
 					return TapAction.COMBINE_UNITS;

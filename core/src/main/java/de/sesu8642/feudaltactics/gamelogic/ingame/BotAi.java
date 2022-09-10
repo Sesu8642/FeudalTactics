@@ -25,6 +25,7 @@ import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Blocking;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
@@ -124,7 +125,7 @@ public class BotAi {
 		Set<HexTile> placedCastleTiles = new HashSet<>();
 		switch (intelligence) {
 		case DUMB:
-			chopTrees(gameState, pickedUpUnits, 0.3F, random);
+			removeBlockingObjects(gameState, pickedUpUnits, 0.3F, random);
 			// only 50% chance to conquer anything
 			if (random.nextFloat() <= 0.5F) {
 				conquerAsMuchAsPossible(gameState, pickedUpUnits);
@@ -132,12 +133,12 @@ public class BotAi {
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
 		case MEDIUM:
-			chopTrees(gameState, pickedUpUnits, 0.7F, random);
+			removeBlockingObjects(gameState, pickedUpUnits, 0.7F, random);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
 		case SMART:
-			chopTrees(gameState, pickedUpUnits, 1F, random);
+			removeBlockingObjects(gameState, pickedUpUnits, 1F, random);
 			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			sellCastles(gameState.getActiveKingdom(), placedCastleTiles);
@@ -179,10 +180,12 @@ public class BotAi {
 		}
 	}
 
-	private void chopTrees(GameState gameState, PickedUpUnits pickedUpUnits, float chance, Random random) {
-		Gdx.app.debug(TAG, "chopping trees");
+	/** Try to remove blocking objects like gravestones or trees. */
+	private void removeBlockingObjects(GameState gameState, PickedUpUnits pickedUpUnits, float chance, Random random) {
+		Gdx.app.debug(TAG, "removing blocking objects");
 		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+			if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())
 					&& random.nextFloat() <= chance) {
 				if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 || acquireUnit(gameState, gameState.getActiveKingdom(),
 						pickedUpUnits, UnitTypes.PEASANT.strength())) {
