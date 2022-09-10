@@ -477,7 +477,7 @@ public class GameStateHelper {
 				// handle kingdom
 				if (neighborTile.getPlayer() == tile.getPlayer() && neighborTile.getKingdom() != tile.getKingdom()) {
 					// combine kingdoms if owned by the same player
-					combineKingdoms(gameState, neighborTile.getKingdom(), tile.getKingdom());
+					combineKingdoms(gameState, tile.getKingdom(), neighborTile.getKingdom());
 					gameState.setActiveKingdom(neighborTile.getKingdom());
 					neighborTile.getKingdom().setWasActiveInCurrentTurn(true);
 				} else if (neighborTile.getKingdom() == oldTileKingdom) {
