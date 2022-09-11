@@ -55,7 +55,7 @@ baron
   index: 1
 baron
   rotate: false
-  xy: 596, 66
+  xy: 662, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -118,14 +118,14 @@ buy_peasant_pressed
   index: -1
 capital
   rotate: false
-  xy: 530, 66
+  xy: 596, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: -1
 castle
   rotate: false
-  xy: 860, 66
+  xy: 926, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
@@ -188,11 +188,18 @@ knight
   index: 1
 knight
   rotate: false
-  xy: 728, 66
+  xy: 794, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 2
+palm_tree
+  rotate: false
+  xy: 530, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 pause
   rotate: false
   xy: 658, 189
@@ -216,14 +223,14 @@ peasant
   index: 2
 peasant
   rotate: false
-  xy: 662, 66
+  xy: 728, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0
   index: 1
 shield
   rotate: false
-  xy: 988, 237
+  xy: 200, 39
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -251,7 +258,7 @@ spearman
   index: 1
 spearman
   rotate: false
-  xy: 794, 66
+  xy: 860, 66
   size: 64, 55
   orig: 64, 55
   offset: 0, 0

@@ -299,7 +299,7 @@ public class GameStateHelper {
 	private static void createTrees(GameState gameState, float vegetationDensity, Random random) {
 		for (HexTile tile : gameState.getMap().values()) {
 			if (random.nextFloat() <= vegetationDensity) {
-				tile.setContent(new Tree());
+				spawnTree(gameState, tile);
 			}
 		}
 	}
@@ -700,6 +700,7 @@ public class GameStateHelper {
 		for (HexTile tile : gameState.getMap().values()) {
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
+				// regular trees have a chance to spread
 				if (random.nextFloat() <= TREE_SPREAD_RATE) {
 					ArrayList<HexTile> candidates = new ArrayList<>();
 					for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
@@ -713,15 +714,38 @@ public class GameStateHelper {
 					}
 				}
 			} else if (tile.getContent() != null
+					&& ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {
+				// palm trees always spread to other coast tiles
+				HexMapHelper.getNeighborTiles(gameState.getMap(), tile).stream()
+						.filter(neighbor -> neighbor != null && neighbor.getContent() == null
+								&& isCoastTile(gameState, neighbor))
+						.forEach(newTreeTile -> newTreeTiles.add(newTreeTile));
+				newTreeTiles.add(tile);
+			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
+				// gravestones become trees/palms after a turn
 				newTreeTiles.add(tile);
 			} else if (tile.getContent() == null && random.nextFloat() <= TREE_SPAWN_RATE) {
 				newTreeTiles.add(tile);
 			}
 		}
 		for (HexTile tile : newTreeTiles) {
+			spawnTree(gameState, tile);
+		}
+	}
+
+	/** Spawns a regular or palm tree depending on the position. */
+	private static void spawnTree(GameState gameState, HexTile tile) {
+		if (isCoastTile(gameState, tile)) {
+			tile.setContent(new PalmTree());
+		} else {
 			tile.setContent(new Tree());
 		}
+	}
+
+	/** Returns whether a tile is a coast tile (= next to water). */
+	private static boolean isCoastTile(GameState gameState, HexTile tile) {
+		return HexMapHelper.getNeighborTiles(gameState.getMap(), tile).contains(null);
 	}
 
 	/**
