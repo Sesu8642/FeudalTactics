@@ -31,7 +31,6 @@ public class GameStateHelper {
 	private static final String TAG = GameStateHelper.class.getName();
 
 	public static final float TREE_SPREAD_RATE = 0.3F;
-	public static final float TREE_SPAWN_RATE = 0.01F;
 	public static final float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
 	public static final float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
@@ -724,8 +723,6 @@ public class GameStateHelper {
 			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
 				// gravestones become trees/palms after a turn
-				newTreeTiles.add(tile);
-			} else if (tile.getContent() == null && random.nextFloat() <= TREE_SPAWN_RATE) {
 				newTreeTiles.add(tile);
 			}
 		}
