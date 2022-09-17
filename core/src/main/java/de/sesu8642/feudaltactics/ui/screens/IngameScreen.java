@@ -132,9 +132,8 @@ public class IngameScreen extends GameScreen {
 
 	/** Displays a warning about lost progress and resets the game if confirmed. */
 	void handleUnconfirmedRetryGame() {
-		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
-			resetGame();
-		});
+		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+				this::resetGame);
 		confirmDialog.show(menuStage);
 	}
 

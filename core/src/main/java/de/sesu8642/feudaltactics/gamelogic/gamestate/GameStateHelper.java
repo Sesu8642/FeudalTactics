@@ -715,10 +715,10 @@ public class GameStateHelper {
 			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {
 				// palm trees always spread to other coast tiles
-				HexMapHelper.getNeighborTiles(gameState.getMap(), tile).stream()
-						.filter(neighbor -> neighbor != null && neighbor.getContent() == null
-								&& isCoastTile(gameState, neighbor))
-						.forEach(newTreeTile -> newTreeTiles.add(newTreeTile));
+				HexMapHelper
+						.getNeighborTiles(gameState.getMap(), tile).stream().filter(neighbor -> neighbor != null
+								&& neighbor.getContent() == null && isCoastTile(gameState, neighbor))
+						.forEach(newTreeTiles::add);
 				newTreeTiles.add(tile);
 			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
