@@ -444,19 +444,21 @@ public class GameStateHelper {
 		((Unit) gameState.getHeldObject()).setCanAct(false);
 
 		// update kingdoms
+		boolean capitalDestroyed = false;
 		if (tile.getKingdom() != null) {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Capital.class, tile.getContent().getClass())
 					&& tile.getKingdom().getTiles().size() > 2) {
 				tile.getKingdom().setSavings(0);
-				createCapital(gameState, tile);
+				// the new capital is created later; otherwise it could land on a tile that is
+				// cut off, causing a tree to spawn there unexpectedly
+				capitalDestroyed = true;
 			}
 			boolean removeResult = tile.getKingdom().getTiles().remove(tile);
 			if (!removeResult) {
-				Gdx.app.error(TAG, String.format("tile could not be removed from it's kingdom: '%s'", tile));
+				Gdx.app.error(TAG, String.format("tile could not be removed from its kingdom: '%s'", tile));
 			}
-
 		}
 		tile.setKingdom(gameState.getActiveKingdom());
 		tile.getKingdom().getTiles().add(tile);
@@ -530,6 +532,10 @@ public class GameStateHelper {
 		if (potentiallySplit || (oldTileKingdom != null && oldTileKingdom.getTiles().size() < 2)) {
 			updateSplitKingdom(gameState, oldTileKingdom.getTiles());
 		}
+
+		if (capitalDestroyed) {
+			createCapital(gameState, tile);
+		}
 		placeObject(gameState, tile);
 	}
 
@@ -597,8 +603,8 @@ public class GameStateHelper {
 			currentTile.setKingdom(newKingdom);
 			doneTiles.add(currentTile);
 			for (HexTile expandTile : HexMapHelper.getNeighborTiles(gameState.getMap(), currentTile)) {
-				if (!doneTiles.contains(expandTile) && !todoTiles.contains(expandTile)
-						&& (expandTile != null && expandTile.getKingdom() == oldKingdom)) {
+				if (expandTile != null && !doneTiles.contains(expandTile) && !todoTiles.contains(expandTile)
+						&& expandTile.getKingdom() == oldKingdom) {
 					todoTiles.add(expandTile);
 				}
 			}
@@ -606,12 +612,14 @@ public class GameStateHelper {
 		tiles.removeAll(newKingdom.getTiles());
 
 		if (newKingdom.getTiles().size() < 2) {
-			// delete capital, units and kingdom if too small
+			// remove capital and units if kingdom is a single tile
 			for (HexTile tile : newKingdom.getTiles()) {
-				if (tile.getContent() != null
-						&& !ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
-						&& !ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
-					tile.setContent(null);
+				if (tile.getContent() != null) {
+					if (Capital.class.isAssignableFrom(tile.getContent().getClass())) {
+						spawnTree(gameState, tile);
+					} else if (Unit.class.isAssignableFrom(tile.getContent().getClass())) {
+						tile.setContent(new Gravestone());
+					}
 				}
 			}
 			startTile.setKingdom(null);
