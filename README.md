@@ -1,14 +1,10 @@
 # Feudal Tactics - Medieval Strategy Game
 
-A medieval strategy game with countless unique and challenging levels.
+A medieval strategy game with countless unique and challenging levels. You play on an randomly generated island made of hexagons. Your goal is to conquer all of it. To do so, you attack the enemy with your units while trying to protect your own kingdoms. Made with libGDX. The game mechanics are heavily inspired by Sean O'Connor's Slay.
 
-You play on an randomly generated island made of hexagons. Your goal is to conquer all of it. To do so, you attack the enemy with your units while trying to protect your own kingdoms.
-
-Made with libGDX. The game mechanics are heavily inspired by Sean O'Connor's Slay.
-
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80">](https://f-droid.org/en/packages/de.sesu8642.feudaltactics/)
-[<img src="https://static.itch.io/images/badge.svg" alt="Available on itch.io" height="55" style="padding: 15px">](https://sesu8642.itch.io/feudal-tactics)
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png" alt="Get it on Google Play" height="80">](https://play.google.com/store/apps/details?id=de.sesu8642.feudaltactics)
+[![F-Droid](https://img.shields.io/f-droid/v/de.sesu8642.feudaltactics?&color=306bc0&logo=f-droid)](https://f-droid.org/en/packages/de.sesu8642.feudaltactics/)
+[![Google Play](https://img.shields.io/static/v1?label=Google&message=Play&color=306bc0&logo=google-play)](https://play.google.com/store/apps/details?id=de.sesu8642.feudaltactics)
+[![itch.io](https://img.shields.io/static/v1?label=itch.io&message=Feudal%20Tactics&color=306bc0&logo=itch.io)](https://sesu8642.itch.io/feudal-tactics)
 
 ![Ingame Screenshot](metadata/en-US/images/sevenInchScreenshots/1.png)
 
