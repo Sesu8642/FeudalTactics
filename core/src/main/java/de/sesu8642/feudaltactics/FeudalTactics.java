@@ -36,8 +36,10 @@ public class FeudalTactics extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 		game = this;
-		// if Eclipse cannot resolve this: https://stackoverflow.com/a/31669111 (note:
-		// too lazy to try it)
+		// Eclipse cannot resolve this. See https://stackoverflow.com/a/31669111 for
+		// more information. Workaround: Right-click the "Feudal Tactics-core" project →
+		// Properties → Java Build Path → Add JARs... → Feudal
+		// Tactics-core/build/libs/core*.jar
 		component = DaggerFeudalTacticsComponent.create();
 
 		EventBus eventBus = component.getEventBus();
