@@ -39,47 +39,8 @@ Before starting any work, please propose your changes in a GitHub issue.
 
 Before a pull request can be accepted, you must sign the [CLA](CLA.md) by adding your name to the table.
 
+## Technical Documentation
+Technical documentation is available in the [wiki](../../wiki).
+
 ## Privacy
-
 No data is collected at all. See [privacy policy](https://raw.githubusercontent.com/Sesu8642/FeudalTactics/blob/master/privacy_policy.txt). It is based on [the one from the Catima Website](https://github.com/CatimaLoyalty/Website/blob/master/_pages/privacy-policy.md).
-
-## Building the project - Steps for Ubuntu 22.04
-
-1. Install JDK
-```
-sudo apt install openjdk-8-jdk
-```
-
-2. OPTIONAL if you want to build the Android app: Download and install the Android SDK (Can alternatively be done using Android Studio)
-    1. Go to this page: https://developer.android.com/studio/index.html#command-tools
-    2. Download the zip file for your OS (here: Linux)
-```
-mkdir Android
-unzip ./Downloads/commandlinetools-linux-8512546_latest.zip -d ./Android
-```
-
-3. Clone this repository
-```
-git clone https://github.com/Sesu8642/FeudalTactics
-```
-
-4. Configure the Android SDK for Gradle (If you didn't do step 2, just put some empty directory here.)
-```
-cd FeudalTactics/
-echo 'sdk.dir=/path/to/Android/sdk' > local.properties
-```
-
-5. Build
-```
-// run desktop version
-./gradlew desktop:run
-
-// build jar (lands in FeudalTactics/desktop/build/libs/)
-./gradlew desktop:dist
-
-// run Android version on device or emulator
-./gradlew android:installDebug android:run
-
-// build apk
-./gradlew android:assembleRelease
-```
