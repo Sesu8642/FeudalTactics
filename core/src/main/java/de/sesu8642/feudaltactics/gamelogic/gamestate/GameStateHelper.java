@@ -303,36 +303,58 @@ public class GameStateHelper {
 		}
 	}
 
+	/**
+	 * Creates a new capital in a kingdom after the old one was destroyed.
+	 * 
+	 * @param gameState      game state
+	 * @param oldCapitalTile tile that previously contained the capital
+	 */
 	private static void createCapital(GameState gameState, HexTile oldCapitalTile) {
 		HexTile newCapitalTile;
 		// try to find empty neighbor tile
 		List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), oldCapitalTile);
 		Optional<HexTile> emptyTileOptional = neighborTiles.stream()
 				.filter((HexTile neighborTile) -> neighborTile != null
-						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
-						&& neighborTile.getContent() == null)
+						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom() && neighborTile.getContent() == null
+						&& !isCapitalCandidateDisconnected(gameState, oldCapitalTile, neighborTile))
 				.findFirst();
+		for (HexTile neighborTile : neighborTiles) {
+			if (neighborTile == null) {
+				continue;
+			}
+			if (neighborTile.getKingdom() != oldCapitalTile.getKingdom()) {
+				continue;
+			}
+			if (neighborTile.getContent() != null) {
+				continue;
+			}
+			if (isCapitalCandidateDisconnected(gameState, oldCapitalTile, neighborTile)) {
+				continue;
+			}
+			emptyTileOptional = Optional.of(neighborTile);
+		}
 		if (emptyTileOptional.isPresent()) {
 			newCapitalTile = emptyTileOptional.get();
 		} else {
 			// no empty neighbor tile -> select any empty tile in the kingdom
 			emptyTileOptional = oldCapitalTile.getKingdom().getTiles().stream()
-					.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
+					.filter((HexTile kingdomTile) -> kingdomTile.getContent() == null
+							&& !isCapitalCandidateDisconnected(gameState, oldCapitalTile, kingdomTile))
+					.findFirst();
 			if (emptyTileOptional.isPresent()) {
 				newCapitalTile = emptyTileOptional.get();
 			} else {
 				// no empty tile -> select any neighbor tile
-				emptyTileOptional = neighborTiles.stream().filter((HexTile neighborTile) -> (neighborTile != null
-						&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
-						// make sure the tile is not unconnected
-						&& neighborTile.getCachedNeighborTiles().stream()
-								.anyMatch((HexTile neighborsNeighbor) -> neighborsNeighbor != null
-										&& neighborsNeighbor != oldCapitalTile
-										&& neighborsNeighbor.getKingdom() == oldCapitalTile.getKingdom())))
+				emptyTileOptional = neighborTiles.stream()
+						.filter((HexTile neighborTile) -> (neighborTile != null
+								&& neighborTile.getKingdom() == oldCapitalTile.getKingdom()
+								&& !isCapitalCandidateDisconnected(gameState, oldCapitalTile, neighborTile)))
 						.findFirst();
 				if (emptyTileOptional.isPresent()) {
 					newCapitalTile = emptyTileOptional.get();
 				} else {
+					// no suitable candidate found, this is ok
+					Gdx.app.debug(TAG, "no suitable capital tile found after the old one was destroyed");
 					return;
 				}
 			}
@@ -340,6 +362,11 @@ public class GameStateHelper {
 		newCapitalTile.setContent(new Capital());
 	}
 
+	/**
+	 * Creates a new capital in a kingdom that doesn't have one.
+	 * 
+	 * @param kingdom kingdom without capital
+	 */
 	private static void createCapital(Kingdom kingdom) {
 		HexTile newCapitalTile;
 		// try to find any empty kingdom tile
@@ -358,6 +385,17 @@ public class GameStateHelper {
 			}
 		}
 		newCapitalTile.setContent(new Capital());
+	}
+
+	/**
+	 * Returns whether a candidate tile is suitable for placing a new capital in the
+	 * regard that it is not a single, unconnected tile.
+	 */
+	private static boolean isCapitalCandidateDisconnected(GameState gameState, HexTile oldCapitalTile,
+			HexTile candidate) {
+		return HexMapHelper.getNeighborTiles(gameState.getMap(), candidate).stream().noneMatch(
+				(HexTile neighborsNeighbor) -> neighborsNeighbor != null && neighborsNeighbor != oldCapitalTile
+						&& neighborsNeighbor.getKingdom() == oldCapitalTile.getKingdom());
 	}
 
 	/**
@@ -444,20 +482,17 @@ public class GameStateHelper {
 		((Unit) gameState.getHeldObject()).setCanAct(false);
 
 		// update kingdoms
-		boolean capitalDestroyed = false;
 		if (tile.getKingdom() != null) {
 			// place new capital if old one is going to be destroyed
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Capital.class, tile.getContent().getClass())
 					&& tile.getKingdom().getTiles().size() > 2) {
 				tile.getKingdom().setSavings(0);
-				// the new capital is created later; otherwise it could land on a tile that is
-				// cut off, causing a tree to spawn there unexpectedly
-				capitalDestroyed = true;
+				createCapital(gameState, tile);
 			}
 			boolean removeResult = tile.getKingdom().getTiles().remove(tile);
 			if (!removeResult) {
-				Gdx.app.error(TAG, String.format("tile could not be removed from its kingdom: '%s'", tile));
+				throw new AssertionError(String.format("tile could not be removed from it's kingdom: '%s'", tile));
 			}
 		}
 		tile.setKingdom(gameState.getActiveKingdom());
@@ -531,10 +566,6 @@ public class GameStateHelper {
 		}
 		if (potentiallySplit || (oldTileKingdom != null && oldTileKingdom.getTiles().size() < 2)) {
 			updateSplitKingdom(gameState, oldTileKingdom.getTiles());
-		}
-
-		if (capitalDestroyed) {
-			createCapital(gameState, tile);
 		}
 		placeObject(gameState, tile);
 	}

@@ -3,6 +3,8 @@
 package de.sesu8642.feudaltactics.gamelogic.ingame;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 
@@ -30,10 +32,12 @@ import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.ApplicationStub;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Capital;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateSerializer;
+import de.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
@@ -42,7 +46,7 @@ import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Speed;
 
 /** Tests for BotAi class. */
 @ExtendWith(MockitoExtension.class)
-class BotAiTest {
+class BotAiIntegrationTest {
 
 	@Mock
 	EventBus eventBusStub;
@@ -128,6 +132,25 @@ class BotAiTest {
 		}
 	}
 
+	@ParameterizedTest
+	@MethodSource("provideMapParameters")
+	void gameStateStaysConsistent(BotAi.Intelligence botIntelligence, Float landMass, Float density, Long seed)
+			throws Exception {
+		GameState gameState = createGameState(landMass, density, seed);
+
+		for (int i = 1; i <= 1000; i++) {
+			if (gameState.getKingdoms().size() == 1) {
+				return;
+			}
+			systemUnderTest.doTurn(gameState, botIntelligence);
+			if (gameState.getKingdoms().size() > 1) {
+				assertIntegreKingdomTileLinks(gameState);
+				assertEveryKingdomHasExactlyOneCapital(gameState);
+			}
+			GameStateHelper.endTurn(gameState);
+		}
+	}
+
 	private String gameStateToJson(GameState gameState) {
 		Json json = new Json(OutputType.json);
 		json.setSerializer(GameState.class, new GameStateSerializer());
@@ -184,6 +207,27 @@ class BotAiTest {
 				Arguments.of(Intelligence.SMART, 12F, 0F, 11L), Arguments.of(Intelligence.SMART, 100F, -3F, 12L),
 				Arguments.of(Intelligence.SMART, 200F, 3F, 13L), Arguments.of(Intelligence.SMART, 250F, 1F, 14L),
 				Arguments.of(Intelligence.SMART, 250F, -3F, 15L));
+	}
+
+	static void assertIntegreKingdomTileLinks(GameState gameState) {
+		// the kingdom of each tile contains the tile
+		gameState.getMap().values().stream().filter(tile -> tile.getKingdom() != null)
+				.forEach(tile -> assertTrue(tile.getKingdom().getTiles().contains(tile)));
+		// every tile in a kingdom knows that it is part of that kingdom
+		for (Kingdom kingdom : gameState.getKingdoms()) {
+			kingdom.getTiles().forEach(tile -> {
+				assertSame(tile.getKingdom(), kingdom);
+			});
+		}
+	}
+
+	static void assertEveryKingdomHasExactlyOneCapital(GameState gameState) {
+		for (Kingdom kingdom : gameState.getKingdoms()) {
+			long amountCapitals = kingdom.getTiles().stream().filter(
+					tile -> tile.getContent() != null && Capital.class.isAssignableFrom(tile.getContent().getClass()))
+					.count();
+			assertEquals(1, amountCapitals);
+		}
 	}
 
 }
