@@ -22,7 +22,7 @@ import de.sesu8642.feudaltactics.ApplicationStub;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 
-/** Tests for GameStateHelper class. */
+/** Tests for GameStateHelper class related to splitting a kingdom. */
 class GameStateHelperKingdomSplitTest {
 
 	Player player1 = new Player(new Color(1, 0, 0, 0), Type.LOCAL_PLAYER);
