@@ -492,7 +492,7 @@ public class GameStateHelper {
 			}
 			boolean removeResult = tile.getKingdom().getTiles().remove(tile);
 			if (!removeResult) {
-				throw new AssertionError(String.format("tile could not be removed from it's kingdom: '%s'", tile));
+				throw new AssertionError(String.format("tile could not be removed from its kingdom: '%s'", tile));
 			}
 		}
 		tile.setKingdom(gameState.getActiveKingdom());
