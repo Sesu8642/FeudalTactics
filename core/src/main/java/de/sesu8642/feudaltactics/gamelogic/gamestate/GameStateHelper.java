@@ -860,9 +860,12 @@ public class GameStateHelper {
 	 * @return income
 	 */
 	public static int getKingdomIncome(Kingdom kingdom) {
-		// number of tiles - trees
-		return kingdom.getTiles().size() - (int) kingdom.getTiles().stream().filter(tile -> tile.getContent() != null
-				&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).count();
+		// number of tiles - trees & palms
+		return kingdom.getTiles().size() - (int) kingdom.getTiles().stream()
+				.filter(tile -> tile.getContent() != null
+						&& (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+								|| ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())))
+				.count();
 	}
 
 	/**
