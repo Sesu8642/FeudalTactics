@@ -30,7 +30,6 @@ public class GameStateHelper {
 
 	private static final String TAG = GameStateHelper.class.getName();
 
-	public static final float TREE_SPREAD_RATE = 0.3F;
 	public static final float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
 	public static final float WIN_LANDMASS_PERCENTAGE = 0.8F;
 
@@ -738,18 +737,24 @@ public class GameStateHelper {
 		for (HexTile tile : gameState.getMap().values()) {
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
-				// regular trees have a chance to spread
-				if (random.nextFloat() <= TREE_SPREAD_RATE) {
-					ArrayList<HexTile> candidates = new ArrayList<>();
-					for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
-						if (neighbor != null && neighbor.getContent() == null) {
-							candidates.add(neighbor);
-						}
+				// regular trees spread if they have another regular tree next to them
+				ArrayList<HexTile> candidates = new ArrayList<>();
+				boolean hasNeighborTree = false;
+				for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
+					if (neighbor == null) {
+						continue;
 					}
-					if (!candidates.isEmpty()) {
-						newTreeTiles.add(candidates.get(random.nextInt(candidates.size())));
-						candidates.clear();
+					if (neighbor.getContent() == null && !newTreeTiles.contains(neighbor)
+							&& !isCoastTile(gameState, neighbor)) {
+						candidates.add(neighbor);
+					} else if (neighbor.getContent() != null
+							&& ClassReflection.isAssignableFrom(Tree.class, neighbor.getContent().getClass())) {
+						hasNeighborTree = true;
 					}
+				}
+				if (hasNeighborTree && !candidates.isEmpty()) {
+					newTreeTiles.add(candidates.get(random.nextInt(candidates.size())));
+					candidates.clear();
 				}
 			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {

@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateHelper;
+
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
 
 /** Factory for the slides displayed in the tutorial. */
@@ -85,9 +85,7 @@ public class TutorialSlideFactory {
 	}
 
 	private Slide createTutorialSlide6() {
-		String text = String.format(
-				"Trees may randomly grow on the map. They will prevent the tiles they stand on from generating income. Even worse, there is a %s chance they will spread to a neighboring tile. They can be removed by placing a unit on them but the unit will be unable to be moved again for the rest of that turn.",
-				Math.round(GameStateHelper.TREE_SPREAD_RATE * 100) + "%");
+		String text = "Trees may randomly grow on the map. They will prevent the tiles they stand on from generating income. Even worse, there is a TODO% chance they will spread to a neighboring tile. They can be removed by placing a unit on them but the unit will be unable to be moved again for the rest of that turn.";
 		String imagePath = "tutorial_trees.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
