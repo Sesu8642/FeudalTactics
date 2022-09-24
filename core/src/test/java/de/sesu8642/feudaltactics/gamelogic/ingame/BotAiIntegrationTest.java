@@ -190,7 +190,7 @@ class BotAiIntegrationTest {
 		players.add(new Player(new Color(0.2F, 0.45F, 0.8F, 1), Type.LOCAL_BOT));
 		players.add(new Player(new Color(0.75F, 0.5F, 0F, 1), Type.LOCAL_BOT));
 		players.add(new Player(new Color(1F, 0.67F, 0.67F, 1), Type.LOCAL_BOT));
-		players.add(new Player(new Color(1F, 1F, 0F, 1), Type.LOCAL_PLAYER));
+		players.add(new Player(new Color(1F, 1F, 0F, 1), Type.LOCAL_BOT));
 		players.add(new Player(new Color(1F, 1F, 1F, 1), Type.LOCAL_BOT));
 		players.add(new Player(new Color(0F, 1F, 0F, 1), Type.LOCAL_BOT));
 		GameState result = new GameState();
