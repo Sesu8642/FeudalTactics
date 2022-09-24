@@ -22,10 +22,10 @@ import de.sesu8642.feudaltactics.dagger.qualifierannotations.IngameRenderer;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
-import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
 import de.sesu8642.feudaltactics.gamelogic.MapParameters;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
@@ -140,7 +140,7 @@ public class IngameScreen extends GameScreen {
 
 	private void resetGame() {
 		eventBus.post(new GameExitedEvent());
-		eventBus.post(new RegenerateMapUiEvent(parameterInputStage.getBotIntelligence(),
+		eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 				new MapParameters(parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
 						parameterInputStage.getMapDensityParam())));
 		activateStage(IngameStages.PARAMETERS);

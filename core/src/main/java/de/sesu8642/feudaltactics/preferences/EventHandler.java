@@ -6,7 +6,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
+
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 
 /** Handles events that affect preferences. */
 @Singleton
@@ -23,7 +24,7 @@ public class EventHandler {
 	 * @param event event to handle
 	 */
 	@Subscribe
-	public void handleMapParamChange(RegenerateMapUiEvent event) {
+	public void handleMapParamChange(RegenerateMapEvent event) {
 		PreferencesHelper.saveNewGamePreferences(new NewGamePreferences(event.getBotIntelligence(),
 				event.getMapParams().getLandMass(), event.getMapParams().getDensity()));
 	}

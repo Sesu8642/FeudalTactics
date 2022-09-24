@@ -12,13 +12,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.Subscribe;
 
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.input.BackInputEvent;
 import de.sesu8642.feudaltactics.events.input.TapInputEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
-import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
 import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Blocking;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Castle;
@@ -121,7 +121,7 @@ public class LocalIngameInputHandler {
 	 * @param event event to handle
 	 */
 	@Subscribe
-	public void handleRegenerateMap(RegenerateMapUiEvent event) {
+	public void handleRegenerateMap(RegenerateMapEvent event) {
 		gameController.generateGameState(event.getBotIntelligence(), event.getMapParams());
 	}
 

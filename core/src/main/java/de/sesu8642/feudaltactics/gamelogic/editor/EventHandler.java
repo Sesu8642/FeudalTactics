@@ -5,7 +5,8 @@ package de.sesu8642.feudaltactics.gamelogic.editor;
 import javax.inject.Inject;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
+
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 
 /** Handles events (except key/tap inputs). **/
 public class EventHandler {
@@ -28,7 +29,7 @@ public class EventHandler {
 	 * @param event event to handle
 	 */
 	@Subscribe
-	public void handleRegenerateMap(RegenerateMapUiEvent event) {
+	public void handleRegenerateMap(RegenerateMapEvent event) {
 		editorController.generateEmptyGameState();
 	}
 

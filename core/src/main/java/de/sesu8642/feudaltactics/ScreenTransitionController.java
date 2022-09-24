@@ -14,12 +14,8 @@ import de.sesu8642.feudaltactics.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MainMenuScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.moves.RegenerateMapUiEvent;
-import de.sesu8642.feudaltactics.gamelogic.MapParameters;
 import de.sesu8642.feudaltactics.gamelogic.editor.EditorInputHandler;
 import de.sesu8642.feudaltactics.gamelogic.ingame.LocalIngameInputHandler;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import de.sesu8642.feudaltactics.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.ui.screens.IngameScreen;
 import de.sesu8642.feudaltactics.ui.screens.IngameScreenEventHandler;
@@ -144,9 +140,6 @@ public class ScreenTransitionController {
 		unregisterAllEventHandlers();
 		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
 				preferencesEventHandler).forEach(object -> eventBus.register(object));
-		NewGamePreferences savedPrefs = PreferencesHelper.getNewGamePreferences();
-		eventBus.post(new RegenerateMapUiEvent(savedPrefs.getBotIntelligence(),
-				new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize(), savedPrefs.getDensity())));
 		FeudalTactics.game.setScreen(ingameScreen);
 	}
 
@@ -155,7 +148,6 @@ public class ScreenTransitionController {
 		unregisterAllEventHandlers();
 		Stream.of(editorInputHandler, editorEventHandler, ingameScreen, rendererEventHandler)
 				.forEach(object -> eventBus.register(object));
-		eventBus.post(new RegenerateMapUiEvent(null, null));
 		FeudalTactics.game.setScreen(ingameScreen);
 	}
 

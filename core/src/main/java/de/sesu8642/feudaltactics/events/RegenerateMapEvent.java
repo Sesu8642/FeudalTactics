@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.events.moves;
+package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.gamelogic.MapParameters;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
 
 /**
- * Event: Map needs te be re-generated because the Parameters of the generated
- * map changed or the player wants to retry.
+ * Event: Map needs to be re-generated because the Parameters of the generated
+ * map changed or the player wants to retry or starts a new game.
  */
-public class RegenerateMapUiEvent {
+public class RegenerateMapEvent {
 
 	private BotAi.Intelligence botIntelligence;
 	private MapParameters mapParams;
@@ -21,7 +21,7 @@ public class RegenerateMapUiEvent {
 	 * @param botIntelligence bot intelligence
 	 * @param mapParams       map parameters
 	 */
-	public RegenerateMapUiEvent(Intelligence botIntelligence, MapParameters mapParams) {
+	public RegenerateMapEvent(Intelligence botIntelligence, MapParameters mapParams) {
 		super();
 		this.botIntelligence = botIntelligence;
 		this.mapParams = mapParams;

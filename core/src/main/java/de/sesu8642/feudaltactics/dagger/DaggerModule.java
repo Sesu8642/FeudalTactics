@@ -46,8 +46,12 @@ import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlideStage;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlides;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.VersionProperty;
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.gamelogic.MapParameters;
+import de.sesu8642.feudaltactics.preferences.NewGamePreferences;
+import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.ui.events.CloseMenuEvent;
 import de.sesu8642.feudaltactics.ui.events.ExitGameUiEvent;
@@ -220,8 +224,12 @@ class DaggerModule {
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
 			@VersionProperty String gameVersion) {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
-		stage.addButton("Play",
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN)));
+		stage.addButton("Play", () -> {
+			NewGamePreferences savedPrefs = PreferencesHelper.getNewGamePreferences();
+			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+			eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
+					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize(), savedPrefs.getDensity())));
+		});
 		// level editor was only used for creating the logo
 //		stage.addButton("Level Editor",
 //				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN)));
