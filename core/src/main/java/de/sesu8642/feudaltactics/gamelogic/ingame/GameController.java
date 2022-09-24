@@ -80,6 +80,9 @@ public class GameController {
 	public void loadLatestAutosave() {
 		Gdx.app.log(TAG, "loading latest autosave");
 		gameState = PreferencesHelper.getLatestAutoSave();
+		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
+			startBotTurn();
+		}
 		eventBus.post(new GameStateChangeEvent(gameState, false, true));
 	}
 
