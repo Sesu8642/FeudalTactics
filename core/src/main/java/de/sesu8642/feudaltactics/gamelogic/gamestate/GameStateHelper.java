@@ -733,45 +733,54 @@ public class GameStateHelper {
 
 	private static void spreadTrees(GameState gameState) {
 		Random random = new Random(gameState.hashCode());
-		HashSet<HexTile> newTreeTiles = new HashSet<>();
+		// keep track of the tiles with trees that are new or have already participated
+		// in spreading; those shouldn't spread again in that turn
+		HashSet<HexTile> tileBlackList = new HashSet<>();
 		for (HexTile tile : gameState.getMap().values()) {
+			if (tileBlackList.contains(tile)) {
+				continue;
+			}
 			if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
 				// regular trees spread if they have another regular tree next to them
 				ArrayList<HexTile> candidates = new ArrayList<>();
-				boolean hasNeighborTree = false;
+				HexTile neighborTreeTile = null;
 				for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
 					if (neighbor == null) {
 						continue;
 					}
-					if (neighbor.getContent() == null && !newTreeTiles.contains(neighbor)
-							&& !isCoastTile(gameState, neighbor)) {
+					if (neighbor.getContent() == null && !isCoastTile(gameState, neighbor)) {
 						candidates.add(neighbor);
 					} else if (neighbor.getContent() != null
-							&& ClassReflection.isAssignableFrom(Tree.class, neighbor.getContent().getClass())) {
-						hasNeighborTree = true;
+							&& ClassReflection.isAssignableFrom(Tree.class, neighbor.getContent().getClass())
+							&& !tileBlackList.contains(neighbor)) {
+						neighborTreeTile = neighbor;
 					}
 				}
-				if (hasNeighborTree && !candidates.isEmpty()) {
-					newTreeTiles.add(candidates.get(random.nextInt(candidates.size())));
+				if (neighborTreeTile != null && !candidates.isEmpty()) {
+					HexTile newTreeTile = candidates.get(random.nextInt(candidates.size()));
+					spawnTree(gameState, newTreeTile);
+					tileBlackList.add(tile);
+					tileBlackList.add(newTreeTile);
+					tileBlackList.add(neighborTreeTile);
 					candidates.clear();
 				}
 			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {
-				// palm trees always spread to other coast tiles
+				// palm trees always spread to a neighboring coast tile, if any
 				HexMapHelper
 						.getNeighborTiles(gameState.getMap(), tile).stream().filter(neighbor -> neighbor != null
 								&& neighbor.getContent() == null && isCoastTile(gameState, neighbor))
-						.forEach(newTreeTiles::add);
-				newTreeTiles.add(tile);
+						.limit(1).forEach(newTreeTile -> {
+							spawnTree(gameState, newTreeTile);
+							tileBlackList.add(newTreeTile);
+						});
 			} else if (tile.getContent() != null
 					&& ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
 				// gravestones become trees/palms after a turn
-				newTreeTiles.add(tile);
+				spawnTree(gameState, tile);
+				tileBlackList.add(tile);
 			}
-		}
-		for (HexTile tile : newTreeTiles) {
-			spawnTree(gameState, tile);
 		}
 	}
 
