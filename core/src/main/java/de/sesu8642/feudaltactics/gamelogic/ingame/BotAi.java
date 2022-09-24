@@ -125,7 +125,7 @@ public class BotAi {
 		Set<HexTile> placedCastleTiles = new HashSet<>();
 		switch (intelligence) {
 		case DUMB:
-			removeBlockingObjects(gameState, pickedUpUnits, 0.3F, random);
+			removeBlockingObjects(gameState, pickedUpUnits, 0.6F, random);
 			// only 50% chance to conquer anything
 			if (random.nextFloat() <= 0.5F) {
 				conquerAsMuchAsPossible(gameState, pickedUpUnits);
@@ -133,7 +133,7 @@ public class BotAi {
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
 		case MEDIUM:
-			removeBlockingObjects(gameState, pickedUpUnits, 0.7F, random);
+			removeBlockingObjects(gameState, pickedUpUnits, 0.8F, random);
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
 			protectWithLeftoverUnits(gameState, pickedUpUnits);
 			break;
