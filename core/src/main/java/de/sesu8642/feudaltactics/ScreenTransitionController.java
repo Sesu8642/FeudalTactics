@@ -35,6 +35,7 @@ public class ScreenTransitionController {
 	private GameScreen mainMenuScreen;
 	private GameScreen tutorialScreen;
 	private GameScreen aboutScreen;
+	private GameScreen preferencesScreen;
 	private de.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler;
 	private de.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler;
@@ -59,6 +60,7 @@ public class ScreenTransitionController {
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
 			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
 			@AboutScreen GameScreen aboutScreen,
+			@de.sesu8642.feudaltactics.dagger.qualifierannotations.PreferencesScreen GameScreen preferencesScreen,
 			de.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler,
@@ -72,6 +74,7 @@ public class ScreenTransitionController {
 		this.mainMenuScreen = mainMenuScreen;
 		this.tutorialScreen = tutorialScreen;
 		this.aboutScreen = aboutScreen;
+		this.preferencesScreen = preferencesScreen;
 		this.gameLogicEventHandler = gameLogicEventHandler;
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
@@ -116,6 +119,9 @@ public class ScreenTransitionController {
 		case ABOUT_SCREEN:
 			transitionToAboutScreen();
 			break;
+		case PREFERENCES_SCREEN:
+			transitionToPreferencesScreen();
+			break;
 		default:
 			throw new AssertionError("Unimplemented transition target: " + event.getTransitionTarget());
 		}
@@ -159,6 +165,11 @@ public class ScreenTransitionController {
 	public void transitionToAboutScreen() {
 		unregisterAllEventHandlers();
 		FeudalTactics.game.setScreen(aboutScreen);
+	}
+
+	public void transitionToPreferencesScreen() {
+		unregisterAllEventHandlers();
+		FeudalTactics.game.setScreen(preferencesScreen);
 	}
 
 }

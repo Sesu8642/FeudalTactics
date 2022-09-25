@@ -75,7 +75,7 @@ public class Slide {
 	/**
 	 * Adds a table to the slide fluent style.
 	 * 
-	 * @param data data to be displayed in the table; outer list = rows, innter list
+	 * @param data data to be displayed in the table; outer list = rows, inner list
 	 *             = cols
 	 * @return this slide
 	 */

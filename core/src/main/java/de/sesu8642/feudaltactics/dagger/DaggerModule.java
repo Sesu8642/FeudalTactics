@@ -41,6 +41,7 @@ import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuBackgroundCamer
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuCamera;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
+import de.sesu8642.feudaltactics.dagger.qualifierannotations.PreferencesScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.SplashScreenStage;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.TutorialSlideStage;
@@ -58,6 +59,7 @@ import de.sesu8642.feudaltactics.ui.events.ExitGameUiEvent;
 import de.sesu8642.feudaltactics.ui.events.RetryGameUnconfirmedUiEvent;
 import de.sesu8642.feudaltactics.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.ui.stages.MenuStage;
+import de.sesu8642.feudaltactics.ui.stages.PreferencesStage;
 import de.sesu8642.feudaltactics.ui.stages.ResizableResettableStage;
 import de.sesu8642.feudaltactics.ui.stages.slidestage.AboutSlideFactory;
 import de.sesu8642.feudaltactics.ui.stages.slidestage.Slide;
@@ -235,6 +237,8 @@ class DaggerModule {
 //				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN)));
 		stage.addButton("Tutorial",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN)));
+		stage.addButton("Preferences",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN)));
 		stage.addButton("About",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN)));
 		stage.setBottomLeftLabelText("Open Privacy Policy");
@@ -279,8 +283,7 @@ class DaggerModule {
 	@Singleton
 	@AboutSlideStage
 	static SlideStage provideAboutSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
-			@AboutSlides List<Slide> aboutSlides, @MenuBackgroundCamera OrthographicCamera camera,
-			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
+			@AboutSlides List<Slide> aboutSlides, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
 		return new SlideStage(viewport, aboutSlides,
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
 				skin);
@@ -300,6 +303,14 @@ class DaggerModule {
 	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
 			@MainMenuStage MenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
+	}
+
+	@Provides
+	@Singleton
+	@PreferencesScreen
+	static GameScreen providePreferencesScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			PreferencesStage preferencesStage) {
+		return new GameScreen(camera, viewport, preferencesStage);
 	}
 
 	@Provides

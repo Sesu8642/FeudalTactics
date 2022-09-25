@@ -65,7 +65,7 @@ public class EventHandler {
 	 * @param event event to handle
 	 */
 	@Subscribe
-	public void handleBotTurnFinished(BotTurnSpeedChangedEvent event) {
+	public void handleBotTurnSpeedChanged(BotTurnSpeedChangedEvent event) {
 		botAi.setCurrentSpeed(event.getSpeed());
 	}
 
