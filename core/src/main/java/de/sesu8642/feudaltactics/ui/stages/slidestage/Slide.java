@@ -106,6 +106,20 @@ public class Slide {
 		return result;
 	}
 
+	/**
+	 * Creates a nicely formatted label.
+	 * 
+	 * @param content text for the label
+	 * @param skin    game skin
+	 * @return label
+	 */
+	public static Label newNiceLabel(String content, Skin skin) {
+		Label result = new Label(content, skin);
+		result.setColor(skin.getColor("black"));
+		result.setFontScale(1.5F);
+		return result;
+	}
+
 	public Table getTable() {
 		return table;
 	}

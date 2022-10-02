@@ -22,7 +22,7 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
 
 /** Controller for playing the game. */
 @Singleton
@@ -110,8 +110,8 @@ public class GameController {
 				break;
 			}
 		}
-		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass().getAmountOfTiles(),
-				mapParams.getDensity().getDensityFloat(), null, mapParams.getSeed());
+		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass(), mapParams.getDensity(), null,
+				mapParams.getSeed());
 		eventBus.post(new GameStateChangeEvent(gameState, false, true));
 	}
 

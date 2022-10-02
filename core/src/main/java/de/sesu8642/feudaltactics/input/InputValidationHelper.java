@@ -13,7 +13,7 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.MapObject;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit.UnitTypes;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
 
 /**
  * Utility class that checks whether certain user action are allowed according

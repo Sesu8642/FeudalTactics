@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.preferences;
+package de.sesu8642.feudaltactics.persistence;
 
 import java.util.Map;
 import java.util.Optional;
@@ -16,8 +16,8 @@ import de.sesu8642.feudaltactics.exceptions.SaveLoadingException;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameState;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.GameStateSerializer;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
+import de.sesu8642.feudaltactics.persistence.NewGamePreferences.Densities;
+import de.sesu8642.feudaltactics.persistence.NewGamePreferences.MapSizes;
 
 /** Helper class for saving and loading preferences. */
 public class PreferencesHelper {
@@ -29,6 +29,9 @@ public class PreferencesHelper {
 	private static final String NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME = "botIntelligence";
 	private static final String NEW_GAME_PREFERENCES_NAME = "newGamePreferences";
 	private static final int MAX_AUTOSAVES = 50;
+	private static final String MAIN_PREFERENCES_NAME = "gamePreferences";
+	private static final String WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME = "warnAboutForgottenKingdoms";
+	private static final String SHOW_ENEMY_TURNS_NAME = "showEnemyTurns";
 
 	private static final String TAG = PreferencesHelper.class.getName();
 
@@ -67,12 +70,36 @@ public class PreferencesHelper {
 	 * @return preferences to load
 	 */
 	public static NewGamePreferences getNewGamePreferences() {
-		Preferences newGamePrefs = Gdx.app.getPreferences(NEW_GAME_PREFERENCES_NAME);
-		Intelligence botIntelligence = Intelligence.values()[newGamePrefs
+		Preferences prefStore = Gdx.app.getPreferences(NEW_GAME_PREFERENCES_NAME);
+		Intelligence botIntelligence = Intelligence.values()[prefStore
 				.getInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, 0)];
-		MapSizes mapSize = MapSizes.values()[newGamePrefs.getInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, 0)];
-		Densities density = Densities.values()[newGamePrefs.getInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, 0)];
+		MapSizes mapSize = MapSizes.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, 0)];
+		Densities density = Densities.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, 0)];
 		return new NewGamePreferences(botIntelligence, mapSize, density);
+	}
+
+	/**
+	 * Saves the preferences the users configured in the main preferences menu.
+	 * 
+	 * @param prefs preferences to save
+	 */
+	public static void saveMainPreferences(MainGamePreferences prefs) {
+		Preferences prefStore = Gdx.app.getPreferences(MAIN_PREFERENCES_NAME);
+		prefStore.putBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, prefs.isWarnAboutForgottenKingdoms());
+		prefStore.putBoolean(SHOW_ENEMY_TURNS_NAME, prefs.isShowEnemyTurns());
+		prefStore.flush();
+	}
+
+	/**
+	 * Loads the preferences the users configured in the main preferences menu.
+	 * 
+	 * @return preferences to load
+	 */
+	public static MainGamePreferences getMainPreferences() {
+		Preferences prefStore = Gdx.app.getPreferences(MAIN_PREFERENCES_NAME);
+		boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME);
+		boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME);
+		return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns);
 	}
 
 	/**
@@ -82,14 +109,14 @@ public class PreferencesHelper {
 	 */
 	public static void autoSaveGameState(GameState gameState) {
 		Gdx.app.debug(TAG, "autosaving");
-		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
+		Preferences prefStore = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
 		String saveString = null;
 		Json json = new Json(OutputType.json);
 		json.setSerializer(GameState.class, new GameStateSerializer());
 		saveString = json.toJson(gameState, GameState.class);
 		// using current time as key
-		autoSavePrefs.putString(String.valueOf(System.currentTimeMillis()), saveString);
-		autoSavePrefs.flush();
+		prefStore.putString(String.valueOf(System.currentTimeMillis()), saveString);
+		prefStore.flush();
 		deleteAllAutoSaveExceptLatestN(MAX_AUTOSAVES);
 	}
 
@@ -99,13 +126,13 @@ public class PreferencesHelper {
 	 * @return loaded game state
 	 */
 	public static GameState getLatestAutoSave() {
-		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
-		if (autoSavePrefs.get().isEmpty()) {
+		Preferences prefStore = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
+		if (prefStore.get().isEmpty()) {
 			throw new SaveLoadingException("No autosave available");
 		}
 		// cannot be empty if there is a save
 		String latestSaveName = getLatestAutoSaveName().get();
-		String loadedString = autoSavePrefs.getString(latestSaveName);
+		String loadedString = prefStore.getString(latestSaveName);
 		JsonValue loadedStateJsonValue = new JsonReader().parse(loadedString);
 		Json json = new Json();
 		json.setSerializer(GameState.class, new GameStateSerializer());
@@ -118,9 +145,9 @@ public class PreferencesHelper {
 	public static void deleteLatestAutoSave() {
 		Optional<String> latestSaveNameOptional = getLatestAutoSaveName();
 		latestSaveNameOptional.ifPresent(latestSaveName -> {
-			Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
-			autoSavePrefs.remove(latestSaveName);
-			autoSavePrefs.flush();
+			Preferences prefStore = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
+			prefStore.remove(latestSaveName);
+			prefStore.flush();
 		});
 	}
 
@@ -128,8 +155,8 @@ public class PreferencesHelper {
 	 * Determines the name (key) of the newest autosave.
 	 */
 	private static Optional<String> getLatestAutoSaveName() {
-		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
-		Map<String, ?> prefsMap = autoSavePrefs.get();
+		Preferences prefStore = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
+		Map<String, ?> prefsMap = prefStore.get();
 		if (prefsMap.isEmpty()) {
 			return Optional.empty();
 		}
@@ -142,16 +169,16 @@ public class PreferencesHelper {
 	 * @param n number of autosaves to keep.
 	 */
 	public static void deleteAllAutoSaveExceptLatestN(int n) {
-		Preferences autoSavePrefs = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
-		Map<String, ?> prefsMap = autoSavePrefs.get();
+		Preferences prefStore = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
+		Map<String, ?> prefsMap = prefStore.get();
 		int noOfAutoSaves = prefsMap.size();
 		if (n > noOfAutoSaves) {
 			return;
 		}
 		// sort by age (oldest first) and remove the oldest ones
 		prefsMap.keySet().stream().sorted((a, b) -> Long.parseLong(a) > Long.parseLong(b) ? 1 : -1)
-				.limit(noOfAutoSaves - n).forEach(autoSavePrefs::remove);
-		autoSavePrefs.flush();
+				.limit(noOfAutoSaves - n).forEach(prefStore::remove);
+		prefStore.flush();
 	}
 
 	/**

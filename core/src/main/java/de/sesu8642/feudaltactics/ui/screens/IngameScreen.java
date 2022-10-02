@@ -36,7 +36,7 @@ import de.sesu8642.feudaltactics.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.gamelogic.gamestate.Unit;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import de.sesu8642.feudaltactics.input.InputValidationHelper;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.ui.DialogFactory;
 import de.sesu8642.feudaltactics.ui.Margin;
@@ -132,17 +132,17 @@ public class IngameScreen extends GameScreen {
 
 	/** Displays a warning about lost progress and resets the game if confirmed. */
 	void handleUnconfirmedRetryGame() {
-		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> 
-			resetGame()
-		);
+		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+				() -> resetGame());
 		confirmDialog.show(menuStage);
 	}
 
 	private void resetGame() {
 		eventBus.post(new GameExitedEvent());
 		eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-				new MapParameters(parameterInputStage.getSeedParam(), parameterInputStage.getMapSizeParam(),
-						parameterInputStage.getMapDensityParam())));
+				new MapParameters(parameterInputStage.getSeedParam(),
+						parameterInputStage.getMapSizeParam().getAmountOfTiles(),
+						parameterInputStage.getMapDensityParam().getDensityFloat())));
 		activateStage(IngameStages.PARAMETERS);
 	}
 

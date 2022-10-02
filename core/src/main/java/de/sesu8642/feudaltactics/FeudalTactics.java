@@ -14,7 +14,7 @@ import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
 
 /** The game's entry point. */
 public class FeudalTactics extends Game {

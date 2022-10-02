@@ -51,8 +51,8 @@ import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.gamelogic.MapParameters;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import de.sesu8642.feudaltactics.persistence.NewGamePreferences;
+import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.ui.events.CloseMenuEvent;
 import de.sesu8642.feudaltactics.ui.events.ExitGameUiEvent;
@@ -230,7 +230,8 @@ class DaggerModule {
 			NewGamePreferences savedPrefs = PreferencesHelper.getNewGamePreferences();
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 			eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
-					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize(), savedPrefs.getDensity())));
+					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize().getAmountOfTiles(),
+							savedPrefs.getDensity().getDensityFloat())));
 		});
 		// level editor was only used for creating the logo
 //		stage.addButton("Level Editor",

@@ -22,15 +22,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.dagger.qualifierannotations.MenuViewport;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.gamelogic.MapParameters;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
-import de.sesu8642.feudaltactics.preferences.PreferencesHelper;
+import de.sesu8642.feudaltactics.persistence.NewGamePreferences;
+import de.sesu8642.feudaltactics.persistence.NewGamePreferences.Densities;
+import de.sesu8642.feudaltactics.persistence.NewGamePreferences.MapSizes;
+import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
+import de.sesu8642.feudaltactics.ui.events.NewGamePreferencesChangedEvent;
 
 /**
  * {@link Stage} for displaying the input mask for a new game.
@@ -137,8 +139,10 @@ public class ParameterInputStage extends ResizableResettableStage {
 				.forEach(actor -> actor.addListener(new ChangeListener() {
 					@Override
 					public void changed(ChangeEvent event, Actor actor) {
-						eventBus.post(new RegenerateMapEvent(getBotIntelligence(),
-								new MapParameters(getSeedParam(), getMapSizeParam(), getMapDensityParam())));
+						eventBus.post(new RegenerateMapEvent(getBotIntelligence(), new MapParameters(getSeedParam(),
+								getMapSizeParam().getAmountOfTiles(), getMapDensityParam().getDensityFloat())));
+						eventBus.post(new NewGamePreferencesChangedEvent(
+								new NewGamePreferences(getBotIntelligence(), getMapSizeParam(), getMapDensityParam())));
 					}
 				}));
 

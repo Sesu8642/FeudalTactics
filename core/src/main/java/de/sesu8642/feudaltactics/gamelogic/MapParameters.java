@@ -2,16 +2,13 @@
 
 package de.sesu8642.feudaltactics.gamelogic;
 
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences.Densities;
-import de.sesu8642.feudaltactics.preferences.NewGamePreferences.MapSizes;
-
 /** Parameter class for map generation. Immutable class. */
 public class MapParameters {
 	private int humanPlayerNo;
 	private int botPlayerNo;
 	private Long seed;
-	private MapSizes landMass;
-	private Densities density;
+	private int landMass;
+	private float density;
 
 	/**
 	 * Constructor.
@@ -22,7 +19,7 @@ public class MapParameters {
 	 * @param landMass      number of tiles to generate
 	 * @param density       map density to use for generation
 	 */
-	public MapParameters(int humanPlayerNo, int botPlayerNo, Long seed, MapSizes landMass, Densities density) {
+	public MapParameters(int humanPlayerNo, int botPlayerNo, Long seed, int landMass, float density) {
 		this.humanPlayerNo = humanPlayerNo;
 		this.botPlayerNo = botPlayerNo;
 		this.seed = seed;
@@ -37,7 +34,7 @@ public class MapParameters {
 	 * @param landMass number of tiles to generate
 	 * @param density  map density to use for generation
 	 */
-	public MapParameters(Long seed, MapSizes landMass, Densities density) {
+	public MapParameters(Long seed, int landMass, float density) {
 		this.humanPlayerNo = 1;
 		this.botPlayerNo = 5;
 		this.seed = seed;
@@ -57,11 +54,11 @@ public class MapParameters {
 		return seed;
 	}
 
-	public MapSizes getLandMass() {
+	public int getLandMass() {
 		return landMass;
 	}
 
-	public Densities getDensity() {
+	public float getDensity() {
 		return density;
 	}
 

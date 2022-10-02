@@ -39,7 +39,7 @@ public class ScreenTransitionController {
 	private de.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler;
 	private de.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler;
-	private de.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler;
+	private de.sesu8642.feudaltactics.persistence.EventHandler preferencesEventHandler;
 	private IngameScreenEventHandler ingameScreenEventHandler;
 
 	/**
@@ -64,7 +64,7 @@ public class ScreenTransitionController {
 			de.sesu8642.feudaltactics.gamelogic.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.gamelogic.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.renderer.EventHandler rendererEventHandler,
-			de.sesu8642.feudaltactics.preferences.EventHandler preferencesEventHandler,
+			de.sesu8642.feudaltactics.persistence.EventHandler preferencesEventHandler,
 			IngameScreenEventHandler ingameScreenEventHandler) {
 		this.eventBus = eventBus;
 		this.localIngameInputHandler = localIngameInputHandler;

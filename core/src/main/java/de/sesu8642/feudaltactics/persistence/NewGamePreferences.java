@@ -1,43 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.preferences;
+package de.sesu8642.feudaltactics.persistence;
 
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi;
 import de.sesu8642.feudaltactics.gamelogic.ingame.BotAi.Intelligence;
 
 /** Value object: preferences for a new game. */
 public class NewGamePreferences {
-
-	/** Map sizes that can be generated. */
-	public enum MapSizes {
-		SMALL(50), MEDIUM(150), LARGE(250), XLARGE(500), XXLARGE(1000);
-
-		private int amountOfTiles;
-
-		private MapSizes(int amountOfTiles) {
-			this.amountOfTiles = amountOfTiles;
-		}
-
-		public int getAmountOfTiles() {
-			return this.amountOfTiles;
-		}
-
-	}
-
-	/** Map densities that can be generated. */
-	public enum Densities {
-		LOOSE(-3), MEDIUM(0), DENSE(3);
-
-		private float densityFloat;
-
-		private Densities(float densityFloat) {
-			this.densityFloat = densityFloat;
-		}
-
-		public float getDensityFloat() {
-			return this.densityFloat;
-		}
-	}
 
 	private BotAi.Intelligence botIntelligence;
 	private MapSizes mapSize;
@@ -78,6 +47,37 @@ public class NewGamePreferences {
 
 	public void setDensity(Densities density) {
 		this.density = density;
+	}
+
+	/** Map sizes that can be generated. */
+	public enum MapSizes {
+		SMALL(50), MEDIUM(150), LARGE(250), XLARGE(500), XXLARGE(1000);
+
+		private int amountOfTiles;
+
+		private MapSizes(int amountOfTiles) {
+			this.amountOfTiles = amountOfTiles;
+		}
+
+		public int getAmountOfTiles() {
+			return this.amountOfTiles;
+		}
+
+	}
+
+	/** Map densities that can be generated. */
+	public enum Densities {
+		LOOSE(-3), MEDIUM(0), DENSE(3);
+
+		private float densityFloat;
+
+		private Densities(float densityFloat) {
+			this.densityFloat = densityFloat;
+		}
+
+		public float getDensityFloat() {
+			return this.densityFloat;
+		}
 	}
 
 }
