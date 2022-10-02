@@ -23,10 +23,10 @@ import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.frontend.ui.screens.SplashScreen;
 
 /**
- * Controller switching between screens bus.
+ * Controller for navigating between screens.
  */
 @Singleton
-public class ScreenTransitionController {
+public class ScreenNavigationController {
 
 	private EventBus eventBus;
 	private LocalIngameInputHandler localIngameInputHandler;
@@ -57,7 +57,7 @@ public class ScreenTransitionController {
 	 * @param ingameScreenEventHandler ingame screen event handler
 	 */
 	@Inject
-	public ScreenTransitionController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
+	public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
 			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
 			@AboutScreen GameScreen aboutScreen,

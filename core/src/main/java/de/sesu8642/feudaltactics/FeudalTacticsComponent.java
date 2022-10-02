@@ -10,7 +10,7 @@ import com.google.common.eventbus.EventBus;
 
 import dagger.Component;
 import de.sesu8642.feudaltactics.backend.dagger.BackendDaggerModule;
-import de.sesu8642.feudaltactics.frontend.ScreenTransitionController;
+import de.sesu8642.feudaltactics.frontend.ScreenNavigationController;
 import de.sesu8642.feudaltactics.frontend.dagger.FrontendDaggerModule;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.VersionProperty;
 import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreen;
@@ -27,7 +27,7 @@ public interface FeudalTacticsComponent {
 
 	EventBus getEventBus();
 
-	ScreenTransitionController getScreenTransitionController();
+	ScreenNavigationController getScreenTransitionController();
 
 	@VersionProperty
 	String getGameVersion();
