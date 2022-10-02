@@ -9,19 +9,19 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
-import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
+import de.sesu8642.feudaltactics.DaggerFeudalTacticsComponent;
+import de.sesu8642.feudaltactics.FeudalTacticsComponent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
-import de.sesu8642.feudaltactics.persistence.PreferencesHelper;
+import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
+import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
 
 /** The game's entry point. */
 public class FeudalTactics extends Game {
 
 	// this needs to be accessed somehow by the other classes and cannot be provided
 	// by DI because it is created by the libGDX framework
-	static FeudalTactics game;
+	public static FeudalTactics game;
 
 	// TODO: put those in a custom skin
 	public static final Color buttonIconColor = new Color(1, 0.7F, 0.15F, 1);
