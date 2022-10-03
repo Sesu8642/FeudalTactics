@@ -20,6 +20,7 @@ import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.InputValidationHelper;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Unit;
+import de.sesu8642.feudaltactics.backend.gamelogic.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.TapInputEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
@@ -38,6 +39,7 @@ public class LocalIngameInputHandler {
 	}
 
 	private GameController gameController;
+	private AutoSaveRepository autoSaveRepo;
 
 	/**
 	 * Constructor.
@@ -45,8 +47,9 @@ public class LocalIngameInputHandler {
 	 * @param gameController game controller
 	 */
 	@Inject
-	public LocalIngameInputHandler(GameController gameController) {
+	public LocalIngameInputHandler(GameController gameController, AutoSaveRepository autoSaveRepo) {
 		this.gameController = gameController;
+		this.autoSaveRepo = autoSaveRepo;
 	}
 
 	/**
@@ -60,7 +63,8 @@ public class LocalIngameInputHandler {
 		if (!playerOptional.isPresent()) {
 			return;
 		}
-		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get())) {
+		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get(),
+				autoSaveRepo.getNoOfAutoSaves())) {
 			gameController.undoLastAction();
 		}
 	}
@@ -136,7 +140,8 @@ public class LocalIngameInputHandler {
 		if (!playerOptional.isPresent()) {
 			return;
 		}
-		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get())) {
+		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get(),
+				autoSaveRepo.getNoOfAutoSaves())) {
 			gameController.undoLastAction();
 		}
 	}

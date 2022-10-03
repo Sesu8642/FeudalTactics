@@ -6,31 +6,16 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Singleton;
 
-import com.google.common.eventbus.EventBus;
-
 import dagger.Component;
 import de.sesu8642.feudaltactics.backend.dagger.BackendDaggerModule;
-import de.sesu8642.feudaltactics.frontend.ScreenNavigationController;
 import de.sesu8642.feudaltactics.frontend.dagger.FrontendDaggerModule;
-import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.VersionProperty;
-import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreen;
-import de.sesu8642.feudaltactics.frontend.ui.screens.SplashScreen;
 
 /** Dagger component. **/
 @Component(modules = { BackendDaggerModule.class, FrontendDaggerModule.class })
 @Singleton
 public interface FeudalTacticsComponent {
 
-	IngameScreen getIngameScreen();
-
-	SplashScreen getSplashScreen();
-
-	EventBus getEventBus();
-
-	ScreenNavigationController getScreenTransitionController();
-
-	@VersionProperty
-	String getGameVersion();
+	GameInitializer getGameInitializer();
 
 	ExecutorService getBotAiExecutor();
 

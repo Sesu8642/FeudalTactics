@@ -2,25 +2,16 @@
 
 package de.sesu8642.feudaltactics;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
-import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.DaggerFeudalTacticsComponent;
-import de.sesu8642.feudaltactics.FeudalTacticsComponent;
-import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
-import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
 
 /** The game's entry point. */
 public class FeudalTactics extends Game {
 
 	// this needs to be accessed somehow by the other classes and cannot be provided
-	// by DI because it is created by the libGDX framework
+	// by DI because it is created by the launcher
 	public static FeudalTactics game;
 
 	// TODO: put those in a custom skin
@@ -32,30 +23,14 @@ public class FeudalTactics extends Game {
 
 	@Override
 	public void create() {
-		// enable debug logging to console
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-
 		game = this;
+
 		// Eclipse cannot resolve this. See https://stackoverflow.com/a/31669111 for
-		// more information. Workaround: Right-click the "Feudal Tactics-core" project →
-		// Properties → Java Build Path → Add JARs... → Feudal
-		// Tactics-core/build/libs/core*.jar
+		// more information.
 		component = DaggerFeudalTacticsComponent.create();
 
-		EventBus eventBus = component.getEventBus();
-		eventBus.register(component.getScreenTransitionController());
-
-		String gameVersion = component.getGameVersion();
-		PreferencesHelper.saveGameVersion(gameVersion);
-
-		if (PreferencesHelper.getNoOfAutoSaves() > 0) {
-			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-			eventBus.post(new GameResumedEvent());
-		} else {
-			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.SPLASH_SCREEN));
-		}
-		// do not close on android back key
-		Gdx.input.setCatchKey(Keys.BACK, true);
+		GameInitializer gameInitializer = component.getGameInitializer();
+		gameInitializer.initializeGame();
 	}
 
 	@Override

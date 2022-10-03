@@ -21,8 +21,8 @@ import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.HexTile;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.backend.gamelogic.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
-import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
 
 /** Controller for playing the game. */
 @Singleton
@@ -34,11 +34,14 @@ public class GameController {
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
 			new Color(0F, 1F, 0F, 1) };
 
-	private EventBus eventBus;
-	private BotAi botAi;
-	private ExecutorService botTurnExecutor;
-	private GameState gameState;
+	private final EventBus eventBus;
+	private final ExecutorService botTurnExecutor;
+	private final BotAi botAi;
+	private final AutoSaveRepository autoSaveRepo;
 	private Future<?> botTurnFuture;
+
+	/** state of the currently running game */
+	private GameState gameState;
 
 	/**
 	 * Winner of the game before the bot players acted. Used to determine whether
@@ -53,10 +56,12 @@ public class GameController {
 	 * @param botAi    bot AI
 	 */
 	@Inject
-	public GameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi) {
+	public GameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi,
+			AutoSaveRepository autoSaveRepo) {
 		this.eventBus = eventBus;
 		this.botTurnExecutor = botTurnExecutor;
 		this.botAi = botAi;
+		this.autoSaveRepo = autoSaveRepo;
 		gameState = new GameState();
 	}
 
@@ -67,19 +72,19 @@ public class GameController {
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
 		}
-		PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
+		autoSaveRepo.deleteAllAutoSaveExceptLatestN(0);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	private void autosave() {
-		PreferencesHelper.autoSaveGameState(gameState);
+		autoSaveRepo.autoSaveGameState(gameState);
 	}
 
 	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
 		Gdx.app.log(TAG, "loading latest autosave");
-		gameState = PreferencesHelper.getLatestAutoSave();
+		gameState = autoSaveRepo.getLatestAutoSave();
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
 		}
@@ -207,7 +212,7 @@ public class GameController {
 			// autosave when a player turn begins
 			autosave();
 			// clear autosaves from previous turn
-			PreferencesHelper.deleteAllAutoSaveExceptLatestN(1);
+			autoSaveRepo.deleteAllAutoSaveExceptLatestN(1);
 			eventBus.post(new GameStateChangeEvent(gameState,
 					(lastWinner != null && !lastWinner.equals(gameState.getWinner())), false));
 		}
@@ -250,12 +255,12 @@ public class GameController {
 	/** Undoes the last action. */
 	public void undoLastAction() {
 		Gdx.app.debug(TAG, "undoing last action");
-		if (PreferencesHelper.getNoOfAutoSaves() > 1) {
+		if (autoSaveRepo.getNoOfAutoSaves() > 1) {
 			// 1 means the current state is the only one saved
 			// remove the current state from autosaves
-			PreferencesHelper.deleteLatestAutoSave();
+			autoSaveRepo.deleteLatestAutoSave();
 			// load the previous state
-			GameState loaded = PreferencesHelper.getLatestAutoSave();
+			GameState loaded = autoSaveRepo.getLatestAutoSave();
 			gameState = loaded;
 		}
 		eventBus.post(new GameStateChangeEvent(gameState));

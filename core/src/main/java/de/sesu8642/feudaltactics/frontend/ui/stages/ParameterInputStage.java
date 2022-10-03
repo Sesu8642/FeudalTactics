@@ -28,11 +28,10 @@ import de.sesu8642.feudaltactics.backend.gamelogic.ingame.BotAi.Intelligence;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuViewport;
-import de.sesu8642.feudaltactics.frontend.events.NewGamePreferencesChangedEvent;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.MapSizes;
-import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
+import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
 
 /**
  * {@link Stage} for displaying the input mask for a new game.
@@ -43,6 +42,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	public static final int NO_OF_INPUTS = 4;
 
 	private EventBus eventBus;
+	private NewGamePreferencesDao newGamePrefDao;
 	private TextureAtlas textureAtlas;
 	private Skin skin;
 
@@ -63,10 +63,11 @@ public class ParameterInputStage extends ResizableResettableStage {
 	 * @param skin         game skin
 	 */
 	@Inject
-	public ParameterInputStage(EventBus eventBus, @MenuViewport Viewport viewport, TextureAtlas textureAtlas,
-			Skin skin) {
+	public ParameterInputStage(EventBus eventBus, NewGamePreferencesDao newGamePrefDao, @MenuViewport Viewport viewport,
+			TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
 		this.eventBus = eventBus;
+		this.newGamePrefDao = newGamePrefDao;
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
@@ -74,7 +75,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private void initUi() {
 		// note about checktyle: widgets are declared in the order they appear in the UI
-		NewGamePreferences prefs = PreferencesHelper.getNewGamePreferences();
+		NewGamePreferences prefs = newGamePrefDao.getNewGamePreferences();
 		Label difficultyLabel = new Label("CPU\nDifficulty", skin);
 		difficultySelect = new SelectBox<>(skin);
 		String[] difficulties = { "Easy", "Medium  ", "Hard" };
@@ -141,8 +142,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 					public void changed(ChangeEvent event, Actor actor) {
 						eventBus.post(new RegenerateMapEvent(getBotIntelligence(), new MapParameters(getSeedParam(),
 								getMapSizeParam().getAmountOfTiles(), getMapDensityParam().getDensityFloat())));
-						eventBus.post(new NewGamePreferencesChangedEvent(
-								new NewGamePreferences(getBotIntelligence(), getMapSizeParam(), getMapDensityParam())));
+						newGamePrefDao.saveNewGamePreferences(
+								new NewGamePreferences(getBotIntelligence(), getMapSizeParam(), getMapDensityParam()));
 					}
 				}));
 

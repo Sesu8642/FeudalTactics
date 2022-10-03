@@ -52,7 +52,7 @@ import de.sesu8642.feudaltactics.frontend.events.RetryGameUnconfirmedEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences;
-import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
+import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.stages.MenuStage;
@@ -216,10 +216,11 @@ public class FrontendDaggerModule {
 	@MainMenuStage
 	static MenuStage provideMainMenuWithVersion(EventBus eventBus, @MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
-			@VersionProperty String gameVersion) {
+			@VersionProperty String gameVersion, NewGamePreferencesDao newGamePreferencesDao) {
+		// TODO: seems a little too much to do here
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
 		stage.addButton("Play", () -> {
-			NewGamePreferences savedPrefs = PreferencesHelper.getNewGamePreferences();
+			NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 			eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
 					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize().getAmountOfTiles(),

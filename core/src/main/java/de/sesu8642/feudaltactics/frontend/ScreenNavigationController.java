@@ -40,7 +40,6 @@ public class ScreenNavigationController {
 	private de.sesu8642.feudaltactics.backend.gamelogic.ingame.EventHandler gameLogicEventHandler;
 	private de.sesu8642.feudaltactics.backend.gamelogic.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler;
-	private de.sesu8642.feudaltactics.frontend.persistence.EventHandler preferencesEventHandler;
 	private IngameScreenEventHandler ingameScreenEventHandler;
 
 	/**
@@ -65,7 +64,6 @@ public class ScreenNavigationController {
 			de.sesu8642.feudaltactics.backend.gamelogic.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.backend.gamelogic.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler,
-			de.sesu8642.feudaltactics.frontend.persistence.EventHandler preferencesEventHandler,
 			IngameScreenEventHandler ingameScreenEventHandler) {
 		this.eventBus = eventBus;
 		this.localIngameInputHandler = localIngameInputHandler;
@@ -79,13 +77,12 @@ public class ScreenNavigationController {
 		this.gameLogicEventHandler = gameLogicEventHandler;
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
-		this.preferencesEventHandler = preferencesEventHandler;
 		this.ingameScreenEventHandler = ingameScreenEventHandler;
 	}
 
 	private void unregisterAllEventHandlers() {
-		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
-				preferencesEventHandler).forEach(object -> {
+		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
+				.forEach(object -> {
 					try {
 						eventBus.unregister(object);
 					} catch (IllegalArgumentException e) {
@@ -145,8 +142,8 @@ public class ScreenNavigationController {
 	/** Transitions to the ingame screen. */
 	public void transitionToIngameScreen() {
 		unregisterAllEventHandlers();
-		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
-				preferencesEventHandler).forEach(object -> eventBus.register(object));
+		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
+				.forEach(object -> eventBus.register(object));
 		FeudalTactics.game.setScreen(ingameScreen);
 	}
 

@@ -5,7 +5,6 @@ package de.sesu8642.feudaltactics.backend.gamelogic.gamestate;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Unit.UnitTypes;
-import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
 
 /**
  * Utility class that checks whether certain user action are allowed according
@@ -268,15 +267,16 @@ public class InputValidationHelper {
 	/**
 	 * Checks whether a player is allowed undo the previous action.
 	 * 
-	 * @param gameState game state of the current game
-	 * @param player    player attempting the action
+	 * @param gameState     game state of the current game
+	 * @param player        player attempting the action
+	 * @param noOfAutoSaves number of available autosaves
 	 * @return whether the action is allowed
 	 */
-	public static boolean checkUndoAction(GameState gameState, Player player) {
+	public static boolean checkUndoAction(GameState gameState, Player player, int noOfAutoSaves) {
 		if (!isCorrectPlayersTurn(gameState, player)) {
 			return false;
 		}
-		return (PreferencesHelper.getNoOfAutoSaves() > 1);
+		return (noOfAutoSaves > 1);
 	}
 
 	private static boolean isWater(HexTile tile) {

@@ -26,6 +26,7 @@ import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Player;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Unit;
+import de.sesu8642.feudaltactics.backend.gamelogic.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
@@ -36,7 +37,6 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuViewpo
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.frontend.input.CombinedInputProcessor;
-import de.sesu8642.feudaltactics.frontend.persistence.PreferencesHelper;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.frontend.ui.DialogFactory;
 import de.sesu8642.feudaltactics.frontend.ui.Margin;
@@ -51,6 +51,8 @@ public class IngameScreen extends GameScreen {
 	private static final long BUTTON_HEIGHT_PX = 110;
 	private static final long INPUT_HEIGHT_PX = 79;
 	private static final long INPUT_WIDTH_PX = 419;
+
+	private AutoSaveRepository autoSaveRepo;
 
 	private OrthographicCamera ingameCamera;
 
@@ -83,6 +85,7 @@ public class IngameScreen extends GameScreen {
 	/**
 	 * Constructor.
 	 * 
+	 * @param autoSaveRepo         repo for interacting with autosave persistence
 	 * @param ingameCamera         camera for viewing the map
 	 * @param viewport             viewport for the menus
 	 * @param menuCamera           camera for the menus
@@ -98,12 +101,13 @@ public class IngameScreen extends GameScreen {
 	 * @param parameterInputStage  stage for the new game parameter input UI
 	 */
 	@Inject
-	public IngameScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
-			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
-			DialogFactory confirmDialogFactory, EventBus eventBus, CombinedInputProcessor inputProcessor,
-			InputMultiplexer inputMultiplexer, HudStage hudStage, MenuStage menuStage,
-			ParameterInputStage parameterInputStage) {
+	public IngameScreen(AutoSaveRepository autoSaveRepo, @IngameCamera OrthographicCamera ingameCamera,
+			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
+			@IngameRenderer MapRenderer mapRenderer, DialogFactory confirmDialogFactory, EventBus eventBus,
+			CombinedInputProcessor inputProcessor, InputMultiplexer inputMultiplexer, HudStage hudStage,
+			MenuStage menuStage, ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
+		this.autoSaveRepo = autoSaveRepo;
 		this.ingameCamera = ingameCamera;
 		this.mapRenderer = mapRenderer;
 		this.dialogFactory = confirmDialogFactory;
@@ -149,7 +153,6 @@ public class IngameScreen extends GameScreen {
 	/** Displays a warning about lost progress and exits the game if confirmed. */
 	public void handleExitGameAttempt() {
 		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
-			PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 			eventBus.post(new GameExitedEvent());
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 		});
@@ -199,7 +202,10 @@ public class IngameScreen extends GameScreen {
 			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
 			if (playerOptional.isPresent()) {
 				Player player = playerOptional.get();
-				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player);
+				// TODO: the repo shouldn't be needed here, maybe these checks could be done in
+				// the backend
+				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
+						autoSaveRepo.getNoOfAutoSaves());
 				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.COST);
 				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.COST);
 				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
@@ -271,7 +277,6 @@ public class IngameScreen extends GameScreen {
 				// exit button
 				eventBus.post(new GameExitedEvent());
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
-				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 				break;
 			case 2:
 				// retry button
@@ -300,7 +305,6 @@ public class IngameScreen extends GameScreen {
 			if ((boolean) result) {
 				eventBus.post(new GameExitedEvent());
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
-				PreferencesHelper.deleteAllAutoSaveExceptLatestN(0);
 			} else {
 				resetGame();
 			}

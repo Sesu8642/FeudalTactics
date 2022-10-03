@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import com.google.common.eventbus.Subscribe;
 
+import de.sesu8642.feudaltactics.backend.gamelogic.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
@@ -16,6 +17,7 @@ public class EventHandler {
 
 	private GameController gameController;
 	private BotAi botAi;
+	private AutoSaveRepository autoSaveRepo;
 
 	/**
 	 * Constructor.
@@ -23,9 +25,10 @@ public class EventHandler {
 	 * @param gameController game controller
 	 */
 	@Inject
-	public EventHandler(GameController gameController, BotAi botAi) {
+	public EventHandler(GameController gameController, BotAi botAi, AutoSaveRepository autoSaveRepo) {
 		this.gameController = gameController;
 		this.botAi = botAi;
+		this.autoSaveRepo = autoSaveRepo;
 	}
 
 	/**
@@ -36,6 +39,7 @@ public class EventHandler {
 	@Subscribe
 	public void handleGameExited(GameExitedEvent event) {
 		gameController.cancelBotTurn();
+		autoSaveRepo.deleteAllAutoSaveExceptLatestN(0);
 	}
 
 	/**
