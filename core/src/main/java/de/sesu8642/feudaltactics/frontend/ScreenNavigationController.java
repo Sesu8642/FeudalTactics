@@ -11,8 +11,8 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.FeudalTactics;
-import de.sesu8642.feudaltactics.backend.gamelogic.editor.EditorInputHandler;
-import de.sesu8642.feudaltactics.backend.gamelogic.ingame.LocalIngameInputHandler;
+import de.sesu8642.feudaltactics.backend.editor.EditorInputHandler;
+import de.sesu8642.feudaltactics.backend.ingame.LocalIngameInputHandler;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialScreen;
@@ -37,8 +37,8 @@ public class ScreenNavigationController {
 	private GameScreen tutorialScreen;
 	private GameScreen aboutScreen;
 	private GameScreen preferencesScreen;
-	private de.sesu8642.feudaltactics.backend.gamelogic.ingame.EventHandler gameLogicEventHandler;
-	private de.sesu8642.feudaltactics.backend.gamelogic.editor.EventHandler editorEventHandler;
+	private de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler;
+	private de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler;
 	private IngameScreenEventHandler ingameScreenEventHandler;
 
@@ -61,8 +61,8 @@ public class ScreenNavigationController {
 			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
 			@AboutScreen GameScreen aboutScreen,
 			@de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.PreferencesScreen GameScreen preferencesScreen,
-			de.sesu8642.feudaltactics.backend.gamelogic.ingame.EventHandler gameLogicEventHandler,
-			de.sesu8642.feudaltactics.backend.gamelogic.editor.EventHandler editorEventHandler,
+			de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler,
+			de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler,
 			IngameScreenEventHandler ingameScreenEventHandler) {
 		this.eventBus = eventBus;

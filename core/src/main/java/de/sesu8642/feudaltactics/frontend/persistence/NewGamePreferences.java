@@ -2,8 +2,8 @@
 
 package de.sesu8642.feudaltactics.frontend.persistence;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.gamelogic.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.BotAi;
+import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
 
 /** Value object: preferences for a new game. */
 public class NewGamePreferences {

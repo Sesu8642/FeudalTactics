@@ -24,20 +24,20 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Capital;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.GameState;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.HexMapHelper;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.HexTile;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.InputValidationHelper;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.MapDimensions;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.MapObject;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Player.Type;
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Unit;
+import de.sesu8642.feudaltactics.backend.gamestate.Capital;
+import de.sesu8642.feudaltactics.backend.gamestate.GameState;
+import de.sesu8642.feudaltactics.backend.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.backend.gamestate.HexMapHelper;
+import de.sesu8642.feudaltactics.backend.gamestate.HexTile;
+import de.sesu8642.feudaltactics.backend.gamestate.InputValidationHelper;
+import de.sesu8642.feudaltactics.backend.gamestate.MapDimensions;
+import de.sesu8642.feudaltactics.backend.gamestate.MapObject;
+import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;
 
 /**
- * Render642.feudaltactics.backend.gamelogic.gamestate.Player.Type; import d
+ * Render642.feudaltactics.backend.gamestate.Player.Type; import d
  * import
  * de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;er
  * for the map and the water.

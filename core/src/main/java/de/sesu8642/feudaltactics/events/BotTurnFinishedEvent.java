@@ -2,7 +2,7 @@
 
 package de.sesu8642.feudaltactics.events;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.GameState;
+import de.sesu8642.feudaltactics.backend.gamestate.GameState;
 
 /** Event: Bot player finished its turn. */
 public class BotTurnFinishedEvent {

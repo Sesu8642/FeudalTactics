@@ -2,9 +2,9 @@
 
 package de.sesu8642.feudaltactics.events;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.MapParameters;
-import de.sesu8642.feudaltactics.backend.gamelogic.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.gamelogic.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.MapParameters;
+import de.sesu8642.feudaltactics.backend.ingame.BotAi;
+import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
 
 /**
  * Event: Map needs to be re-generated because the Parameters of the generated

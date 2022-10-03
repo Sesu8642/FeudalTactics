@@ -23,8 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.MapParameters;
-import de.sesu8642.feudaltactics.backend.gamelogic.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.MapParameters;
+import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuViewport;

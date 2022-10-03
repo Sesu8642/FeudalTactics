@@ -10,7 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.persistence.AutoSaveRepository;
+import de.sesu8642.feudaltactics.backend.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.frontend.ScreenNavigationController;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.VersionProperty;

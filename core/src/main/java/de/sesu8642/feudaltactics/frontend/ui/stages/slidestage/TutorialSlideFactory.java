@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import de.sesu8642.feudaltactics.backend.gamelogic.gamestate.Unit.UnitTypes;
+import de.sesu8642.feudaltactics.backend.gamestate.Unit.UnitTypes;
 
 /** Factory for the slides displayed in the tutorial. */
 @Singleton

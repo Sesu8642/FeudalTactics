@@ -26,7 +26,7 @@ import com.google.common.eventbus.EventBus;
 
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.backend.gamelogic.MapParameters;
+import de.sesu8642.feudaltactics.backend.MapParameters;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlideStage;
