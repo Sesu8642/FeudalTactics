@@ -33,6 +33,9 @@ task dist(type: Jar) {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
     with jar
+
+    // to fix "Entry META-INF/INDEX.LIST is a duplicate but no duplicate handling strategy has been set."
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 
