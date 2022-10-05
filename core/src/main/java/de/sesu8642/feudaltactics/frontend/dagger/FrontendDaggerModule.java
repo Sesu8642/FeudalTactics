@@ -40,7 +40,6 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuBackgr
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuCamera;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuViewport;
-import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.PreferencesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.SplashScreenStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialSlideStage;
@@ -56,7 +55,6 @@ import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.stages.MenuStage;
-import de.sesu8642.feudaltactics.frontend.ui.stages.PreferencesStage;
 import de.sesu8642.feudaltactics.frontend.ui.stages.ResizableResettableStage;
 import de.sesu8642.feudaltactics.frontend.ui.stages.slidestage.AboutSlideFactory;
 import de.sesu8642.feudaltactics.frontend.ui.stages.slidestage.Slide;
@@ -297,14 +295,6 @@ public class FrontendDaggerModule {
 	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
 			@MainMenuStage MenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
-	}
-
-	@Provides
-	@Singleton
-	@PreferencesScreen
-	static GameScreen providePreferencesScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-			PreferencesStage preferencesStage) {
-		return new GameScreen(camera, viewport, preferencesStage);
 	}
 
 }

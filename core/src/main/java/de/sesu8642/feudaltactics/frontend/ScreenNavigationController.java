@@ -20,6 +20,8 @@ import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreenEventHandler;
+import de.sesu8642.feudaltactics.frontend.ui.screens.PreferencesScreen;
+import de.sesu8642.feudaltactics.frontend.ui.screens.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.frontend.ui.screens.SplashScreen;
 
 /**
@@ -41,30 +43,32 @@ public class ScreenNavigationController {
 	private de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler;
 	private IngameScreenEventHandler ingameScreenEventHandler;
+	private PreferencesScreenEventHandler preferencesScreenEventHandler;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param eventBus                 event bus to register and unregister to/with
-	 * @param localIngameInputHandler  local ingame input handler
-	 * @param gameLogicEventHandler    game logic event handler
-	 * @param splashScreen             splash screen
-	 * @param ingameScreen             ingame screen
-	 * @param mainMenuScreen           main menu screen
-	 * @param rendererEventHandler     renderer event handler
-	 * @param preferencesEventHandler  preferences event handler
-	 * @param ingameScreenEventHandler ingame screen event handler
+	 * @param eventBus                      event bus to register and unregister
+	 *                                      to/with
+	 * @param localIngameInputHandler       local ingame input handler
+	 * @param gameLogicEventHandler         game logic event handler
+	 * @param splashScreen                  splash screen
+	 * @param ingameScreen                  ingame screen
+	 * @param mainMenuScreen                main menu screen
+	 * @param rendererEventHandler          renderer event handler
+	 * @param ingameScreenEventHandler      ingame screen event handler
+	 * @param preferencesScreenEventHandler preferences screen event handler
 	 */
 	@Inject
 	public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
 			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
-			@AboutScreen GameScreen aboutScreen,
-			@de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.PreferencesScreen GameScreen preferencesScreen,
+			@AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
 			de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler,
-			IngameScreenEventHandler ingameScreenEventHandler) {
+			IngameScreenEventHandler ingameScreenEventHandler,
+			PreferencesScreenEventHandler preferencesScreenEventHandler) {
 		this.eventBus = eventBus;
 		this.localIngameInputHandler = localIngameInputHandler;
 		this.editorInputHandler = editorInputHandler;
@@ -78,11 +82,12 @@ public class ScreenNavigationController {
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
 		this.ingameScreenEventHandler = ingameScreenEventHandler;
+		this.preferencesScreenEventHandler = preferencesScreenEventHandler;
 	}
 
 	private void unregisterAllEventHandlers() {
-		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
-				.forEach(object -> {
+		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
+				preferencesScreenEventHandler).forEach(object -> {
 					try {
 						eventBus.unregister(object);
 					} catch (IllegalArgumentException e) {
@@ -165,8 +170,10 @@ public class ScreenNavigationController {
 		FeudalTactics.game.setScreen(aboutScreen);
 	}
 
+	/** Transitions to the preferences screen. */
 	public void transitionToPreferencesScreen() {
 		unregisterAllEventHandlers();
+		eventBus.register(preferencesScreenEventHandler);
 		FeudalTactics.game.setScreen(preferencesScreen);
 	}
 
