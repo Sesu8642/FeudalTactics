@@ -37,6 +37,7 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuViewpo
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.frontend.input.CombinedInputProcessor;
+import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.frontend.ui.DialogFactory;
 import de.sesu8642.feudaltactics.frontend.ui.Margin;
@@ -53,6 +54,7 @@ public class IngameScreen extends GameScreen {
 	private static final long INPUT_WIDTH_PX = 419;
 
 	private AutoSaveRepository autoSaveRepo;
+	private MainPreferencesDao mainPrefsDao;
 
 	private OrthographicCamera ingameCamera;
 
@@ -101,13 +103,15 @@ public class IngameScreen extends GameScreen {
 	 * @param parameterInputStage  stage for the new game parameter input UI
 	 */
 	@Inject
-	public IngameScreen(AutoSaveRepository autoSaveRepo, @IngameCamera OrthographicCamera ingameCamera,
-			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
-			@IngameRenderer MapRenderer mapRenderer, DialogFactory confirmDialogFactory, EventBus eventBus,
-			CombinedInputProcessor inputProcessor, InputMultiplexer inputMultiplexer, HudStage hudStage,
-			MenuStage menuStage, ParameterInputStage parameterInputStage) {
+	public IngameScreen(AutoSaveRepository autoSaveRepo, MainPreferencesDao mainPrefsDao,
+			@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
+			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
+			DialogFactory confirmDialogFactory, EventBus eventBus, CombinedInputProcessor inputProcessor,
+			InputMultiplexer inputMultiplexer, HudStage hudStage, MenuStage menuStage,
+			ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
 		this.autoSaveRepo = autoSaveRepo;
+		this.mainPrefsDao = mainPrefsDao;
 		this.ingameCamera = ingameCamera;
 		this.mapRenderer = mapRenderer;
 		this.dialogFactory = confirmDialogFactory;
@@ -124,7 +128,8 @@ public class IngameScreen extends GameScreen {
 	 * displays it and then ends the turn if confirmed.
 	 */
 	public void handleEndTurnAttempt() {
-		if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)) {
+		if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)
+				&& mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
 			Dialog confirmDialog = dialogFactory.createConfirmDialog(
 					"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
 					() -> eventBus.post(new EndTurnEvent()));
@@ -137,7 +142,7 @@ public class IngameScreen extends GameScreen {
 	/** Displays a warning about lost progress and resets the game if confirmed. */
 	void handleUnconfirmedRetryGame() {
 		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-				() -> resetGame());
+				this::resetGame);
 		confirmDialog.show(menuStage);
 	}
 
