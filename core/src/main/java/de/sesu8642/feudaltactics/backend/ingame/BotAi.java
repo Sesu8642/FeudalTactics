@@ -37,6 +37,7 @@ import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.backend.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 
 /** Class that does the turns for bot players. */
 @Singleton
@@ -67,13 +68,15 @@ public class BotAi {
 	}
 
 	private EventBus eventBus;
+	private MainPreferencesDao mainPrefsDao;
 
 	/** Current speed. */
 	private Speed currentSpeed = Speed.NORMAL;
 
 	@Inject
-	public BotAi(EventBus eventBus) {
+	public BotAi(EventBus eventBus, MainPreferencesDao mainPrefsDao) {
 		this.eventBus = eventBus;
+		this.mainPrefsDao = mainPrefsDao;
 	}
 
 	/**
@@ -161,7 +164,7 @@ public class BotAi {
 	 */
 	private void delayForPreview(GameState gameState) throws InterruptedException {
 		// no need to update the game state if there is no delay to see it anyway
-		if (currentSpeed == Speed.INSTANT) {
+		if (currentSpeed == Speed.INSTANT || !mainPrefsDao.getMainPreferences().isShowEnemyTurns()) {
 			return;
 		}
 		eventBus.post(new GameStateChangeEvent(gameState));
