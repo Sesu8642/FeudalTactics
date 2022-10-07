@@ -40,8 +40,8 @@ public class MainPreferencesDao {
 	 * @return preferences to load
 	 */
 	public MainGamePreferences getMainPreferences() {
-		boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME);
-		boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME);
+		boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, true);
+		boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME, true);
 		return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns);
 	}
 
