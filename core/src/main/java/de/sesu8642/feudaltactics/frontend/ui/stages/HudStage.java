@@ -91,6 +91,8 @@ public class HudStage extends ResizableResettableStage {
 		// TODO: put the buttons in a custom skin
 		menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
 				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
+		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		menuButton.getImageCell().expand().fill();
 
 		// buttons visible during the local player turn
 		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
@@ -101,7 +103,6 @@ public class HudStage extends ResizableResettableStage {
 				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
 		endTurnButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("end_turn")),
 				new SpriteDrawable(textureAtlas.createSprite("end_turn_pressed")));
-		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
 		playerTurnButtons.add(undoButton);
 		playerTurnButtons.add(buyPeasantButton);
 		playerTurnButtons.add(buyCastleButton);
@@ -139,7 +140,7 @@ public class HudStage extends ResizableResettableStage {
 		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.add(infoTextLabel).left().top().pad(10);
-		rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.05F, rootTable)).pad(10);
+		rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
 		rootTable.row();
 		rootTable.add();
 		rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
