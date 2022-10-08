@@ -37,10 +37,7 @@ import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;
 
 /**
- * Render642.feudaltactics.backend.gamestate.Player.Type; import d
- * import
- * de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;er
- * for the map and the water.
+ * Renderer for the map and the water.
  */
 public class MapRenderer {
 
