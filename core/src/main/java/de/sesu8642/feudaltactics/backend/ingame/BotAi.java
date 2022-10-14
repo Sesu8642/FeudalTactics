@@ -44,12 +44,47 @@ import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 public class BotAi {
 
 	private static final String TAG = BotAi.class.getName();
-	static final int MUST_PROTECT_SCORE_THRESHOLD = 25;
-	static final int SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD = 20;
 
 	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
-		DUMB, MEDIUM, SMART
+		DUMB(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE),
+		MEDIUM(1F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE), SMART(1F, 1F, true, 25, 20);
+
+		/** Chance that the bot will even try to conquer anything in a given turn. */
+		public final float chanceToConquerPerTurn;
+
+		/** Chance to remove each blocking map object. */
+		public final float chanceToRemoveEachBlockingObject;
+
+		/**
+		 * Minimum defense tile score to be worth protecting with a castle. Will be
+		 * protected with a unit if a castle is too expensive. Use a very high value to
+		 * disable protecting with castles.
+		 */
+		public final int protectWithCastleScoreTreshold;
+
+		/**
+		 * Minimum defense tile score to be worth protecting with a unit. Use a very
+		 * high value to disable protecting with units as a first choice.
+		 */
+		public final int protectWithUnitScoreTreshold;
+
+		/**
+		 * Whether to reconsider which tiles need to be protected after attacking may
+		 * have changed which tiles make sense to protect.
+		 */
+		public final boolean reconsidersWhichTilesToProtect;
+
+		private Intelligence(float chanceToConquerPerTurn, float chanceToRemoveEachBlockingObject,
+				boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
+				int protectWithUnitScoreTreshold) {
+			this.chanceToConquerPerTurn = chanceToConquerPerTurn;
+			this.chanceToRemoveEachBlockingObject = chanceToRemoveEachBlockingObject;
+			this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;
+			this.protectWithCastleScoreTreshold = protectWithCastleScoreTreshold;
+			this.protectWithUnitScoreTreshold = protectWithUnitScoreTreshold;
+		}
+
 	}
 
 	/** Possible speeds for the preview. */
@@ -123,35 +158,22 @@ public class BotAi {
 		// pick up all units
 		PickedUpUnits pickedUpUnits = new PickedUpUnits();
 		pickUpAllAvailableUnits(kingdom, pickedUpUnits);
-		// remember the tiles where a castle was placed to reverse the decision later
-		// after conquering
+		// remember the tiles where a castle was placed to possibly reverse the decision
+		// later after conquering
 		Set<HexTile> placedCastleTiles = new HashSet<>();
-		switch (intelligence) {
-		case DUMB:
-			removeBlockingObjects(gameState, pickedUpUnits, 0.6F, random);
-			// only 50% chance to conquer anything
-			if (random.nextFloat() <= 0.5F) {
-				conquerAsMuchAsPossible(gameState, pickedUpUnits);
-			}
-			protectWithLeftoverUnits(gameState, pickedUpUnits);
-			break;
-		case MEDIUM:
-			removeBlockingObjects(gameState, pickedUpUnits, 0.8F, random);
+
+		removeBlockingObjects(gameState, pickedUpUnits, intelligence.chanceToRemoveEachBlockingObject, random);
+		defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
+		if (random.nextFloat() <= intelligence.chanceToConquerPerTurn) {
 			conquerAsMuchAsPossible(gameState, pickedUpUnits);
-			protectWithLeftoverUnits(gameState, pickedUpUnits);
-			break;
-		case SMART:
-			removeBlockingObjects(gameState, pickedUpUnits, 1F, random);
-			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
-			conquerAsMuchAsPossible(gameState, pickedUpUnits);
+		}
+		if (intelligence.reconsidersWhichTilesToProtect) {
 			sellCastles(gameState.getActiveKingdom(), placedCastleTiles);
 			pickUpAllAvailableUnits(gameState.getActiveKingdom(), pickedUpUnits);
-			defendMostImportantTiles(gameState, pickedUpUnits, placedCastleTiles);
-			protectWithLeftoverUnits(gameState, pickedUpUnits);
-			break;
-		default:
-			throw new AssertionError("Unknown bot intelligence " + intelligence);
+			defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
 		}
+		protectWithLeftoverUnits(gameState, pickedUpUnits);
+
 		delayForPreview(gameState);
 		return gameState;
 	}
@@ -202,12 +224,12 @@ public class BotAi {
 		}
 	}
 
-	private void defendMostImportantTiles(GameState gameState, PickedUpUnits pickedUpUnits,
+	private void defendMostImportantTiles(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits,
 			Set<HexTile> placedCastleTiles) {
 		Gdx.app.debug(TAG, "defending most important tiles");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
 		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
-		while (bestProtectionCandidate.score >= MUST_PROTECT_SCORE_THRESHOLD) {
+		while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
 			// if enough money buy castle
 			if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.COST)) {
 				GameStateHelper.buyCastle(gameState);
@@ -227,7 +249,7 @@ public class BotAi {
 			}
 			bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
 		}
-		while (bestProtectionCandidate.score >= SHOULD_PROTECT_WITH_UNIT_SCORE_THRESHOLD) {
+		while (bestProtectionCandidate.score >= intelligence.protectWithUnitScoreTreshold) {
 			if (pickedUpUnits.ofType(UnitTypes.PEASANT) > 0 || acquireUnit(gameState, gameState.getActiveKingdom(),
 					pickedUpUnits, UnitTypes.PEASANT.strength())) {
 				// protect with existing peasant
