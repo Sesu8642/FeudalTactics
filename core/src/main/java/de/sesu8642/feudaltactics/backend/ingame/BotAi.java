@@ -47,8 +47,9 @@ public class BotAi {
 
 	/** Possible intelligence levels for the AI. */
 	public enum Intelligence {
-		DUMB(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE),
-		MEDIUM(1F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE), SMART(1F, 1F, true, 25, 20);
+		DUMB(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
+		MEDIUM(0.8F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
+		SMART(1F, 1F, true, 25, 20, true, true);
 
 		/** Chance that the bot will even try to conquer anything in a given turn. */
 		public final float chanceToConquerPerTurn;
@@ -57,15 +58,31 @@ public class BotAi {
 		public final float chanceToRemoveEachBlockingObject;
 
 		/**
+		 * Whether to defend smartly: i.e. considering how many tiles are protected. If
+		 * false, the defense score of every tile is 0. This means that (basically)
+		 * random tiles near the border are protected.
+		 */
+		private boolean smartDefending;
+
+		/**
+		 * Whether to attack smartly: prefer enemy kingdom tiles over unconnected ones,
+		 * destroy castles etc. If false, the offense score of every tile is 0. This
+		 * means that (basically) random tiles are conquered.
+		 */
+		private boolean smartAttacking;
+
+		/**
 		 * Minimum defense tile score to be worth protecting with a castle. Will be
 		 * protected with a unit if a castle is too expensive. Use a very high value to
-		 * disable protecting with castles.
+		 * disable protecting with castles. If {@link #smartDefending} is false, any
+		 * value above 0 will disable it as well.
 		 */
 		public final int protectWithCastleScoreTreshold;
 
 		/**
 		 * Minimum defense tile score to be worth protecting with a unit. Use a very
-		 * high value to disable protecting with units as a first choice.
+		 * high value to disable protecting with units as a first choice. If
+		 * {@link #smartDefending} is false, any value above 0 will disable it as well.
 		 */
 		public final int protectWithUnitScoreTreshold;
 
@@ -77,12 +94,14 @@ public class BotAi {
 
 		private Intelligence(float chanceToConquerPerTurn, float chanceToRemoveEachBlockingObject,
 				boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
-				int protectWithUnitScoreTreshold) {
+				int protectWithUnitScoreTreshold, boolean smartProtectionPlacement, boolean smartAttacking) {
 			this.chanceToConquerPerTurn = chanceToConquerPerTurn;
 			this.chanceToRemoveEachBlockingObject = chanceToRemoveEachBlockingObject;
 			this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;
+			this.smartDefending = smartProtectionPlacement;
 			this.protectWithCastleScoreTreshold = protectWithCastleScoreTreshold;
 			this.protectWithUnitScoreTreshold = protectWithUnitScoreTreshold;
+			this.smartAttacking = smartAttacking;
 		}
 
 	}
@@ -165,14 +184,14 @@ public class BotAi {
 		removeBlockingObjects(gameState, pickedUpUnits, intelligence.chanceToRemoveEachBlockingObject, random);
 		defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
 		if (random.nextFloat() <= intelligence.chanceToConquerPerTurn) {
-			conquerAsMuchAsPossible(gameState, pickedUpUnits);
+			conquerAsMuchAsPossible(gameState, intelligence, pickedUpUnits);
 		}
 		if (intelligence.reconsidersWhichTilesToProtect) {
 			sellCastles(gameState.getActiveKingdom(), placedCastleTiles);
 			pickUpAllAvailableUnits(gameState.getActiveKingdom(), pickedUpUnits);
 			defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
 		}
-		protectWithLeftoverUnits(gameState, pickedUpUnits);
+		protectWithLeftoverUnits(gameState, intelligence, pickedUpUnits);
 
 		delayForPreview(gameState);
 		return gameState;
@@ -228,7 +247,8 @@ public class BotAi {
 			Set<HexTile> placedCastleTiles) {
 		Gdx.app.debug(TAG, "defending most important tiles");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
-		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
+		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
+				interestingProtectionTiles);
 		while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
 			// if enough money buy castle
 			if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.COST)) {
@@ -247,7 +267,7 @@ public class BotAi {
 			} else {
 				break;
 			}
-			bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
+			bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence, interestingProtectionTiles);
 		}
 		while (bestProtectionCandidate.score >= intelligence.protectWithUnitScoreTreshold) {
 			if (pickedUpUnits.ofType(UnitTypes.PEASANT) > 0 || acquireUnit(gameState, gameState.getActiveKingdom(),
@@ -259,11 +279,11 @@ public class BotAi {
 			} else {
 				break;
 			}
-			bestProtectionCandidate = getBestDefenseTileScore(gameState, interestingProtectionTiles);
+			bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence, interestingProtectionTiles);
 		}
 	}
 
-	private void conquerAsMuchAsPossible(GameState gameState, PickedUpUnits pickedUpUnits) {
+	private void conquerAsMuchAsPossible(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
 		Gdx.app.debug(TAG, "conquering as much as possible");
 		boolean unableToConquerAnyMore = false;
 		whileloop: while (!unableToConquerAnyMore) {
@@ -277,8 +297,8 @@ public class BotAi {
 			// determine how "valuable" the tiles are for conquering
 			Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
 					.newSetFromMap(new ConcurrentHashMap<BotAi.OffenseTileScoreInfo, Boolean>());
-			possibleConquerTiles.parallelStream().forEach(
-					conquerTile -> offenseTileScoreInfoSet.add(getOffenseTileScoreInfo(gameState, conquerTile)));
+			possibleConquerTiles.parallelStream().forEach(conquerTile -> offenseTileScoreInfoSet
+					.add(getOffenseTileScoreInfo(gameState, intelligence, conquerTile)));
 			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
 			offenseTileScoreInfos.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
 				int result = Integer.compare(o2.score, o1.score);
@@ -443,10 +463,11 @@ public class BotAi {
 		pickedUpUnits.addUnit(unitType);
 	}
 
-	private void protectWithLeftoverUnits(GameState gameState, PickedUpUnits pickedUpUnits) {
+	private void protectWithLeftoverUnits(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
 		Gdx.app.debug(TAG, "protecting the kingdom with leftover units");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
-		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, interestingProtectionTiles);
+		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
+				interestingProtectionTiles);
 		while (bestDefenseTileScore.score >= 0) {
 			if (pickedUpUnits.getTotalNoOfUnits() == 0) {
 				break;
@@ -463,7 +484,7 @@ public class BotAi {
 					break;
 				}
 			}
-			bestDefenseTileScore = getBestDefenseTileScore(gameState, interestingProtectionTiles);
+			bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence, interestingProtectionTiles);
 		}
 		placeLeftOverUnitsSomeWhere(gameState, pickedUpUnits);
 	}
@@ -519,10 +540,11 @@ public class BotAi {
 		return interestingPlacementTiles;
 	}
 
-	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Set<HexTile> interestingProtectionTiles) {
+	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
+			Set<HexTile> interestingProtectionTiles) {
 		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<BotAi.TileScoreInfo, Boolean>());
-		interestingProtectionTiles.parallelStream()
-				.forEach(tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, tile))));
+		interestingProtectionTiles.parallelStream().forEach(
+				tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
 		return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
 			int result = Integer.compare(t1.score, t2.score);
 			// if the score is the same, use the coordinates to eliminate randomness
@@ -533,7 +555,18 @@ public class BotAi {
 		}).orElse(new TileScoreInfo(null, -1));
 	}
 
-	private int getTileDefenseScore(GameState gameState, HexTile tile) {
+	/**
+	 * Calculates a score for a given tile. The score expresses how good the tile is
+	 * as a candidate to place a unit or castle on for defensive purposes. Occupied
+	 * tiles get a score of -1. Depending of the intelligence level, all other tiles
+	 * may get a score of 0. The highest possible value should be 60 (I think).
+	 * 
+	 * @param gameStategame state to work with
+	 * @param intelligence  intelligence level of the bot player
+	 * @param tile          tiles to calculate the score of
+	 * @return defense score
+	 */
+	private int getTileDefenseScore(GameState gameState, Intelligence intelligence, HexTile tile) {
 		if (tile.getContent() != null) {
 			// already occupied
 			return -1;
@@ -582,10 +615,13 @@ public class BotAi {
 			// border
 			score += tileIsProtected ? 1 : 5;
 		}
+		if (!intelligence.smartDefending) {
+			return 0;
+		}
 		return score;
 	}
 
-	private OffenseTileScoreInfo getOffenseTileScoreInfo(GameState gameState, HexTile tile) {
+	private OffenseTileScoreInfo getOffenseTileScoreInfo(GameState gameState, Intelligence intelligence, HexTile tile) {
 		int score;
 		int requiredStrength = 1;
 		if (tile.getKingdom() == null) {
@@ -621,6 +657,9 @@ public class BotAi {
 					score++;
 				}
 			}
+		}
+		if (!intelligence.smartAttacking) {
+			score = 0;
 		}
 		return new OffenseTileScoreInfo(tile, score, requiredStrength);
 	}
