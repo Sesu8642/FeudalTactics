@@ -21,6 +21,8 @@ import de.sesu8642.feudaltactics.backend.gamestate.HexTile;
 import de.sesu8642.feudaltactics.backend.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.backend.gamestate.Player;
 import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.backend.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 
@@ -97,7 +99,7 @@ public class GameController {
 	 * @param botIntelligence intelligence of the bot players
 	 * @param mapParams       map generation parameters
 	 */
-	public void generateGameState(BotAi.Intelligence botIntelligence, MapParameters mapParams) {
+	public void generateGameState(Intelligence botIntelligence, MapParameters mapParams) {
 		Gdx.app.log(TAG, String.format("generating a new game state with bot intelligence %s and %s", botIntelligence,
 				mapParams));
 		gameState = new GameState();

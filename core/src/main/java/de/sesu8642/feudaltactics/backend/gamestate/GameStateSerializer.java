@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.Json.Serializer;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 
 /** JSON serializer for the {@link GameState} class. **/
 public class GameStateSerializer implements Serializer<GameState> {

@@ -40,9 +40,9 @@ import de.sesu8642.feudaltactics.backend.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.backend.gamestate.Player;
 import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Speed;
+import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 
 /** Tests for BotAi class. */
@@ -78,7 +78,7 @@ class BotAiIntegrationTest {
 
 	@ParameterizedTest
 	@MethodSource("provideMapParameters")
-	void botsDoNotGainOrLoseValueDuringTurn(BotAi.Intelligence botIntelligence, Float landMass, Float density,
+	void botsDoNotGainOrLoseValueDuringTurn(Intelligence botIntelligence, Float landMass, Float density,
 			Long seed) throws Exception {
 		GameState gameState = createGameState(landMass, density, seed);
 
@@ -113,7 +113,7 @@ class BotAiIntegrationTest {
 
 	@ParameterizedTest
 	@MethodSource("provideMapParameters")
-	void botsActConsistentWithTheSameSeed(BotAi.Intelligence botIntelligence, Float landMass, Float density, Long seed)
+	void botsActConsistentWithTheSameSeed(Intelligence botIntelligence, Float landMass, Float density, Long seed)
 			throws Exception {
 		GameState gameState1 = createGameState(landMass, density, seed);
 		GameState gameState2 = createGameState(landMass, density, seed);
@@ -135,7 +135,7 @@ class BotAiIntegrationTest {
 
 	@ParameterizedTest
 	@MethodSource("provideMapParameters")
-	void gameStateStaysConsistent(BotAi.Intelligence botIntelligence, Float landMass, Float density, Long seed)
+	void gameStateStaysConsistent(Intelligence botIntelligence, Float landMass, Float density, Long seed)
 			throws Exception {
 		GameState gameState = createGameState(landMass, density, seed);
 

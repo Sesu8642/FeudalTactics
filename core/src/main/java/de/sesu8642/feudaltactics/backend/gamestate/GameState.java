@@ -9,8 +9,7 @@ import java.util.Objects;
 
 import com.badlogic.gdx.math.Vector2;
 
-import de.sesu8642.feudaltactics.backend.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 
 /** Contains all information about a running game. **/
 public class GameState {
@@ -23,7 +22,7 @@ public class GameState {
 	private List<Kingdom> kingdoms;
 	private Kingdom activeKingdom = null;
 	private MapObject heldObject = null;
-	private BotAi.Intelligence botIntelligence = Intelligence.DUMB;
+	private Intelligence botIntelligence = Intelligence.DUMB;
 	private Long seed;
 
 	public GameState() {
@@ -90,11 +89,11 @@ public class GameState {
 		return players.get(playerTurn);
 	}
 
-	public BotAi.Intelligence getBotIntelligence() {
+	public Intelligence getBotIntelligence() {
 		return botIntelligence;
 	}
 
-	public void setBotIntelligence(BotAi.Intelligence botIntelligence) {
+	public void setBotIntelligence(Intelligence botIntelligence) {
 		this.botIntelligence = botIntelligence;
 	}
 

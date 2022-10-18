@@ -29,8 +29,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.FeudalTactics;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Speed;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
@@ -212,8 +211,8 @@ public class HudStage extends ResizableResettableStage {
 				// used for the other button
 				int currentSpeedIndex = currentBotSpeed.ordinal();
 				int nextSpeedIndex = currentSpeedIndex + 1;
-				if (nextSpeedIndex >= BotAi.Speed.values().length
-						|| BotAi.Speed.values()[nextSpeedIndex] == Speed.INSTANT) {
+				if (nextSpeedIndex >= Speed.values().length
+						|| Speed.values()[nextSpeedIndex] == Speed.INSTANT) {
 					nextSpeedIndex = 0;
 				}
 				currentBotSpeed = Speed.values()[nextSpeedIndex];

@@ -7,7 +7,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 import de.sesu8642.feudaltactics.FeudalTactics;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi;
+import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
 
 public class DesktopLauncher {
 

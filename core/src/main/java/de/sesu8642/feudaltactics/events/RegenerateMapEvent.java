@@ -3,8 +3,7 @@
 package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.backend.MapParameters;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 
 /**
  * Event: Map needs to be re-generated because the Parameters of the generated
@@ -12,7 +11,7 @@ import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
  */
 public class RegenerateMapEvent {
 
-	private BotAi.Intelligence botIntelligence;
+	private Intelligence botIntelligence;
 	private MapParameters mapParams;
 
 	/**
@@ -27,11 +26,11 @@ public class RegenerateMapEvent {
 		this.mapParams = mapParams;
 	}
 
-	public BotAi.Intelligence getBotIntelligence() {
+	public Intelligence getBotIntelligence() {
 		return botIntelligence;
 	}
 
-	public void setBotIntelligence(BotAi.Intelligence botIntelligence) {
+	public void setBotIntelligence(Intelligence botIntelligence) {
 		this.botIntelligence = botIntelligence;
 	}
 

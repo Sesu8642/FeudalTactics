@@ -2,7 +2,7 @@
 
 package de.sesu8642.feudaltactics.events;
 
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Speed;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Speed;
 
 /** Event: Speed of bot turns is changed. */
 public class BotTurnSpeedChangedEvent {

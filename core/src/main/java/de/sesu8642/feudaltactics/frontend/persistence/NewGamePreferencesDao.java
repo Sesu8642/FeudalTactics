@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.MapSizes;
 

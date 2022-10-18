@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.backend.ingame;
+package de.sesu8642.feudaltactics.backend.ingame.botai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -44,82 +42,6 @@ import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 public class BotAi {
 
 	private static final String TAG = BotAi.class.getName();
-
-	/** Possible intelligence levels for the AI. */
-	public enum Intelligence {
-		DUMB(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
-		MEDIUM(0.8F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
-		SMART(1F, 1F, true, 25, 20, true, true);
-
-		/** Chance that the bot will even try to conquer anything in a given turn. */
-		public final float chanceToConquerPerTurn;
-
-		/** Chance to remove each blocking map object. */
-		public final float chanceToRemoveEachBlockingObject;
-
-		/**
-		 * Whether to defend smartly: i.e. considering how many tiles are protected. If
-		 * false, the defense score of every tile is 0. This means that (basically)
-		 * random tiles near the border are protected.
-		 */
-		private boolean smartDefending;
-
-		/**
-		 * Whether to attack smartly: prefer enemy kingdom tiles over unconnected ones,
-		 * destroy castles etc. If false, the offense score of every tile is 0. This
-		 * means that (basically) random tiles are conquered.
-		 */
-		private boolean smartAttacking;
-
-		/**
-		 * Minimum defense tile score to be worth protecting with a castle. Will be
-		 * protected with a unit if a castle is too expensive. Use a very high value to
-		 * disable protecting with castles. If {@link #smartDefending} is false, any
-		 * value above 0 will disable it as well.
-		 */
-		public final int protectWithCastleScoreTreshold;
-
-		/**
-		 * Minimum defense tile score to be worth protecting with a unit. Use a very
-		 * high value to disable protecting with units as a first choice. If
-		 * {@link #smartDefending} is false, any value above 0 will disable it as well.
-		 */
-		public final int protectWithUnitScoreTreshold;
-
-		/**
-		 * Whether to reconsider which tiles need to be protected after attacking may
-		 * have changed which tiles make sense to protect.
-		 */
-		public final boolean reconsidersWhichTilesToProtect;
-
-		private Intelligence(float chanceToConquerPerTurn, float chanceToRemoveEachBlockingObject,
-				boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
-				int protectWithUnitScoreTreshold, boolean smartProtectionPlacement, boolean smartAttacking) {
-			this.chanceToConquerPerTurn = chanceToConquerPerTurn;
-			this.chanceToRemoveEachBlockingObject = chanceToRemoveEachBlockingObject;
-			this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;
-			this.smartDefending = smartProtectionPlacement;
-			this.protectWithCastleScoreTreshold = protectWithCastleScoreTreshold;
-			this.protectWithUnitScoreTreshold = protectWithUnitScoreTreshold;
-			this.smartAttacking = smartAttacking;
-		}
-
-	}
-
-	/** Possible speeds for the preview. */
-	public enum Speed {
-		HALF(600), NORMAL(300), TIMES_TWO(150), INSTANT(0);
-
-		/**
-		 * Time to wait after activating each kingdom as well as after doing the moves
-		 * for each one. For the player to see what is happening.
-		 */
-		public final int tickDelayMs;
-
-		private Speed(int tickDelayMs) {
-			this.tickDelayMs = tickDelayMs;
-		}
-	}
 
 	private EventBus eventBus;
 	private MainPreferencesDao mainPrefsDao;
@@ -247,7 +169,7 @@ public class BotAi {
 			Set<HexTile> placedCastleTiles) {
 		Gdx.app.debug(TAG, "defending most important tiles");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
-		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
+		DefenseTileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
 				interestingProtectionTiles);
 		while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
 			// if enough money buy castle
@@ -296,7 +218,7 @@ public class BotAi {
 
 			// determine how "valuable" the tiles are for conquering
 			Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
-					.newSetFromMap(new ConcurrentHashMap<BotAi.OffenseTileScoreInfo, Boolean>());
+					.newSetFromMap(new ConcurrentHashMap<OffenseTileScoreInfo, Boolean>());
 			possibleConquerTiles.parallelStream().forEach(conquerTile -> offenseTileScoreInfoSet
 					.add(getOffenseTileScoreInfo(gameState, intelligence, conquerTile)));
 			List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
@@ -466,7 +388,7 @@ public class BotAi {
 	private void protectWithLeftoverUnits(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
 		Gdx.app.debug(TAG, "protecting the kingdom with leftover units");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
-		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
+		DefenseTileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
 				interestingProtectionTiles);
 		while (bestDefenseTileScore.score >= 0) {
 			if (pickedUpUnits.getTotalNoOfUnits() == 0) {
@@ -540,19 +462,19 @@ public class BotAi {
 		return interestingPlacementTiles;
 	}
 
-	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
+	private DefenseTileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
 			Set<HexTile> interestingProtectionTiles) {
-		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<BotAi.TileScoreInfo, Boolean>());
+		Set<DefenseTileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<DefenseTileScoreInfo, Boolean>());
 		interestingProtectionTiles.parallelStream().forEach(
-				tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
-		return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
+				tile -> results.add(new DefenseTileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
+		return results.stream().max((DefenseTileScoreInfo t1, DefenseTileScoreInfo t2) -> {
 			int result = Integer.compare(t1.score, t2.score);
 			// if the score is the same, use the coordinates to eliminate randomness
 			if (result == 0) {
 				result = t1.tile.compareTo(t2.tile);
 			}
 			return result;
-		}).orElse(new TileScoreInfo(null, -1));
+		}).orElse(new DefenseTileScoreInfo(null, -1));
 	}
 
 	/**
@@ -682,75 +604,5 @@ public class BotAi {
 	public void setCurrentSpeed(Speed currentSpeed) {
 		this.currentSpeed = currentSpeed;
 		Gdx.app.debug(TAG, "Bot turn speed set to " + currentSpeed);
-	}
-
-	private class TileScoreInfo {
-
-		HexTile tile;
-		int score;
-
-		public TileScoreInfo(HexTile tile, int score) {
-			this.tile = tile;
-			this.score = score;
-		}
-	}
-
-	private class OffenseTileScoreInfo extends TileScoreInfo {
-
-		int requiredStrength;
-
-		public OffenseTileScoreInfo(HexTile tile, int score, int requiredStrength) {
-			super(tile, score);
-			this.requiredStrength = requiredStrength;
-		}
-
-	}
-
-	private class PickedUpUnits {
-
-		/** key = strength of the unit; value: number of picked up units. */
-		private Map<Integer, Integer> internalPickedUpUnits = new HashMap<>();
-
-		public PickedUpUnits() {
-			for (UnitTypes type : UnitTypes.values()) {
-				internalPickedUpUnits.put(type.strength(), 0);
-			}
-		}
-
-		public Integer ofType(UnitTypes type) {
-			return ofStrength(type.strength());
-		}
-
-		public Integer ofStrength(int strength) {
-			return internalPickedUpUnits.get(strength);
-		}
-
-		public void addUnit(UnitTypes type) {
-			addUnitOfStrength(type.strength());
-		}
-
-		public void addUnitOfStrength(int strength) {
-			internalPickedUpUnits.put(strength, internalPickedUpUnits.get(strength) + 1);
-		}
-
-		public void removeUnit(UnitTypes type) {
-			removeUnit(type, 1);
-		}
-
-		public void removeUnit(UnitTypes type, int amount) {
-			removeUnitOfStrength(type.strength(), amount);
-		}
-
-		public void removeUnitOfStrength(int strength) {
-			removeUnitOfStrength(strength, 1);
-		}
-
-		public void removeUnitOfStrength(int strength, int amount) {
-			internalPickedUpUnits.put(strength, internalPickedUpUnits.get(strength) - amount);
-		}
-
-		public int getTotalNoOfUnits() {
-			return internalPickedUpUnits.values().stream().mapToInt(Integer::intValue).sum();
-		}
 	}
 }

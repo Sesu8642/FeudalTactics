@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import com.google.common.eventbus.Subscribe;
 
+import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.backend.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;

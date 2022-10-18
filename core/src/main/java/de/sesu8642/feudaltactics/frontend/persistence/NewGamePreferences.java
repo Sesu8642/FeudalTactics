@@ -2,13 +2,12 @@
 
 package de.sesu8642.feudaltactics.frontend.persistence;
 
-import de.sesu8642.feudaltactics.backend.ingame.BotAi;
-import de.sesu8642.feudaltactics.backend.ingame.BotAi.Intelligence;
+import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 
 /** Value object: preferences for a new game. */
 public class NewGamePreferences {
 
-	private BotAi.Intelligence botIntelligence;
+	private Intelligence botIntelligence;
 	private MapSizes mapSize;
 	private Densities density;
 
@@ -25,11 +24,11 @@ public class NewGamePreferences {
 		this.density = density;
 	}
 
-	public BotAi.Intelligence getBotIntelligence() {
+	public Intelligence getBotIntelligence() {
 		return botIntelligence;
 	}
 
-	public void setBotIntelligence(BotAi.Intelligence botIntelligence) {
+	public void setBotIntelligence(Intelligence botIntelligence) {
 		this.botIntelligence = botIntelligence;
 	}
 
