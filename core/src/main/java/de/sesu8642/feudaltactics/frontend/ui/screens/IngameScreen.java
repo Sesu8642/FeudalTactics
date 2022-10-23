@@ -73,6 +73,15 @@ public class IngameScreen extends GameScreen {
 	private GameState cachedGameState;
 
 	/**
+	 * Winner of the game before the bot players acted. Used to determine whether
+	 * the winner changed in order to display a message.
+	 */
+	private Player winnerBeforeBotTurn;
+
+	/** Whether it is the local player's turn. */
+	private boolean isLocalPlayerTurn = true;
+
+	/**
 	 * Switching the buttons must happen in the same thread that does the rendering
 	 * because the UI libs aren't thread-safe. To do that, a Runnable can be placed
 	 * here and will be executed when the next render happens.
@@ -135,6 +144,10 @@ public class IngameScreen extends GameScreen {
 					() -> eventBus.post(new EndTurnEvent()));
 			confirmDialog.show(hudStage);
 		} else {
+			winnerBeforeBotTurn = cachedGameState.getWinner();
+			// isLocalPlayerTurn needs to be set here because if the bot turns are not
+			// shown, this class would never notice that a bot player was active
+			isLocalPlayerTurn = false;
 			eventBus.post(new EndTurnEvent());
 		}
 	}
@@ -169,14 +182,16 @@ public class IngameScreen extends GameScreen {
 	 * appropriate.
 	 * 
 	 * @param gameState            new game state
-	 * @param winnerChanged        whether the winner changed compared to the
-	 *                             previous GameState
 	 * @param mapDimensionsChanged whether the map dimensions changed
 	 */
-	public void handleGameStateChange(GameState gameState, boolean winnerChanged, boolean mapDimensionsChanged) {
-		// cache the new state
+	public void handleGameStateChange(GameState gameState, boolean mapDimensionsChanged) {
+		boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
+		boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
+		isLocalPlayerTurn = isLocalPlayerTurnNew;
+		boolean winnerChanged = winnerBeforeBotTurn != gameState.getWinner();
+
 		cachedGameState = gameState;
-		// update the UI when there is a gameState change
+		// update the UI
 		GameState newGameState = gameState;
 		// hand content
 		if (newGameState.getHeldObject() != null) {
@@ -207,8 +222,8 @@ public class IngameScreen extends GameScreen {
 			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
 			if (playerOptional.isPresent()) {
 				Player player = playerOptional.get();
-				// TODO: the repo shouldn't be needed here, maybe these checks could be done in
-				// the backend
+				// TODO: the repo shouldn't be needed here, would be better to create a
+				// viewmodel somewhere else
 				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
 						autoSaveRepo.getNoOfAutoSaves());
 				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.COST);
@@ -223,9 +238,7 @@ public class IngameScreen extends GameScreen {
 				showLostMessage();
 			} else {
 				// check if winner changed
-				// this cannot be determined by this class itself because it is not determined
-				// by comparing to the very last state but an earlier one
-				if (winnerChanged) {
+				if (humanPlayerTurnJustStarted && winnerChanged) {
 					showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
 							newGameState.getWinner().getColor());
 				}

@@ -9,8 +9,6 @@ public class GameStateChangeEvent {
 
 	private GameState gameState;
 
-	private boolean winnerChanged = false;
-
 	private boolean mapDimensionsChanged = false;
 
 	/**
@@ -26,12 +24,10 @@ public class GameStateChangeEvent {
 	 * Constructor.
 	 * 
 	 * @param gameState            new game state
-	 * @param winnerChanged        whether the game's winner has changed
 	 * @param mapDimensionsChanged whether the map's dimensions have changed
 	 */
-	public GameStateChangeEvent(GameState gameState, boolean winnerChanged, boolean mapDimensionsChanged) {
+	public GameStateChangeEvent(GameState gameState, boolean mapDimensionsChanged) {
 		this.gameState = gameState;
-		this.winnerChanged = winnerChanged;
 		this.mapDimensionsChanged = mapDimensionsChanged;
 	}
 
@@ -41,14 +37,6 @@ public class GameStateChangeEvent {
 
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
-	}
-
-	public boolean isWinnerChanged() {
-		return winnerChanged;
-	}
-
-	public void setWinnerChanged(boolean winnerChanged) {
-		this.winnerChanged = winnerChanged;
 	}
 
 	public boolean isMapDimensionsChanged() {

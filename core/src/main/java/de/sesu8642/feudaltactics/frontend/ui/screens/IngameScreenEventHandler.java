@@ -119,8 +119,7 @@ public class IngameScreenEventHandler {
 	 */
 	@Subscribe
 	public void handleGameStateChange(GameStateChangeEvent event) {
-		ingameScreen.handleGameStateChange(event.getGameState(), event.isWinnerChanged(),
-				event.isMapDimensionsChanged());
+		ingameScreen.handleGameStateChange(event.getGameState(), event.isMapDimensionsChanged());
 	}
 
 }

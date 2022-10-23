@@ -42,14 +42,8 @@ public class GameController {
 	private final AutoSaveRepository autoSaveRepo;
 	private Future<?> botTurnFuture;
 
-	/** state of the currently running game */
+	/** State of the currently running game. */
 	private GameState gameState;
-
-	/**
-	 * Winner of the game before the bot players acted. Used to determine whether
-	 * the winner changed in order to display a message.
-	 */
-	private Player lastWinner;
 
 	/**
 	 * Constructor.
@@ -90,7 +84,7 @@ public class GameController {
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
 		}
-		eventBus.post(new GameStateChangeEvent(gameState, false, true));
+		eventBus.post(new GameStateChangeEvent(gameState, true));
 	}
 
 	/**
@@ -119,7 +113,7 @@ public class GameController {
 		}
 		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass(), mapParams.getDensity(), null,
 				mapParams.getSeed());
-		eventBus.post(new GameStateChangeEvent(gameState, false, true));
+		eventBus.post(new GameStateChangeEvent(gameState, true));
 	}
 
 	/**
@@ -200,10 +194,6 @@ public class GameController {
 	 */
 	void endTurn() {
 		Gdx.app.debug(TAG, String.format("ending turn of %s", gameState.getActivePlayer()));
-		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
-			// remember the winner as it might change during bot turns
-			lastWinner = gameState.getWinner();
-		}
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
@@ -215,8 +205,7 @@ public class GameController {
 			autosave();
 			// clear autosaves from previous turn
 			autoSaveRepo.deleteAllAutoSaveExceptLatestN(1);
-			eventBus.post(new GameStateChangeEvent(gameState,
-					(lastWinner != null && !lastWinner.equals(gameState.getWinner())), false));
+			eventBus.post(new GameStateChangeEvent(gameState, false));
 		}
 	}
 
