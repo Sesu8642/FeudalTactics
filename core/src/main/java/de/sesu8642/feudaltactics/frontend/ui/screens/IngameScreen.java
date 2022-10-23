@@ -232,16 +232,16 @@ public class IngameScreen extends GameScreen {
 				hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
 			}
 			// display messages
-			// check if player lost
 			if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
 					&& newGameState.getActivePlayer().isDefeated()) {
+				// player lost
 				showLostMessage();
-			} else {
-				// check if winner changed
-				if (humanPlayerTurnJustStarted && winnerChanged) {
-					showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
-							newGameState.getWinner().getColor());
-				}
+			} else if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
+				showAllEnemiesDefeatedMessage();
+			} else if (humanPlayerTurnJustStarted && winnerChanged) {
+				// winner changed
+				showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
+						newGameState.getWinner().getColor());
 			}
 		} else {
 			infoText = "Enemy turn";
@@ -315,6 +315,16 @@ public class IngameScreen extends GameScreen {
 			endDialog.button("Retry", (byte) 2);
 		}
 		endDialog.button("Continue", (byte) 0);
+		endDialog.show(hudStage);
+	}
+
+	private void showAllEnemiesDefeatedMessage() {
+		Dialog endDialog = dialogFactory.createDialog(result -> {
+			eventBus.post(new GameExitedEvent());
+			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+		});
+		endDialog.button("Exit");
+		endDialog.text("VICTORY! You deafeated all of you enemies.");
 		endDialog.show(hudStage);
 	}
 
