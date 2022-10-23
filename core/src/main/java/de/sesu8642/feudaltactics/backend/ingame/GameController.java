@@ -201,7 +201,7 @@ public class GameController {
 			startBotTurn();
 		} else {
 			Gdx.app.log(TAG, "player turn begins");
-			// autosave when a player turn begins
+			botAi.setSkipDisplayingTurn(false);
 			autosave();
 			// clear autosaves from previous turn
 			autoSaveRepo.deleteAllAutoSaveExceptLatestN(1);
@@ -225,6 +225,11 @@ public class GameController {
 		if (botTurnFuture != null) {
 			botTurnFuture.cancel(true);
 		}
+	}
+
+	/** Skips a bot turn by finishing it instantly. */
+	public void skipBotTurn() {
+		botAi.setSkipDisplayingTurn(true);
 	}
 
 	/** Buys a peasant. */

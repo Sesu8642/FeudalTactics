@@ -4,7 +4,7 @@ package de.sesu8642.feudaltactics.backend.ingame.botai;
 
 /** Possible speeds for the preview. */
 public enum Speed {
-	HALF(600), NORMAL(300), TIMES_TWO(150), INSTANT(0);
+	HALF(600), NORMAL(300), TIMES_TWO(150);
 
 	/**
 	 * Time to wait after activating each kingdom as well as after doing the moves

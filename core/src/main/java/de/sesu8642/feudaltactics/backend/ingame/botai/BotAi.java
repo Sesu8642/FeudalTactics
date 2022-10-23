@@ -49,6 +49,9 @@ public class BotAi {
 	/** Current speed. */
 	private Speed currentSpeed = Speed.NORMAL;
 
+	/** Whether to skip displaying the current turn. */
+	private boolean skipDisplayingTurn = false;
+
 	@Inject
 	public BotAi(EventBus eventBus, MainPreferencesDao mainPrefsDao) {
 		this.eventBus = eventBus;
@@ -127,7 +130,7 @@ public class BotAi {
 	 */
 	private void delayForPreview(GameState gameState) throws InterruptedException {
 		// no need to update the game state if there is no delay to see it anyway
-		if (currentSpeed == Speed.INSTANT || !mainPrefsDao.getMainPreferences().isShowEnemyTurns()) {
+		if (skipDisplayingTurn || !mainPrefsDao.getMainPreferences().isShowEnemyTurns()) {
 			return;
 		}
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -464,9 +467,10 @@ public class BotAi {
 
 	private DefenseTileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
 			Set<HexTile> interestingProtectionTiles) {
-		Set<DefenseTileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<DefenseTileScoreInfo, Boolean>());
-		interestingProtectionTiles.parallelStream().forEach(
-				tile -> results.add(new DefenseTileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
+		Set<DefenseTileScoreInfo> results = Collections
+				.newSetFromMap(new ConcurrentHashMap<DefenseTileScoreInfo, Boolean>());
+		interestingProtectionTiles.parallelStream().forEach(tile -> results
+				.add(new DefenseTileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
 		return results.stream().max((DefenseTileScoreInfo t1, DefenseTileScoreInfo t2) -> {
 			int result = Integer.compare(t1.score, t2.score);
 			// if the score is the same, use the coordinates to eliminate randomness
@@ -605,4 +609,13 @@ public class BotAi {
 		this.currentSpeed = currentSpeed;
 		Gdx.app.debug(TAG, "Bot turn speed set to " + currentSpeed);
 	}
+
+	public boolean isSkipDisplayingTurn() {
+		return skipDisplayingTurn;
+	}
+
+	public void setSkipDisplayingTurn(boolean skipDisplayingTurn) {
+		this.skipDisplayingTurn = skipDisplayingTurn;
+	}
+
 }

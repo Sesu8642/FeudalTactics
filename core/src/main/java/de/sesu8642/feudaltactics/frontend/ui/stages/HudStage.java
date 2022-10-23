@@ -30,6 +30,7 @@ import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.backend.ingame.botai.Speed;
+import de.sesu8642.feudaltactics.events.BotTurnSkippedEvent;
 import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
@@ -176,9 +177,6 @@ public class HudStage extends ResizableResettableStage {
 		endTurnButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				// sync the speed of the ai component; it might be instant if the last turn was
-				// skipped
-				eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
 				eventBus.post(new EndTurnUnconfirmedEvent());
 			}
 		});
@@ -211,8 +209,7 @@ public class HudStage extends ResizableResettableStage {
 				// used for the other button
 				int currentSpeedIndex = currentBotSpeed.ordinal();
 				int nextSpeedIndex = currentSpeedIndex + 1;
-				if (nextSpeedIndex >= Speed.values().length
-						|| Speed.values()[nextSpeedIndex] == Speed.INSTANT) {
+				if (nextSpeedIndex >= Speed.values().length) {
 					nextSpeedIndex = 0;
 				}
 				currentBotSpeed = Speed.values()[nextSpeedIndex];
@@ -228,7 +225,7 @@ public class HudStage extends ResizableResettableStage {
 		skipButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BotTurnSpeedChangedEvent(Speed.INSTANT));
+				eventBus.post(new BotTurnSkippedEvent());
 			}
 		});
 

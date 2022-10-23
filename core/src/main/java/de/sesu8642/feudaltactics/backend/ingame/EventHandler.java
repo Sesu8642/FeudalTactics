@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.backend.persistence.AutoSaveRepository;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
+import de.sesu8642.feudaltactics.events.BotTurnSkippedEvent;
 import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
@@ -72,6 +73,16 @@ public class EventHandler {
 	@Subscribe
 	public void handleBotTurnSpeedChanged(BotTurnSpeedChangedEvent event) {
 		botAi.setCurrentSpeed(event.getSpeed());
+	}
+
+	/**
+	 * Event handler for bot turn skip events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBotTurnSpeedChanged(BotTurnSkippedEvent event) {
+		botAi.setSkipDisplayingTurn(true);
 	}
 
 }

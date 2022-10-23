@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +39,13 @@ import de.sesu8642.feudaltactics.backend.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.backend.gamestate.GameStateSerializer;
 import de.sesu8642.feudaltactics.backend.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.backend.gamestate.Player;
-import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.backend.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
+import de.sesu8642.feudaltactics.frontend.persistence.MainGamePreferences;
+import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 
 /** Tests for BotAi class. */
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +53,12 @@ class BotAiIntegrationTest {
 
 	@Mock
 	EventBus eventBusStub;
+
+	@Mock
+	MainPreferencesDao prefsDaoStub;
+
+	// do not wait in tests
+	MainGamePreferences stubPreferences = new MainGamePreferences(false, false);;
 
 	@InjectMocks
 	private BotAi systemUnderTest;
@@ -64,8 +72,7 @@ class BotAiIntegrationTest {
 
 	@BeforeEach
 	void init() {
-		// set tick delay to 0 have it run as fast as possible
-		systemUnderTest.setCurrentSpeed(Speed.INSTANT);
+		when(prefsDaoStub.getMainPreferences()).thenReturn(stubPreferences);
 		doAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) {
@@ -78,8 +85,8 @@ class BotAiIntegrationTest {
 
 	@ParameterizedTest
 	@MethodSource("provideMapParameters")
-	void botsDoNotGainOrLoseValueDuringTurn(Intelligence botIntelligence, Float landMass, Float density,
-			Long seed) throws Exception {
+	void botsDoNotGainOrLoseValueDuringTurn(Intelligence botIntelligence, Float landMass, Float density, Long seed)
+			throws Exception {
 		GameState gameState = createGameState(landMass, density, seed);
 
 		for (int i = 1; i <= 1000; i++) {
