@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
@@ -671,11 +672,14 @@ public class GameStateHelper {
 	 * @param gameState GameState to act on
 	 */
 	public static GameState endTurn(GameState gameState) {
-		// check win condition; the winner can change if the human player recovers from
+		// check win condition; the winner can change if a player recovers from
 		// a really bad situation
+		// tiles that belong to no kingdom are irrelevant as they help no player
+		int noOfKingdomTiles = gameState.getKingdoms().stream()
+				.collect(Collectors.summingInt(kingdom -> kingdom.getTiles().size()));
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (kingdom.getPlayer() == gameState.getActivePlayer()
-					&& kingdom.getTiles().size() >= gameState.getMap().size() * WIN_LANDMASS_PERCENTAGE) {
+					&& kingdom.getTiles().size() >= noOfKingdomTiles * WIN_LANDMASS_PERCENTAGE) {
 				gameState.setWinner(kingdom.getPlayer());
 			}
 		}
