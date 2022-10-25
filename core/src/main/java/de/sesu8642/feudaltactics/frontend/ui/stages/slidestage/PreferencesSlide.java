@@ -9,26 +9,31 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.google.common.eventbus.EventBus;
 
 // this is not just a slide created by a factory because it needs the additional accessors for the preferences
 // it is not created by the PreferencesStage because that could only use static methods as the slide needs to be passed to the super constructor
 
+/** UI for the preferences. */
 @Singleton
 public class PreferencesSlide extends Slide {
 
 	private final SelectBox<Boolean> forgottenKingdomSelectBox;
 	private final SelectBox<Boolean> showEnemyTurnsSelectBox;
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param skin game skin
+	 */
 	@Inject
-	public PreferencesSlide(EventBus eventBus, Skin skin) {
+	public PreferencesSlide(Skin skin) {
 		super(skin, "Preferences");
 
 		Table preferencesTable = new Table();
 
-		forgottenKingdomSelectBox = placeBooleanSelectWithLabel(eventBus, preferencesTable,
-				"Warn about forgotten kingdoms", skin);
-		showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(eventBus, preferencesTable, "Show enemy turns", skin);
+		forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Warn about forgotten kingdoms",
+				skin);
+		showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Show enemy turns", skin);
 
 		// add a row to fill the rest of the space in order for the other options to be
 		// at the top of the page
@@ -38,8 +43,7 @@ public class PreferencesSlide extends Slide {
 		getTable().add(preferencesTable).fill().expand();
 	}
 
-	private SelectBox<Boolean> placeBooleanSelectWithLabel(EventBus eventBus, Table preferencesTable, String labelText,
-			Skin skin) {
+	private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin) {
 		Label newLabel = Slide.newNiceLabel(labelText, skin);
 		newLabel.setWrap(true);
 		preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
