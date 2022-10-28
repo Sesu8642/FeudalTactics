@@ -22,7 +22,7 @@ public class GameState {
 	private List<Kingdom> kingdoms;
 	private Kingdom activeKingdom = null;
 	private MapObject heldObject = null;
-	private Intelligence botIntelligence = Intelligence.DUMB;
+	private Intelligence botIntelligence = Intelligence.LEVEL_1;
 	private Long seed;
 
 	public GameState() {

@@ -4,9 +4,9 @@ package de.sesu8642.feudaltactics.backend.ingame.botai;
 
 /** Possible intelligence levels for the AI. */
 public enum Intelligence {
-	DUMB(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
-	MEDIUM(0.8F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
-	SMART(1F, 1F, true, 25, 20, true, true);
+	LEVEL_1(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
+	LEVEL_2(0.8F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
+	LEVEL_3(1F, 0.8F, false, 25, 20, true, true), LEVEL_4(1F, 1F, true, 25, 20, true, true);
 
 	/** Chance that the bot will even try to conquer anything in a given turn. */
 	public final float chanceToConquerPerTurn;
