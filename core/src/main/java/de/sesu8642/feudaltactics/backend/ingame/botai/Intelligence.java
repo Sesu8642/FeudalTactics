@@ -15,18 +15,10 @@ public enum Intelligence {
 	public final float chanceToRemoveEachBlockingObject;
 
 	/**
-	 * Whether to defend smartly: i.e. considering how many tiles are protected. If
-	 * false, the defense score of every tile is 0. This means that (basically)
-	 * random tiles near the border are protected.
+	 * Whether to reconsider which tiles need to be protected after attacking may
+	 * have changed which tiles make sense to protect.
 	 */
-	boolean smartDefending;
-
-	/**
-	 * Whether to attack smartly: prefer enemy kingdom tiles over unconnected ones,
-	 * destroy castles etc. If false, the offense score of every tile is 0. This
-	 * means that (basically) random tiles are conquered.
-	 */
-	boolean smartAttacking;
+	public final boolean reconsidersWhichTilesToProtect;
 
 	/**
 	 * Minimum defense tile score to be worth protecting with a castle. Will be
@@ -44,18 +36,26 @@ public enum Intelligence {
 	public final int protectWithUnitScoreTreshold;
 
 	/**
-	 * Whether to reconsider which tiles need to be protected after attacking may
-	 * have changed which tiles make sense to protect.
+	 * Whether to defend smartly: i.e. considering how many tiles are protected. If
+	 * false, the defense score of every tile is 0. This means that (basically)
+	 * random tiles near the border are protected.
 	 */
-	public final boolean reconsidersWhichTilesToProtect;
+	boolean smartDefending;
+
+	/**
+	 * Whether to attack smartly: prefer enemy kingdom tiles over unconnected ones,
+	 * destroy castles etc. If false, the offense score of every tile is 0. This
+	 * means that (basically) random tiles are conquered.
+	 */
+	boolean smartAttacking;
 
 	private Intelligence(float chanceToConquerPerTurn, float chanceToRemoveEachBlockingObject,
 			boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
-			int protectWithUnitScoreTreshold, boolean smartProtectionPlacement, boolean smartAttacking) {
+			int protectWithUnitScoreTreshold, boolean smartDefending, boolean smartAttacking) {
 		this.chanceToConquerPerTurn = chanceToConquerPerTurn;
 		this.chanceToRemoveEachBlockingObject = chanceToRemoveEachBlockingObject;
 		this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;
-		this.smartDefending = smartProtectionPlacement;
+		this.smartDefending = smartDefending;
 		this.protectWithCastleScoreTreshold = protectWithCastleScoreTreshold;
 		this.protectWithUnitScoreTreshold = protectWithUnitScoreTreshold;
 		this.smartAttacking = smartAttacking;
