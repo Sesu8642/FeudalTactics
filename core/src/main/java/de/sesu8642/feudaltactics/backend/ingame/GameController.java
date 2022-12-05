@@ -216,6 +216,8 @@ public class GameController {
 			} catch (InterruptedException e) {
 				Gdx.app.log(TAG, "bot turn was canceled");
 				Thread.currentThread().interrupt();
+			} catch (Exception e) {
+				Gdx.app.error(TAG, "an error happened during the enemy turn", e);
 			}
 		});
 	}
