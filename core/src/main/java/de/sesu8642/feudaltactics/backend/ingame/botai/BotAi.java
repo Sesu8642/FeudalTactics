@@ -4,10 +4,12 @@ package de.sesu8642.feudaltactics.backend.ingame.botai;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
@@ -18,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.EventBus;
 
@@ -26,10 +29,12 @@ import de.sesu8642.feudaltactics.backend.gamestate.Capital;
 import de.sesu8642.feudaltactics.backend.gamestate.Castle;
 import de.sesu8642.feudaltactics.backend.gamestate.GameState;
 import de.sesu8642.feudaltactics.backend.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.backend.gamestate.Gravestone;
 import de.sesu8642.feudaltactics.backend.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.backend.gamestate.HexTile;
 import de.sesu8642.feudaltactics.backend.gamestate.InputValidationHelper;
 import de.sesu8642.feudaltactics.backend.gamestate.Kingdom;
+import de.sesu8642.feudaltactics.backend.gamestate.PalmTree;
 import de.sesu8642.feudaltactics.backend.gamestate.Tree;
 import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.backend.gamestate.Unit.UnitTypes;
@@ -106,7 +111,7 @@ public class BotAi {
 		// later after conquering
 		Set<HexTile> placedCastleTiles = new HashSet<>();
 
-		removeBlockingObjects(gameState, pickedUpUnits, intelligence.chanceToRemoveEachBlockingObject, random);
+		removeBlockingObjects(gameState, pickedUpUnits, intelligence.blockingObjectRemovalScoreTreshold);
 		defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
 		if (random.nextFloat() <= intelligence.chanceToConquerPerTurn) {
 			conquerAsMuchAsPossible(gameState, intelligence, pickedUpUnits);
@@ -115,7 +120,9 @@ public class BotAi {
 			sellCastles(gameState.getActiveKingdom(), placedCastleTiles);
 			pickUpAllAvailableUnits(gameState.getActiveKingdom(), pickedUpUnits);
 			defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
+			conquerAsMuchAsPossible(gameState, intelligence, pickedUpUnits);
 		}
+		removeBlockingObjects(gameState, pickedUpUnits, 0);
 		protectWithLeftoverUnits(gameState, intelligence, pickedUpUnits);
 
 		delayForPreview(gameState);
@@ -149,21 +156,36 @@ public class BotAi {
 		}
 	}
 
-	/** Try to remove blocking objects like gravestones or trees. */
-	private void removeBlockingObjects(GameState gameState, PickedUpUnits pickedUpUnits, float chance, Random random) {
+	/**
+	 * Try to remove blocking objects like gravestones and trees.
+	 * 
+	 * @param gameState                   game state
+	 * @param pickedUpUnits               picked up units that can be used
+	 * @param minimumRemovalScoreTreshold minimum score a tile must have to be
+	 *                                    removed
+	 */
+	private void removeBlockingObjects(GameState gameState, PickedUpUnits pickedUpUnits,
+			int minimumRemovalScoreTreshold) {
 		Gdx.app.debug(TAG, "removing blocking objects");
-		for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-			if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())
-					&& random.nextFloat() <= chance) {
-				if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 || acquireUnit(gameState, gameState.getActiveKingdom(),
-						pickedUpUnits, UnitTypes.PEASANT.strength())) {
-					pickedUpUnits.removeUnit(UnitTypes.PEASANT);
-					gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
-					GameStateHelper.placeOwn(gameState, tile);
-				} else {
-					return;
-				}
+		// not using a hashset because the tiles are changed in this function which
+		// changes their hashcode as well
+		Map<Vector2, HexTile> tilesWithBlockingObjects = gameState.getActiveKingdom().getTiles().stream().filter(
+				tile -> tile.getContent() != null && Blocking.class.isAssignableFrom(tile.getContent().getClass()))
+				.collect(Collectors.toMap(HexTile::getPosition, tile -> tile));
+		TileScoreInfo bestRemovalCandidate = getBestBlockingObjectRemovalScore(gameState,
+				tilesWithBlockingObjects.values());
+		while (bestRemovalCandidate.score >= minimumRemovalScoreTreshold) {
+			if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 || acquireUnit(gameState, gameState.getActiveKingdom(),
+					pickedUpUnits, UnitTypes.PEASANT.strength())) {
+				Gdx.app.debug(TAG, String.format("removing blocking object with score %s from tile %s",
+						bestRemovalCandidate.score, bestRemovalCandidate.tile));
+				pickedUpUnits.removeUnit(UnitTypes.PEASANT);
+				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
+				GameStateHelper.placeOwn(gameState, bestRemovalCandidate.tile);
+				tilesWithBlockingObjects.remove(bestRemovalCandidate.tile.getPosition());
+				bestRemovalCandidate = getBestBlockingObjectRemovalScore(gameState, tilesWithBlockingObjects.values());
+			} else {
+				return;
 			}
 		}
 	}
@@ -172,7 +194,7 @@ public class BotAi {
 			Set<HexTile> placedCastleTiles) {
 		Gdx.app.debug(TAG, "defending most important tiles");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
-		DefenseTileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
+		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
 				interestingProtectionTiles);
 		while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
 			// if enough money buy castle
@@ -391,7 +413,7 @@ public class BotAi {
 	private void protectWithLeftoverUnits(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
 		Gdx.app.debug(TAG, "protecting the kingdom with leftover units");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
-		DefenseTileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
+		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
 				interestingProtectionTiles);
 		while (bestDefenseTileScore.score >= 0) {
 			if (pickedUpUnits.getTotalNoOfUnits() == 0) {
@@ -465,20 +487,102 @@ public class BotAi {
 		return interestingPlacementTiles;
 	}
 
-	private DefenseTileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
-			Set<HexTile> interestingProtectionTiles) {
-		Set<DefenseTileScoreInfo> results = Collections
-				.newSetFromMap(new ConcurrentHashMap<DefenseTileScoreInfo, Boolean>());
-		interestingProtectionTiles.parallelStream().forEach(tile -> results
-				.add(new DefenseTileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
-		return results.stream().max((DefenseTileScoreInfo t1, DefenseTileScoreInfo t2) -> {
+	private TileScoreInfo getBestBlockingObjectRemovalScore(GameState gameState,
+			Collection<HexTile> tilesWithBlockingObjects) {
+		Set<TileScoreInfo> scores = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
+		tilesWithBlockingObjects.parallelStream()
+				.forEach(tile -> scores.add(new TileScoreInfo(tile, getBlockingObjectRemovalScore(gameState, tile))));
+		return scores.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
 			int result = Integer.compare(t1.score, t2.score);
 			// if the score is the same, use the coordinates to eliminate randomness
 			if (result == 0) {
 				result = t1.tile.compareTo(t2.tile);
 			}
 			return result;
-		}).orElse(new DefenseTileScoreInfo(null, -1));
+		}).orElse(new TileScoreInfo(null, -1));
+	}
+
+	private int getBlockingObjectRemovalScore(GameState gameState, HexTile tile) {
+		if (PalmTree.class.isAssignableFrom(tile.getContent().getClass())) {
+			return getPalmTreeRemovalScore(gameState, tile);
+		} else if (Tree.class.isAssignableFrom(tile.getContent().getClass())) {
+			return getRegularTreeRemovalScore(gameState, tile);
+		} else if (Gravestone.class.isAssignableFrom(tile.getContent().getClass())) {
+			return getGraveStoneRemovalScore(gameState, tile);
+		} else {
+			throw new IllegalStateException("Tile content is unexpected class " + tile.getContent().getClass());
+		}
+	}
+
+	private int getPalmTreeRemovalScore(GameState gameState, HexTile tile) {
+		for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
+			if (neighborTile != null && !isTileBlockedForTreeSpreading(neighborTile)
+					&& areTilesInTheSameKingdom(tile, neighborTile) && isBeachTile(gameState, neighborTile)) {
+				return 9;
+			}
+		}
+		// palm tree that cannot spread to own kingdom (for now)
+		return 6;
+	}
+
+	private int getRegularTreeRemovalScore(GameState gameState, HexTile tile) {
+		boolean hasPartnerTree = false;
+		boolean hasSpaceToSpread = false;
+		for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
+			if (neighborTile != null) {
+				if (!isTileBlockedForTreeSpreading(neighborTile) && areTilesInTheSameKingdom(tile, neighborTile)
+						&& !isBeachTile(gameState, neighborTile)) {
+					hasSpaceToSpread = true;
+				}
+				if (neighborTile.getContent() != null
+						&& Tree.class.isAssignableFrom(neighborTile.getContent().getClass())) {
+					hasPartnerTree = true;
+				}
+			}
+		}
+		if (hasPartnerTree && hasSpaceToSpread) {
+			return 10;
+		}
+		// a single tree is almost no threat at all
+		return 3;
+	}
+
+	private int getGraveStoneRemovalScore(GameState gameState, HexTile tile) {
+		boolean graveStoneWillBecomePalmTree = isBeachTile(gameState, tile);
+		int score = -2;
+		if (graveStoneWillBecomePalmTree) {
+			score += getPalmTreeRemovalScore(gameState, tile);
+		} else {
+			score += getRegularTreeRemovalScore(gameState, tile);
+		}
+		return score;
+	}
+
+	private boolean isBeachTile(GameState gameState, HexTile tile) {
+		return HexMapHelper.getNeighborTiles(gameState.getMap(), tile).contains(null);
+	}
+
+	private boolean areTilesInTheSameKingdom(HexTile tile1, HexTile tile2) {
+		return tile1.getKingdom() == tile2.getKingdom();
+	}
+
+	private boolean isTileBlockedForTreeSpreading(HexTile tile) {
+		return tile.getContent() != null;
+	}
+
+	private TileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
+			Set<HexTile> interestingProtectionTiles) {
+		Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
+		interestingProtectionTiles.parallelStream().forEach(
+				tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
+		return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
+			int result = Integer.compare(t1.score, t2.score);
+			// if the score is the same, use the coordinates to eliminate randomness
+			if (result == 0) {
+				result = t1.tile.compareTo(t2.tile);
+			}
+			return result;
+		}).orElse(new TileScoreInfo(null, -1));
 	}
 
 	/**

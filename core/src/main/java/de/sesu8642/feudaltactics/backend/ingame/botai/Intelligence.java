@@ -4,15 +4,18 @@ package de.sesu8642.feudaltactics.backend.ingame.botai;
 
 /** Possible intelligence levels for the AI. */
 public enum Intelligence {
-	LEVEL_1(0.5F, 0.6F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
-	LEVEL_2(0.8F, 0.8F, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
-	LEVEL_3(1F, 0.8F, false, 25, 20, true, true), LEVEL_4(1F, 1F, true, 25, 20, true, true);
+	LEVEL_1(0.5F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
+	LEVEL_2(0.8F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
+	LEVEL_3(1F, 4, false, 25, 20, true, true), LEVEL_4(1F, 7, true, 25, 20, true, true);
 
 	/** Chance that the bot will even try to conquer anything in a given turn. */
 	public final float chanceToConquerPerTurn;
 
-	/** Chance to remove each blocking map object. */
-	public final float chanceToRemoveEachBlockingObject;
+	/**
+	 * Minimum removal score for blocking objects to be removed. A value of 0 will
+	 * cause all blocking objects to be removed, if possible.
+	 */
+	public final int blockingObjectRemovalScoreTreshold;
 
 	/**
 	 * Whether to reconsider which tiles need to be protected after attacking may
@@ -49,11 +52,11 @@ public enum Intelligence {
 	 */
 	boolean smartAttacking;
 
-	private Intelligence(float chanceToConquerPerTurn, float chanceToRemoveEachBlockingObject,
+	private Intelligence(float chanceToConquerPerTurn, int blockingObjectRemovalScoreTreshold,
 			boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
 			int protectWithUnitScoreTreshold, boolean smartDefending, boolean smartAttacking) {
 		this.chanceToConquerPerTurn = chanceToConquerPerTurn;
-		this.chanceToRemoveEachBlockingObject = chanceToRemoveEachBlockingObject;
+		this.blockingObjectRemovalScoreTreshold = blockingObjectRemovalScoreTreshold;
 		this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;
 		this.smartDefending = smartDefending;
 		this.protectWithCastleScoreTreshold = protectWithCastleScoreTreshold;
