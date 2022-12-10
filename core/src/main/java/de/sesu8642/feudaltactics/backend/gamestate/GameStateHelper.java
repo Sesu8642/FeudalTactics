@@ -99,6 +99,8 @@ public class GameStateHelper {
 			result.setSeed(original.getSeed());
 		}
 
+		result.setRound(original.getRound());
+
 		return result;
 	}
 
@@ -686,6 +688,8 @@ public class GameStateHelper {
 		// update active player
 		gameState.setPlayerTurn(gameState.getPlayerTurn() + 1);
 		if (gameState.getPlayerTurn() >= gameState.getPlayers().size()) {
+			// round ended
+			gameState.setRound(gameState.getRound() + 1);
 			gameState.setPlayerTurn(0);
 			spreadTrees(gameState);
 		}

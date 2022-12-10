@@ -25,6 +25,9 @@ public class GameState {
 	private Intelligence botIntelligence = Intelligence.LEVEL_1;
 	private Long seed;
 
+	/** A round consists of one turn per player. */
+	private int round = 0;
+
 	public GameState() {
 		// no fields must be set on construction
 	}
@@ -105,9 +108,17 @@ public class GameState {
 		this.seed = seed;
 	}
 
+	public int getRound() {
+		return round;
+	}
+
+	public void setRound(int round) {
+		this.round = round;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(activeKingdom, botIntelligence, heldObject, kingdoms, map, playerTurn, players, seed,
+		return Objects.hash(activeKingdom, botIntelligence, heldObject, kingdoms, map, playerTurn, players, round, seed,
 				winner);
 	}
 
@@ -126,7 +137,7 @@ public class GameState {
 		return Objects.equals(activeKingdom, other.activeKingdom) && botIntelligence == other.botIntelligence
 				&& Objects.equals(heldObject, other.heldObject) && Objects.equals(kingdoms, other.kingdoms)
 				&& Objects.equals(map, other.map) && playerTurn == other.playerTurn
-				&& Objects.equals(players, other.players) && Objects.equals(seed, other.seed)
+				&& Objects.equals(players, other.players) && round == other.round && Objects.equals(seed, other.seed)
 				&& Objects.equals(winner, other.winner);
 	}
 
