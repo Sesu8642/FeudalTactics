@@ -207,14 +207,17 @@ class BotAiIntegrationTest {
 	}
 
 	static Stream<Arguments> provideMapParameters() {
-		return Stream.of(Arguments.of(Intelligence.DUMB, 12F, 0F, 1L), Arguments.of(Intelligence.DUMB, 100F, -3F, 2L),
-				Arguments.of(Intelligence.DUMB, 200F, 3F, 3L), Arguments.of(Intelligence.DUMB, 250F, 1F, 4L),
-				Arguments.of(Intelligence.DUMB, 250F, -3F, 5L), Arguments.of(Intelligence.MEDIUM, 12F, 0F, 6L),
-				Arguments.of(Intelligence.MEDIUM, 100F, -3F, 7L), Arguments.of(Intelligence.MEDIUM, 200F, 3F, 8L),
-				Arguments.of(Intelligence.MEDIUM, 250F, 1F, 9L), Arguments.of(Intelligence.MEDIUM, 250F, -3F, 10L),
-				Arguments.of(Intelligence.SMART, 12F, 0F, 11L), Arguments.of(Intelligence.SMART, 100F, -3F, 12L),
-				Arguments.of(Intelligence.SMART, 200F, 3F, 13L), Arguments.of(Intelligence.SMART, 250F, 1F, 14L),
-				Arguments.of(Intelligence.SMART, 250F, -3F, 15L));
+		return Stream.of(Arguments.of(Intelligence.LEVEL_1, 12F, 0F, 1L),
+				Arguments.of(Intelligence.LEVEL_1, 100F, -3F, 2L), Arguments.of(Intelligence.LEVEL_1, 200F, 3F, 3L),
+				Arguments.of(Intelligence.LEVEL_1, 250F, 1F, 4L), Arguments.of(Intelligence.LEVEL_1, 250F, -3F, 5L),
+				Arguments.of(Intelligence.LEVEL_2, 12F, 0F, 6L), Arguments.of(Intelligence.LEVEL_2, 100F, -3F, 7L),
+				Arguments.of(Intelligence.LEVEL_2, 200F, 3F, 8L), Arguments.of(Intelligence.LEVEL_2, 250F, 1F, 9L),
+				Arguments.of(Intelligence.LEVEL_2, 250F, -3F, 10L), Arguments.of(Intelligence.LEVEL_2, 12F, 0F, 6L),
+				Arguments.of(Intelligence.LEVEL_2, 100F, -3F, 7L), Arguments.of(Intelligence.LEVEL_2, 200F, 3F, 8L),
+				Arguments.of(Intelligence.LEVEL_2, 250F, 1F, 9L), Arguments.of(Intelligence.LEVEL_2, 250F, -3F, 10L),
+				Arguments.of(Intelligence.LEVEL_4, 12F, 0F, 11L), Arguments.of(Intelligence.LEVEL_4, 100F, -3F, 12L),
+				Arguments.of(Intelligence.LEVEL_4, 200F, 3F, 13L), Arguments.of(Intelligence.LEVEL_4, 250F, 1F, 14L),
+				Arguments.of(Intelligence.LEVEL_4, 250F, -3F, 15L));
 	}
 
 	static void assertIntegreKingdomTileLinks(GameState gameState) {
