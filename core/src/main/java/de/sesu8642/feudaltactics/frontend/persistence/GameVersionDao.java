@@ -5,19 +5,22 @@ package de.sesu8642.feudaltactics.frontend.persistence;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GameVersionPrefStore;
 
 /** Data access object for the (previous) game version. */
 @Singleton
 public class GameVersionDao {
 
-	private static final String VERSION_PREFERENCES_NAME = "versionPreferences";
+	public static final String VERSION_PREFERENCES_NAME = "versionPreferences";
 	private static final String VERSION_GAME_VERSION_NAME = "gameVersion";
 
+	private Preferences versionPrefs;
+
 	@Inject
-	public GameVersionDao() {
-		// empty constructor for DI
+	public GameVersionDao(@GameVersionPrefStore Preferences versionPrefs) {
+		this.versionPrefs = versionPrefs;
 	}
 
 	/**
@@ -26,7 +29,6 @@ public class GameVersionDao {
 	 * @param version version to save
 	 */
 	public void saveGameVersion(String version) {
-		Preferences versionPrefs = Gdx.app.getPreferences(VERSION_PREFERENCES_NAME);
 		versionPrefs.putString(VERSION_GAME_VERSION_NAME, version);
 		versionPrefs.flush();
 	}

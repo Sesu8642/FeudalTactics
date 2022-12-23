@@ -15,6 +15,7 @@ import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -32,6 +33,8 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScree
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlideStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlides;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicenses;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GamePrefsPrefStore;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GameVersionPrefStore;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameRenderer;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuScreen;
@@ -40,6 +43,8 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuBackgr
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuCamera;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuViewport;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.NewGamePrefsPrefStore;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.SplashScreenStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialSlideStage;
@@ -50,6 +55,8 @@ import de.sesu8642.feudaltactics.frontend.events.ExitGameEvent;
 import de.sesu8642.feudaltactics.frontend.events.RetryGameUnconfirmedEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.frontend.persistence.GameVersionDao;
+import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
@@ -107,6 +114,13 @@ public class FrontendDaggerModule {
 	@VersionProperty
 	static String provideVersionProperty(Properties config) {
 		return config.getProperty("version");
+	}
+
+	@Provides
+	@Singleton
+	@PreferencesPrefixProperty
+	static String providePreferencesProperty(Properties config) {
+		return config.getProperty("preferences_prefix");
 	}
 
 	@Provides
@@ -295,6 +309,27 @@ public class FrontendDaggerModule {
 	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
 			@MainMenuStage MenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
+	}
+
+	@Provides
+	@Singleton
+	@GameVersionPrefStore
+	static Preferences provideGameVersionPrefStore(@PreferencesPrefixProperty String prefix) {
+		return Gdx.app.getPreferences(prefix + GameVersionDao.VERSION_PREFERENCES_NAME);
+	}
+
+	@Provides
+	@Singleton
+	@GamePrefsPrefStore
+	static Preferences provideGamePrefsPrefStore(@PreferencesPrefixProperty String prefix) {
+		return Gdx.app.getPreferences(prefix + MainPreferencesDao.MAIN_PREFERENCES_NAME);
+	}
+
+	@Provides
+	@Singleton
+	@NewGamePrefsPrefStore
+	static Preferences provideNewGamePrefsPrefStore(@PreferencesPrefixProperty String prefix) {
+		return Gdx.app.getPreferences(prefix + NewGamePreferencesDao.NEW_GAME_PREFERENCES_NAME);
 	}
 
 }

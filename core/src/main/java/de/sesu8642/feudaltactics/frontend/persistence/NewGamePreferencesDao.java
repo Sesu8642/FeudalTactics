@@ -5,10 +5,10 @@ package de.sesu8642.feudaltactics.frontend.persistence;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 
 import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.NewGamePrefsPrefStore;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.MapSizes;
 
@@ -16,16 +16,17 @@ import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences.MapSize
 @Singleton
 public class NewGamePreferencesDao {
 
-	private static final String NEW_GAME_PREFERENCES_NAME = "newGamePreferences";
+	public static final String NEW_GAME_PREFERENCES_NAME = "newGamePreferences";
+
 	private static final String NEW_GAME_PREFERENCES_DENSITY_NAME = "density";
 	private static final String NEW_GAME_PREFERENCES_MAP_SIZE_NAME = "mapSize";
 	private static final String NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME = "botIntelligence";
 
-	private final Preferences prefStore = Gdx.app.getPreferences(NEW_GAME_PREFERENCES_NAME);
+	private final Preferences prefStore;
 
 	@Inject
-	public NewGamePreferencesDao() {
-		// empty constructor for DI
+	public NewGamePreferencesDao(@NewGamePrefsPrefStore Preferences newGamePrefs) {
+		this.prefStore = newGamePrefs;
 	}
 
 	/**

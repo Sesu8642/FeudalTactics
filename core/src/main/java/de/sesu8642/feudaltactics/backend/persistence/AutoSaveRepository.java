@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 
+import de.sesu8642.feudaltactics.backend.dagger.qualifierannotations.AutoSavePrefStore;
 import de.sesu8642.feudaltactics.backend.exceptions.SaveLoadingException;
 import de.sesu8642.feudaltactics.backend.gamestate.GameState;
 import de.sesu8642.feudaltactics.backend.gamestate.GameStateSerializer;
@@ -23,15 +24,16 @@ import de.sesu8642.feudaltactics.backend.gamestate.GameStateSerializer;
 @Singleton
 public class AutoSaveRepository {
 
+	public static final String AUTO_SAVE_PREFERENCES_NAME = "autoSavePreferences";
+
 	private static final String TAG = AutoSaveRepository.class.getName();
-	private static final String AUTO_SAVE_PREFERENCES_NAME = "autoSavePreferences";
 	private static final int MAX_AUTOSAVES = 50;
 
-	Preferences prefStore = Gdx.app.getPreferences(AUTO_SAVE_PREFERENCES_NAME);
+	private Preferences prefStore;
 
 	@Inject
-	public AutoSaveRepository() {
-		// empty constructor for DI
+	public AutoSaveRepository(@AutoSavePrefStore Preferences prefStore) {
+		this.prefStore = prefStore;
 	}
 
 	/**

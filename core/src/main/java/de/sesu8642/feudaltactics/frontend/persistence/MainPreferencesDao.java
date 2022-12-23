@@ -5,22 +5,24 @@ package de.sesu8642.feudaltactics.frontend.persistence;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GamePrefsPrefStore;
 
 /** Data access object for the main preferences. */
 @Singleton
 public class MainPreferencesDao {
 
-	private static final String MAIN_PREFERENCES_NAME = "gamePreferences";
+	public static final String MAIN_PREFERENCES_NAME = "gamePreferences";
+
 	private static final String WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME = "warnAboutForgottenKingdoms";
 	private static final String SHOW_ENEMY_TURNS_NAME = "showEnemyTurns";
 
-	private final Preferences prefStore = Gdx.app.getPreferences(MAIN_PREFERENCES_NAME);
+	private final Preferences prefStore;
 
 	@Inject
-	public MainPreferencesDao() {
-		// empty constructor for DI
+	public MainPreferencesDao(@GamePrefsPrefStore Preferences gamePrefs) {
+		this.prefStore = gamePrefs;
 	}
 
 	/**
