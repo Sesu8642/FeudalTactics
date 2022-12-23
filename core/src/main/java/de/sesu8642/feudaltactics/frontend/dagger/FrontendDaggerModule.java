@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -31,10 +32,13 @@ import de.sesu8642.feudaltactics.backend.MapParameters;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlideStage;
-import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlides;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicenses;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GamePrefsPrefStore;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GameVersionPrefStore;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuScreen;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameRenderer;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuScreen;
@@ -212,7 +216,7 @@ public class FrontendDaggerModule {
 	}
 
 	@Provides
-	static MenuStage provideMenuStageWithVersion(EventBus eventBus, @MenuViewport Viewport viewport,
+	static MenuStage provideMainMenuStage(EventBus eventBus, @MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
 			@VersionProperty String gameVersion) {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
@@ -245,11 +249,27 @@ public class FrontendDaggerModule {
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN)));
 		stage.addButton("Preferences",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN)));
+		stage.addButton("Information",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)));
+		stage.setBottomRightLabelText(String.format("Version %s", gameVersion));
+		return stage;
+	}
+
+	@Provides
+	@Singleton
+	@InformationMenuStage
+	static MenuStage provideInformationMenuStage(EventBus eventBus, @MenuViewport Viewport viewport,
+			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
+			@VersionProperty String gameVersion) {
+		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
 		stage.addButton("About",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN)));
-		stage.setBottomLeftLabelText("Open Privacy Policy");
-		stage.setBottomLeftLabelLink(
-				"https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt");
+		stage.addButton("Dependency Licenses", () -> eventBus
+				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.DEPENDENCY_LICENSES_SCREEN)));
+		stage.addButton("Privacy Policy", () -> Gdx.net
+				.openURI("https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt"));
+		stage.addButton("Back",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)));
 		stage.setBottomRightLabelText(String.format("Version %s", gameVersion));
 		return stage;
 	}
@@ -264,8 +284,7 @@ public class FrontendDaggerModule {
 	@Singleton
 	@TutorialSlideStage
 	static SlideStage provideTutorialSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
-			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera,
-			@MainMenuScreen GameScreen mainMenuScreen, Skin skin) {
+			@TutorialSlides List<Slide> tutorialSlides, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
 		return new SlideStage(viewport, tutorialSlides,
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
 				skin);
@@ -280,19 +299,13 @@ public class FrontendDaggerModule {
 	}
 
 	@Provides
-	@AboutSlides
-	static List<Slide> provideAboutSlides(AboutSlideFactory slideFactory) {
-		return slideFactory.createAllSlides();
-	}
-
-	@Provides
 	@Singleton
 	@AboutSlideStage
 	static SlideStage provideAboutSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
-			@AboutSlides List<Slide> aboutSlides, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-		return new SlideStage(viewport, aboutSlides,
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
-				skin);
+			AboutSlideFactory slideFactory, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
+		return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()),
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+				camera, skin);
 	}
 
 	@Provides
@@ -305,9 +318,37 @@ public class FrontendDaggerModule {
 
 	@Provides
 	@Singleton
+	@DependencyLicensesStage
+	static SlideStage provideDependencyLicensesStage(EventBus eventBus, @MenuViewport Viewport viewport,
+			@DependencyLicenses String dependencyLicensesText, @MenuBackgroundCamera OrthographicCamera camera,
+			Skin skin) {
+		Slide licenseSlide = new Slide(skin, "Dependency Licenses").addLabel(dependencyLicensesText);
+		return new SlideStage(viewport, Collections.singletonList(licenseSlide),
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+				camera, skin);
+	}
+
+	@Provides
+	@Singleton
+	@DependencyLicensesScreen
+	static GameScreen provideDependencyLicensesScreen(@MenuCamera OrthographicCamera camera,
+			@MenuViewport Viewport viewport, @DependencyLicensesStage SlideStage dependencyLicensesStage) {
+		return new GameScreen(camera, viewport, dependencyLicensesStage);
+	}
+
+	@Provides
+	@Singleton
 	@MainMenuScreen
 	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
 			@MainMenuStage MenuStage menuStage) {
+		return new GameScreen(camera, viewport, menuStage);
+	}
+
+	@Provides
+	@Singleton
+	@InformationMenuScreen
+	static GameScreen provideInformationMenuScreen(@MenuCamera OrthographicCamera camera,
+			@MenuViewport Viewport viewport, @InformationMenuStage MenuStage menuStage) {
 		return new GameScreen(camera, viewport, menuStage);
 	}
 
