@@ -2,15 +2,13 @@
 
 package de.sesu8642.feudaltactics.frontend.dagger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
@@ -25,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import com.google.common.io.Resources;
 
 import dagger.Module;
 import dagger.Provides;
@@ -32,6 +31,9 @@ import de.sesu8642.feudaltactics.backend.MapParameters;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlideStage;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogScreen;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogSlideStage;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogText;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicenses;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesStage;
@@ -99,18 +101,24 @@ public class FrontendDaggerModule {
 	@Singleton
 	@DependencyLicenses
 	static String provideDependencyLicensesText() {
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		StringBuilder resultBuilder = new StringBuilder();
-		try (InputStream inputStream = classLoader.getResourceAsStream("licenses.txt")) {
-			try (InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
-					BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
-				resultBuilder.append(bufferedReader.lines().collect(Collectors.joining(System.lineSeparator())));
-			}
+		try {
+			URL url = Resources.getResource("licenses.txt");
+			return Resources.toString(url, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			// modules can only throw unchecked exceptions so this needs to be converted
 			throw new RuntimeException("Dependency licenses cannot be read!", e);
 		}
-		return resultBuilder.toString();
+	}
+
+	@Provides
+	@Singleton
+	@ChangelogText
+	static String provideChangelogText() {
+		try {
+			URL url = Resources.getResource("changelog.txt");
+			return Resources.toString(url, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			throw new RuntimeException("Changelog cannot be read!", e);
+		}
 	}
 
 	@Provides
@@ -264,6 +272,8 @@ public class FrontendDaggerModule {
 		MenuStage stage = new MenuStage(viewport, camera, mapRenderer, skin);
 		stage.addButton("About",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN)));
+		stage.addButton("Changelog",
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN)));
 		stage.addButton("Dependency Licenses", () -> eventBus
 				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.DEPENDENCY_LICENSES_SCREEN)));
 		stage.addButton("Privacy Policy", () -> Gdx.net
@@ -288,6 +298,25 @@ public class FrontendDaggerModule {
 		return new SlideStage(viewport, tutorialSlides,
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
 				skin);
+	}
+
+	@Provides
+	@Singleton
+	@ChangelogScreen
+	static GameScreen provideChangelogScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			@ChangelogSlideStage SlideStage slideStage) {
+		return new GameScreen(camera, viewport, slideStage);
+	}
+
+	@Provides
+	@Singleton
+	@ChangelogSlideStage
+	static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
+			@ChangelogText String changelogText, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
+		Slide changelogSlide = new Slide(skin, changelogText);
+		return new SlideStage(viewport, Collections.singletonList(changelogSlide),
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+				camera, skin);
 	}
 
 	@Provides

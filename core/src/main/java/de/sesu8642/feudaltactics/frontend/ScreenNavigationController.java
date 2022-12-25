@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.badlogic.gdx.Screen;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
@@ -14,6 +15,7 @@ import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.backend.editor.EditorInputHandler;
 import de.sesu8642.feudaltactics.backend.ingame.LocalIngameInputHandler;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuScreen;
@@ -43,6 +45,7 @@ public class ScreenNavigationController {
 	private GameScreen preferencesScreen;
 	private GameScreen informationMenuScreen;
 	private GameScreen dependencyLicensesScreen;
+	private GameScreen changelogScreen;
 	private de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler;
 	private de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler;
@@ -69,7 +72,7 @@ public class ScreenNavigationController {
 			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
 			@AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
 			@InformationMenuScreen GameScreen informationMenuScreen,
-			@DependencyLicensesScreen GameScreen dependencyLicensesScreen,
+			@DependencyLicensesScreen GameScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
 			de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler,
@@ -86,6 +89,7 @@ public class ScreenNavigationController {
 		this.preferencesScreen = preferencesScreen;
 		this.informationMenuScreen = informationMenuScreen;
 		this.dependencyLicensesScreen = dependencyLicensesScreen;
+		this.changelogScreen = changelogScreen;
 		this.gameLogicEventHandler = gameLogicEventHandler;
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
@@ -113,10 +117,10 @@ public class ScreenNavigationController {
 	public void handleScreenTransitionTrigger(ScreenTransitionTriggerEvent event) {
 		switch (event.getTransitionTarget()) {
 		case SPLASH_SCREEN:
-			transitionToSplashScreen();
+			changeScreen(splashScreen);
 			break;
 		case MAIN_MENU_SCREEN:
-			transitionToMainMenuScreen();
+			changeScreen(mainMenuScreen);
 			break;
 		case INGAME_SCREEN:
 			transitionToIngameScreen();
@@ -125,82 +129,48 @@ public class ScreenNavigationController {
 			transitionToEditorScreen();
 			break;
 		case TUTORIAL_SCREEN:
-			transitionToTutorialScreen();
+			changeScreen(tutorialScreen);
 			break;
 		case ABOUT_SCREEN:
-			transitionToAboutScreen();
+			changeScreen(aboutScreen);
 			break;
 		case PREFERENCES_SCREEN:
 			transitionToPreferencesScreen();
 			break;
 		case INFORMATION_MENU_SCREEN:
-			transitionToInformationScreen();
+			changeScreen(informationMenuScreen);
 			break;
 		case DEPENDENCY_LICENSES_SCREEN:
-			transitionToDependencyLicensesScreen();
+			changeScreen(dependencyLicensesScreen);
+			break;
+		case CHANGELOG_SCREEN:
+			changeScreen(changelogScreen);
 			break;
 		default:
 			throw new AssertionError("Unimplemented transition target: " + event.getTransitionTarget());
 		}
 	}
 
-	/** Transitions to the splash screen. */
-	public void transitionToSplashScreen() {
-		unregisterAllEventHandlers();
-		// nothing to register currently
-		FeudalTactics.game.setScreen(splashScreen);
-	}
-
-	/** Transitions to the main menu screen. */
-	public void transitionToMainMenuScreen() {
-		unregisterAllEventHandlers();
-		// nothing to register currently
-		FeudalTactics.game.setScreen(mainMenuScreen);
-	}
-
-	/** Transitions to the ingame screen. */
-	public void transitionToIngameScreen() {
-		unregisterAllEventHandlers();
+	private void transitionToIngameScreen() {
+		changeScreen(ingameScreen);
 		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
 				.forEach(object -> eventBus.register(object));
-		FeudalTactics.game.setScreen(ingameScreen);
 	}
 
-	/** Transitions to the editor screen. */
-	public void transitionToEditorScreen() {
-		unregisterAllEventHandlers();
+	private void transitionToEditorScreen() {
+		changeScreen(ingameScreen);
 		Stream.of(editorInputHandler, editorEventHandler, ingameScreen, rendererEventHandler)
 				.forEach(object -> eventBus.register(object));
-		FeudalTactics.game.setScreen(ingameScreen);
 	}
 
-	public void transitionToTutorialScreen() {
+	private void changeScreen(Screen screen) {
 		unregisterAllEventHandlers();
-		FeudalTactics.game.setScreen(tutorialScreen);
+		FeudalTactics.game.setScreen(screen);
 	}
 
-	public void transitionToAboutScreen() {
-		unregisterAllEventHandlers();
-		FeudalTactics.game.setScreen(aboutScreen);
-	}
-
-	/** Transitions to the preferences screen. */
-	public void transitionToPreferencesScreen() {
-		unregisterAllEventHandlers();
+	private void transitionToPreferencesScreen() {
+		changeScreen(preferencesScreen);
 		eventBus.register(preferencesScreenEventHandler);
-		FeudalTactics.game.setScreen(preferencesScreen);
-	}
-
-	/** Transitions to the information screen. */
-	public void transitionToInformationScreen() {
-		unregisterAllEventHandlers();
-		FeudalTactics.game.setScreen(informationMenuScreen);
-	}
-
-	/** Transitions to the information screen. */
-	public void transitionToDependencyLicensesScreen() {
-		unregisterAllEventHandlers();
-		FeudalTactics.game.setScreen(dependencyLicensesScreen);
 	}
 
 }
