@@ -19,17 +19,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import de.sesu8642.feudaltactics.ApplicationStub;
-import de.sesu8642.feudaltactics.backend.gamestate.Capital;
-import de.sesu8642.feudaltactics.backend.gamestate.GameState;
-import de.sesu8642.feudaltactics.backend.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.backend.gamestate.Gravestone;
-import de.sesu8642.feudaltactics.backend.gamestate.HexTile;
-import de.sesu8642.feudaltactics.backend.gamestate.Kingdom;
-import de.sesu8642.feudaltactics.backend.gamestate.MapObject;
-import de.sesu8642.feudaltactics.backend.gamestate.PalmTree;
-import de.sesu8642.feudaltactics.backend.gamestate.Player;
-import de.sesu8642.feudaltactics.backend.gamestate.Tree;
-import de.sesu8642.feudaltactics.backend.gamestate.Unit;
 import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.backend.gamestate.Unit.UnitTypes;
 
@@ -119,6 +108,9 @@ class GameStateHelperKingdomSplitTest {
 				// capital and gravestone, conquering capital --> gravestone stays
 				Arguments.of(Arrays.asList(new Capital(), new Gravestone()), 0,
 						Arrays.asList(conqueringUnit, new Gravestone())),
+
+				// capital and castle, conquering capital --> castle is destroyed
+				Arguments.of(Arrays.asList(new Capital(), new Castle()), 0, Arrays.asList(conqueringUnit, null)),
 
 				// capital, empty tile, empty tile, conquering capital --> capital moves one
 				// tile

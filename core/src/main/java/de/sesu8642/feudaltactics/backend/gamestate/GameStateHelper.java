@@ -644,13 +644,15 @@ public class GameStateHelper {
 		tiles.removeAll(newKingdom.getTiles());
 
 		if (newKingdom.getTiles().size() < 2) {
-			// remove capital and units if kingdom is a single tile
+			// remove contents if kingdom is a single tile
 			for (HexTile tile : newKingdom.getTiles()) {
 				if (tile.getContent() != null) {
 					if (Capital.class.isAssignableFrom(tile.getContent().getClass())) {
 						spawnTree(gameState, tile);
 					} else if (Unit.class.isAssignableFrom(tile.getContent().getClass())) {
 						tile.setContent(new Gravestone());
+					} else if (Castle.class.isAssignableFrom(tile.getContent().getClass())) {
+						tile.setContent(null);
 					}
 				}
 			}
