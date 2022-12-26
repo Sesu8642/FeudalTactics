@@ -18,7 +18,6 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScree
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuScreen;
-import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
@@ -69,9 +68,9 @@ public class ScreenNavigationController {
 	@Inject
 	public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
-			@MainMenuScreen GameScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
-			@AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
-			@InformationMenuScreen GameScreen informationMenuScreen,
+			de.sesu8642.feudaltactics.frontend.ui.screens.MainMenuScreen mainMenuScreen,
+			@TutorialScreen GameScreen tutorialScreen, @AboutScreen GameScreen aboutScreen,
+			PreferencesScreen preferencesScreen, @InformationMenuScreen GameScreen informationMenuScreen,
 			@DependencyLicensesScreen GameScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
 			de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler,

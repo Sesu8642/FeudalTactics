@@ -43,7 +43,6 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.Informatio
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameRenderer;
-import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MainMenuStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.MenuBackgroundRenderer;
@@ -67,6 +66,7 @@ import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
+import de.sesu8642.feudaltactics.frontend.ui.screens.MainMenuScreen;
 import de.sesu8642.feudaltactics.frontend.ui.stages.MenuStage;
 import de.sesu8642.feudaltactics.frontend.ui.stages.ResizableResettableStage;
 import de.sesu8642.feudaltactics.frontend.ui.stages.slidestage.AboutSlideFactory;
@@ -215,7 +215,7 @@ public class FrontendDaggerModule {
 	@Singleton
 	@SplashScreenStage
 	static ResizableResettableStage provideSplashScreenStage(@MenuViewport Viewport viewport,
-			@MenuBackgroundCamera OrthographicCamera camera, @MainMenuScreen GameScreen mainMenuScreen,
+			@MenuBackgroundCamera OrthographicCamera camera, MainMenuScreen mainMenuScreen,
 			@MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
 		// using a menu stage without buttons here
 		MenuStage menuStage = new MenuStage(viewport, camera, mapRenderer, skin);
@@ -363,14 +363,6 @@ public class FrontendDaggerModule {
 	static GameScreen provideDependencyLicensesScreen(@MenuCamera OrthographicCamera camera,
 			@MenuViewport Viewport viewport, @DependencyLicensesStage SlideStage dependencyLicensesStage) {
 		return new GameScreen(camera, viewport, dependencyLicensesStage);
-	}
-
-	@Provides
-	@Singleton
-	@MainMenuScreen
-	static GameScreen provideMainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-			@MainMenuStage MenuStage menuStage) {
-		return new GameScreen(camera, viewport, menuStage);
 	}
 
 	@Provides

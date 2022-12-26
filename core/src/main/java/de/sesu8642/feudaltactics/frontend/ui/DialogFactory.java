@@ -19,7 +19,8 @@ public class DialogFactory {
 	}
 
 	/**
-	 * Creates a new dialog.
+	 * Creates a new dialog. Text and buttons can be added to it after it is
+	 * created.
 	 * 
 	 * @param action action to execute once the dialog is confirmed
 	 * @return the created dialog
@@ -36,6 +37,14 @@ public class DialogFactory {
 		};
 	}
 
+	/**
+	 * Creates a new {@link ConfirmDialog} with a given message and action that is
+	 * executed on confirmation.
+	 * 
+	 * @param message message to display in the dialog
+	 * @param action  action to execute on confirmation
+	 * @return new dialog
+	 */
 	public ConfirmDialog createConfirmDialog(String message, Runnable action) {
 		return new ConfirmDialog(message, action, skin);
 	}

@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.backend.persistence.AutoSaveRepository;
@@ -24,6 +25,8 @@ import de.sesu8642.feudaltactics.frontend.persistence.GameVersionDao;
  */
 @Singleton
 public class GameInitializer {
+
+	private static final String TAG = GameInitializer.class.getName();
 
 	private EventBus eventBus;
 	private GameVersionDao gameVersionDao;
@@ -61,6 +64,13 @@ public class GameInitializer {
 		} else {
 			// fresh start
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.SPLASH_SCREEN));
+		}
+
+		String previousVersion = gameVersionDao.getGameVersion();
+		if (!Strings.isNullOrEmpty(previousVersion) && !previousVersion.equals(gameVersion)) {
+			// first start after update
+			Gdx.app.log(TAG, String.format("game was updated from version %s to %s", previousVersion, gameVersion));
+			gameVersionDao.saveChangelogState(true);
 		}
 
 		// save current game version
