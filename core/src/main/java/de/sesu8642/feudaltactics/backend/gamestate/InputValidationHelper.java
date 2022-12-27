@@ -213,7 +213,7 @@ public class InputValidationHelper {
 			}
 			MapObject neighborContent = neighborTile.getContent();
 			// check if there is no stronger object next to it protecting it
-			if (neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
+			if (tile.getKingdom() != null && neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
 					&& neighborContent.getStrength() >= gameState.getHeldObject().getStrength()) {
 				return false;
 			}

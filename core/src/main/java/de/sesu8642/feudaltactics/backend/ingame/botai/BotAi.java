@@ -653,7 +653,7 @@ public class BotAi {
 
 	private OffenseTileScoreInfo getOffenseTileScoreInfo(GameState gameState, Intelligence intelligence, HexTile tile) {
 		int score;
-		int requiredStrength = 1;
+		int requiredStrength = tile.getContent() == null ? 1 : tile.getContent().getStrength() + 1;
 		if (tile.getKingdom() == null) {
 			if (tile.getContent() == null) {
 				// conquering single tiles is not as good as stealing from enemy kingdoms

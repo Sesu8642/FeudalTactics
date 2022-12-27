@@ -649,8 +649,6 @@ public class GameStateHelper {
 				if (tile.getContent() != null) {
 					if (Capital.class.isAssignableFrom(tile.getContent().getClass())) {
 						spawnTree(gameState, tile);
-					} else if (Unit.class.isAssignableFrom(tile.getContent().getClass())) {
-						tile.setContent(new Gravestone());
 					} else if (Castle.class.isAssignableFrom(tile.getContent().getClass())) {
 						tile.setContent(null);
 					}
@@ -695,6 +693,7 @@ public class GameStateHelper {
 			gameState.setPlayerTurn(0);
 			spreadTrees(gameState);
 		}
+		progressBlockingObjects(gameState, gameState.getActivePlayer());
 		// check defeat condition
 		playerLoop: for (Player player : gameState.getPlayers()) {
 			if (player.isDefeated()) {
@@ -711,6 +710,9 @@ public class GameStateHelper {
 		// reset active kingdom
 		gameState.setActiveKingdom(null);
 		for (Kingdom kingdom : gameState.getKingdoms()) {
+			if (kingdom.getPlayer().getType() == Type.LOCAL_PLAYER) {
+				kingdom.setSavings(99999);
+			}
 			// update savings
 			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
 				kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
@@ -784,11 +786,21 @@ public class GameStateHelper {
 							spawnTree(gameState, newTreeTile);
 							tileBlackList.add(newTreeTile);
 						});
-			} else if (tile.getContent() != null
-					&& ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
-				// gravestones become trees/palms after a turn
-				spawnTree(gameState, tile);
-				tileBlackList.add(tile);
+			}
+		}
+	}
+
+	private static void progressBlockingObjects(GameState gameState, Player player) {
+		for (HexTile tile : gameState.getMap().values()) {
+			// gravestones become trees/palms at the start of the player turn
+			if (tile.getPlayer() == player && tile.getContent() != null) {
+				if (ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
+					spawnTree(gameState, tile);
+				} else if (tile.getKingdom() == null
+						&& ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
+					// cut off units become gravestones at the start of the player turn
+					tile.setContent(new Gravestone());
+				}
 			}
 		}
 	}
