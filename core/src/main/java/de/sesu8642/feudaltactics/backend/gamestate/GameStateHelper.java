@@ -710,9 +710,6 @@ public class GameStateHelper {
 		// reset active kingdom
 		gameState.setActiveKingdom(null);
 		for (Kingdom kingdom : gameState.getKingdoms()) {
-			if (kingdom.getPlayer().getType() == Type.LOCAL_PLAYER) {
-				kingdom.setSavings(99999);
-			}
 			// update savings
 			if (kingdom.getPlayer() == gameState.getActivePlayer()) {
 				kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
