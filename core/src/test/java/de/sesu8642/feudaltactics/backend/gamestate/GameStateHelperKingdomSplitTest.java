@@ -94,9 +94,10 @@ class GameStateHelperKingdomSplitTest {
 				// capital and empty tile, conquering empty tile --> capital becomes (palm) tree
 				Arguments.of(Arrays.asList(new Capital(), null), 1, Arrays.asList(new PalmTree(), conqueringUnit)),
 
-				// capital and unit, conquering capital --> unit becomes gravestone
+				// capital and unit, conquering capital --> unit stays (turns into gravestone
+				// later)
 				Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.PEASANT)), 0,
-						Arrays.asList(conqueringUnit, new Gravestone())),
+						Arrays.asList(conqueringUnit, new Unit(UnitTypes.PEASANT))),
 
 				// capital and tree, conquering capital --> tree stays
 				Arguments.of(Arrays.asList(new Capital(), new Tree()), 0, Arrays.asList(conqueringUnit, new Tree())),
