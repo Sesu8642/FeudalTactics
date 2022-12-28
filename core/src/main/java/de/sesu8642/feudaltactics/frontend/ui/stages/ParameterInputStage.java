@@ -83,7 +83,9 @@ public class ParameterInputStage extends ResizableResettableStage {
 		difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
 		Label sizeLabel = new Label("Map\nSize", skin);
 		sizeSelect = new SelectBox<>(skin);
-		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", "XXLarge" };
+		// xxlarge is temporarily disabled because of performance problems
+		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", /* "XXLarge" */
+		};
 		sizeSelect.setItems(sizes);
 		sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
 		Label densityLabel = new Label("Map\nDensity", skin);
