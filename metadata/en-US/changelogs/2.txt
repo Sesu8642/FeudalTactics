@@ -1,0 +1,10 @@
+Feudal Tactics 1.1.0
+
+This update is aimed to address the most dire problems with the initial release, i.e., too little feedback and steep difficulty curve. Some new objects and rule changes made it into the update as well. Highlights include:
+- visible enemy turn progress
+- tweaked enemy behavior and difficulty levels
+- dying units result in new gravestones that turn into trees
+- new tree type: palm trees
+- overhauled tree spreading behavior (see tutorial)
+- new preferences menu
+- new information sub-menu with changelog
