@@ -313,7 +313,7 @@ public class FrontendDaggerModule {
 	@ChangelogSlideStage
 	static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
 			@ChangelogText String changelogText, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-		Slide changelogSlide = new Slide(skin, changelogText);
+		Slide changelogSlide = new Slide(skin, "Changelog").addLabel(changelogText);
 		return new SlideStage(viewport, Collections.singletonList(changelogSlide),
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
 				camera, skin);

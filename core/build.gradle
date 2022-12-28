@@ -53,10 +53,10 @@ mkdir(resources_dest_path)
 	def changelog_dir = "../metadata/en-US/changelogs/"
 	def changelog = ''
 	def fileNames = fileTree(changelog_dir).filter { it.isFile() }.files.name
-	def availableVersions = fileNames.collect({it - ".txt"}).collect({it.toInteger()}).sort()
+	def availableVersions = fileNames.collect({it - ".txt"}).collect({it.toInteger()}).sort().reverse()
 	availableVersions.each({
 		String versionChangelog = file(changelog_dir + it + ".txt").text
-		changelog += "\n" + versionChangelog
+		changelog += "\n\n\n" + versionChangelog
 	})
 	// write the result
 	new File("$resources_dest_path/changelog.txt").text = changelog
