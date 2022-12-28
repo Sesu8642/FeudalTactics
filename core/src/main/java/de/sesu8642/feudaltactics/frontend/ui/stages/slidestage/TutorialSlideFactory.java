@@ -49,19 +49,19 @@ public class TutorialSlideFactory {
 	}
 
 	private Slide createTutorialSlide1() {
-		String text = "This game is a turn based strategy game. You play on an island composed of hexagonal tiles. The color of the tile indicates which player it is owned by. The blue tiles are owned by you. Your goal is to conquer the whole island.";
+		String text = "This is a turn based strategy game. You play on an island composed of hexagonal tiles. The color of a tile indicates which player it is owned by. The blue tiles are owned by you. Your goal is to conquer the whole island.";
 		String imagePath = "tutorial_island.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
 
 	private Slide createTutorialSlide2() {
-		String text = "Two or more connected tiles of the same color will form a kingdom. A kingdom will gain one coin per tile per turn. A player can have multiple kingdoms that are financially independent from each other. Select a kingdom by clicking any of its tiles. Its finances will be displayed in the top left corner of the screen. Money is stored in the capital. If a kingdom's capital is destroyed, all of its money is lost.";
+		String text = "Two or more connected tiles of the same color form a kingdom. A kingdom gains one coin per tile per turn. A player can have multiple kingdoms that are financially independent from each other. Select a kingdom by clicking any of its tiles. Its finances will be displayed in the top left corner of the screen. Money is stored in the capital. If a kingdom's capital is destroyed, all of its money is lost.";
 		String imagePath = "tutorial_kingdoms_money.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
 
 	private Slide createTutorialSlide3() {
-		String text = "To conquer enemy tiles, you need to get units. You can buy peasants for 10 coins. To get stronger units, combine a unit with a peasant by placing them on top of each other. Every unit must be paid a salary at the start of your turn. If you cannot pay all of your units, they will vanish.";
+		String text = "To conquer enemy tiles, you need to get units. You can buy a peasant for 10 coins. To get stronger units, combine a unit with a peasant by placing them on top of each other. Every unit must be paid a salary at the start of your turn. If you cannot pay all of your units, they will die. A gravestone will appear in each unit's place.";
 		String imagePath = "tutorial_units.png";
 		List<List<String>> tableData = new ArrayList<>();
 		tableData.add(Arrays.asList("Unit", "Strength", "Salary"));
@@ -79,13 +79,13 @@ public class TutorialSlideFactory {
 	}
 
 	private Slide createTutorialSlide5() {
-		String text = "Units will protect the tile they stand on as well as the tiles next to them from being conquered. To conquer protected tiles anyway, you need a unit stronger that the one protecting. Capitals will also protect the neighboring tiles with a strength of 1. Additionaly, you can buy a castle for 15 coins which will protect neighboring tiles with a strength of 2. When you have something picked up, shield icons indicate the protection level of each tile.";
+		String text = "Units protect the tile they stand on as well as the tiles next to them from being conquered. To conquer protected tiles anyway, you need a unit stronger that the one protecting. Capitals also protect the neighboring tiles with a strength of 1. Additionaly, you can buy a castle for 15 coins which protects neighboring tiles with a strength of 2. When you have something picked up, shield icons indicate the protection level of each tile.";
 		String imagePath = "tutorial_protection.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
 
 	private Slide createTutorialSlide6() {
-		String text = "Trees may randomly grow on the map. They will prevent the tiles they stand on from generating income. Even worse, there is a TODO% chance they will spread to a neighboring tile. They can be removed by placing a unit on them but the unit will be unable to be moved again for the rest of that turn.";
+		String text = "At the beginning of your turn, any gravestones on your tiles turn into trees. They prevent the tiles they stand on from generating income. Trees can be removed by placing a unit on them but the unit will be unable to be moved again for the rest of that turn. There are two types of trees: oaks and palm trees. Palm trees grow on tiles that are close to water and spread rapidly along the coast. Oak trees can only grow on tiles that are not directly connected to water. They only spread when there are two or more of them next to each other.";
 		String imagePath = "tutorial_trees.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}
