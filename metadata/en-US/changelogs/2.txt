@@ -8,3 +8,4 @@ This update is aimed to address the most dire problems with the initial release,
 - overhauled tree spreading behavior (see tutorial)
 - new preferences menu
 - new information sub-menu with changelog
+- general system stability improvements to enhance the user's experience
