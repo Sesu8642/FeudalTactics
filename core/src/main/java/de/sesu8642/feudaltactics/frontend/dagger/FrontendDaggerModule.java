@@ -37,6 +37,7 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogT
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicenses;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesStage;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.EnableDeepWaterRenderingProperty;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GamePrefsPrefStore;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.GameVersionPrefStore;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuScreen;
@@ -131,8 +132,15 @@ public class FrontendDaggerModule {
 	@Provides
 	@Singleton
 	@PreferencesPrefixProperty
-	static String providePreferencesProperty(Properties config) {
+	static String providePreferencesPrefixProperty(Properties config) {
 		return config.getProperty("preferences_prefix");
+	}
+
+	@Provides
+	@Singleton
+	@EnableDeepWaterRenderingProperty
+	static Boolean provideEnableDeepWaterRenderingProperty(Properties config) {
+		return Boolean.parseBoolean(config.getProperty("enable_deep_water_rendering"));
 	}
 
 	@Provides
@@ -161,8 +169,9 @@ public class FrontendDaggerModule {
 	@Singleton
 	@IngameRenderer
 	static MapRenderer provideIngameMapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas,
-			ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
-		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch);
+			ShapeRenderer shapeRenderer, SpriteBatch spriteBatch,
+			@EnableDeepWaterRenderingProperty boolean enableDeepWaterRendering) {
+		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch, enableDeepWaterRendering);
 	}
 
 	@Provides
@@ -186,7 +195,7 @@ public class FrontendDaggerModule {
 	@MenuBackgroundRenderer
 	static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera,
 			TextureAtlas textureAtlas, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
-		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch);
+		return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch, true);
 	}
 
 	@Provides

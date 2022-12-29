@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -34,6 +35,7 @@ import de.sesu8642.feudaltactics.backend.gamestate.MapDimensions;
 import de.sesu8642.feudaltactics.backend.gamestate.MapObject;
 import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.backend.gamestate.Unit;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.EnableDeepWaterRenderingProperty;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.IngameCamera;
 
 /**
@@ -86,6 +88,9 @@ public class MapRenderer {
 	private List<Vector2> redLineStartPoints = new ArrayList<>();
 	private List<Vector2> redLineEndPoints = new ArrayList<>();
 
+	// settings
+	private boolean enableDeepWaterRendering;
+
 	/**
 	 * Constructor.
 	 * 
@@ -96,11 +101,12 @@ public class MapRenderer {
 	 */
 	@Inject
 	public MapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas, ShapeRenderer shapeRenderer,
-			SpriteBatch spriteBatch) {
+			SpriteBatch spriteBatch, @EnableDeepWaterRenderingProperty boolean enableDeepWaterRendering) {
 		this.camera = camera;
 		this.shapeRenderer = shapeRenderer;
 		this.spriteBatch = spriteBatch;
 		this.textureAtlas = textureAtlas;
+		this.enableDeepWaterRendering = enableDeepWaterRendering;
 
 		tileRegion = textureAtlas.findRegion("tile_bw");
 		shieldRegion = textureAtlas.findRegion("shield");
@@ -410,25 +416,27 @@ public class MapRenderer {
 
 		spriteBatch.begin();
 
-		// draw sea background
-		// subtract -3 in the loop condition because some room is needed due to the
-		// movement offset on the top right
-		// start with -1 to do the same on the bottom left
-		for (int i = -1; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
-			for (int j = -1; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
-				// there is a bug that causes tiny gaps between the water tiles on the sides
-				// (but not top/bottom); probably some rounding issue
-				// a similar thing happens with TiledDrawable so maybe look into that and report
-				// it later
-				// the 0.01F is a hack that seems to mitigate this
-				spriteBatch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
-						waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
+		if (enableDeepWaterRendering) {
+			// draw sea background
+			// subtract -3 in the loop condition because some room is needed due to the
+			// movement offset on the top right
+			// start with -1 to do the same on the bottom left
+			for (int i = -1; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
+				for (int j = -1; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
+					// there is a bug that causes tiny gaps between the water tiles on the sides
+					// (but not top/bottom); probably some rounding issue
+					// a similar thing happens with TiledDrawable so maybe look into that and report
+					// it later
+					// the 0.01F is a hack that seems to mitigate this
+					spriteBatch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
+							waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
+				}
 			}
+		} else {
+			// when making art like the logo, use black background instead of water
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 		}
-
-		// when making art like the logo, use black background instead of water
-//		Gdx.gl.glClearColor(0, 0, 0, 1);
-//		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
 		// draw all the beaches first because they would cover some of the tiles
 		// otherwise
