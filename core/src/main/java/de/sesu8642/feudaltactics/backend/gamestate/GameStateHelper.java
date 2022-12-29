@@ -287,7 +287,7 @@ public class GameStateHelper {
 
 	private static void createMoney(GameState gameState) {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
-			int savings = Math.max(kingdom.getTiles().size() * 5, 20);
+			int savings = Math.min(kingdom.getTiles().size() * 5, 20);
 			// players other than the first one will earn some money once their turn starts
 			if (gameState.getActivePlayer() != kingdom.getPlayer()) {
 				savings -= getKingdomIncome(kingdom);
