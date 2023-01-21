@@ -101,7 +101,9 @@ public class Unit implements MapObject {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(canAct, unitType);
+		// calculating with enum strings because the hashcode must be consistent across
+		// runs
+		return Objects.hash(canAct, unitType.toString());
 	}
 
 	@Override

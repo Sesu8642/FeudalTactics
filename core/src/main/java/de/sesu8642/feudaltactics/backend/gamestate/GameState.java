@@ -118,8 +118,10 @@ public class GameState {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(activeKingdom, botIntelligence, heldObject, kingdoms, map, playerTurn, players, round, seed,
-				winner);
+		// calculating with enum strings because the hashcode must be consistent across
+		// runs
+		return Objects.hash(activeKingdom, botIntelligence.toString(), heldObject, kingdoms, map, playerTurn, players,
+				round, seed, winner);
 	}
 
 	@Override

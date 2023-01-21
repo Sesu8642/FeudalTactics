@@ -67,7 +67,9 @@ public class Player {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(color, defeated, type);
+		// calculating with enum strings because the hashcode must be consistent across
+		// runs
+		return Objects.hash(color, defeated, type.toString());
 	}
 
 	@Override
