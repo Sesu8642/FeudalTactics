@@ -14,12 +14,14 @@ PACKR_VERSION=4.0.0
 PACKR_EXE_NAME="packr-all-$PACKR_VERSION.jar"
 PACKR_DL_LINK="https://github.com/libgdx/packr/releases/download/$PACKR_VERSION/$PACKR_EXE_NAME"
 PACKR_WORK_DIR="packr_work"
-PACKR_BUNDLE_JRE_VERSION="8u332-b09"
+# use the following for the latest Linux version: https://api.adoptium.net/v3/info/release_versions?architecture=x64&heap_size=normal&image_type=jre&jvm_impl=hotspot&lts=true&os=linux&page=0&page_size=10&project=jdk&release_type=ga&sort_method=DATE&sort_order=DESC&vendor=eclipse&version=%5B8%2C9%5D
+PACKR_BUNDLE_JRE_VERSION_LINUX="8u362-b09"
+PACKR_BUNDLE_JRE_VERSION_WINDOWS="8u352-b08"
 # "OS_HERE" is a placeholder for the os name
 PACKR_JRE_CACHE_DIR="jre_cache_$PACKR_BUNDLE_JRE_VERSION"_OS_HERE
 # probably need to delete jre cache if changing this
-PACKR_JDK_BUNDLE_DL_LINK_LINUX="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$PACKR_BUNDLE_JRE_VERSION/OpenJDK8U-jre_x64_linux_hotspot_${PACKR_BUNDLE_JRE_VERSION/-/}.tar.gz"
-PACKR_JDK_BUNDLE_DL_LINK_WINDOWS="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$PACKR_BUNDLE_JRE_VERSION/OpenJDK8U-jre_x64_windows_hotspot_${PACKR_BUNDLE_JRE_VERSION/-/}.zip"
+PACKR_JDK_BUNDLE_DL_LINK_LINUX="https://api.adoptium.net/v3/binary/version/jdk$PACKR_BUNDLE_JRE_VERSION_LINUX/linux/x64/jre/hotspot/normal/eclipse?project=jdk"
+PACKR_JDK_BUNDLE_DL_LINK_WINDOWS="https://api.adoptium.net/v3/binary/version/jdk$PACKR_BUNDLE_JRE_VERSION_WINDOWS/windows/x64/jre/hotspot/normal/eclipse?project=jdk"
 PACKR_PLATFORMS="LINUX WINDOWS"
 SCRIPT_DIR=$(dirname "$0")
 
