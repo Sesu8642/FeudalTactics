@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: eclipse-temurin:17
+    env:
+      # need to set this variable or gradle will fail on the first run for some reason
+      ANDROID_HOME: /dev/null
     steps:
 
       - name: Check out repository code
@@ -20,9 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: eclipse-temurin:17
-    env:
-      # need to set this variable or gradle will fail on the first run for some reason
-      ANDROID_HOME: /dev/null
     steps:
 
       - name: Check out repository code
