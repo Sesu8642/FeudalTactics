@@ -1,10 +1,12 @@
 name: Build CI
 on: [push]
 jobs:
-  Build:
+
+
+  run_tests:
     runs-on: ubuntu-latest
     container:
-      image: cangol/android-gradle
+      image: eclipse-temurin:17
     steps:
 
       - name: Check out repository code
@@ -12,6 +14,16 @@ jobs:
 
       - name: Run unit tests
         run: ./gradlew test
+
+
+  build_desktop:
+    runs-on: ubuntu-latest
+    container:
+      image: eclipse-temurin:17
+    steps:
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
 
       - name: Build Desktop
         run: ./gradlew desktop:dist
@@ -21,6 +33,17 @@ jobs:
         with:
           name: Desktop jar
           path: ./desktop//build/libs/*.jar
+
+
+  build_android:
+    runs-on: ubuntu-latest
+    container:
+      # trying to be close to the f-droid build to detect failures early
+      image: registry.gitlab.com/fdroid/fdroidserver:buildserver-bullseye
+    steps:
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
 
       - name: Build Android
         run: ./gradlew android:assembleRelease
