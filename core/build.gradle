@@ -1,7 +1,5 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply plugin: "java"
-
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -16,15 +14,6 @@ processResources {
 	from "$sourceSets.main.resources.srcDirs"
 	filter(ReplaceTokens, tokens: [version: project.version])
 }
-
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-}
-
-	test {
-	    useJUnitPlatform()
-	}
 
 // define and create resource destination
 def resources_dest_path = "$buildDir/generated/resources"
