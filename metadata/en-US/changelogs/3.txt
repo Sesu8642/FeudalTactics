@@ -1,0 +1,3 @@
+Feudal Tactics 1.1.1
+
+Bugfix release to fix the F-Droid build.
