@@ -161,6 +161,8 @@ public class IngameScreen extends GameScreen {
 	}
 
 	private void resetGame() {
+		cachedGameState = null;
+		winnerBeforeBotTurn = null;
 		eventBus.post(new GameExitedEvent());
 		eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 				new MapParameters(parameterInputStage.getSeedParam(),
