@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.frontend.ui.screens;
 
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -82,11 +83,11 @@ public class IngameScreen extends GameScreen {
 	private boolean isLocalPlayerTurn = true;
 
 	/**
-	 * Switching the buttons must happen in the same thread that does the rendering
-	 * because the UI libs aren't thread-safe. To do that, a Runnable can be placed
-	 * here and will be executed when the next render happens.
+	 * Interactions with the UI must happen in the same thread that does the
+	 * rendering because the UI libs aren't thread-safe. To do that, Runnables can
+	 * be placed here and will be executed when the next render happens.
 	 */
-	private Runnable hudStageButtonSwitchAction = null;
+	private ConcurrentLinkedQueue<Runnable> uiChangeActions = new ConcurrentLinkedQueue<>();
 
 	/** Stages that can be displayed. */
 	public enum IngameStages {
@@ -217,7 +218,7 @@ public class IngameScreen extends GameScreen {
 			}
 			// buttons
 			if (hudStage.isEnemyTurnButtonsShown()) {
-				hudStageButtonSwitchAction = () -> hudStage.showPlayerTurnButtons();
+				uiChangeActions.add(() -> hudStage.showPlayerTurnButtons());
 			}
 			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
 			if (playerOptional.isPresent()) {
@@ -235,18 +236,18 @@ public class IngameScreen extends GameScreen {
 			if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
 					&& newGameState.getActivePlayer().isDefeated()) {
 				// player lost
-				showLostMessage();
+				uiChangeActions.add(this::showLostMessage);
 			} else if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
-				showAllEnemiesDefeatedMessage();
+				uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
 			} else if (humanPlayerTurnJustStarted && winnerChanged) {
 				// winner changed
-				showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
-						newGameState.getWinner().getColor());
+				uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
+						newGameState.getWinner().getColor()));
 			}
 		} else {
 			infoText = "Enemy turn";
 			if (!hudStage.isEnemyTurnButtonsShown()) {
-				hudStageButtonSwitchAction = () -> hudStage.showEnemyTurnButtons();
+				uiChangeActions.add(() -> hudStage.showEnemyTurnButtons());
 			}
 		}
 		hudStage.setInfoText(infoText);
@@ -378,9 +379,10 @@ public class IngameScreen extends GameScreen {
 
 	@Override
 	public void render(float delta) {
-		if (hudStageButtonSwitchAction != null) {
-			hudStageButtonSwitchAction.run();
-			hudStageButtonSwitchAction = null;
+		while (!uiChangeActions.isEmpty()) {
+			Runnable action = uiChangeActions.poll();
+			action.run();
+
 		}
 		getViewport().apply();
 		mapRenderer.render();
