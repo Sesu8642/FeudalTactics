@@ -1,0 +1,6 @@
+Feudal Tactics 1.1.2
+
+Bugfix release:
+- fix rare crash when displaying a dialog
+- fix occasional crash after retrying a map
+- adhere to screen rotation preference on Android
