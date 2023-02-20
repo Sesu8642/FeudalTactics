@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -102,27 +103,34 @@ public class ParameterInputStage extends ResizableResettableStage {
 		randomButton.getImageCell().expand().fill();
 		playButton = new TextButton("Play", skin);
 
+		// The largest element on the screen is the seed text field. Measure the largest possible
+		// size of this, based on the max number of chars allowed (18), and in case the font is not
+		// a monospace font, choose a number that takes lots of space (7).
+		// Then, add a little bit extra for the UI component border.
+		GlyphLayout seedWidthRuler = new GlyphLayout(seedTextField.getStyle().font, "777777777777777777");
+		float seedLabelWidth = seedWidthRuler.width * 1.2f;
+
 		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().left();
 		rootTable.columnDefaults(0).pad(0, 10, 0, 10);
 		rootTable.add().expandY();
-		rootTable.row();
+		rootTable.row().pad(10);
 		rootTable.add(difficultyLabel);
-		rootTable.add(difficultySelect);
+		rootTable.add(difficultySelect).colspan(2).fillX();
 		rootTable.add().expandX();
-		rootTable.row();
+		rootTable.row().pad(10);
 		rootTable.add(sizeLabel);
-		rootTable.add(sizeSelect);
-		rootTable.row();
+		rootTable.add(sizeSelect).colspan(2).fillX();
+		rootTable.row().pad(10);
 		rootTable.add(densityLabel);
-		rootTable.add(densitySelect);
-		rootTable.row();
+		rootTable.add(densitySelect).colspan(2).fillX();
+		rootTable.row().pad(10);
 		rootTable.add(seedLabel);
-		rootTable.add(seedTextField).prefWidth(Value.percentWidth(1, difficultySelect));
+		rootTable.add(seedTextField).minWidth(seedLabelWidth);
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
 				.padLeft(10);
-		rootTable.row();
+		rootTable.row().pad(10);
 		rootTable.add(playButton).colspan(4).fillX();
 		this.addActor(rootTable);
 
