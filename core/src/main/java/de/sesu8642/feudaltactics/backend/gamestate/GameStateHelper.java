@@ -15,7 +15,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
@@ -28,7 +30,7 @@ import de.sesu8642.feudaltactics.backend.gamestate.Unit.UnitTypes;
  **/
 public class GameStateHelper {
 
-	private static final String TAG = GameStateHelper.class.getName();
+	private static final Logger LOGGER = LoggerFactory.getLogger(GameStateHelper.class);
 
 	public static final float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
 	public static final float WIN_LANDMASS_PERCENTAGE = 0.8F;
@@ -355,7 +357,7 @@ public class GameStateHelper {
 					newCapitalTile = emptyTileOptional.get();
 				} else {
 					// no suitable candidate found, this is ok
-					Gdx.app.debug(TAG, "no suitable capital tile found after the old one was destroyed");
+					LOGGER.debug("no suitable capital tile found after the old one was destroyed");
 					return;
 				}
 			}

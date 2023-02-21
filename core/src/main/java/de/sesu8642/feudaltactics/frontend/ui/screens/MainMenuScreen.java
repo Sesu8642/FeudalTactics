@@ -5,7 +5,9 @@ package de.sesu8642.feudaltactics.frontend.ui.screens;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -25,7 +27,7 @@ import de.sesu8642.feudaltactics.frontend.ui.stages.MenuStage;
 @Singleton
 public class MainMenuScreen extends GameScreen {
 
-	private static final String TAG = MainMenuScreen.class.getName();
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	private GameVersionDao gameVersionDao;
 	private DialogFactory dialogFactory;
@@ -62,16 +64,16 @@ public class MainMenuScreen extends GameScreen {
 	}
 
 	private void showNewVersionDialog() {
-		Gdx.app.debug(TAG, "informing the user about the version upgrade");
+		logger.debug("informing the user about the version upgrade");
 		Dialog newVersionDialog = dialogFactory.createDialog(result -> {
 			switch ((byte) result) {
 			case 0:
 				// ok button
-				Gdx.app.debug(TAG, "the user dismissed the version upgrade dialog");
+				logger.debug("the user dismissed the version upgrade dialog");
 				break;
 			case 1:
 				// open changelog button
-				Gdx.app.debug(TAG, "the user openened the changelog");
+				logger.debug("the user openened the changelog");
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN));
 				break;
 			default:

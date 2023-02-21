@@ -87,6 +87,8 @@ project(":core") {
     	implementation "com.google.dagger:dagger:$daggerVersion"
 		annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
         
+        implementation 'org.slf4j:slf4j-jdk14:2.0.6'
+        
 	    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 		testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
 	    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

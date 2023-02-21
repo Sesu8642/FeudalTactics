@@ -28,6 +28,7 @@ import com.google.common.io.Resources;
 import dagger.Module;
 import dagger.Provides;
 import de.sesu8642.feudaltactics.backend.MapParameters;
+import de.sesu8642.feudaltactics.backend.exceptions.InitializationException;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlideStage;
@@ -93,7 +94,7 @@ public class FrontendDaggerModule {
 			config.load(inputStream);
 		} catch (IOException e) {
 			// modules can only throw unchecked exceptions so this needs to be converted
-			throw new RuntimeException("Config cannot be read!", e);
+			throw new InitializationException("Config cannot be read!", e);
 		}
 		return config;
 	}
@@ -106,7 +107,7 @@ public class FrontendDaggerModule {
 			URL url = Resources.getResource("licenses.txt");
 			return Resources.toString(url, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			throw new RuntimeException("Dependency licenses cannot be read!", e);
+			throw new InitializationException("Dependency licenses cannot be read!", e);
 		}
 	}
 
@@ -118,7 +119,7 @@ public class FrontendDaggerModule {
 			URL url = Resources.getResource("changelog.txt");
 			return Resources.toString(url, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			throw new RuntimeException("Changelog cannot be read!", e);
+			throw new InitializationException("Changelog cannot be read!", e);
 		}
 	}
 

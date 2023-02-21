@@ -8,7 +8,9 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
@@ -26,8 +28,9 @@ public class AutoSaveRepository {
 
 	public static final String AUTO_SAVE_PREFERENCES_NAME = "autoSavePreferences";
 
-	private static final String TAG = AutoSaveRepository.class.getName();
 	private static final int MAX_AUTOSAVES = 50;
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	private Preferences prefStore;
 
@@ -42,7 +45,7 @@ public class AutoSaveRepository {
 	 * @param gameState game state to save
 	 */
 	public void autoSaveGameState(GameState gameState) {
-		Gdx.app.debug(TAG, "autosaving");
+		logger.debug("autosaving");
 		String saveString = null;
 		Json json = new Json(OutputType.json);
 		json.setSerializer(GameState.class, new GameStateSerializer());

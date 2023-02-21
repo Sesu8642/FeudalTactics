@@ -9,7 +9,9 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
@@ -30,7 +32,7 @@ import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 @Singleton
 public class GameController {
 
-	private static final String TAG = GameController.class.getName();
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	public static final Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
 			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
@@ -63,7 +65,7 @@ public class GameController {
 
 	/** Starts the game. Bots will do their turns if they are first. */
 	public void startGame() {
-		Gdx.app.log(TAG, "starting game");
+		logger.info("starting game");
 		// if a bot begins, make it act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
@@ -79,7 +81,7 @@ public class GameController {
 
 	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
-		Gdx.app.log(TAG, "loading latest autosave");
+		logger.info("loading latest autosave");
 		gameState = autoSaveRepo.getLatestAutoSave();
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
@@ -94,8 +96,7 @@ public class GameController {
 	 * @param mapParams       map generation parameters
 	 */
 	public void generateGameState(Intelligence botIntelligence, MapParameters mapParams) {
-		Gdx.app.log(TAG, String.format("generating a new game state with bot intelligence %s and %s", botIntelligence,
-				mapParams));
+		logger.info("generating a new game state with bot intelligence {} and {}", botIntelligence, mapParams);
 		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
 		ArrayList<Player> players = new ArrayList<>();
@@ -122,7 +123,7 @@ public class GameController {
 	 * @param hexCoords coords of the tile
 	 */
 	public void printTileInfo(Vector2 hexCoords) {
-		Gdx.app.debug(TAG, String.format("clicked: %s", gameState.getMap().get(hexCoords)));
+		logger.debug("clicked: {}", gameState.getMap().get(hexCoords));
 	}
 
 	/**
@@ -131,7 +132,7 @@ public class GameController {
 	 * @param kingdom kingdom to activate
 	 */
 	public void activateKingdom(Kingdom kingdom) {
-		Gdx.app.debug(TAG, String.format("activating %s", kingdom));
+		logger.debug("activating {}", kingdom);
 		GameStateHelper.activateKingdom(gameState, kingdom);
 		autosave();
 		// save first because is is relevant for the undo button status
@@ -144,7 +145,7 @@ public class GameController {
 	 * @param tile tile that contains the object
 	 */
 	public void pickupObject(HexTile tile) {
-		Gdx.app.debug(TAG, String.format("picking up object from %s", tile));
+		logger.debug("picking up object from {}", tile);
 		GameStateHelper.pickupObject(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -156,7 +157,7 @@ public class GameController {
 	 * @param tile tile to place to object on
 	 */
 	public void placeOwn(HexTile tile) {
-		Gdx.app.debug(TAG, String.format("placing held object on own %s", tile));
+		logger.debug("placing held object on own {}", tile);
 		GameStateHelper.placeOwn(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -168,7 +169,7 @@ public class GameController {
 	 * @param tile tile that contains the unit on the map
 	 */
 	public void combineUnits(HexTile tile) {
-		Gdx.app.debug(TAG, String.format("combining held unit with unit on %s", tile));
+		logger.debug("combining held unit with unit on {}", tile);
 		GameStateHelper.combineUnits(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -180,7 +181,7 @@ public class GameController {
 	 * @param tile tile to conquer
 	 */
 	public void conquer(HexTile tile) {
-		Gdx.app.debug(TAG, String.format("conquering %s", tile));
+		logger.debug("conquering {}", tile);
 		GameStateHelper.conquer(gameState, tile);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -193,14 +194,14 @@ public class GameController {
 	 * @param oldWinner winner of the game when the last player ended their turn
 	 */
 	void endTurn() {
-		Gdx.app.debug(TAG, String.format("ending turn of %s", gameState.getActivePlayer()));
+		logger.debug("ending turn of {}", gameState.getActivePlayer());
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			// make bots act
 			startBotTurn();
 		} else {
-			Gdx.app.log(TAG, "player turn begins");
+			logger.info("player turn begins");
 			botAi.setSkipDisplayingTurn(false);
 			autosave();
 			// clear autosaves from previous turn
@@ -214,10 +215,10 @@ public class GameController {
 			try {
 				botAi.doTurn(gameState, gameState.getBotIntelligence());
 			} catch (InterruptedException e) {
-				Gdx.app.log(TAG, "bot turn was canceled");
+				logger.info("bot turn was canceled");
 				Thread.currentThread().interrupt();
 			} catch (Exception e) {
-				Gdx.app.error(TAG, "an error happened during the enemy turn", e);
+				logger.error("an error happened during the enemy turn", e);
 			}
 		});
 	}
@@ -236,7 +237,7 @@ public class GameController {
 
 	/** Buys a peasant. */
 	public void buyPeasant() {
-		Gdx.app.debug(TAG, "buying peasant");
+		logger.debug("buying peasant");
 		GameStateHelper.buyPeasant(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -244,7 +245,7 @@ public class GameController {
 
 	/** Buys a castle. */
 	public void buyCastle() {
-		Gdx.app.debug(TAG, "buying castle");
+		logger.debug("buying castle");
 		GameStateHelper.buyCastle(gameState);
 		autosave();
 		eventBus.post(new GameStateChangeEvent(gameState));
@@ -252,7 +253,7 @@ public class GameController {
 
 	/** Undoes the last action. */
 	public void undoLastAction() {
-		Gdx.app.debug(TAG, "undoing last action");
+		logger.debug("undoing last action");
 		if (autoSaveRepo.getNoOfAutoSaves() > 1) {
 			// 1 means the current state is the only one saved
 			// remove the current state from autosaves

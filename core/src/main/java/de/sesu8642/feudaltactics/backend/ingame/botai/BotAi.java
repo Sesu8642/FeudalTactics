@@ -19,7 +19,9 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.Gdx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.EventBus;
@@ -46,7 +48,7 @@ import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 @Singleton
 public class BotAi {
 
-	private static final String TAG = BotAi.class.getName();
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	private EventBus eventBus;
 	private MainPreferencesDao mainPrefsDao;
@@ -71,8 +73,8 @@ public class BotAi {
 	 * @throws InterruptedException if interrupted
 	 */
 	public void doTurn(GameState gameState, Intelligence intelligence) throws InterruptedException {
-		Gdx.app.debug(TAG, String.format("doing the turn for bot player '%s' with intelligence level '%s'",
-				gameState.getActivePlayer(), intelligence));
+		logger.debug("doing the turn for bot player '{}' with intelligence level '{}'", gameState.getActivePlayer(),
+				intelligence);
 		Random random = new Random(gameState.hashCode());
 		Optional<Kingdom> nextKingdomOptional = getNextKingdom(gameState);
 		while (nextKingdomOptional.isPresent()) {
@@ -101,7 +103,7 @@ public class BotAi {
 
 	private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence, Random random)
 			throws InterruptedException {
-		Gdx.app.debug(TAG, String.format("doing moves in kingdom '%s'", kingdom));
+		logger.debug("doing moves in kingdom '{}'", kingdom);
 		gameState.setActiveKingdom(kingdom);
 		delayForPreview(gameState);
 		// pick up all units
@@ -145,7 +147,7 @@ public class BotAi {
 	}
 
 	private void pickUpAllAvailableUnits(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
-		Gdx.app.debug(TAG, "picking up all available units");
+		logger.debug("picking up all available units");
 		for (HexTile tile : kingdom.getTiles()) {
 			if (tile.getContent() != null && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
 					&& ((Unit) tile.getContent()).isCanAct()) {
@@ -166,7 +168,7 @@ public class BotAi {
 	 */
 	private void removeBlockingObjects(GameState gameState, PickedUpUnits pickedUpUnits,
 			int minimumRemovalScoreTreshold) {
-		Gdx.app.debug(TAG, "removing blocking objects");
+		logger.debug("removing blocking objects");
 		// not using a hashset because the tiles are changed in this function which
 		// changes their hashcode as well
 		Map<Vector2, HexTile> tilesWithBlockingObjects = gameState.getActiveKingdom().getTiles().stream().filter(
@@ -177,8 +179,8 @@ public class BotAi {
 		while (bestRemovalCandidate.score >= minimumRemovalScoreTreshold) {
 			if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 || acquireUnit(gameState, gameState.getActiveKingdom(),
 					pickedUpUnits, UnitTypes.PEASANT.strength())) {
-				Gdx.app.debug(TAG, String.format("removing blocking object with score %s from tile %s",
-						bestRemovalCandidate.score, bestRemovalCandidate.tile));
+				logger.debug("removing blocking object with score {} from tile {}", bestRemovalCandidate.score,
+						bestRemovalCandidate.tile);
 				pickedUpUnits.removeUnit(UnitTypes.PEASANT);
 				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestRemovalCandidate.tile);
@@ -192,7 +194,7 @@ public class BotAi {
 
 	private void defendMostImportantTiles(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits,
 			Set<HexTile> placedCastleTiles) {
-		Gdx.app.debug(TAG, "defending most important tiles");
+		logger.debug("defending most important tiles");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
 		TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
 				interestingProtectionTiles);
@@ -231,7 +233,7 @@ public class BotAi {
 	}
 
 	private void conquerAsMuchAsPossible(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
-		Gdx.app.debug(TAG, "conquering as much as possible");
+		logger.debug("conquering as much as possible");
 		boolean unableToConquerAnyMore = false;
 		whileloop: while (!unableToConquerAnyMore) {
 			// need a list here to be deterministic
@@ -295,7 +297,7 @@ public class BotAi {
 	}
 
 	private boolean acquireUnit(GameState gameState, Kingdom kingdom, PickedUpUnits pickedUpUnits, int strength) {
-		Gdx.app.debug(TAG, "acquiring a new unit");
+		logger.debug("acquiring a new unit");
 		// this could probably be done in much less lines but be 5x less readable
 		// could try with recursion: acquire the next weaker unit first
 		switch (strength) {
@@ -411,7 +413,7 @@ public class BotAi {
 	}
 
 	private void protectWithLeftoverUnits(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
-		Gdx.app.debug(TAG, "protecting the kingdom with leftover units");
+		logger.debug("protecting the kingdom with leftover units");
 		Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
 		TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
 				interestingProtectionTiles);
@@ -444,7 +446,7 @@ public class BotAi {
 					gameState.setHeldObject(new Unit(type));
 					GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
 				} else {
-					Gdx.app.error(TAG, "Unable to place leftover unit because there are no available spaces.");
+					logger.error("Unable to place leftover unit because there are no available spaces.");
 				}
 			}
 		}
@@ -456,7 +458,7 @@ public class BotAi {
 	}
 
 	private void sellCastles(Kingdom kingdom, Set<HexTile> placedCastleTiles) {
-		Gdx.app.debug(TAG, "selling previously bought castles again");
+		logger.debug("selling previously bought castles again");
 		// sell the castles bought earlier to re-assess the situation after conquering
 		for (HexTile tile : placedCastleTiles) {
 			tile.setContent(null);
@@ -696,7 +698,7 @@ public class BotAi {
 
 	private boolean conquerTileWithStoredUnit(GameState gameState, HexTile tile, Unit.UnitTypes unitType,
 			Integer nrAvailableUnits) {
-		Gdx.app.debug(TAG, String.format("conquering tile '%s' with stored unit '%s'", tile, unitType));
+		logger.debug("conquering tile '{}' with stored unit '{}'", tile, unitType);
 		if (nrAvailableUnits > 0) {
 			gameState.setHeldObject(new Unit(unitType));
 			GameStateHelper.conquer(gameState, tile);
@@ -711,7 +713,7 @@ public class BotAi {
 
 	public void setCurrentSpeed(Speed currentSpeed) {
 		this.currentSpeed = currentSpeed;
-		Gdx.app.debug(TAG, "Bot turn speed set to " + currentSpeed);
+		logger.debug("Bot turn speed set to " + currentSpeed);
 	}
 
 	public boolean isSkipDisplayingTurn() {
