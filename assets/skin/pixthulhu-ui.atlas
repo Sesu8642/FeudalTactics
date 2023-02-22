@@ -2,11 +2,11 @@
 pixthulhu-ui.png
 size: 1024,1024
 format: RGBA8888
-filter: Nearest,Nearest
+filter: Linear,Linear
 repeat: none
 button
   rotate: false
-  xy: 847, 220
+  xy: 444, 103
   size: 102, 114
   split: 33, 33, 33, 45
   pad: 28, 28, 22, 33
@@ -33,11 +33,27 @@ button-arcade-pressed
   index: -1
 button-pressed
   rotate: false
-  xy: 674, 158
+  xy: 548, 114
   size: 102, 114
   split: 33, 33, 42, 36
   pad: 28, 28, 30, 24
   orig: 102, 114
+  offset: 0, 0
+  index: -1
+button-small
+  rotate: false
+  xy: 218, 1
+  size: 45, 45
+  split: 18, 18, 18, 18
+  orig: 45, 45
+  offset: 0, 0
+  index: -1
+button-small-pressed
+  rotate: false
+  xy: 218, 48
+  size: 45, 45
+  split: 18, 18, 18, 18
+  orig: 45, 45
   offset: 0, 0
   index: -1
 checkbox-off
@@ -49,7 +65,7 @@ checkbox-off
   index: -1
 checkbox-on
   rotate: false
-  xy: 1, 7
+  xy: 263, 119
   size: 50, 42
   orig: 50, 42
   offset: 0, 0
@@ -91,7 +107,7 @@ font-title-export
   index: -1
 list
   rotate: false
-  xy: 263, 47
+  xy: 847, 220
   size: 114, 114
   split: 48, 48, 42, 48
   pad: 48, 48, 9, 9
@@ -107,14 +123,14 @@ logo
   index: -1
 pixthulhu
   rotate: false
-  xy: 379, 82
+  xy: 339, 82
   size: 103, 135
   orig: 103, 135
   offset: 0, 0
   index: -1
 portrait
   rotate: false
-  xy: 132, 31
+  xy: 1, 31
   size: 129, 130
   orig: 129, 130
   offset: 0, 0
@@ -137,7 +153,7 @@ progress-bar-health-knob
   index: -1
 progress-bar-horizontal
   rotate: false
-  xy: 1013, 726
+  xy: 1009, 726
   size: 9, 45
   split: 3, 3, 3, 3
   orig: 9, 45
@@ -176,14 +192,14 @@ progress-bar-vertical
   index: -1
 progress-bar-vertical-knob
   rotate: false
-  xy: 778, 194
+  xy: 444, 100
   size: 39, 1
   orig: 39, 1
   offset: 0, 0
   index: -1
 scrollbar-horizontal
   rotate: false
-  xy: 339, 174
+  xy: 315, 118
   size: 21, 43
   split: 9, 9, 17, 17
   pad: 0, 0, 0, 0
@@ -192,7 +208,7 @@ scrollbar-horizontal
   index: -1
 scrollbar-horizontal-knob
   rotate: false
-  xy: 1, 51
+  xy: 674, 230
   size: 93, 42
   split: 24, 24, 0, 0
   pad: 0, 0, 0, 0
@@ -201,7 +217,7 @@ scrollbar-horizontal-knob
   index: -1
 scrollbar-vertical
   rotate: false
-  xy: 951, 236
+  xy: 927, 664
   size: 43, 21
   split: 17, 17, 9, 9
   pad: 0, 0, 0, 0
@@ -210,7 +226,7 @@ scrollbar-vertical
   index: -1
 scrollbar-vertical-knob
   rotate: false
-  xy: 484, 38
+  xy: 265, 24
   size: 42, 93
   split: 0, 0, 24, 24
   pad: 0, 0, 0, 0
@@ -219,7 +235,7 @@ scrollbar-vertical-knob
   index: -1
 select-box
   rotate: false
-  xy: 1, 95
+  xy: 132, 95
   size: 129, 66
   split: 9, 69, 9, 30
   pad: 16, 76, 13, 12
@@ -228,7 +244,7 @@ select-box
   index: -1
 slider-horizontal
   rotate: false
-  xy: 927, 717
+  xy: 132, 39
   size: 84, 54
   split: 36, 36, 15, 15
   pad: 0, 0, 0, 0
@@ -244,7 +260,7 @@ slider-knob
   index: -1
 slider-vertical
   rotate: false
-  xy: 484, 133
+  xy: 927, 687
   size: 54, 84
   split: 15, 15, 36, 36
   pad: 0, 0, 0, 0
@@ -253,7 +269,7 @@ slider-vertical
   index: -1
 split-pane-horizontal
   rotate: false
-  xy: 53, 1
+  xy: 983, 723
   size: 24, 48
   split: 3, 3, 3, 3
   pad: 0, 0, 0, 0
@@ -262,7 +278,7 @@ split-pane-horizontal
   index: -1
 split-pane-vertical
   rotate: false
-  xy: 379, 56
+  xy: 1, 5
   size: 48, 24
   split: 3, 3, 3, 3
   pad: 0, 0, 0, 0
@@ -271,7 +287,7 @@ split-pane-vertical
   index: -1
 textfield
   rotate: false
-  xy: 951, 259
+  xy: 652, 153
   size: 69, 75
   split: 21, 21, 21, 21
   pad: 28, 28, 23, 23
@@ -287,21 +303,21 @@ touchpad
   index: -1
 touchpad-knob
   rotate: false
-  xy: 927, 664
+  xy: 723, 177
   size: 48, 51
   orig: 48, 51
   offset: 0, 0
   index: -1
 white
   rotate: false
-  xy: 96, 92
+  xy: 548, 111
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 996, 230
+  xy: 652, 124
   size: 27, 27
   split: 9, 9, 9, 9
   orig: 27, 27
@@ -309,7 +325,7 @@ window
   index: -1
 window-round
   rotate: false
-  xy: 778, 197
+  xy: 963, 259
   size: 60, 75
   split: 18, 30, 18, 30
   pad: 6, 6, 18, 30

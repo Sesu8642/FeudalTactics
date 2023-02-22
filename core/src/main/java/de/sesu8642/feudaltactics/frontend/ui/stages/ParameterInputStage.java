@@ -98,8 +98,9 @@ public class ParameterInputStage extends ResizableResettableStage {
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
-		randomButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("die")),
-				new SpriteDrawable(textureAtlas.createSprite("die_pressed")));
+		randomButton = new ImageButton(skin);
+		randomButton.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
+		randomButton.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
 		randomButton.getImageCell().expand().fill();
 		playButton = new TextButton("Play", skin);
 

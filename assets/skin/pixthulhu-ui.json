@@ -117,8 +117,8 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
-		up: button
-		down: button-pressed
+		up: button-small
+		down: button-small-pressed
 	}
 	toggle: {
 		up: button
