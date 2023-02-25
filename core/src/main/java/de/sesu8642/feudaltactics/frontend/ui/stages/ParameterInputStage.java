@@ -144,7 +144,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(seedLabel);
 		rootTable.add(seedTextField).minWidth(seedTextFieldWidth);
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
-				.padLeft(10);
+				.padLeft(INPUT_PADDING_PX);
 		rootTable.row();
 		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTTER_PADDING_PX, OUTTER_PADDING_PX,
 				OUTTER_PADDING_PX);
