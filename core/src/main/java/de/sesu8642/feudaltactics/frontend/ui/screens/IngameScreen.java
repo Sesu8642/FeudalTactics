@@ -50,10 +50,6 @@ import de.sesu8642.feudaltactics.frontend.ui.stages.ParameterInputStage;
 @Singleton
 public class IngameScreen extends GameScreen {
 
-	private static final long BUTTON_HEIGHT_PX = 110;
-	private static final long INPUT_HEIGHT_PX = 79;
-	private static final long INPUT_WIDTH_PX = 419;
-
 	private AutoSaveRepository autoSaveRepo;
 	private MainPreferencesDao mainPrefsDao;
 
@@ -280,13 +276,13 @@ public class IngameScreen extends GameScreen {
 		// calculate what is the bigger rectangular area for the map to fit: above the
 		// inputs or to their right
 		float aboveArea = ingameCamera.viewportWidth
-				* (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX - ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX);
-		float rightArea = (ingameCamera.viewportWidth - INPUT_WIDTH_PX)
-				* (ingameCamera.viewportHeight - BUTTON_HEIGHT_PX);
+				* (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
+		float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
+				* (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX);
 		if (aboveArea > rightArea) {
-			return new Margin(0, BUTTON_HEIGHT_PX + ParameterInputStage.NO_OF_INPUTS * INPUT_HEIGHT_PX, 0, 0);
+			return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT, 0, 0);
 		} else {
-			return new Margin(INPUT_WIDTH_PX, BUTTON_HEIGHT_PX, 0, 0);
+			return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH, ParameterInputStage.BUTTON_HEIGHT_PX, 0, 0);
 		}
 	}
 

@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -38,8 +39,21 @@ import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
  */
 public class ParameterInputStage extends ResizableResettableStage {
 
+	private static final long INPUT_HEIGHT_PX = 79;
+	private static final int INPUT_PADDING_PX = 20;
+	private static final int OUTTER_PADDING_PX = 10;
+
 	// for map centering calculation
-	public static final int NO_OF_INPUTS = 4;
+	/** Height of the play button. */
+	public static final long BUTTON_HEIGHT_PX = 110;
+
+	/** Height of all parameter inputs combined. */
+	public static final long TOTAL_INPUT_HEIGHT = 4 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
+			+ OUTTER_PADDING_PX;
+	/**
+	 * Width of all parameter inputs combined; depends on label texts and used font.
+	 */
+	public static final long TOTAL_INPUT_WIDTH = 509;
 
 	private EventBus eventBus;
 	private NewGamePreferencesDao newGamePrefDao;
@@ -102,28 +116,37 @@ public class ParameterInputStage extends ResizableResettableStage {
 		randomButton.getImageCell().expand().fill();
 		playButton = new TextButton("Play", skin);
 
+		/*
+		 * The longest text on the screen is the seed text field. It allows for 18
+		 * characters at max and 7 is the widest number. Scrolling the text is possible.
+		 * Generated seeds are normally much shorter than the worst case (only 7s).
+		 */
+		float maxSeedNumberWidth = new GlyphLayout(seedTextField.getStyle().font, "7").width;
+		float seedTextFieldWidth = maxSeedNumberWidth * 20;
+
 		rootTable = new Table();
 		rootTable.setFillParent(true);
-		rootTable.defaults().left();
-		rootTable.columnDefaults(0).pad(0, 10, 0, 10);
+		rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);
+		rootTable.columnDefaults(0).pad(0, OUTTER_PADDING_PX, 0, OUTTER_PADDING_PX);
 		rootTable.add().expandY();
 		rootTable.row();
 		rootTable.add(difficultyLabel);
-		rootTable.add(difficultySelect);
+		rootTable.add(difficultySelect).colspan(2).fillX();
 		rootTable.add().expandX();
 		rootTable.row();
 		rootTable.add(sizeLabel);
-		rootTable.add(sizeSelect);
+		rootTable.add(sizeSelect).colspan(2).fillX();
 		rootTable.row();
 		rootTable.add(densityLabel);
-		rootTable.add(densitySelect);
+		rootTable.add(densitySelect).colspan(2).fillX();
 		rootTable.row();
 		rootTable.add(seedLabel);
-		rootTable.add(seedTextField).prefWidth(Value.percentWidth(1, difficultySelect));
+		rootTable.add(seedTextField).minWidth(seedTextFieldWidth);
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
 				.padLeft(10);
 		rootTable.row();
-		rootTable.add(playButton).colspan(4).fillX();
+		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTTER_PADDING_PX, OUTTER_PADDING_PX,
+				OUTTER_PADDING_PX);
 		this.addActor(rootTable);
 
 		registerEventListeners();
