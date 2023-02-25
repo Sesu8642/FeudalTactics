@@ -103,12 +103,13 @@ public class ParameterInputStage extends ResizableResettableStage {
 		randomButton.getImageCell().expand().fill();
 		playButton = new TextButton("Play", skin);
 
-		// The largest element on the screen is the seed text field. Measure the largest possible
-		// size of this, based on the max number of chars allowed (18), and in case the font is not
-		// a monospace font, choose a number that takes lots of space (7).
-		// Then, add a little bit extra for the UI component border.
-		GlyphLayout seedWidthRuler = new GlyphLayout(seedTextField.getStyle().font, "777777777777777777");
-		float seedLabelWidth = seedWidthRuler.width * 1.2f;
+		/*
+		 * The longest text on the screen is the seed text field. It allows for 18
+		 * characters at max and 7 is the widest number. Scrolling the text is possible.
+		 * Generated seeds are normally much shorter than the worst case (only 7s).
+		 */
+		float maxSeedNumberWidth = new GlyphLayout(seedTextField.getStyle().font, "7").width;
+		float seedTextFieldWidth = maxSeedNumberWidth * 20;
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
@@ -127,7 +128,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(densitySelect).colspan(2).fillX();
 		rootTable.row().pad(10);
 		rootTable.add(seedLabel);
-		rootTable.add(seedTextField).minWidth(seedLabelWidth);
+		rootTable.add(seedTextField).minWidth(seedTextFieldWidth);
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
 				.padLeft(10);
 		rootTable.row().pad(10);
