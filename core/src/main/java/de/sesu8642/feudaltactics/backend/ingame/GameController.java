@@ -201,7 +201,7 @@ public class GameController {
 			// make bots act
 			startBotTurn();
 		} else {
-			logger.info("player turn begins");
+			logger.info("human player turn begins");
 			botAi.setSkipDisplayingTurn(false);
 			autosave();
 			// clear autosaves from previous turn
