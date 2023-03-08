@@ -161,8 +161,7 @@ public class IngameScreen extends GameScreen {
 	}
 
 	private void resetGame() {
-		cachedGameState = null;
-		winnerBeforeBotTurn = null;
+		clearCache();
 		eventBus.post(new GameExitedEvent());
 		eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 				new MapParameters(parameterInputStage.getSeedParam(),
@@ -171,9 +170,15 @@ public class IngameScreen extends GameScreen {
 		activateStage(IngameStages.PARAMETERS);
 	}
 
+	private void clearCache() {
+		cachedGameState = null;
+		winnerBeforeBotTurn = null;
+	}
+
 	/** Displays a warning about lost progress and exits the game if confirmed. */
 	public void handleExitGameAttempt() {
 		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
+			clearCache();
 			eventBus.post(new GameExitedEvent());
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 		});
@@ -296,6 +301,7 @@ public class IngameScreen extends GameScreen {
 			switch ((byte) result) {
 			case 1:
 				// exit button
+				clearCache();
 				eventBus.post(new GameExitedEvent());
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
 				break;
@@ -384,7 +390,6 @@ public class IngameScreen extends GameScreen {
 		while (!uiChangeActions.isEmpty()) {
 			Runnable action = uiChangeActions.poll();
 			action.run();
-
 		}
 		getViewport().apply();
 		mapRenderer.render();
