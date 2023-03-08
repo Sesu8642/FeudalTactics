@@ -15,7 +15,7 @@ buildscript {
 allprojects {
     apply plugin: "eclipse"
 
-    version = '1.1.2'
+    version = '1.1.3'
     ext {
         appName = "Feudal Tactics"
         gdxVersion = '1.11.0'
