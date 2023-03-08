@@ -1,0 +1,5 @@
+Feudal Tactics 1.1.3
+
+Bugfix release:
+- fix crash in the first turn under certain conditions
+- fix message about enemies giving up sometimes being displayed multiple times
