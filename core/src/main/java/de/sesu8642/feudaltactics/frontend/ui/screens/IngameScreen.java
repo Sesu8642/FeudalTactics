@@ -142,15 +142,19 @@ public class IngameScreen extends GameScreen {
 				&& mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
 			Dialog confirmDialog = dialogFactory.createConfirmDialog(
 					"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
-					() -> eventBus.post(new EndTurnEvent()));
+					this::endHumanPlayerTurn);
 			confirmDialog.show(hudStage);
 		} else {
-			winnerBeforeBotTurn = cachedGameState.getWinner();
-			// isLocalPlayerTurn needs to be set here because if the bot turns are not
-			// shown, this class would never notice that a bot player was active
-			isLocalPlayerTurn = false;
-			eventBus.post(new EndTurnEvent());
+			endHumanPlayerTurn();
 		}
+	}
+
+	private void endHumanPlayerTurn() {
+		winnerBeforeBotTurn = cachedGameState.getWinner();
+		// isLocalPlayerTurn needs to be set here because if the bot turns are not
+		// shown, this class would never notice that a bot player was active
+		isLocalPlayerTurn = false;
+		eventBus.post(new EndTurnEvent());
 	}
 
 	/** Displays a warning about lost progress and resets the game if confirmed. */
