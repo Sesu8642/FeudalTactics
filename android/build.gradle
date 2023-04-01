@@ -20,8 +20,8 @@ android {
         applicationId "de.sesu8642.feudaltactics"
         minSdkVersion 24
         targetSdkVersion 32
-        versionCode 6
-        versionName "1.1.4"
+        versionCode 7
+        versionName "1.1.5"
     }
     buildTypes {
         release {
