@@ -53,7 +53,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	/**
 	 * Width of all parameter inputs combined; depends on label texts and used font.
 	 */
-	public static final long TOTAL_INPUT_WIDTH = 509;
+	public static final long TOTAL_INPUT_WIDTH = 519;
 
 	private EventBus eventBus;
 	private NewGamePreferencesDao newGamePrefDao;
