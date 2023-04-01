@@ -88,7 +88,7 @@ public class MenuStage extends ResizableResettableStage {
 		Image logo = new Image(logoTexture);
 		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.91F));
 		rootTable.row();
-		rootTable.defaults().minHeight(100).pad(10);
+		rootTable.defaults().minHeight(100).pad(5);
 		for (TextButton button : buttons) {
 			rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
 			rootTable.row();
@@ -119,8 +119,8 @@ public class MenuStage extends ResizableResettableStage {
 		rootTable.row();
 		rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
 		rootTable.row();
-		rootTable.add(bottomLeftLabel).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
-		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
+		rootTable.add(bottomLeftLabel).fill(false).left().bottom().pad(5).minHeight(0).colspan(1);
+		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(5).minHeight(0).colspan(1);
 	}
 
 	public void setBottomLeftLabelText(String text) {

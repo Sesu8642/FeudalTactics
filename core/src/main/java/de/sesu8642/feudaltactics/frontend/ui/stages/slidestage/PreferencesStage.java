@@ -25,7 +25,7 @@ import de.sesu8642.feudaltactics.frontend.persistence.MainGamePreferences;
 import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 
 /**
- * {@link Stage} that that displays the global preferences menu.
+ * {@link Stage} that displays the global preferences menu.
  */
 @Singleton
 public class PreferencesStage extends SlideStage {

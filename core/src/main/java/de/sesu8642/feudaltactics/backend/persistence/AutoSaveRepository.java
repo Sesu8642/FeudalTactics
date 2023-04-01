@@ -75,6 +75,20 @@ public class AutoSaveRepository {
 	}
 
 	/**
+	 * Returns the last autosave as JSON string.
+	 * 
+	 * @return loaded game state as JSON string
+	 */
+	public String getLatestAutoSaveAsString() {
+		if (prefStore.get().isEmpty()) {
+			throw new SaveLoadingException("No autosave available");
+		}
+		// cannot be empty if there is a save
+		String latestSaveName = getLatestAutoSaveName().get();
+		return prefStore.getString(latestSaveName);
+	}
+
+	/**
 	 * Deletes the newest autosave.
 	 */
 	public void deleteLatestAutoSave() {

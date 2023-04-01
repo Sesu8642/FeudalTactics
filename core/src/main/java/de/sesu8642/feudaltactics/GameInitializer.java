@@ -24,6 +24,7 @@ import de.sesu8642.feudaltactics.frontend.ScreenNavigationController;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.VersionProperty;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.frontend.persistence.CrashReportDao;
 import de.sesu8642.feudaltactics.frontend.persistence.GameVersionDao;
 
 /**
@@ -37,16 +38,19 @@ public class GameInitializer {
 
 	private EventBus eventBus;
 	private GameVersionDao gameVersionDao;
+	private CrashReportDao crashReportDao;
 	private AutoSaveRepository autoSaveRepository;
 	private ScreenNavigationController screenNavigationController;
 	private String gameVersion;
 
 	/** Constructor. */
 	@Inject
-	public GameInitializer(EventBus eventBus, GameVersionDao gameVersionDao, AutoSaveRepository autoSaveRepository,
-			ScreenNavigationController screenNavigationController, @VersionProperty String gameVersion) {
+	public GameInitializer(EventBus eventBus, GameVersionDao gameVersionDao, CrashReportDao crashReportDao,
+			AutoSaveRepository autoSaveRepository, ScreenNavigationController screenNavigationController,
+			@VersionProperty String gameVersion) {
 		this.eventBus = eventBus;
 		this.gameVersionDao = gameVersionDao;
+		this.crashReportDao = crashReportDao;
 		this.autoSaveRepository = autoSaveRepository;
 		this.screenNavigationController = screenNavigationController;
 		this.gameVersion = gameVersion;
@@ -64,31 +68,40 @@ public class GameInitializer {
 			throw new InitializationException("Unable to configure logging", e);
 		}
 
-		// do not close on android back key
-		Gdx.input.setCatchKey(Keys.BACK, true);
+		try {
+			// do not close on android back key
+			Gdx.input.setCatchKey(Keys.BACK, true);
 
-		eventBus.register(screenNavigationController);
+			eventBus.register(screenNavigationController);
 
-		// show appropriate screen
-		if (autoSaveRepository.getNoOfAutoSaves() > 0) {
-			// resume running game
-			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-			eventBus.post(new GameResumedEvent());
-		} else {
-			// fresh start
-			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.SPLASH_SCREEN));
+			// show appropriate screen
+			if (crashReportDao.hasFreshCrashReport()) {
+				// the game crashed on the previous run --> show the crash report screen
+				crashReportDao.markCrashReportAsNonFresh();
+				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_ON_STARTUP));
+			} else {
+				if (autoSaveRepository.getNoOfAutoSaves() > 0) {
+					// resume running game
+					eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+					eventBus.post(new GameResumedEvent());
+				} else {
+					// fresh start
+					eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.SPLASH_SCREEN));
+				}
+			}
+
+			String previousVersion = gameVersionDao.getGameVersion();
+			if (!Strings.isNullOrEmpty(previousVersion) && !previousVersion.equals(gameVersion)) {
+				// first start after update
+				logger.info("game was updated from version {} to {}", previousVersion, gameVersion);
+				gameVersionDao.saveChangelogState(true);
+			}
+
+			// save current game version
+			gameVersionDao.saveGameVersion(gameVersion);
+		} catch (Exception e) {
+			logger.error("unexpected exception during application start", e);
 		}
-
-		String previousVersion = gameVersionDao.getGameVersion();
-		if (!Strings.isNullOrEmpty(previousVersion) && !previousVersion.equals(gameVersion)) {
-			// first start after update
-			logger.info("game was updated from version {} to {}", previousVersion, gameVersion);
-			gameVersionDao.saveChangelogState(true);
-		}
-
-		// save current game version
-		gameVersionDao.saveGameVersion(gameVersion);
-
 	}
 
 }

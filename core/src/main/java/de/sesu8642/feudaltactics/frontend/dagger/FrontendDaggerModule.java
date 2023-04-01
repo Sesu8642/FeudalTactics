@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.inject.Singleton;
 
@@ -35,6 +37,9 @@ import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutSlide
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogSlideStage;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogText;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.CrashReportPrefStore;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.CrashReportScreenInMainMenu;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.CrashReportScreenOnStartup;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicenses;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesStage;
@@ -62,11 +67,15 @@ import de.sesu8642.feudaltactics.frontend.events.ExitGameEvent;
 import de.sesu8642.feudaltactics.frontend.events.RetryGameUnconfirmedEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.frontend.persistence.CrashReportDao;
 import de.sesu8642.feudaltactics.frontend.persistence.GameVersionDao;
 import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferences;
 import de.sesu8642.feudaltactics.frontend.persistence.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.frontend.renderer.MapRenderer;
+import de.sesu8642.feudaltactics.frontend.ui.crashreportscreen.CrashReportScreen;
+import de.sesu8642.feudaltactics.frontend.ui.crashreportscreen.CrashReportStageForMenu;
+import de.sesu8642.feudaltactics.frontend.ui.crashreportscreen.CrashReportStageForStartup;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.screens.MainMenuScreen;
 import de.sesu8642.feudaltactics.frontend.ui.stages.MenuStage;
@@ -288,6 +297,8 @@ public class FrontendDaggerModule {
 				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.DEPENDENCY_LICENSES_SCREEN)));
 		stage.addButton("Privacy Policy", () -> Gdx.net
 				.openURI("https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt"));
+		stage.addButton("Report Crash", () -> eventBus
+				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_IN_MAIN_MENU)));
 		stage.addButton("Back",
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)));
 		stage.setBottomRightLabelText(String.format("Version %s", gameVersion));
@@ -369,6 +380,31 @@ public class FrontendDaggerModule {
 
 	@Provides
 	@Singleton
+	@CrashReportScreenInMainMenu
+	static CrashReportScreen provideCrashReportScreenInMainMenu(@MenuCamera OrthographicCamera camera,
+			@MenuViewport Viewport viewport, CrashReportStageForMenu crashReportStage, CrashReportDao crashReportDao,
+			ScheduledExecutorService copyButtonFeedbackExecutorService) {
+		return new CrashReportScreen(camera, viewport, crashReportStage, crashReportDao,
+				copyButtonFeedbackExecutorService);
+	}
+
+	/**
+	 * The difference between this instance and the one accessible in the menu is
+	 * that this one transitions to the splash screen afterwards while the other one
+	 * transitions to the menu.
+	 */
+	@Provides
+	@Singleton
+	@CrashReportScreenOnStartup
+	static CrashReportScreen provideCrashReportScreenOnStartup(@MenuCamera OrthographicCamera camera,
+			@MenuViewport Viewport viewport, CrashReportStageForStartup crashReportStage, CrashReportDao crashReportDao,
+			ScheduledExecutorService copyButtonFeedbackExecutorService) {
+		return new CrashReportScreen(camera, viewport, crashReportStage, crashReportDao,
+				copyButtonFeedbackExecutorService);
+	}
+
+	@Provides
+	@Singleton
 	@DependencyLicensesScreen
 	static GameScreen provideDependencyLicensesScreen(@MenuCamera OrthographicCamera camera,
 			@MenuViewport Viewport viewport, @DependencyLicensesStage SlideStage dependencyLicensesStage) {
@@ -402,6 +438,19 @@ public class FrontendDaggerModule {
 	@NewGamePrefsPrefStore
 	static Preferences provideNewGamePrefsPrefStore(@PreferencesPrefixProperty String prefix) {
 		return Gdx.app.getPreferences(prefix + NewGamePreferencesDao.NEW_GAME_PREFERENCES_NAME);
+	}
+
+	@Provides
+	@Singleton
+	@CrashReportPrefStore
+	static Preferences provideCrashReportPrefStore(@PreferencesPrefixProperty String prefix) {
+		return Gdx.app.getPreferences(prefix + CrashReportDao.CRASH_REPORT_PREFERENCES_NAME);
+	}
+
+	@Provides
+	@Singleton
+	static ScheduledExecutorService provideCopyButtonFeedbackExecutorService() {
+		return Executors.newSingleThreadScheduledExecutor();
 	}
 
 }

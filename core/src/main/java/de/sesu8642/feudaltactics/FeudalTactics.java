@@ -37,7 +37,16 @@ public class FeudalTactics extends Game {
 	public void dispose() {
 		// shutdown executor services to kill all background threads
 		component.getBotAiExecutor().shutdownNow();
+		component.getCopyButtonExecutor().shutdownNow();
 		super.dispose();
+	}
+
+	/**
+	 * For accessing dependencies from non-DI-capable classes like the custom JUL
+	 * handler.
+	 */
+	public FeudalTacticsComponent getComponent() {
+		return component;
 	}
 
 }

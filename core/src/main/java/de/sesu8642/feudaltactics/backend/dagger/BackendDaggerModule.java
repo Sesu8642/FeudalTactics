@@ -7,9 +7,14 @@ import java.util.concurrent.Executors;
 
 import javax.inject.Singleton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.SubscriberExceptionContext;
+import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import dagger.Module;
@@ -30,7 +35,15 @@ public class BackendDaggerModule {
 	@Provides
 	@Singleton
 	static EventBus provideEventBus() {
-		return new EventBus();
+		return new EventBus(new SubscriberExceptionHandler() {
+			@Override
+			public void handleException(Throwable exception, SubscriberExceptionContext context) {
+				Logger logger = LoggerFactory.getLogger(SubscriberExceptionHandler.class.getName());
+				logger.error(String.format(
+						"an unexpected error happened while handling the event %s in method %s of subscriber %s",
+						context.getEvent(), context.getSubscriberMethod(), context.getSubscriber()), exception);
+			}
+		});
 	}
 
 	@Provides

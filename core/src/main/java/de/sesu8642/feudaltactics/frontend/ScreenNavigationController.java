@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -16,10 +17,13 @@ import de.sesu8642.feudaltactics.backend.editor.EditorInputHandler;
 import de.sesu8642.feudaltactics.backend.ingame.LocalIngameInputHandler;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.AboutScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.ChangelogScreen;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.CrashReportScreenInMainMenu;
+import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.CrashReportScreenOnStartup;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.InformationMenuScreen;
 import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.TutorialScreen;
 import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
+import de.sesu8642.feudaltactics.frontend.ui.crashreportscreen.CrashReportScreen;
 import de.sesu8642.feudaltactics.frontend.ui.screens.GameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreen;
 import de.sesu8642.feudaltactics.frontend.ui.screens.IngameScreenEventHandler;
@@ -45,6 +49,8 @@ public class ScreenNavigationController {
 	private GameScreen informationMenuScreen;
 	private GameScreen dependencyLicensesScreen;
 	private GameScreen changelogScreen;
+	private CrashReportScreen crashReportScreenInMainMenu;
+	private CrashReportScreen crashReportScreenOnStartup;
 	private de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler;
 	private de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler;
 	private de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler;
@@ -72,6 +78,8 @@ public class ScreenNavigationController {
 			@TutorialScreen GameScreen tutorialScreen, @AboutScreen GameScreen aboutScreen,
 			PreferencesScreen preferencesScreen, @InformationMenuScreen GameScreen informationMenuScreen,
 			@DependencyLicensesScreen GameScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
+			@CrashReportScreenInMainMenu CrashReportScreen crashReportScreenInMainMenu,
+			@CrashReportScreenOnStartup CrashReportScreen crashReportScreenOnStartup,
 			de.sesu8642.feudaltactics.backend.ingame.EventHandler gameLogicEventHandler,
 			de.sesu8642.feudaltactics.backend.editor.EventHandler editorEventHandler,
 			de.sesu8642.feudaltactics.frontend.renderer.EventHandler rendererEventHandler,
@@ -89,6 +97,8 @@ public class ScreenNavigationController {
 		this.informationMenuScreen = informationMenuScreen;
 		this.dependencyLicensesScreen = dependencyLicensesScreen;
 		this.changelogScreen = changelogScreen;
+		this.crashReportScreenInMainMenu = crashReportScreenInMainMenu;
+		this.crashReportScreenOnStartup = crashReportScreenOnStartup;
 		this.gameLogicEventHandler = gameLogicEventHandler;
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
@@ -145,6 +155,12 @@ public class ScreenNavigationController {
 		case CHANGELOG_SCREEN:
 			changeScreen(changelogScreen);
 			break;
+		case CRASH_REPORT_SCREEN_IN_MAIN_MENU:
+			changeScreen(crashReportScreenInMainMenu);
+			break;
+		case CRASH_REPORT_SCREEN_ON_STARTUP:
+			changeScreen(crashReportScreenOnStartup);
+			break;
 		default:
 			throw new AssertionError("Unimplemented transition target: " + event.getTransitionTarget());
 		}
@@ -164,7 +180,9 @@ public class ScreenNavigationController {
 
 	private void changeScreen(Screen screen) {
 		unregisterAllEventHandlers();
-		FeudalTactics.game.setScreen(screen);
+		// changing the screen needs to happen in the UI thread, otherwise there can be
+		// some exception in native code
+		Gdx.app.postRunnable(() -> FeudalTactics.game.setScreen(screen));
 	}
 
 	private void transitionToPreferencesScreen() {
