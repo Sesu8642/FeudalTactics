@@ -174,6 +174,11 @@ public class IngameScreen extends GameScreen {
 		activateStage(IngameStages.PARAMETERS);
 	}
 
+	private void exitToMenu() {
+		eventBus.post(new GameExitedEvent());
+		eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+	}
+
 	private void clearCache() {
 		cachedGameState = null;
 		winnerBeforeBotTurn = null;
@@ -181,11 +186,8 @@ public class IngameScreen extends GameScreen {
 
 	/** Displays a warning about lost progress and exits the game if confirmed. */
 	public void handleExitGameAttempt() {
-		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n", () -> {
-			clearCache();
-			eventBus.post(new GameExitedEvent());
-			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
-		});
+		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+				this::exitToMenu);
 		confirmDialog.show(menuStage);
 	}
 
@@ -305,9 +307,7 @@ public class IngameScreen extends GameScreen {
 			switch ((byte) result) {
 			case 1:
 				// exit button
-				clearCache();
-				eventBus.post(new GameExitedEvent());
-				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+				exitToMenu();
 				break;
 			case 2:
 				// retry button
@@ -332,10 +332,7 @@ public class IngameScreen extends GameScreen {
 	}
 
 	private void showAllEnemiesDefeatedMessage() {
-		Dialog endDialog = dialogFactory.createDialog(result -> {
-			eventBus.post(new GameExitedEvent());
-			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
-		});
+		Dialog endDialog = dialogFactory.createDialog(result -> exitToMenu());
 		endDialog.button("Exit");
 		endDialog.text("VICTORY! You deafeated all of you enemies.");
 		endDialog.show(hudStage);
@@ -344,8 +341,7 @@ public class IngameScreen extends GameScreen {
 	private void showLostMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			if ((boolean) result) {
-				eventBus.post(new GameExitedEvent());
-				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+				exitToMenu();
 			} else {
 				resetGame();
 			}
@@ -385,6 +381,7 @@ public class IngameScreen extends GameScreen {
 
 	@Override
 	public void show() {
+		clearCache();
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		activateStage(IngameStages.PARAMETERS);
 	}
