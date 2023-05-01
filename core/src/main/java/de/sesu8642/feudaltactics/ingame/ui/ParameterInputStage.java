@@ -28,9 +28,9 @@ import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -42,15 +42,18 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private static final long INPUT_HEIGHT_PX = 79;
 	private static final int INPUT_PADDING_PX = 20;
-	private static final int OUTTER_PADDING_PX = 10;
 
 	// for map centering calculation
-	/** Height of the play button. */
-	public static final long BUTTON_HEIGHT_PX = 110;
+	/** Outer padding around all the inputs. */
+	public static final int OUTER_PADDING_PX = 10;
+
+	/** Height of the play button + bottom padding. */
+	public static final long BUTTON_HEIGHT_PX = 114;
 
 	/** Height of all parameter inputs combined. */
 	public static final long TOTAL_INPUT_HEIGHT = 4 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
-			+ OUTTER_PADDING_PX;
+			+ OUTER_PADDING_PX;
+
 	/**
 	 * Width of all parameter inputs combined; depends on label texts and used font.
 	 */
@@ -129,7 +132,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable = new Table();
 		rootTable.setFillParent(true);
 		rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);
-		rootTable.columnDefaults(0).pad(0, OUTTER_PADDING_PX, 0, OUTTER_PADDING_PX);
+		rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
 		rootTable.add().expandY();
 		rootTable.row();
 		rootTable.add(difficultyLabel);
@@ -147,8 +150,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
 				.padLeft(INPUT_PADDING_PX);
 		rootTable.row();
-		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTTER_PADDING_PX, OUTTER_PADDING_PX,
-				OUTTER_PADDING_PX);
+		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
+				OUTER_PADDING_PX);
 		this.addActor(rootTable);
 
 		registerEventListeners();

@@ -34,8 +34,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.InputValidationHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -288,11 +288,13 @@ public class IngameScreen extends GameScreen {
 		float aboveArea = ingameCamera.viewportWidth
 				* (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
 		float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
-				* (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX);
+				* (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX
+						- ParameterInputStage.OUTER_PADDING_PX);
 		if (aboveArea > rightArea) {
 			return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT, 0, 0);
 		} else {
-			return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH, ParameterInputStage.BUTTON_HEIGHT_PX, 0, 0);
+			return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
+					ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
 		}
 	}
 
