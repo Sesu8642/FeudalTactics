@@ -32,20 +32,20 @@ import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.ApplicationStub;
-import de.sesu8642.feudaltactics.backend.gamestate.Capital;
-import de.sesu8642.feudaltactics.backend.gamestate.Castle;
-import de.sesu8642.feudaltactics.backend.gamestate.GameState;
-import de.sesu8642.feudaltactics.backend.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.backend.gamestate.GameStateSerializer;
-import de.sesu8642.feudaltactics.backend.gamestate.Kingdom;
-import de.sesu8642.feudaltactics.backend.gamestate.Player;
-import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
-import de.sesu8642.feudaltactics.backend.gamestate.Unit;
-import de.sesu8642.feudaltactics.backend.ingame.botai.BotAi;
-import de.sesu8642.feudaltactics.backend.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
-import de.sesu8642.feudaltactics.frontend.persistence.MainGamePreferences;
-import de.sesu8642.feudaltactics.frontend.persistence.MainPreferencesDao;
+import de.sesu8642.feudaltactics.lib.gamestate.Capital;
+import de.sesu8642.feudaltactics.lib.gamestate.Castle;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.lib.gamestate.GameStateSerializer;
+import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit;
+import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
+import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 
 /** Tests for BotAi class. */
 @ExtendWith(MockitoExtension.class)

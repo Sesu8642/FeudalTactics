@@ -17,15 +17,14 @@ import com.badlogic.gdx.Input.Keys;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.backend.exceptions.InitializationException;
-import de.sesu8642.feudaltactics.backend.persistence.AutoSaveRepository;
+import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.frontend.ScreenNavigationController;
-import de.sesu8642.feudaltactics.frontend.dagger.qualifierannotations.VersionProperty;
-import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.frontend.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
-import de.sesu8642.feudaltactics.frontend.persistence.CrashReportDao;
-import de.sesu8642.feudaltactics.frontend.persistence.GameVersionDao;
+import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
+import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.exceptions.InitializationException;
+import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
+import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
+import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
 
 /**
  * Class for initializing the game in a non-static context that can get injected

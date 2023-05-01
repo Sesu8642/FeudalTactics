@@ -19,8 +19,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import de.sesu8642.feudaltactics.ApplicationStub;
-import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
-import de.sesu8642.feudaltactics.backend.gamestate.Unit.UnitTypes;
+import de.sesu8642.feudaltactics.lib.gamestate.Capital;
+import de.sesu8642.feudaltactics.lib.gamestate.Castle;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.lib.gamestate.Gravestone;
+import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
+import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
+import de.sesu8642.feudaltactics.lib.gamestate.MapObject;
+import de.sesu8642.feudaltactics.lib.gamestate.PalmTree;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.gamestate.Tree;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit;
+import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 
 /** Tests for GameStateHelper class related to splitting a kingdom. */
 class GameStateHelperKingdomSplitTest {

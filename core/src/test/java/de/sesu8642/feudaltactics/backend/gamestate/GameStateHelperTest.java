@@ -19,10 +19,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import com.badlogic.gdx.graphics.Color;
 
-import de.sesu8642.feudaltactics.backend.gamestate.GameState;
-import de.sesu8642.feudaltactics.backend.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.backend.gamestate.Player;
-import de.sesu8642.feudaltactics.backend.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 
 /** Tests for GameStateHelper class. */
 class GameStateHelperTest {

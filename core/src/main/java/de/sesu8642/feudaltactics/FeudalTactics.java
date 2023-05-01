@@ -5,7 +5,8 @@ package de.sesu8642.feudaltactics;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 
-import de.sesu8642.feudaltactics.DaggerFeudalTacticsComponent;
+import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
+import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
 
 /** The game's entry point. */
 public class FeudalTactics extends Game {
