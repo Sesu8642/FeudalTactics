@@ -6,17 +6,15 @@ import javax.inject.Inject;
 
 import com.google.common.eventbus.Subscribe;
 
+import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
-import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
-import de.sesu8642.feudaltactics.menu.common.ui.Margin;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /** Handles events that affect rendering. */
 public class IngameRendererEventHandler {
 
 	MapRenderer mapRenderer;
-	IngameScreen ingameSceen;
 
 	/**
 	 * Constructor.
@@ -25,9 +23,8 @@ public class IngameRendererEventHandler {
 	 * @param ingameSceen ingame screen
 	 */
 	@Inject
-	public IngameRendererEventHandler(@IngameRenderer MapRenderer mapRenderer, IngameScreen ingameSceen) {
+	public IngameRendererEventHandler(@IngameRenderer MapRenderer mapRenderer) {
 		this.mapRenderer = mapRenderer;
-		this.ingameSceen = ingameSceen;
 	}
 
 	/**
@@ -38,10 +35,17 @@ public class IngameRendererEventHandler {
 	@Subscribe
 	public void handleGameStateChange(GameStateChangeEvent event) {
 		mapRenderer.updateMap(event.getGameState());
-		if (event.isMapDimensionsChanged()) {
-			Margin margin = ingameSceen.calculateMapScreenArea();
-			mapRenderer.placeCameraForFullMapView(event.getGameState(), margin.marginLeft, margin.marginBottom, 0, 0);
-		}
+	}
+
+	/**
+	 * Event handler for map centering.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleMapCentering(CenterMapEvent event) {
+		mapRenderer.placeCameraForFullMapView(event.getGameState(), event.getMarginLeftPx(), event.getMarginBottomPx(),
+				event.getMarginRightPx(), event.getMarginTopPx());
 	}
 
 }

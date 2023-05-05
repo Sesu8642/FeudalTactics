@@ -18,6 +18,7 @@ import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
+import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
@@ -83,6 +84,7 @@ public class GameInitializer {
 					// resume running game
 					eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 					eventBus.post(new GameResumedEvent());
+					eventBus.post(new CenterMapUIEvent());
 				} else {
 					// fresh start
 					eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.SPLASH_SCREEN));

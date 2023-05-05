@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
+import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
@@ -166,6 +167,7 @@ public class IngameScreen extends GameScreen {
 				new MapParameters(parameterInputStage.getSeedParam(),
 						parameterInputStage.getMapSizeParam().getAmountOfTiles(),
 						parameterInputStage.getMapDensityParam().getDensityFloat())));
+		centerMap();
 		activateStage(IngameStages.PARAMETERS);
 	}
 
@@ -193,7 +195,7 @@ public class IngameScreen extends GameScreen {
 	 * @param gameState            new game state
 	 * @param mapDimensionsChanged whether the map dimensions changed
 	 */
-	public void handleGameStateChange(GameState gameState, boolean mapDimensionsChanged) {
+	public void handleGameStateChange(GameState gameState) {
 		boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
 		boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
 		isLocalPlayerTurn = isLocalPlayerTurnNew;
@@ -259,11 +261,7 @@ public class IngameScreen extends GameScreen {
 			}
 		}
 		hudStage.setInfoText(infoText);
-
-		if (mapDimensionsChanged) {
-			// dimensions changed means that the seed also changed
-			parameterInputStage.updateSeed(newGameState.getSeed());
-		}
+		parameterInputStage.updateSeed(newGameState.getSeed());
 	}
 
 	/** Toggles the pause menu. */
@@ -275,6 +273,13 @@ public class IngameScreen extends GameScreen {
 		}
 	}
 
+	/** Centers the map in the available screen space. */
+	void centerMap() {
+		Margin centeringMargin = calculateMapScreenArea();
+		eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
+				centeringMargin.marginTop, centeringMargin.marginRight));
+	}
+
 	/**
 	 * Calculates where the map should be placed to have the most room while not
 	 * being behind the UI elements.
@@ -282,7 +287,7 @@ public class IngameScreen extends GameScreen {
 	 * @return Vector of margin to the left and margin to the bottom where the map
 	 *         should not be rendered. The rest of the screen can be used.
 	 */
-	public Margin calculateMapScreenArea() {
+	private Margin calculateMapScreenArea() {
 		// calculate what is the bigger rectangular area for the map to fit: above the
 		// inputs or to their right
 		float aboveArea = ingameCamera.viewportWidth
@@ -381,6 +386,7 @@ public class IngameScreen extends GameScreen {
 		clearCache();
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		activateStage(IngameStages.PARAMETERS);
+		centerMap();
 	}
 
 	@Override

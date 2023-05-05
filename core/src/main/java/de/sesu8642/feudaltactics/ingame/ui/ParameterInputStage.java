@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
+import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
@@ -172,6 +173,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 					public void changed(ChangeEvent event, Actor actor) {
 						eventBus.post(new RegenerateMapEvent(getBotIntelligence(), new MapParameters(getSeedParam(),
 								getMapSizeParam().getAmountOfTiles(), getMapDensityParam().getDensityFloat())));
+						eventBus.post(new CenterMapUIEvent());
 						newGamePrefDao.saveNewGamePreferences(
 								new NewGamePreferences(getBotIntelligence(), getMapSizeParam(), getMapDensityParam()));
 					}

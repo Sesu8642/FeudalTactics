@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import com.badlogic.gdx.Gdx;
 import com.google.common.eventbus.Subscribe;
 
+import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.CloseMenuEvent;
 import de.sesu8642.feudaltactics.events.EndTurnUnconfirmedEvent;
 import de.sesu8642.feudaltactics.events.ExitGameEvent;
@@ -126,7 +127,17 @@ public class IngameScreenEventHandler {
 	 */
 	@Subscribe
 	public void handleGameStateChange(GameStateChangeEvent event) {
-		ingameScreen.handleGameStateChange(event.getGameState(), event.isMapDimensionsChanged());
+		ingameScreen.handleGameStateChange(event.getGameState());
+	}
+
+	/**
+	 * Event handler for gameState changes.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleMapCenteringUiEvent(CenterMapUIEvent event) {
+		ingameScreen.centerMap();
 	}
 
 }

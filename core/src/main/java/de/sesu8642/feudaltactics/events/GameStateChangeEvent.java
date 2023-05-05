@@ -9,8 +9,6 @@ public class GameStateChangeEvent {
 
 	private GameState gameState;
 
-	private boolean mapDimensionsChanged = false;
-
 	/**
 	 * Constructor.
 	 * 
@@ -20,31 +18,12 @@ public class GameStateChangeEvent {
 		this.gameState = gameState;
 	}
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param gameState            new game state
-	 * @param mapDimensionsChanged whether the map's dimensions have changed
-	 */
-	public GameStateChangeEvent(GameState gameState, boolean mapDimensionsChanged) {
-		this.gameState = gameState;
-		this.mapDimensionsChanged = mapDimensionsChanged;
-	}
-
 	public GameState getGameState() {
 		return gameState;
 	}
 
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
-	}
-
-	public boolean isMapDimensionsChanged() {
-		return mapDimensionsChanged;
-	}
-
-	public void setMapDimensionsChanged(boolean mapDimensionsChanged) {
-		this.mapDimensionsChanged = mapDimensionsChanged;
 	}
 
 }

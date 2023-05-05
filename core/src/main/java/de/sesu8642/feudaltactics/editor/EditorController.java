@@ -45,7 +45,7 @@ public class EditorController {
 			players.add(new Player(GameController.PLAYER_COLORS[i], Type.LOCAL_BOT));
 		}
 		GameStateHelper.initializeMap(gameState, players, 0, 0, 0F, null);
-		eventBus.post(new GameStateChangeEvent(gameState, false));
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/** Creates a tile. */
@@ -61,7 +61,7 @@ public class EditorController {
 			Player newPlayer = gameState.getPlayers().get(newTilePlayerIndex);
 			GameStateHelper.placeTile(gameState, hexCoords, newPlayer);
 		}
-		eventBus.post(new GameStateChangeEvent(gameState, false));
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	public GameState getGameState() {

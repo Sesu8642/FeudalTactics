@@ -81,7 +81,7 @@ public class GameController {
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
 		}
-		eventBus.post(new GameStateChangeEvent(gameState, true));
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class GameController {
 		}
 		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass(), mapParams.getDensity(), null,
 				mapParams.getSeed());
-		eventBus.post(new GameStateChangeEvent(gameState, true));
+		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class GameController {
 			autosave();
 			// clear autosaves from previous turn
 			autoSaveRepo.deleteAllAutoSaveExceptLatestN(1);
-			eventBus.post(new GameStateChangeEvent(gameState, false));
+			eventBus.post(new GameStateChangeEvent(gameState));
 		}
 	}
 
