@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import javax.inject.Inject;
 
+import com.badlogic.gdx.Gdx;
 import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.events.CloseMenuEvent;
@@ -89,7 +90,13 @@ public class IngameScreenEventHandler {
 	 */
 	@Subscribe
 	public void handleGameResumed(GameResumedEvent event) {
-		ingameScreen.activateStage(IngameStages.HUD);
+		// need to do this in postRunnable
+		// the ingame screen is set in postRunnable as well and in
+		// IngameScreen#show, the parameter input stage is activated which MUST happen
+		// before this, otherwise the wrong state will be shown
+		Gdx.app.postRunnable(() -> {
+			ingameScreen.activateStage(IngameStages.HUD);
+		});
 	}
 
 	/**
