@@ -54,7 +54,6 @@ public class GameInitializer {
 		this.autoSaveRepository = autoSaveRepository;
 		this.screenNavigationController = screenNavigationController;
 		this.gameVersion = gameVersion;
-
 	}
 
 	void initializeGame() {

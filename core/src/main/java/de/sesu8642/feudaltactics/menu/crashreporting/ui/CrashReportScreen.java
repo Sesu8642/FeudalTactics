@@ -8,6 +8,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,25 +20,41 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.base.Strings;
+import com.google.common.eventbus.EventBus;
 
+import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
+import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
+import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
 
-/** Screen for crash reporting. */
+/**
+ * Screen for crash reporting.
+ */
+@Singleton
 public class CrashReportScreen extends GameScreen {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private final AbstractCrashReportStage crashReportStage;
+	private EventBus eventBus;
+	private final CrashReportStage crashReportStage;
 	private final CrashReportDao crashReportDao;
-
 	private final ScheduledExecutorService copyButtonFeedbackExecutorService;
 	private ScheduledFuture<?> copyButtonFeedBackFuture;
+	/**
+	 * Whether the screen is shown on startup. Causes the splash screen to be shown
+	 * on finish instead of the menu.
+	 */
+	private boolean isGameStartup = false;
 
 	/** Constructor. */
-	public CrashReportScreen(OrthographicCamera camera, Viewport viewport, AbstractCrashReportStage crashReportStage,
-			CrashReportDao crashReportDao, ScheduledExecutorService copyButtonFeedbackExecutorService) {
+	@Inject
+	public CrashReportScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+			CrashReportStage crashReportStage, CrashReportDao crashReportDao,
+			ScheduledExecutorService copyButtonFeedbackExecutorService) {
 		super(camera, viewport, crashReportStage);
+		this.eventBus = eventBus;
 		this.crashReportStage = crashReportStage;
 		this.crashReportDao = crashReportDao;
 		this.copyButtonFeedbackExecutorService = copyButtonFeedbackExecutorService;
@@ -57,6 +76,11 @@ public class CrashReportScreen extends GameScreen {
 	}
 
 	private void registerEventListeners() {
+		crashReportStage.setFinishedCallback(() -> {
+			ScreenTransitionTarget onFinishedTarget = isGameStartup ? ScreenTransitionTarget.SPLASH_SCREEN
+					: ScreenTransitionTarget.INFORMATION_MENU_SCREEN;
+			eventBus.post(new ScreenTransitionTriggerEvent(onFinishedTarget));
+		});
 		crashReportStage.crashReportSlide.sendMailButton.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -100,6 +124,14 @@ public class CrashReportScreen extends GameScreen {
 				Gdx.net.openURI("https://github.com/Sesu8642/FeudalTactics/issues");
 			}
 		});
+	}
+
+	public boolean isGameStartup() {
+		return isGameStartup;
+	}
+
+	public void setGameStartup(boolean isGameStartup) {
+		this.isGameStartup = isGameStartup;
 	}
 
 }

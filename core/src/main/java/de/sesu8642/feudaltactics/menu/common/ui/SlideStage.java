@@ -38,6 +38,20 @@ public class SlideStage extends ResizableResettableStage {
 	private TextButton backButton;
 	private TextButton nextButton;
 	private Container<Table> slideContainer = new Container<>();
+	private Runnable finishedCallback;
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param viewport viewport for the stage
+	 * @param slides   slides that are displayed
+	 * @param camera   camera to use
+	 * @param skin     game skin
+	 */
+	public SlideStage(Viewport viewport, List<Slide> slides, OrthographicCamera camera, Skin skin) {
+		this(viewport, slides, () -> {
+		}, camera, skin);
+	}
 
 	/**
 	 * Constructor.
@@ -57,10 +71,11 @@ public class SlideStage extends ResizableResettableStage {
 		this.camera = camera;
 		this.skin = skin;
 		this.slides = slides.stream().map(Slide::getTable).collect(Collectors.toList());
-		initUi(this.slides, finishedCallback);
+		this.finishedCallback = finishedCallback;
+		initUi(this.slides);
 	}
 
-	private void initUi(List<Table> slides, Runnable finishedCallback) {
+	private void initUi(List<Table> slides) {
 		backButton = new TextButton("", skin);
 		backButton.setDisabled(true);
 		backButton.setTouchable(Touchable.disabled);
@@ -167,4 +182,9 @@ public class SlideStage extends ResizableResettableStage {
 			disposable.dispose();
 		}
 	}
+
+	public void setFinishedCallback(Runnable finishedCallback) {
+		this.finishedCallback = finishedCallback;
+	}
+
 }

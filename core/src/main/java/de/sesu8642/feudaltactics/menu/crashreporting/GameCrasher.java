@@ -13,6 +13,7 @@ import com.google.common.base.Throwables;
 import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
+import de.sesu8642.feudaltactics.menu.crashreporting.ui.CrashingScreen;
 
 /**
  * Soft-crashes the game in case of a critical error after collecting important

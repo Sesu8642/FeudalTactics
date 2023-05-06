@@ -13,10 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 
 /**
  * {@link Stage} that displays information about the last crash for reporting.
@@ -24,7 +23,9 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
  * to the menu.
  */
 @Singleton
-public class CrashReportStageForMenu extends AbstractCrashReportStage {
+public class CrashReportStage extends SlideStage {
+
+	final CrashReportSlide crashReportSlide;
 
 	/**
 	 * Constructor.
@@ -35,11 +36,10 @@ public class CrashReportStageForMenu extends AbstractCrashReportStage {
 	 * @param skin     game skin
 	 */
 	@Inject
-	public CrashReportStageForMenu(EventBus eventBus, CrashReportSlide crashReportSlide,
-			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
-		super(crashReportSlide, viewport, Arrays.asList(crashReportSlide),
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
-				camera, skin);
+	public CrashReportStage(EventBus eventBus, CrashReportSlide crashReportSlide, @MenuViewport Viewport viewport,
+			@MenuCamera OrthographicCamera camera, Skin skin) {
+		super(viewport, Arrays.asList(crashReportSlide), camera, skin);
+		this.crashReportSlide = crashReportSlide;
 	}
 
 }

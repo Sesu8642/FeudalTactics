@@ -13,18 +13,20 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.editor.EditorInputHandler;
+import de.sesu8642.feudaltactics.editor.EventHandler;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
+import de.sesu8642.feudaltactics.ingame.IngameRendererEventHandler;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.input.LocalIngameInputHandler;
+import de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler;
 import de.sesu8642.feudaltactics.menu.about.dagger.AboutScreen;
 import de.sesu8642.feudaltactics.menu.changelog.dagger.ChangelogScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
-import de.sesu8642.feudaltactics.menu.crashreporting.dagger.CrashReportScreenInMainMenu;
-import de.sesu8642.feudaltactics.menu.crashreporting.dagger.CrashReportScreenOnStartup;
 import de.sesu8642.feudaltactics.menu.crashreporting.ui.CrashReportScreen;
 import de.sesu8642.feudaltactics.menu.information.dagger.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.menu.information.dagger.InformationMenuScreen;
+import de.sesu8642.feudaltactics.menu.mainmenu.ui.MainMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
@@ -48,40 +50,25 @@ public class ScreenNavigationController {
 	private GameScreen informationMenuScreen;
 	private GameScreen dependencyLicensesScreen;
 	private GameScreen changelogScreen;
-	private CrashReportScreen crashReportScreenInMainMenu;
-	private CrashReportScreen crashReportScreenOnStartup;
-	private de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler gameLogicEventHandler;
-	private de.sesu8642.feudaltactics.editor.EventHandler editorEventHandler;
-	private de.sesu8642.feudaltactics.ingame.IngameRendererEventHandler rendererEventHandler;
+	private CrashReportScreen crashReportScreen;
+	private GameControllerEventHandler gameLogicEventHandler;
+	private EventHandler editorEventHandler;
+	private IngameRendererEventHandler rendererEventHandler;
 	private IngameScreenEventHandler ingameScreenEventHandler;
 	private PreferencesScreenEventHandler preferencesScreenEventHandler;
 
 	/**
 	 * Constructor.
-	 * 
-	 * @param eventBus                      event bus to register and unregister
-	 *                                      to/with
-	 * @param localIngameInputHandler       local ingame input handler
-	 * @param gameLogicEventHandler         game logic event handler
-	 * @param splashScreen                  splash screen
-	 * @param ingameScreen                  ingame screen
-	 * @param mainMenuScreen                main menu screen
-	 * @param rendererEventHandler          renderer event handler
-	 * @param ingameScreenEventHandler      ingame screen event handler
-	 * @param preferencesScreenEventHandler preferences screen event handler
 	 */
 	@Inject
 	public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
-			de.sesu8642.feudaltactics.menu.mainmenu.ui.MainMenuScreen mainMenuScreen,
-			@TutorialScreen GameScreen tutorialScreen, @AboutScreen GameScreen aboutScreen,
-			PreferencesScreen preferencesScreen, @InformationMenuScreen GameScreen informationMenuScreen,
+			MainMenuScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
+			@AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
+			@InformationMenuScreen GameScreen informationMenuScreen,
 			@DependencyLicensesScreen GameScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
-			@CrashReportScreenInMainMenu CrashReportScreen crashReportScreenInMainMenu,
-			@CrashReportScreenOnStartup CrashReportScreen crashReportScreenOnStartup,
-			de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler gameLogicEventHandler,
-			de.sesu8642.feudaltactics.editor.EventHandler editorEventHandler,
-			de.sesu8642.feudaltactics.ingame.IngameRendererEventHandler rendererEventHandler,
+			CrashReportScreen crashReportScreen, GameControllerEventHandler gameLogicEventHandler,
+			EventHandler editorEventHandler, IngameRendererEventHandler rendererEventHandler,
 			IngameScreenEventHandler ingameScreenEventHandler,
 			PreferencesScreenEventHandler preferencesScreenEventHandler) {
 		this.eventBus = eventBus;
@@ -96,8 +83,7 @@ public class ScreenNavigationController {
 		this.informationMenuScreen = informationMenuScreen;
 		this.dependencyLicensesScreen = dependencyLicensesScreen;
 		this.changelogScreen = changelogScreen;
-		this.crashReportScreenInMainMenu = crashReportScreenInMainMenu;
-		this.crashReportScreenOnStartup = crashReportScreenOnStartup;
+		this.crashReportScreen = crashReportScreen;
 		this.gameLogicEventHandler = gameLogicEventHandler;
 		this.editorEventHandler = editorEventHandler;
 		this.rendererEventHandler = rendererEventHandler;
@@ -155,10 +141,10 @@ public class ScreenNavigationController {
 			changeScreen(changelogScreen);
 			break;
 		case CRASH_REPORT_SCREEN_IN_MAIN_MENU:
-			changeScreen(crashReportScreenInMainMenu);
+			transitionToCrashReportScreenInMainMenu();
 			break;
 		case CRASH_REPORT_SCREEN_ON_STARTUP:
-			changeScreen(crashReportScreenOnStartup);
+			transitionToCrashReportScreenOnStartup();
 			break;
 		default:
 			throw new AssertionError("Unimplemented transition target: " + event.getTransitionTarget());
@@ -175,6 +161,16 @@ public class ScreenNavigationController {
 		changeScreen(ingameScreen);
 		Stream.of(editorInputHandler, editorEventHandler, ingameScreen, rendererEventHandler)
 				.forEach(object -> eventBus.register(object));
+	}
+
+	private void transitionToCrashReportScreenInMainMenu() {
+		changeScreen(crashReportScreen);
+		crashReportScreen.setGameStartup(false);
+	}
+
+	private void transitionToCrashReportScreenOnStartup() {
+		changeScreen(crashReportScreen);
+		crashReportScreen.setGameStartup(true);
 	}
 
 	private void changeScreen(Screen screen) {
