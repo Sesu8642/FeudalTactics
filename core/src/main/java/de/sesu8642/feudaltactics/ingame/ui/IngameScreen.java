@@ -2,8 +2,10 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,19 +15,33 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
+import de.sesu8642.feudaltactics.events.BotTurnSkippedEvent;
+import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
 import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
+import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
+import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
@@ -37,6 +53,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -49,6 +66,8 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 /** {@link Screen} for playing a map. */
 @Singleton
 public class IngameScreen extends GameScreen {
+
+	private TextureAtlas textureAtlas;
 
 	private AutoSaveRepository autoSaveRepo;
 	private MainPreferencesDao mainPrefsDao;
@@ -84,16 +103,22 @@ public class IngameScreen extends GameScreen {
 	 * be placed here and will be executed when the next render happens.
 	 */
 	private ConcurrentLinkedQueue<Runnable> uiChangeActions = new ConcurrentLinkedQueue<>();
+	private NewGamePreferencesDao newGamePrefDao;
 
 	/** Stages that can be displayed. */
 	public enum IngameStages {
 		PARAMETERS, HUD, MENU
 	}
 
+	// current speed that the enemy turns are displayed in
+	private Speed currentBotSpeed = Speed.NORMAL;
+
 	/**
 	 * Constructor.
 	 * 
 	 * @param autoSaveRepo         repo for interacting with autosave persistence
+	 * @param mainPrefsDao         dao for main preferences
+	 * @param newGamePrefDao       dao for new game preferences
 	 * @param ingameCamera         camera for viewing the map
 	 * @param viewport             viewport for the menus
 	 * @param menuCamera           camera for the menus
@@ -109,15 +134,17 @@ public class IngameScreen extends GameScreen {
 	 * @param parameterInputStage  stage for the new game parameter input UI
 	 */
 	@Inject
-	public IngameScreen(AutoSaveRepository autoSaveRepo, MainPreferencesDao mainPrefsDao,
-			@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
-			@MenuCamera OrthographicCamera menuCamera, @IngameRenderer MapRenderer mapRenderer,
-			DialogFactory confirmDialogFactory, EventBus eventBus, CombinedInputProcessor inputProcessor,
-			InputMultiplexer inputMultiplexer, HudStage hudStage, MenuStage menuStage,
-			ParameterInputStage parameterInputStage) {
+	public IngameScreen(TextureAtlas textureAtlas, AutoSaveRepository autoSaveRepo, MainPreferencesDao mainPrefsDao,
+			NewGamePreferencesDao newGamePrefDao, @IngameCamera OrthographicCamera ingameCamera,
+			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
+			@IngameRenderer MapRenderer mapRenderer, DialogFactory confirmDialogFactory, EventBus eventBus,
+			CombinedInputProcessor inputProcessor, InputMultiplexer inputMultiplexer, HudStage hudStage,
+			IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
+		this.textureAtlas = textureAtlas;
 		this.autoSaveRepo = autoSaveRepo;
 		this.mainPrefsDao = mainPrefsDao;
+		this.newGamePrefDao = newGamePrefDao;
 		this.ingameCamera = ingameCamera;
 		this.mapRenderer = mapRenderer;
 		this.dialogFactory = confirmDialogFactory;
@@ -127,6 +154,10 @@ public class IngameScreen extends GameScreen {
 		this.hudStage = hudStage;
 		this.menuStage = menuStage;
 		this.parameterInputStage = parameterInputStage;
+		addIngameMenuListeners();
+		addParameterInputListeners();
+		addHudListeners();
+		loadNewGameParameterValues();
 	}
 
 	/**
@@ -153,13 +184,6 @@ public class IngameScreen extends GameScreen {
 		eventBus.post(new EndTurnEvent());
 	}
 
-	/** Displays a warning about lost progress and resets the game if confirmed. */
-	void handleUnconfirmedRetryGame() {
-		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-				this::resetGame);
-		confirmDialog.show(menuStage);
-	}
-
 	private void resetGame() {
 		clearCache();
 		eventBus.post(new GameExitedEvent());
@@ -179,13 +203,6 @@ public class IngameScreen extends GameScreen {
 	private void clearCache() {
 		cachedGameState = null;
 		winnerBeforeBotTurn = null;
-	}
-
-	/** Displays a warning about lost progress and exits the game if confirmed. */
-	public void handleExitGameAttempt() {
-		Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-				this::exitToMenu);
-		confirmDialog.show(menuStage);
 	}
 
 	/**
@@ -410,6 +427,139 @@ public class IngameScreen extends GameScreen {
 		menuStage.dispose();
 		// might try to dispose the same stage twice
 		super.dispose();
+	}
+
+	private void addIngameMenuListeners() {
+		// exit button
+		List<TextButton> buttons = menuStage.getButtons();
+		buttons.get(0).addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+						() -> exitToMenu());
+				confirmDialog.show(menuStage);
+			}
+		});
+		// retry button
+		buttons.get(1).addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+						() -> resetGame());
+				confirmDialog.show(menuStage);
+			}
+		});
+		// continue button
+		buttons.get(2).addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				activateStage(IngameStages.HUD);
+			}
+		});
+	}
+
+	private void addParameterInputListeners() {
+		parameterInputStage.randomButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()));
+			}
+		});
+
+		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
+				parameterInputStage.densitySelect).forEach(actor -> actor.addListener(new ChangeListener() {
+					@Override
+					public void changed(ChangeEvent event, Actor actor) {
+						eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
+								new MapParameters(parameterInputStage.getSeedParam(),
+										parameterInputStage.getMapSizeParam().getAmountOfTiles(),
+										parameterInputStage.getMapDensityParam().getDensityFloat())));
+						centerMap();
+						newGamePrefDao.saveNewGamePreferences(new NewGamePreferences(
+								parameterInputStage.getBotIntelligence(), parameterInputStage.getMapSizeParam(),
+								parameterInputStage.getMapDensityParam()));
+					}
+				}));
+
+		parameterInputStage.playButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new GameStartEvent());
+			}
+		});
+	}
+
+	private void addHudListeners() {
+		hudStage.undoButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new UndoMoveEvent());
+			}
+		});
+
+		hudStage.endTurnButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				handleEndTurnAttempt();
+			}
+		});
+
+		hudStage.buyPeasantButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new BuyPeasantEvent());
+			}
+		});
+
+		hudStage.buyCastleButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new BuyCastleEvent());
+			}
+		});
+
+		hudStage.menuButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				activateStage(IngameStages.MENU);
+			}
+		});
+
+		hudStage.speedButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				// determine the next speed level with overflow, skipping Speed.INSTANT which is
+				// used for the other button
+				int currentSpeedIndex = currentBotSpeed.ordinal();
+				int nextSpeedIndex = currentSpeedIndex + 1;
+				if (nextSpeedIndex >= Speed.values().length) {
+					nextSpeedIndex = 0;
+				}
+				currentBotSpeed = Speed.values()[nextSpeedIndex];
+				eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
+				hudStage.speedButton.setStyle(new ImageButtonStyle(null, null, null,
+						new SpriteDrawable(
+								textureAtlas.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed))),
+						new SpriteDrawable(textureAtlas
+								.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed) + "_pressed")),
+						null));
+			}
+		});
+
+		hudStage.skipButton.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				eventBus.post(new BotTurnSkippedEvent());
+			}
+		});
+
+	}
+
+	private void loadNewGameParameterValues() {
+		NewGamePreferences prefs = newGamePrefDao.getNewGamePreferences();
+		parameterInputStage.difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
+		parameterInputStage.sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
+		parameterInputStage.densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
 	}
 
 	public OrthographicCamera getCamera() {

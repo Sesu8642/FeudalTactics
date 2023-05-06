@@ -2,13 +2,10 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
-import java.util.stream.Stream;
-
 import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -19,19 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
-import de.sesu8642.feudaltactics.ingame.MapParameters;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -60,18 +49,16 @@ public class ParameterInputStage extends ResizableResettableStage {
 	 */
 	public static final long TOTAL_INPUT_WIDTH = 519;
 
-	private EventBus eventBus;
-	private NewGamePreferencesDao newGamePrefDao;
 	private TextureAtlas textureAtlas;
 	private Skin skin;
 
 	private Table rootTable;
-	private SelectBox<String> sizeSelect;
-	private SelectBox<String> densitySelect;
-	private SelectBox<String> difficultySelect;
-	private ImageButton randomButton;
-	private TextButton playButton;
-	private TextField seedTextField;
+	SelectBox<String> sizeSelect;
+	SelectBox<String> densitySelect;
+	SelectBox<String> difficultySelect;
+	ImageButton randomButton;
+	TextButton playButton;
+	TextField seedTextField;
 
 	/**
 	 * Constructor.
@@ -82,11 +69,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 	 * @param skin         game skin
 	 */
 	@Inject
-	public ParameterInputStage(EventBus eventBus, NewGamePreferencesDao newGamePrefDao, @MenuViewport Viewport viewport,
-			TextureAtlas textureAtlas, Skin skin) {
+	public ParameterInputStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
-		this.eventBus = eventBus;
-		this.newGamePrefDao = newGamePrefDao;
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
@@ -94,24 +78,20 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private void initUi() {
 		// note about checktyle: widgets are declared in the order they appear in the UI
-		NewGamePreferences prefs = newGamePrefDao.getNewGamePreferences();
 		Label difficultyLabel = new Label("CPU\nDifficulty", skin);
 		difficultySelect = new SelectBox<>(skin);
 		String[] difficulties = { "Easy", "Medium", "Hard", "Very hard" };
 		difficultySelect.setItems(difficulties);
-		difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
 		Label sizeLabel = new Label("Map\nSize", skin);
 		sizeSelect = new SelectBox<>(skin);
 		// xxlarge is temporarily disabled because of performance problems
 		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", /* "XXLarge" */
 		};
 		sizeSelect.setItems(sizes);
-		sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
 		Label densityLabel = new Label("Map\nDensity", skin);
 		densitySelect = new SelectBox<>(skin);
 		String[] densities = { "Dense", "Medium   ", "Loose" };
 		densitySelect.setItems(densities);
-		densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
 		Label seedLabel = new Label("Seed", skin);
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
@@ -154,37 +134,6 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
 				OUTER_PADDING_PX);
 		this.addActor(rootTable);
-
-		registerEventListeners();
-	}
-
-	private void registerEventListeners() {
-
-		randomButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				seedTextField.setText(String.valueOf(System.currentTimeMillis()));
-			}
-		});
-
-		Stream.of(seedTextField, randomButton, difficultySelect, sizeSelect, densitySelect)
-				.forEach(actor -> actor.addListener(new ChangeListener() {
-					@Override
-					public void changed(ChangeEvent event, Actor actor) {
-						eventBus.post(new RegenerateMapEvent(getBotIntelligence(), new MapParameters(getSeedParam(),
-								getMapSizeParam().getAmountOfTiles(), getMapDensityParam().getDensityFloat())));
-						eventBus.post(new CenterMapUIEvent());
-						newGamePrefDao.saveNewGamePreferences(
-								new NewGamePreferences(getBotIntelligence(), getMapSizeParam(), getMapDensityParam()));
-					}
-				}));
-
-		playButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new GameStartEvent());
-			}
-		});
 	}
 
 	/**

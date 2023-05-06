@@ -8,13 +8,8 @@ import com.badlogic.gdx.Gdx;
 import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
-import de.sesu8642.feudaltactics.events.CloseMenuEvent;
-import de.sesu8642.feudaltactics.events.EndTurnUnconfirmedEvent;
-import de.sesu8642.feudaltactics.events.ExitGameEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
-import de.sesu8642.feudaltactics.events.OpenMenuEvent;
-import de.sesu8642.feudaltactics.events.RetryGameUnconfirmedEvent;
 import de.sesu8642.feudaltactics.events.input.EscInputEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreen.IngameStages;
@@ -45,36 +40,6 @@ public class IngameScreenEventHandler {
 	}
 
 	/**
-	 * Event handler for end turn attempt events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleEndTurnAttempt(EndTurnUnconfirmedEvent event) {
-		ingameScreen.handleEndTurnAttempt();
-	}
-
-	/**
-	 * Event handler for open menu events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleOpenMenuAttempt(OpenMenuEvent event) {
-		ingameScreen.activateStage(IngameStages.MENU);
-	}
-
-	/**
-	 * Event handler for close menu events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleCloseMenuAttempt(CloseMenuEvent event) {
-		ingameScreen.activateStage(IngameStages.HUD);
-	}
-
-	/**
 	 * Event handler for game start events.
 	 * 
 	 * @param event event to handle
@@ -101,26 +66,6 @@ public class IngameScreenEventHandler {
 	}
 
 	/**
-	 * Event handler for unconfirmed retry game events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleUnconfirmedRetryGame(RetryGameUnconfirmedEvent event) {
-		ingameScreen.handleUnconfirmedRetryGame();
-	}
-
-	/**
-	 * Event handler for exit game events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleExitGameAttempt(ExitGameEvent event) {
-		ingameScreen.handleExitGameAttempt();
-	}
-
-	/**
 	 * Event handler for gameState changes.
 	 * 
 	 * @param event event to handle
@@ -131,7 +76,7 @@ public class IngameScreenEventHandler {
 	}
 
 	/**
-	 * Event handler for gameState changes.
+	 * Event handler for centering the map.
 	 * 
 	 * @param event event to handle
 	 */

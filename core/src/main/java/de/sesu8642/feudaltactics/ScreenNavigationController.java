@@ -25,7 +25,7 @@ import de.sesu8642.feudaltactics.menu.changelog.dagger.ChangelogScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.crashreporting.ui.CrashReportScreen;
 import de.sesu8642.feudaltactics.menu.information.dagger.DependencyLicensesScreen;
-import de.sesu8642.feudaltactics.menu.information.dagger.InformationMenuScreen;
+import de.sesu8642.feudaltactics.menu.information.ui.InformationMenuScreen;
 import de.sesu8642.feudaltactics.menu.mainmenu.ui.MainMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
@@ -65,11 +65,10 @@ public class ScreenNavigationController {
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
 			MainMenuScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
 			@AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
-			@InformationMenuScreen GameScreen informationMenuScreen,
-			@DependencyLicensesScreen GameScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
-			CrashReportScreen crashReportScreen, GameControllerEventHandler gameLogicEventHandler,
-			EventHandler editorEventHandler, IngameRendererEventHandler rendererEventHandler,
-			IngameScreenEventHandler ingameScreenEventHandler,
+			InformationMenuScreen informationMenuScreen, @DependencyLicensesScreen GameScreen dependencyLicensesScreen,
+			@ChangelogScreen GameScreen changelogScreen, CrashReportScreen crashReportScreen,
+			GameControllerEventHandler gameLogicEventHandler, EventHandler editorEventHandler,
+			IngameRendererEventHandler rendererEventHandler, IngameScreenEventHandler ingameScreenEventHandler,
 			PreferencesScreenEventHandler preferencesScreenEventHandler) {
 		this.eventBus = eventBus;
 		this.localIngameInputHandler = localIngameInputHandler;

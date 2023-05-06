@@ -4,16 +4,12 @@ package de.sesu8642.feudaltactics.menu.common.ui;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -22,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -43,10 +38,6 @@ public class MenuStage extends ResizableResettableStage {
 	private Skin skin;
 	private OrthographicCamera camera;
 
-	public MenuStage(Viewport viewport, OrthographicCamera camera, MapRenderer mapRenderer, Skin skin) {
-		this(viewport, new LinkedHashMap<>(), camera, mapRenderer, skin);
-	}
-
 	/**
 	 * Constructor.
 	 * 
@@ -57,26 +48,20 @@ public class MenuStage extends ResizableResettableStage {
 	 * @param mapRenderer renderer for the sea background
 	 * @param skin        game skin
 	 */
-	public MenuStage(Viewport viewport, Map<String, Runnable> buttonData, OrthographicCamera camera,
-			MapRenderer mapRenderer, Skin skin) {
+	public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera, MapRenderer mapRenderer,
+			Skin skin) {
 		super(viewport);
 		this.camera = camera;
 		this.mapRenderer = mapRenderer;
 		this.skin = skin;
-		initUi(buttonData);
+		initUI(buttonTexts);
 	}
 
-	private void initUi(Map<String, Runnable> buttonData) {
+	private void initUI(List<String> buttonTexts) {
 		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
 		disposables.add(logoTexture);
-		for (Entry<String, Runnable> buttonDataPoint : buttonData.entrySet()) {
-			TextButton button = new TextButton(buttonDataPoint.getKey(), skin);
-			button.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					buttonDataPoint.getValue().run();
-				}
-			});
+		for (String buttonText : buttonTexts) {
+			TextButton button = new TextButton(buttonText, skin);
 			buttons.add(button);
 		}
 		bottomLeftLabel = new Label("", skin);
@@ -98,29 +83,6 @@ public class MenuStage extends ResizableResettableStage {
 		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 
 		this.addActor(rootTable);
-	}
-
-	/**
-	 * Adds a button to this menu.
-	 * 
-	 * @param text     button text
-	 * @param callback callback that is executed when the button is clicked
-	 */
-	public void addButton(String text, Runnable callback) {
-		TextButton button = new TextButton(text, skin);
-		button.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				callback.run();
-			}
-		});
-		rootTable.removeActor(bottomLeftLabel);
-		rootTable.removeActor(bottomRightLabel);
-		rootTable.row();
-		rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
-		rootTable.row();
-		rootTable.add(bottomLeftLabel).fill(false).left().bottom().pad(5).minHeight(0).colspan(1);
-		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(5).minHeight(0).colspan(1);
 	}
 
 	public void setBottomLeftLabelText(String text) {

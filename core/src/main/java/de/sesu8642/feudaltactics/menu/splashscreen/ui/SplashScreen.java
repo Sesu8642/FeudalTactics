@@ -16,8 +16,6 @@ import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTrans
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
-import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
-import de.sesu8642.feudaltactics.menu.splashscreen.dagger.SplashScreenStage;
 
 /** {@link Screen} for displaying a splash image. */
 @Singleton
@@ -28,7 +26,7 @@ public class SplashScreen extends GameScreen {
 
 	@Inject
 	public SplashScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-			@SplashScreenStage ResizableResettableStage stage) {
+			SplashScreenStage stage) {
 		super(camera, viewport, stage);
 		this.eventBus = eventBus;
 	}

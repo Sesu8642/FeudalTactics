@@ -10,32 +10,21 @@ import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.FeudalTactics;
-import de.sesu8642.feudaltactics.events.BotTurnSkippedEvent;
-import de.sesu8642.feudaltactics.events.BotTurnSpeedChangedEvent;
-import de.sesu8642.feudaltactics.events.EndTurnUnconfirmedEvent;
-import de.sesu8642.feudaltactics.events.OpenMenuEvent;
-import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
-import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
-import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -46,10 +35,9 @@ import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
  */
 public class HudStage extends ResizableResettableStage {
 
-	private static final Map<Speed, String> SPEED_BUTTON_TEXTURE_NAMES = ImmutableMap.of(Speed.HALF, "0.5x",
-			Speed.NORMAL, "1x", Speed.TIMES_TWO, "2x");
+	static final Map<Speed, String> SPEED_BUTTON_TEXTURE_NAMES = ImmutableMap.of(Speed.HALF, "0.5x", Speed.NORMAL, "1x",
+			Speed.TIMES_TWO, "2x");
 
-	private EventBus eventBus;
 	private TextureAtlas textureAtlas;
 	private Skin skin;
 
@@ -58,18 +46,17 @@ public class HudStage extends ResizableResettableStage {
 	private Label infoTextLabel;
 	private Table handContentTable;
 	private Image handContent;
-	private ImageButton undoButton;
-	private ImageButton endTurnButton;
-	private ImageButton buyPeasantButton;
-	private ImageButton buyCastleButton;
-	private ImageButton speedButton;
-	private ImageButton skipButton;
-	private ImageButton menuButton;
+	ImageButton undoButton;
+	ImageButton endTurnButton;
+	ImageButton buyPeasantButton;
+	ImageButton buyCastleButton;
+	ImageButton speedButton;
+	ImageButton skipButton;
+	ImageButton menuButton;
 	private Table bottomTable;
 	private List<ImageButton> playerTurnButtons = new ArrayList<>();
 	private List<ImageButton> enemyTurnButtons = new ArrayList<>();
 
-	private Speed currentBotSpeed = Speed.NORMAL;
 	private boolean enemyTurnButtonsShown = false;
 
 	/**
@@ -80,9 +67,8 @@ public class HudStage extends ResizableResettableStage {
 	 * @param skin         game skin
 	 */
 	@Inject
-	public HudStage(EventBus eventBus, @MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+	public HudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
 		super(viewport);
-		this.eventBus = eventBus;
 		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
@@ -164,72 +150,6 @@ public class HudStage extends ResizableResettableStage {
 		handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
 				.width(Value.percentHeight(1.16F));
 		this.addActor(rootTable);
-		registerEventListeners();
-	}
-
-	private void registerEventListeners() {
-		undoButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new UndoMoveEvent());
-			}
-		});
-
-		endTurnButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new EndTurnUnconfirmedEvent());
-			}
-		});
-
-		buyPeasantButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BuyPeasantEvent());
-			}
-		});
-
-		buyCastleButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BuyCastleEvent());
-			}
-		});
-
-		menuButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new OpenMenuEvent());
-			}
-		});
-
-		speedButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				// determine the next speed level with overflow, skipping Speed.INSTANT which is
-				// used for the other button
-				int currentSpeedIndex = currentBotSpeed.ordinal();
-				int nextSpeedIndex = currentSpeedIndex + 1;
-				if (nextSpeedIndex >= Speed.values().length) {
-					nextSpeedIndex = 0;
-				}
-				currentBotSpeed = Speed.values()[nextSpeedIndex];
-				eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
-				speedButton.setStyle(new ImageButtonStyle(null, null, null,
-						new SpriteDrawable(textureAtlas.createSprite(SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed))),
-						new SpriteDrawable(textureAtlas
-								.createSprite(SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed) + "_pressed")),
-						null));
-			}
-		});
-
-		skipButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BotTurnSkippedEvent());
-			}
-		});
-
 	}
 
 	@Override
