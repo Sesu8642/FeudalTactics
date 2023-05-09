@@ -1,15 +1,14 @@
 
 pixthulhu-ui.png
-size: 1024,1024
+size: 1024, 1024
 format: RGBA8888
-filter: Linear,Linear
+filter: Linear, Linear
 repeat: none
 button
   rotate: false
   xy: 444, 103
   size: 102, 114
-  split: 33, 33, 33, 45
-  pad: 28, 28, 22, 33
+  split: 49, 50, 49, 62
   orig: 102, 114
   offset: 0, 0
   index: -1
@@ -327,8 +326,8 @@ window-round
   rotate: false
   xy: 963, 259
   size: 60, 75
-  split: 18, 30, 18, 30
-  pad: 6, 6, 18, 30
+  split: 18, 18, 18, 18
+  pad: 29, 29, 36, 37
   orig: 60, 75
   offset: 0, 0
   index: -1
