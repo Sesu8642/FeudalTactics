@@ -3,7 +3,7 @@ atlasData: {
 	atlasCurrent: true
 	drawables: [
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/button.9.png"
+			file: "./FeudalTacticsSkin_data/button.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -23,7 +23,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/button-arcade.9.png"
+			file: "./FeudalTacticsSkin_data/button-arcade.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -43,7 +43,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/button-arcade-pressed.9.png"
+			file: "./FeudalTacticsSkin_data/button-arcade-pressed.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -63,7 +63,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/button-pressed.9.png"
+			file: "./FeudalTacticsSkin_data/button-pressed.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -83,7 +83,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/checkbox-off.png"
+			file: "./FeudalTacticsSkin_data/checkbox-off.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -103,7 +103,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/checkbox-on.png"
+			file: "./FeudalTacticsSkin_data/checkbox-on.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -123,7 +123,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/eye-1.png"
+			file: "./FeudalTacticsSkin_data/eye-1.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -143,7 +143,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/eye-2.png"
+			file: "./FeudalTacticsSkin_data/eye-2.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -163,7 +163,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/list.9.png"
+			file: "./FeudalTacticsSkin_data/list.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -183,7 +183,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/logo.png"
+			file: "./FeudalTacticsSkin_data/logo.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -203,7 +203,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/pixthulhu.png"
+			file: "./FeudalTacticsSkin_data/pixthulhu.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -223,7 +223,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/portrait.png"
+			file: "./FeudalTacticsSkin_data/portrait.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -243,7 +243,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-health.9.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-health.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -263,7 +263,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-health-knob.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-health-knob.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -283,7 +283,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-horizontal.9.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-horizontal.9.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -303,7 +303,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-horizontal-knob.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-horizontal-knob.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -323,7 +323,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-mana.9.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-mana.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -343,7 +343,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-mana-knob.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-mana-knob.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -363,7 +363,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-vertical.9.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-vertical.9.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -383,7 +383,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/progress-bar-vertical-knob.png"
+			file: "./FeudalTacticsSkin_data/progress-bar-vertical-knob.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -403,7 +403,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/scrollbar-horizontal.9.png"
+			file: "./FeudalTacticsSkin_data/scrollbar-horizontal.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -423,7 +423,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/scrollbar-horizontal-knob.9.png"
+			file: "./FeudalTacticsSkin_data/scrollbar-horizontal-knob.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -443,7 +443,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/scrollbar-vertical.9.png"
+			file: "./FeudalTacticsSkin_data/scrollbar-vertical.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -463,7 +463,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/scrollbar-vertical-knob.9.png"
+			file: "./FeudalTacticsSkin_data/scrollbar-vertical-knob.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -483,7 +483,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/select-box.9.png"
+			file: "./FeudalTacticsSkin_data/select-box.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -503,7 +503,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/slider-horizontal.9.png"
+			file: "./FeudalTacticsSkin_data/slider-horizontal.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -523,7 +523,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/slider-knob.png"
+			file: "./FeudalTacticsSkin_data/slider-knob.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -543,7 +543,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/slider-vertical.9.png"
+			file: "./FeudalTacticsSkin_data/slider-vertical.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -563,7 +563,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/split-pane-horizontal.9.png"
+			file: "./FeudalTacticsSkin_data/split-pane-horizontal.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -583,7 +583,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/split-pane-vertical.9.png"
+			file: "./FeudalTacticsSkin_data/split-pane-vertical.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -603,7 +603,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/textfield.9.png"
+			file: "./FeudalTacticsSkin_data/textfield.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -623,7 +623,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/touchpad.png"
+			file: "./FeudalTacticsSkin_data/touchpad.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -643,7 +643,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/touchpad-knob.png"
+			file: "./FeudalTacticsSkin_data/touchpad-knob.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -663,7 +663,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/white.png"
+			file: "./FeudalTacticsSkin_data/white.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -683,7 +683,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/window.9.png"
+			file: "./FeudalTacticsSkin_data/window.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -703,7 +703,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/window-round.9.png"
+			file: "./FeudalTacticsSkin_data/window-round.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -723,7 +723,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/white.png"
+			file: "./FeudalTacticsSkin_data/white.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -748,7 +748,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/white.png"
+			file: "./FeudalTacticsSkin_data/white.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -773,7 +773,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/white.png"
+			file: "./FeudalTacticsSkin_data/white.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -798,7 +798,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/white.png"
+			file: "./FeudalTacticsSkin_data/white.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -823,7 +823,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/button-small-pressed.9.png"
+			file: "./FeudalTacticsSkin_data/button-small-pressed.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -843,7 +843,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/button-small.9.png"
+			file: "./FeudalTacticsSkin_data/button-small.9.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -865,7 +865,7 @@ atlasData: {
 	]
 	fontDrawables: [
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/font-export.png"
+			file: "./FeudalTacticsSkin_data/font-export.png"
 			bgColor: {
 				r: 0
 				g: 0
@@ -885,7 +885,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/font-subtitle-export.png"
+			file: "./FeudalTacticsSkin_data/font-subtitle-export.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -905,7 +905,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/font-title-export.png"
+			file: "./FeudalTacticsSkin_data/font-title-export.png"
 			bgColor: {
 				r: 1
 				g: 1
@@ -1006,7 +1006,7 @@ jsonData: {
 			flip: false
 			markupEnabled: false
 			scaling: -1
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/font-export.fnt"
+			file: "./FeudalTacticsSkin_data/font-export.fnt"
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
@@ -1014,7 +1014,7 @@ jsonData: {
 			flip: false
 			markupEnabled: false
 			scaling: -1
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/font-subtitle-export.fnt"
+			file: "./FeudalTacticsSkin_data/font-subtitle-export.fnt"
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
@@ -1022,7 +1022,7 @@ jsonData: {
 			flip: false
 			markupEnabled: false
 			scaling: -1
-			file: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin_data/font-title-export.fnt"
+			file: "./FeudalTacticsSkin_data/font-title-export.fnt"
 		}
 	]
 	freeTypeFonts: []
@@ -3248,7 +3248,7 @@ preferences: {
 		value: 30
 	}
 }
-saveFile: "/home/pete/code/FeudalTactics/skin/FeudalTacticsSkin.scmp"
+saveFile: "./FeudalTacticsSkin.scmp"
 version: 56
 sceneComposer: null
 }
