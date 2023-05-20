@@ -16,7 +16,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
@@ -45,6 +44,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
+import de.sesu8642.feudaltactics.input.FeudalTacticsGestureDetector;
 import de.sesu8642.feudaltactics.lib.gamestate.Castle;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
@@ -78,6 +78,7 @@ public class IngameScreen extends GameScreen {
 	private InputMultiplexer inputMultiplexer;
 	private EventBus eventBus;
 	private CombinedInputProcessor inputProcessor;
+	private final FeudalTacticsGestureDetector gestureDetector;
 
 	private ParameterInputStage parameterInputStage;
 	private HudStage hudStage;
@@ -127,6 +128,7 @@ public class IngameScreen extends GameScreen {
 	 * @param eventBus             event bus
 	 * @param inputProcessor       input processor for user inputs that is added to
 	 *                             the input multiplexer
+	 * @param gestureDetector      gesture detector
 	 * @param inputMultiplexer     input multiplexer that stages are added to as
 	 *                             processors
 	 * @param hudStage             stage for heads up display UI
@@ -138,8 +140,9 @@ public class IngameScreen extends GameScreen {
 			NewGamePreferencesDao newGamePrefDao, @IngameCamera OrthographicCamera ingameCamera,
 			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
 			@IngameRenderer MapRenderer mapRenderer, DialogFactory confirmDialogFactory, EventBus eventBus,
-			CombinedInputProcessor inputProcessor, InputMultiplexer inputMultiplexer, HudStage hudStage,
-			IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
+			CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
+			InputMultiplexer inputMultiplexer, HudStage hudStage, IngameMenuStage menuStage,
+			ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
 		this.textureAtlas = textureAtlas;
 		this.autoSaveRepo = autoSaveRepo;
@@ -149,6 +152,7 @@ public class IngameScreen extends GameScreen {
 		this.mapRenderer = mapRenderer;
 		this.dialogFactory = confirmDialogFactory;
 		this.inputMultiplexer = inputMultiplexer;
+		this.gestureDetector = gestureDetector;
 		this.eventBus = eventBus;
 		this.inputProcessor = inputProcessor;
 		this.hudStage = hudStage;
@@ -381,13 +385,13 @@ public class IngameScreen extends GameScreen {
 			break;
 		case HUD:
 			inputMultiplexer.addProcessor(hudStage);
-			inputMultiplexer.addProcessor(new GestureDetector(inputProcessor));
+			inputMultiplexer.addProcessor(gestureDetector);
 			inputMultiplexer.addProcessor(inputProcessor);
 			setActiveStage(hudStage);
 			break;
 		case PARAMETERS:
 			inputMultiplexer.addProcessor(parameterInputStage);
-			inputMultiplexer.addProcessor(new GestureDetector(inputProcessor));
+			inputMultiplexer.addProcessor(gestureDetector);
 			inputMultiplexer.addProcessor(inputProcessor);
 			setActiveStage(parameterInputStage);
 			break;

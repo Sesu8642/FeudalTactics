@@ -124,6 +124,79 @@ public class InputValidationHelper {
 	}
 
 	/**
+	 * Checks whether a player is allowed to buy and place their own unit instantly,
+	 * without it being in held before.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player attempting the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
+	public static boolean checkBuyAndPlaceUnitInstantly(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
+		// first check whether buying is possible
+		if (!checkBuyObject(gameState, player, Unit.COST)) {
+			return false;
+		}
+		// then check whether placing is possible
+		if (isWater(tile)) {
+			return false;
+		}
+		if (player != tile.getPlayer()) {
+			return false;
+		}
+		if (gameState.getActiveKingdom() != tile.getKingdom()) {
+			return false;
+		}
+		if (tile.getContent() != null
+				&& !ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
+			// not empty or blocking object
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Checks whether a player is allowed to buy and place a castle instantly,
+	 * without it being in held before.
+	 * 
+	 * @param gameState game state of the current game
+	 * @param player    player attempting the action
+	 * @param tile      tile that was clicked
+	 * @return whether the action is allowed
+	 */
+	public static boolean checkBuyAndPlaceCastleInstantly(GameState gameState, Player player, HexTile tile) {
+		if (!isCorrectPlayersTurn(gameState, player)) {
+			return false;
+		}
+		// first check whether buying is possible
+		Kingdom activeKingdom = gameState.getActiveKingdom();
+		if (activeKingdom == null) {
+			return false;
+		}
+		if (activeKingdom.getSavings() < Castle.COST) {
+			return false;
+		}
+		// then check whether placing is possible
+		if (isWater(tile)) {
+			return false;
+		}
+		if (player != tile.getPlayer()) {
+			return false;
+		}
+		if (gameState.getActiveKingdom() != tile.getKingdom()) {
+			return false;
+		}
+		if (tile.getContent() != null) {
+			// not empty
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Checks whether a player is allowed to combine units.
 	 * 
 	 * @param gameState game state of the current game

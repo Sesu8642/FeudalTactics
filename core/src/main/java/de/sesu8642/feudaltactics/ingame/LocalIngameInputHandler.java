@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.input;
+package de.sesu8642.feudaltactics.ingame;
 
 import java.util.Map;
 import java.util.Optional;
@@ -15,12 +15,12 @@ import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.TapInputEvent;
 import de.sesu8642.feudaltactics.events.input.BackInputEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyAndPlaceCastleEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
 import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
-import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.lib.gamestate.Blocking;
 import de.sesu8642.feudaltactics.lib.gamestate.Castle;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
@@ -36,7 +36,7 @@ import de.sesu8642.feudaltactics.lib.ingame.GameController;
 public class LocalIngameInputHandler {
 
 	private enum TapAction {
-		NONE, PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER
+		NONE, PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER, BUY_AND_PLACE_PEASANT
 	}
 
 	private GameController gameController;
@@ -91,7 +91,7 @@ public class LocalIngameInputHandler {
 			// activate kingdom
 			gameController.activateKingdom(tile.getKingdom());
 		}
-		TapAction action = determineTapAction(player, tile);
+		TapAction action = determineTapAction(player, tile, event.getCount());
 		switch (action) {
 		case PICK_UP:
 			if (InputValidationHelper.checkPickupObject(gameController.getGameState(), player, tile)) {
@@ -113,6 +113,12 @@ public class LocalIngameInputHandler {
 				gameController.conquer(tile);
 			}
 			break;
+		case BUY_AND_PLACE_PEASANT:
+			if (InputValidationHelper.checkBuyAndPlaceUnitInstantly(gameController.getGameState(), playerOptional.get(),
+					tile)) {
+				gameController.buyPeasant();
+				gameController.placeOwn(tile);
+			}
 		case NONE:
 			break;
 		default:
@@ -180,6 +186,27 @@ public class LocalIngameInputHandler {
 	}
 
 	/**
+	 * Event handler for buy and place castle events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBuyAndPlaceCastle(BuyAndPlaceCastleEvent event) {
+		Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+		if (!playerOptional.isPresent()) {
+			return;
+		}
+		Map<Vector2, HexTile> map = gameController.getGameState().getMap();
+		HexTile tile = map.get(hexCoords);
+		if (InputValidationHelper.checkBuyAndPlaceCastleInstantly(gameController.getGameState(), playerOptional.get(),
+				tile)) {
+			gameController.buyCastle();
+			gameController.placeOwn(tile);
+		}
+	}
+
+	/**
 	 * Event handler for confirmed end turn events.
 	 * 
 	 * @param event event to handle
@@ -205,16 +232,16 @@ public class LocalIngameInputHandler {
 		gameController.startGame();
 	}
 
-	private TapAction determineTapAction(Player player, HexTile tile) {
-		// determine action
+	private TapAction determineTapAction(Player player, HexTile tile, int count) {
 		if (tile == null) {
 			return TapAction.NONE;
 		}
 		if (gameController.getGameState().getHeldObject() == null) {
-			// pick up object
+			if (count == 2) {
+				return TapAction.BUY_AND_PLACE_PEASANT;
+			}
 			return TapAction.PICK_UP;
 		} else {
-			// place object
 			if (tile.getPlayer() != null && tile.getPlayer() == player) {
 				if (tile.getContent() == null
 						|| ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {

@@ -3,8 +3,10 @@
 package de.sesu8642.feudaltactics.input;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,9 +18,13 @@ import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.TapInputEvent;
 import de.sesu8642.feudaltactics.events.input.BackInputEvent;
 import de.sesu8642.feudaltactics.events.input.EscInputEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyAndPlaceCastleEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyCastleEvent;
+import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
 
 /** Class that handles touch as well as gesture inputs. **/
+@Singleton
 public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	private EventBus eventBus;
@@ -50,11 +56,14 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY) {
-		Vector3 worldDistance = camera.unproject(new Vector3(x, y, 0))
-				.sub(camera.unproject(new Vector3(x + deltaX, y + deltaY, 0)));
-		camera.translate(worldDistance);
-		camera.update();
-		return true;
+		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+			Vector3 worldDistance = camera.unproject(new Vector3(x, y, 0))
+					.sub(camera.unproject(new Vector3(x + deltaX, y + deltaY, 0)));
+			camera.translate(worldDistance);
+			camera.update();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -67,18 +76,33 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 		return false;
 	}
 
-	// TODO: move this logic somwhere else
+	// TODO: move this logic somewhere else
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
-		Vector3 fullWorldCoords = camera.unproject(new Vector3(x, y, 0));
-		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
-		eventBus.post(new TapInputEvent(worldCoords));
+		switch (button) {
+		case Buttons.LEFT:
+			Vector2 worldCoords = eventCoordsToXYWorldCoords(x, y);
+			eventBus.post(new TapInputEvent(worldCoords, count));
+			break;
+		case Buttons.RIGHT:
+			eventBus.post(new BuyPeasantEvent());
+			break;
+		case Buttons.MIDDLE:
+			eventBus.post(new BuyCastleEvent());
+			break;
+		default:
+			return false;
+		}
 		return true;
 	}
 
 	@Override
 	public boolean longPress(float x, float y) {
-		return false;
+		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+			Vector2 worldCoords = eventCoordsToXYWorldCoords(x, y);
+			eventBus.post(new BuyAndPlaceCastleEvent(worldCoords));
+		}
+		return true;
 	}
 
 	@Override
@@ -147,7 +171,10 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		return false;
+		if (button == Buttons.BACK) {
+			eventBus.post(new BackInputEvent());
+		}
+		return true;
 	}
 
 	@Override
@@ -163,5 +190,11 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		return false;
+	}
+
+	private Vector2 eventCoordsToXYWorldCoords(float eventX, float eventY) {
+		Vector3 fullWorldCoords = camera.unproject(new Vector3(eventX, eventY, 0));
+		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
+		return worldCoords;
 	}
 }
