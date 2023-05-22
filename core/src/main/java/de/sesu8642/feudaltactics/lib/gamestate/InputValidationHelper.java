@@ -137,7 +137,7 @@ public class InputValidationHelper {
 			return false;
 		}
 		// first check whether buying is possible
-		if (!checkBuyObject(gameState, player, Unit.COST)) {
+		if (!checkBuyObject(gameState, player, Unit.class)) {
 			return false;
 		}
 		// then check whether placing is possible
@@ -320,7 +320,7 @@ public class InputValidationHelper {
 	 * @param cost      cost of the object
 	 * @return whether the action is allowed
 	 */
-	public static boolean checkBuyObject(GameState gameState, Player player, int cost) {
+	public static boolean checkBuyObject(GameState gameState, Player player, Class<?> targetClass) {
 		if (!isCorrectPlayersTurn(gameState, player)) {
 			return false;
 		}
@@ -328,10 +328,21 @@ public class InputValidationHelper {
 		if (activeKingdom == null) {
 			return false;
 		}
+		int cost;
+		if (Unit.class.isAssignableFrom(targetClass)) {
+			cost = Unit.COST;
+		} else if (Castle.class.isAssignableFrom(targetClass)) {
+			cost = Castle.COST;
+		} else {
+			throw new IllegalStateException("Unexpected class to buy " + targetClass);
+		}
 		if (activeKingdom.getSavings() < cost) {
 			return false;
 		}
-		if (gameState.getHeldObject() != null) {
+		// allow upgrading a held unit
+		if (!(gameState.getHeldObject() == null || (Unit.class.isAssignableFrom(gameState.getHeldObject().getClass())
+				&& ((Unit) gameState.getHeldObject()).getStrength() < UnitTypes.strongest().strength()
+				&& Unit.class.isAssignableFrom(targetClass)))) {
 			return false;
 		}
 		return true;

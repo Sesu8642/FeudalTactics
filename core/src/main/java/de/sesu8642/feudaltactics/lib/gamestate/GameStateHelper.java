@@ -825,7 +825,14 @@ public class GameStateHelper {
 	 */
 	public static void buyPeasant(GameState gameState) {
 		gameState.getActiveKingdom().setSavings(gameState.getActiveKingdom().getSavings() - Unit.COST);
-		gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
+		if (gameState.getHeldObject() == null) {
+			gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
+		} else {
+			// held object is guaranteed to be a non-baron unit by the validation
+			gameState.setHeldObject(
+					new Unit(UnitTypes.ofStrength(((Unit) gameState.getHeldObject()).getStrength() + 1)));
+		}
+
 	}
 
 	/**
@@ -928,7 +935,7 @@ public class GameStateHelper {
 		for (Kingdom kingdom : gameState.getKingdoms()) {
 			if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
 				// can buy castle or any unit that is more expensive
-				if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.COST)) {
+				if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.class)) {
 					return true;
 				}
 				// has unit stronger than peasant

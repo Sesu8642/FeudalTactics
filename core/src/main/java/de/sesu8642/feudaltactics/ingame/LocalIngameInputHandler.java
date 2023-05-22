@@ -164,7 +164,7 @@ public class LocalIngameInputHandler {
 		if (!playerOptional.isPresent()) {
 			return;
 		}
-		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Unit.COST)) {
+		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Unit.class)) {
 			gameController.buyPeasant();
 		}
 	}
@@ -180,7 +180,7 @@ public class LocalIngameInputHandler {
 		if (!playerOptional.isPresent()) {
 			return;
 		}
-		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Castle.COST)) {
+		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Castle.class)) {
 			gameController.buyCastle();
 		}
 	}

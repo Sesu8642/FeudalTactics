@@ -195,7 +195,7 @@ public class BotAi {
 				interestingProtectionTiles);
 		while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
 			// if enough money buy castle
-			if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.COST)) {
+			if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.class)) {
 				GameStateHelper.buyCastle(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
 				placedCastleTiles.add(bestProtectionCandidate.tile);
@@ -204,7 +204,7 @@ public class BotAi {
 				pickedUpUnits.removeUnit(UnitTypes.PEASANT);
 				gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);
-			} else if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Unit.COST)) {
+			} else if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Unit.class)) {
 				// protect with new peasant
 				GameStateHelper.buyPeasant(gameState);
 				GameStateHelper.placeOwn(gameState, bestProtectionCandidate.tile);

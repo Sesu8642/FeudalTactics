@@ -258,8 +258,8 @@ public class IngameScreen extends GameScreen {
 				// viewmodel somewhere else
 				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
 						autoSaveRepo.getNoOfAutoSaves());
-				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.COST);
-				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.COST);
+				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
+				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
 				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
 				hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
 			}
