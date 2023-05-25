@@ -331,7 +331,7 @@ public class IngameScreen extends GameScreen {
 	private void showAllEnemiesDefeatedMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> exitToMenu());
 		endDialog.button("Exit");
-		endDialog.text("VICTORY! You deafeated all of you enemies.");
+		endDialog.text("VICTORY! You deafeated all your enemies.");
 		endDialog.show(hudStage);
 	}
 
