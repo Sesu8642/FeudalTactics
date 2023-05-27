@@ -12,10 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
@@ -29,6 +27,7 @@ import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
 
@@ -68,37 +67,22 @@ public class MainMenuScreen extends GameScreen {
 	private void initUi(MenuStage stage) {
 		List<TextButton> buttons = stage.getButtons();
 		// play button
-		buttons.get(0).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
-				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-				eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
-						new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize().getAmountOfTiles(),
-								savedPrefs.getDensity().getDensityFloat())));
-			}
-		});
+		buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
+			NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
+			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+			eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
+					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize().getAmountOfTiles(),
+							savedPrefs.getDensity().getDensityFloat())));
+		}));
 		// tutorial button
-		buttons.get(1).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN));
-			}
-		});
+		buttons.get(1).addListener(new ExceptionLoggingChangeListener(
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN))));
 		// preferences button
-		buttons.get(2).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN));
-			}
-		});
+		buttons.get(2).addListener(new ExceptionLoggingChangeListener(
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN))));
 		// information button
-		buttons.get(3).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN));
-			}
-		});
+		buttons.get(3).addListener(new ExceptionLoggingChangeListener(
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
 	}
 
 	@Override

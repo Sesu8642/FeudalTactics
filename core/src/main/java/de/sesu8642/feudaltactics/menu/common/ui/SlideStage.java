@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
@@ -18,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -108,44 +106,38 @@ public class SlideStage extends ResizableResettableStage {
 
 		this.addActor(rootTable);
 
-		nextButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				int currentSlideIndex = slides.indexOf(currentSlide);
-				if (slides.size() > currentSlideIndex + 1) {
-					Table newSlide = slides.get(currentSlideIndex + 1);
-					slideContainer.setActor(newSlide);
-					currentSlide = newSlide;
-					if (slides.size() == currentSlideIndex + 2) {
-						nextButton.setText("Finish");
-					}
-					backButton.setTouchable(Touchable.enabled);
-					backButton.setDisabled(false);
-					backButton.setText("Back");
-					camera.update();
-				} else {
-					finishedCallback.run();
+		nextButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			int currentSlideIndex = slides.indexOf(currentSlide);
+			if (slides.size() > currentSlideIndex + 1) {
+				Table newSlide = slides.get(currentSlideIndex + 1);
+				slideContainer.setActor(newSlide);
+				currentSlide = newSlide;
+				if (slides.size() == currentSlideIndex + 2) {
+					nextButton.setText("Finish");
 				}
+				backButton.setTouchable(Touchable.enabled);
+				backButton.setDisabled(false);
+				backButton.setText("Back");
+				camera.update();
+			} else {
+				finishedCallback.run();
 			}
-		});
+		}));
 
-		backButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				int currentSlideIndex = slides.indexOf(currentSlide);
-				if (currentSlideIndex > 0) {
-					Table newSlide = slides.get(currentSlideIndex - 1);
-					slideContainer.setActor(newSlide);
-					currentSlide = newSlide;
-					nextButton.setText("Next");
-					if (currentSlideIndex == 1) {
-						backButton.setTouchable(Touchable.disabled);
-						backButton.setDisabled(true);
-						backButton.setText("");
-					}
+		backButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			int currentSlideIndex = slides.indexOf(currentSlide);
+			if (currentSlideIndex > 0) {
+				Table newSlide = slides.get(currentSlideIndex - 1);
+				slideContainer.setActor(newSlide);
+				currentSlide = newSlide;
+				nextButton.setText("Next");
+				if (currentSlideIndex == 1) {
+					backButton.setTouchable(Touchable.disabled);
+					backButton.setDisabled(true);
+					backButton.setText("");
 				}
 			}
-		});
+		}));
 	}
 
 	@Override

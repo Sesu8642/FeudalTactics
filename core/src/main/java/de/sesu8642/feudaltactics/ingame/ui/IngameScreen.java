@@ -16,11 +16,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
@@ -57,6 +55,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.Margin;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
@@ -213,8 +212,7 @@ public class IngameScreen extends GameScreen {
 	 * Adjusts all the UI elements that need to be adjusted and displays dialogs if
 	 * appropriate.
 	 * 
-	 * @param gameState            new game state
-	 * @param mapDimensionsChanged whether the map dimensions changed
+	 * @param gameState new game state
 	 */
 	public void handleGameStateChange(GameState gameState) {
 		boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
@@ -436,126 +434,75 @@ public class IngameScreen extends GameScreen {
 	private void addIngameMenuListeners() {
 		// exit button
 		List<TextButton> buttons = menuStage.getButtons();
-		buttons.get(0).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-						() -> exitToMenu());
-				confirmDialog.show(menuStage);
-			}
-		});
+		buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
+			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+					() -> exitToMenu());
+			confirmDialog.show(menuStage);
+		}));
 		// retry button
-		buttons.get(1).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-						() -> resetGame());
-				confirmDialog.show(menuStage);
-			}
-		});
+		buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
+			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+					() -> resetGame());
+			confirmDialog.show(menuStage);
+		}));
 		// continue button
-		buttons.get(2).addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				activateStage(IngameStages.HUD);
-			}
-		});
+		buttons.get(2).addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.HUD)));
 	}
 
 	private void addParameterInputListeners() {
-		parameterInputStage.randomButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()));
-			}
-		});
+		parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
+				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
-				parameterInputStage.densitySelect).forEach(actor -> actor.addListener(new ChangeListener() {
-					@Override
-					public void changed(ChangeEvent event, Actor actor) {
-						eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-								new MapParameters(parameterInputStage.getSeedParam(),
-										parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-										parameterInputStage.getMapDensityParam().getDensityFloat())));
-						centerMap();
-						newGamePrefDao.saveNewGamePreferences(new NewGamePreferences(
-								parameterInputStage.getBotIntelligence(), parameterInputStage.getMapSizeParam(),
-								parameterInputStage.getMapDensityParam()));
-					}
-				}));
+				parameterInputStage.densitySelect)
+				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
+					eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
+							new MapParameters(parameterInputStage.getSeedParam(),
+									parameterInputStage.getMapSizeParam().getAmountOfTiles(),
+									parameterInputStage.getMapDensityParam().getDensityFloat())));
+					centerMap();
+					newGamePrefDao
+							.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
+									parameterInputStage.getMapSizeParam(), parameterInputStage.getMapDensityParam()));
+				})));
 
-		parameterInputStage.playButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new GameStartEvent());
-			}
-		});
+		parameterInputStage.playButton
+				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
 	}
 
 	private void addHudListeners() {
-		hudStage.undoButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new UndoMoveEvent());
-			}
-		});
+		hudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new UndoMoveEvent())));
 
-		hudStage.endTurnButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				handleEndTurnAttempt();
-			}
-		});
+		hudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(() -> handleEndTurnAttempt()));
 
-		hudStage.buyPeasantButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BuyPeasantEvent());
-			}
-		});
+		hudStage.buyPeasantButton
+				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyPeasantEvent())));
 
-		hudStage.buyCastleButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BuyCastleEvent());
-			}
-		});
+		hudStage.buyCastleButton
+				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyCastleEvent())));
 
-		hudStage.menuButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				activateStage(IngameStages.MENU);
-			}
-		});
+		hudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.MENU)));
 
-		hudStage.speedButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				// determine the next speed level with overflow, skipping Speed.INSTANT which is
-				// used for the other button
-				int currentSpeedIndex = currentBotSpeed.ordinal();
-				int nextSpeedIndex = currentSpeedIndex + 1;
-				if (nextSpeedIndex >= Speed.values().length) {
-					nextSpeedIndex = 0;
-				}
-				currentBotSpeed = Speed.values()[nextSpeedIndex];
-				eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
-				hudStage.speedButton.setStyle(new ImageButtonStyle(null, null, null,
-						new SpriteDrawable(
-								textureAtlas.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed))),
-						new SpriteDrawable(textureAtlas
-								.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed) + "_pressed")),
-						null));
+		hudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			// determine the next speed level with overflow, skipping Speed.INSTANT which is
+			// used for the other button
+			int currentSpeedIndex = currentBotSpeed.ordinal();
+			int nextSpeedIndex = currentSpeedIndex + 1;
+			if (nextSpeedIndex >= Speed.values().length) {
+				nextSpeedIndex = 0;
 			}
-		});
+			currentBotSpeed = Speed.values()[nextSpeedIndex];
+			eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
+			hudStage.speedButton.setStyle(new ImageButtonStyle(null, null, null,
+					new SpriteDrawable(
+							textureAtlas.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed))),
+					new SpriteDrawable(textureAtlas
+							.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed) + "_pressed")),
+					null));
+		}));
 
-		hudStage.skipButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				eventBus.post(new BotTurnSkippedEvent());
-			}
-		});
+		hudStage.skipButton
+				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BotTurnSkippedEvent())));
 
 	}
 

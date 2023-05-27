@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
@@ -26,6 +24,7 @@ import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
 
@@ -81,49 +80,39 @@ public class CrashReportScreen extends GameScreen {
 					: ScreenTransitionTarget.INFORMATION_MENU_SCREEN;
 			eventBus.post(new ScreenTransitionTriggerEvent(onFinishedTarget));
 		});
-		crashReportStage.crashReportSlide.sendMailButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				try {
-					String totallyUnharvestableEmail = "con" + "tact@sesu" + "8642.de";
-					URI mailtoUri = new URI("mailto", totallyUnharvestableEmail, null,
-							"subject=FeudalTactics Crash Report&body="
-									+ crashReportStage.crashReportSlide.textArea.getText(),
-							null);
-					// couldn't find a way to build a proper mailto uri without the forward slashes
-					String mailtoUriString = mailtoUri.toString().replaceFirst("://", ":");
-					logger.debug("Opening bug report mailto URI.");
-					Gdx.net.openURI(mailtoUriString);
-				} catch (URISyntaxException e) {
-					// do not throw an exception while the user is trying to report an exception
-					logger.warn("unable to build mailto URI with body: {}",
-							crashReportStage.crashReportSlide.textArea.getText());
-				}
+		crashReportStage.crashReportSlide.sendMailButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			try {
+				String totallyUnharvestableEmail = "con" + "tact@sesu" + "8642.de";
+				URI mailtoUri = new URI("mailto", totallyUnharvestableEmail, null,
+						"subject=FeudalTactics Crash Report&body="
+								+ crashReportStage.crashReportSlide.textArea.getText(),
+						null);
+				// couldn't find a way to build a proper mailto uri without the forward slashes
+				String mailtoUriString = mailtoUri.toString().replaceFirst("://", ":");
+				logger.debug("Opening bug report mailto URI.");
+				Gdx.net.openURI(mailtoUriString);
+			} catch (URISyntaxException e) {
+				// do not throw an exception while the user is trying to report an exception
+				logger.warn("unable to build mailto URI with body: {}",
+						crashReportStage.crashReportSlide.textArea.getText());
 			}
-		});
-		crashReportStage.crashReportSlide.copyButton.addListener(new ChangeListener() {
-
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				logger.debug("copying bug report info to clipboard.");
-				Gdx.app.getClipboard().setContents(crashReportStage.crashReportSlide.textArea.getText());
-				// give feedback to the user by setting the button text to "done" for a moment
-				crashReportStage.crashReportSlide.copyButton.setText("Done");
-				if (copyButtonFeedBackFuture != null) {
-					copyButtonFeedBackFuture.cancel(false);
-				}
-				copyButtonFeedBackFuture = copyButtonFeedbackExecutorService.schedule(
-						() -> Gdx.app.postRunnable(() -> crashReportStage.crashReportSlide.copyButton.setText("Copy")),
-						1000, TimeUnit.MILLISECONDS);
+		}));
+		crashReportStage.crashReportSlide.copyButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			logger.debug("copying bug report info to clipboard.");
+			Gdx.app.getClipboard().setContents(crashReportStage.crashReportSlide.textArea.getText());
+			// give feedback to the user by setting the button text to "done" for a moment
+			crashReportStage.crashReportSlide.copyButton.setText("Done");
+			if (copyButtonFeedBackFuture != null) {
+				copyButtonFeedBackFuture.cancel(false);
 			}
-		});
-		crashReportStage.crashReportSlide.openGithubButton.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				logger.debug("opening GitHub issue URI.");
-				Gdx.net.openURI("https://github.com/Sesu8642/FeudalTactics/issues");
-			}
-		});
+			copyButtonFeedBackFuture = copyButtonFeedbackExecutorService.schedule(
+					() -> Gdx.app.postRunnable(() -> crashReportStage.crashReportSlide.copyButton.setText("Copy")),
+					1000, TimeUnit.MILLISECONDS);
+		}));
+		crashReportStage.crashReportSlide.openGithubButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			logger.debug("opening GitHub issue URI.");
+			Gdx.net.openURI("https://github.com/Sesu8642/FeudalTactics/issues");
+		}));
 	}
 
 	public boolean isGameStartup() {
