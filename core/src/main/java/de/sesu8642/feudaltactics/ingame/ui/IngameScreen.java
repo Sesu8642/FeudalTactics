@@ -201,6 +201,7 @@ public class IngameScreen extends GameScreen {
 	private void exitToMenu() {
 		eventBus.post(new GameExitedEvent());
 		eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+		clearCache();
 	}
 
 	private void clearCache() {
@@ -402,7 +403,6 @@ public class IngameScreen extends GameScreen {
 
 	@Override
 	public void show() {
-		clearCache();
 		Gdx.input.setInputProcessor(inputMultiplexer);
 		activateStage(IngameStages.PARAMETERS);
 		centerMap();
