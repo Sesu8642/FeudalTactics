@@ -2,12 +2,21 @@
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	font: {
 		file: font-export.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
 	}
 	subtitle: {
 		file: font-subtitle-export.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
 	}
 	title: {
 		file: font-title-export.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
 	}
 }
 com.badlogic.gdx.graphics.Color: {
@@ -94,13 +103,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
-		up: button
-		down: button-pressed
+		up: button-small
+		down: button-small-pressed
 	}
 	toggle: {
-		up: button
-		down: button-pressed
-		checked: button-pressed
+		up: button-small
+		down: button-small-pressed
+		checked: button-small-pressed
 	}
 	arcade: {
 		up: button-arcade
@@ -214,8 +223,8 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
 		font: subtitle
 		fontColor: field
-		up: button
-		down: button-pressed
+		up: button-small
+		down: button-small-pressed
 	}
 	toggle: {
 		font: subtitle
@@ -253,7 +262,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
-		background: window
+		background: window-round
 		titleFont: font
 	}
 	round: {
