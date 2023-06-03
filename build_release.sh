@@ -15,8 +15,8 @@ PACKR_EXE_NAME="packr-all-$PACKR_VERSION.jar"
 PACKR_DL_LINK="https://github.com/libgdx/packr/releases/download/$PACKR_VERSION/$PACKR_EXE_NAME"
 PACKR_WORK_DIR="packr_work"
 # use the following for the latest Linux version: https://api.adoptium.net/v3/info/release_versions?architecture=x64&heap_size=normal&image_type=jre&jvm_impl=hotspot&lts=true&os=linux&page=0&page_size=10&project=jdk&release_type=ga&sort_method=DATE&sort_order=DESC&vendor=eclipse&version=%5B8%2C9%5D
-PACKR_BUNDLE_JRE_VERSION_LINUX="8u362-b09"
-PACKR_BUNDLE_JRE_VERSION_WINDOWS="8u352-b08"
+PACKR_BUNDLE_JRE_VERSION_LINUX="8u372-b07"
+PACKR_BUNDLE_JRE_VERSION_WINDOWS="8u372-b07"
 # "OS_HERE" is a placeholder for the os name
 PACKR_JRE_CACHE_DIR="jre_cache_$PACKR_BUNDLE_JRE_VERSION"_OS_HERE
 # probably need to delete jre cache if changing this
