@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
@@ -23,7 +24,7 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 @Singleton
 public class MainMenuStage extends MenuStage {
 
-	private static final List<String> BUTTON_TEXTS = List.of("Play", "Tutorial", "Preferences", "Information");
+	private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Tutorial", "Preferences", "Information");
 
 	@Inject
 	public MainMenuStage(EventBus eventBus, @MenuViewport Viewport viewport,

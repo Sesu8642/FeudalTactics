@@ -2,14 +2,13 @@
 
 package de.sesu8642.feudaltactics.menu.splashscreen.ui;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.ImmutableList;
 
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
@@ -25,7 +24,7 @@ public class SplashScreenStage extends MenuStage {
 	public SplashScreenStage(@MenuViewport Viewport viewport, @MenuBackgroundCamera OrthographicCamera camera,
 			MainMenuScreen mainMenuScreen, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
 		// using a menu stage without buttons here
-		super(viewport, List.of(), camera, mapRenderer, skin);
+		super(viewport, ImmutableList.of(), camera, mapRenderer, skin);
 		setBottomRightLabelText("By Sesu8642");
 	}
 
