@@ -1,0 +1,6 @@
+Feudal Tactics 1.2.0
+
+- new shortcuts (see tutorial)
+- new crash reporting screen
+- UI improvements
+- adaptive icon for Android
