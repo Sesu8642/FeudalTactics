@@ -1,5 +1,6 @@
 Feudal Tactics 1.2.0
 
+This update brings some visual and QOL improvements:
 - new shortcuts (see tutorial)
 - new crash reporting screen
 - UI improvements
