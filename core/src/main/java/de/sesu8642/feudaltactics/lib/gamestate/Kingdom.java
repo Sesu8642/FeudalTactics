@@ -93,7 +93,7 @@ public class Kingdom {
 	@Override
 	public String toString() {
 		return String.format("Kingdom [tiles=%s, player=%s, savings=%s, doneMoving=%s, wasActiveInCurrentTurn=%s]",
-				tiles, player, savings, doneMoving, wasActiveInCurrentTurn);
+				tiles.stream().map(HexTile::getPosition), player, savings, doneMoving, wasActiveInCurrentTurn);
 	}
 
 }
