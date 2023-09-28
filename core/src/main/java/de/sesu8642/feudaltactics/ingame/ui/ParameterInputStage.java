@@ -63,7 +63,6 @@ public class ParameterInputStage extends ResizableResettableStage {
 	/**
 	 * Constructor.
 	 * 
-	 * @param eventBus     event bus
 	 * @param viewport     viewport for the stage
 	 * @param textureAtlas texture atlas containing the button textures
 	 * @param skin         game skin

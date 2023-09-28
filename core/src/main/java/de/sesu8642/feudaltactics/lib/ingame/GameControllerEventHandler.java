@@ -81,7 +81,7 @@ public class GameControllerEventHandler {
 	 * @param event event to handle
 	 */
 	@Subscribe
-	public void handleBotTurnSpeedChanged(BotTurnSkippedEvent event) {
+	public void handleBotTurnSkipped(BotTurnSkippedEvent event) {
 		botAi.setSkipDisplayingTurn(true);
 	}
 

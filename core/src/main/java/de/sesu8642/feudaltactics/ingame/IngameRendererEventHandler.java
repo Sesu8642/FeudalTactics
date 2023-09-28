@@ -20,7 +20,6 @@ public class IngameRendererEventHandler {
 	 * Constructor.
 	 * 
 	 * @param mapRenderer map renderer
-	 * @param ingameSceen ingame screen
 	 */
 	@Inject
 	public IngameRendererEventHandler(@IngameRenderer MapRenderer mapRenderer) {

@@ -61,7 +61,8 @@ public class GameController {
 	/** Starts the game. Bots will do their turns if they are first. */
 	public void startGame() {
 		logger.info("starting game");
-		// autosave before starting the AI thread, to avoid potential ConcurrentModificationException
+		// autosave before starting the AI thread, to avoid potential
+		// ConcurrentModificationException
 		autoSaveRepo.deleteAllAutoSaveExceptLatestN(0);
 		autosave();
 		// if a bot begins, make it act
@@ -79,10 +80,13 @@ public class GameController {
 	public void loadLatestAutosave() {
 		logger.info("loading latest autosave");
 		gameState = autoSaveRepo.getLatestAutoSave();
+		// posting the event must happen before starting the AI thread cause the data
+		// for the renderer will be updated and the AI must not change the gamestate
+		// while it is
+		eventBus.post(new GameStateChangeEvent(gameState));
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
 		}
-		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
