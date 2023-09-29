@@ -3,3 +3,4 @@ Feudal Tactics 1.2.1
 Bugfix release:
 - fix crash situation when resuming the game during enemy turn
 - fix crash situation at game start
+- fix held unit disappearing when using shortcut
