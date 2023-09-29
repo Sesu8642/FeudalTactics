@@ -179,6 +179,9 @@ public class InputValidationHelper {
 		if (activeKingdom.getSavings() < Castle.COST) {
 			return false;
 		}
+		if (gameState.getHeldObject() != null) {
+			return false;
+		}
 		// then check whether placing is possible
 		if (isWater(tile)) {
 			return false;
