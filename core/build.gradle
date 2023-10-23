@@ -11,8 +11,9 @@ eclipse.project.name = appName + "-core"
 
 // put current version in config
 processResources {
-	from "$sourceSets.main.resources.srcDirs"
+	from sourceSets.main.resources.srcDirs
 	filter(ReplaceTokens, tokens: [version: project.version])
+	duplicatesStrategy = "exclude"
 }
 
 // define and create resource destination
