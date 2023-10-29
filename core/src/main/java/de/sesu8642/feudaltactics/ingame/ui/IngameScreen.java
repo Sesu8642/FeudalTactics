@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Stream;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 
 
 import javax.inject.Inject;
@@ -459,10 +456,8 @@ public class IngameScreen extends GameScreen {
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
 
 		parameterInputStage.saveSeed.addListener(new ExceptionLoggingChangeListener(
-				() -> {//Save seed to clipboard
-					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-					StringSelection seedNum = new StringSelection(parameterInputStage.seedTextField.getText());
-					clipboard.setContents(seedNum, seedNum);
+				() -> {
+					Gdx.app.getClipboard().setContents(parameterInputStage.seedTextField.getText());
 				}));
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
