@@ -102,10 +102,10 @@ public class ParameterInputStage extends ResizableResettableStage {
 		randomButton.getImageCell().expand().fill();
 
 		saveSeed = new ImageButton(skin);
-		saveSeed.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("saveSeedButton"));
-		saveSeed.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("seedSaved"));
-		//saveSeed.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
-		//saveSeed.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
+		//saveSeed.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("saveSeedButton"));
+		//saveSeed.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("seedSaved"));
+		saveSeed.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
+		saveSeed.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
 
 		saveSeed.getImageCell().expand().fill();
 

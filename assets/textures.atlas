@@ -1,130 +1,307 @@
+
 textures.png
-size:2048,2048
-repeat:none
+size: 1024, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
 0.5x
-bounds:214,354,64,64
+  rotate: false
+  xy: 592, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 0.5x_pressed
-bounds:712,868,64,64
+  rotate: false
+  xy: 724, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 1x
-bounds:1589,1967,64,64
+  rotate: false
+  xy: 266, 57
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 1x_pressed
-bounds:2,2,64,64
+  rotate: false
+  xy: 658, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 2x
-bounds:1099,1643,64,64
+  rotate: false
+  xy: 328, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 2x_pressed
-bounds:1099,1577,64,64
+  rotate: false
+  xy: 790, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 baron
-index:1
-bounds:646,811,64,55
+  rotate: false
+  xy: 2, 2
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 1
 baron
-index:2
-bounds:976,877,64,55
+  rotate: false
+  xy: 662, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 2
 beach_sand
-index:2
-bounds:1457,1967,64,64
+  rotate: false
+  xy: 856, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
 beach_sand
-index:1
-bounds:516,540,64,64
+  rotate: false
+  xy: 790, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
 beach_water
-index:1
-bounds:516,804,128,128
+  rotate: false
+  xy: 2, 125
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 1
 beach_water
-index:2
-bounds:1099,1709,128,128
+  rotate: false
+  xy: 132, 125
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 2
 buy_castle
-bounds:1099,1511,64,64
+  rotate: false
+  xy: 460, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 buy_castle_pressed
-bounds:2,134,64,64
+  rotate: false
+  xy: 394, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 buy_peasant
-bounds:778,868,64,64
+  rotate: false
+  xy: 394, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 buy_peasant_pressed
-bounds:516,606,64,64
+  rotate: false
+  xy: 328, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 capital
-bounds:516,426,64,55
+  rotate: false
+  xy: 596, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 castle
-bounds:1099,1274,64,55
+  rotate: false
+  xy: 926, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 die
-bounds:148,288,64,64
+  rotate: false
+  xy: 460, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 die_pressed
-bounds:280,288,64,64
+  rotate: false
+  xy: 592, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 end_turn
-bounds:844,868,64,64
+  rotate: false
+  xy: 856, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 end_turn_pressed
-bounds:214,288,64,64
+  rotate: false
+  xy: 262, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 gravestone
-bounds:910,877,64,55
+  rotate: false
+  xy: 68, 2
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 hand
-bounds:516,738,64,64
+  rotate: false
+  xy: 262, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 hand_thumb
-bounds:1391,1967,64,64
+  rotate: false
+  xy: 134, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 knight
-index:1
-bounds:1099,1388,64,55
+  rotate: false
+  xy: 134, 2
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 1
 knight
-index:2
-bounds:1721,1976,64,55
+  rotate: false
+  xy: 794, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 2
 palm_tree
-bounds:516,483,64,55
+  rotate: false
+  xy: 530, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 pause
-bounds:516,672,64,64
+  rotate: false
+  xy: 658, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 pause_pressed
-bounds:412,354,64,64
+  rotate: false
+  xy: 200, 57
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 peasant
-index:2
-bounds:712,811,64,55
+  rotate: false
+  xy: 464, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 2
 peasant
-index:1
-bounds:1099,1331,64,55
-saveSeedButton
-bounds:1293,1869,64,64
-seedSaved
-bounds:1099,1445,64,64
+  rotate: false
+  xy: 728, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 1
 shield
-bounds:582,786,16,16
+  rotate: false
+  xy: 200, 39
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 skip_turn
-bounds:346,354,64,64
+  rotate: false
+  xy: 724, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 skip_turn_pressed
-bounds:646,868,64,64
+  rotate: false
+  xy: 68, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 spearman
-index:1
-bounds:1655,1976,64,55
+  rotate: false
+  xy: 332, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 1
 spearman
-index:2
-bounds:778,811,64,55
-square_logo
-bounds:2,934,1095,1097
-square_logo
-index:512
-bounds:2,420,512,512
-square_logo
-index:192
-bounds:1099,1839,192,192
-square_logo
-index:144
-bounds:2,274,144,144
-square_logo
-index:96
-bounds:1293,1935,96,96
-square_logo
-index:72
-bounds:2,200,72,72
-square_logo
-index:64
-bounds:280,354,64,64
-square_logo
-index:48
-bounds:1229,1789,48,48
+  rotate: false
+  xy: 860, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: 2
 tile_bw
-bounds:76,208,64,64
+  rotate: false
+  xy: 526, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 tree
-bounds:412,297,64,55
+  rotate: false
+  xy: 398, 66
+  size: 64, 55
+  orig: 64, 55
+  offset: 0, 0
+  index: -1
 undo
-bounds:2,68,64,64
+  rotate: false
+  xy: 922, 189
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 undo_pressed
-bounds:148,354,64,64
+  rotate: false
+  xy: 2, 59
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: -1
 water
-index:2
-bounds:1523,1967,64,64
+  rotate: false
+  xy: 526, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 2
 water
-index:1
-bounds:346,288,64,64
+  rotate: false
+  xy: 922, 123
+  size: 64, 64
+  orig: 64, 64
+  offset: 0, 0
+  index: 1
