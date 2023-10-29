@@ -2,10 +2,15 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Stream;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -452,6 +457,13 @@ public class IngameScreen extends GameScreen {
 	private void addParameterInputListeners() {
 		parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
+
+		parameterInputStage.saveSeed.addListener(new ExceptionLoggingChangeListener(
+				() -> {//Save seed to clipboard
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					StringSelection seedNum = new StringSelection(parameterInputStage.seedTextField.getText());
+					clipboard.setContents(seedNum, seedNum);
+				}));
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
 				parameterInputStage.densitySelect)
