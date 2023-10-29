@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -57,9 +58,9 @@ public class ParameterInputStage extends ResizableResettableStage {
 	SelectBox<String> densitySelect;
 	SelectBox<String> difficultySelect;
 	ImageButton randomButton;
+	ImageButton saveSeedButton;
 	TextButton playButton;
 	TextField seedTextField;
-	ImageButton saveSeed;
 
 	/**
 	 * Constructor.
@@ -97,17 +98,18 @@ public class ParameterInputStage extends ResizableResettableStage {
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
 		randomButton = new ImageButton(skin);
-		randomButton.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
-		randomButton.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
+		ImageButtonStyle randomButtonStyle = new ImageButtonStyle(randomButton.getStyle());
+		randomButtonStyle.imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
+		randomButtonStyle.imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
+		randomButton.setStyle(randomButtonStyle);
 		randomButton.getImageCell().expand().fill();
 
-		saveSeed = new ImageButton(skin);
-		//saveSeed.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("saveSeedButton"));
-		//saveSeed.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("seedSaved"));
-		saveSeed.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
-		saveSeed.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
-
-		saveSeed.getImageCell().expand().fill();
+		saveSeedButton = new ImageButton(skin);
+		ImageButtonStyle saveButtonStyle = new ImageButtonStyle(saveSeedButton.getStyle());
+		saveButtonStyle.imageUp = new SpriteDrawable(textureAtlas.createSprite("copy"));
+		saveButtonStyle.imageDown = new SpriteDrawable(textureAtlas.createSprite("tick"));
+		saveSeedButton.setStyle(saveButtonStyle);
+		saveSeedButton.getImageCell().expand().fill();
 
 		playButton = new TextButton("Play", skin);
 
@@ -139,8 +141,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(seedTextField).minWidth(seedTextFieldWidth);
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
 				.padLeft(INPUT_PADDING_PX);
-		rootTable.add(saveSeed).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
-				.padLeft(INPUT_PADDING_PX+10);
+		rootTable.add(saveSeedButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
+				.padLeft(INPUT_PADDING_PX + 10);
 		rootTable.row();
 		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
 				OUTER_PADDING_PX);

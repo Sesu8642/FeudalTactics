@@ -455,7 +455,7 @@ public class IngameScreen extends GameScreen {
 		parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
 
-		parameterInputStage.saveSeed.addListener(new ExceptionLoggingChangeListener(
+		parameterInputStage.saveSeedButton.addListener(new ExceptionLoggingChangeListener(
 				() -> {
 					Gdx.app.getClipboard().setContents(parameterInputStage.seedTextField.getText());
 				}));
