@@ -2,10 +2,12 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Stream;
+
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -452,6 +454,11 @@ public class IngameScreen extends GameScreen {
 	private void addParameterInputListeners() {
 		parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
+
+		parameterInputStage.saveSeedButton.addListener(new ExceptionLoggingChangeListener(
+				() -> {
+					Gdx.app.getClipboard().setContents(parameterInputStage.seedTextField.getText());
+				}));
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
 				parameterInputStage.densitySelect)
