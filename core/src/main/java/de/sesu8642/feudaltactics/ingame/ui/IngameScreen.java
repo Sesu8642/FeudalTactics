@@ -98,6 +98,11 @@ public class IngameScreen extends GameScreen {
 	private boolean isLocalPlayerTurn = true;
 
 	/**
+	 * Whether local player has elected to spectate the bots after being defeated.
+	 */
+	private boolean isSpectateMode = false;
+
+	/**
 	 * Interactions with the UI must happen in the same thread that does the
 	 * rendering because the UI libs aren't thread-safe. To do that, Runnables can
 	 * be placed here and will be executed when the next render happens.
@@ -207,6 +212,7 @@ public class IngameScreen extends GameScreen {
 	private void clearCache() {
 		cachedGameState = null;
 		winnerBeforeBotTurn = null;
+		isSpectateMode = false;
 	}
 
 	/**
@@ -234,6 +240,7 @@ public class IngameScreen extends GameScreen {
 		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
 		String infoText = "";
 		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+			Player localPlayer = newGameState.getActivePlayer();
 			// info text
 			Kingdom kingdom = newGameState.getActiveKingdom();
 			if (kingdom != null) {
@@ -263,13 +270,18 @@ public class IngameScreen extends GameScreen {
 				hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
 			}
 			// display messages
-			if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER
-					&& newGameState.getActivePlayer().isDefeated()) {
-				// player lost
+			if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
+				if (localPlayer.isDefeated()) {
+					// Game is over; player lost
+					uiChangeActions.add(this::showLostMessageWithoutSpectate);
+				} else {
+					// Game is over; player won
+					uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
+				}
+			} else if (localPlayer.isDefeated() && !isSpectateMode) {
+				// Local player lost but game isn't over; offer a spectate option
 				uiChangeActions.add(this::showLostMessage);
-			} else if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
-				uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
-			} else if (humanPlayerTurnJustStarted && winnerChanged) {
+			} else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
 				// winner changed
 				uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
 						newGameState.getWinner().getColor()));
@@ -362,16 +374,36 @@ public class IngameScreen extends GameScreen {
 
 	private void showLostMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
-			if ((boolean) result) {
-				exitToMenu();
-			} else {
-				resetGame();
+			switch ((byte) result) {
+				case 1:
+					// exit button
+					exitToMenu();
+					break;
+				case 2:
+					// retry button
+					resetGame();
+					break;
+				case 0:
+					// spectate button
+					isSpectateMode = true;
+					break;
+				default:
+					break;
 			}
 		});
-		endDialog.button("Exit", true);
-		endDialog.button("Retry", false);
+		endDialog.button("Exit", (byte) 1);
+		if (!isSpectateMode) {
+			endDialog.button("Spectate", (byte) 0);
+		}
+		endDialog.button("Retry", (byte) 2);
 		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.");
 		endDialog.show(hudStage);
+	}
+
+	private void showLostMessageWithoutSpectate() {
+		// Set isSpectateMode to true so that the dialog spectate option is not offered.
+		isSpectateMode = true;
+		showLostMessage();
 	}
 
 	void activateStage(IngameStages ingameStage) {
