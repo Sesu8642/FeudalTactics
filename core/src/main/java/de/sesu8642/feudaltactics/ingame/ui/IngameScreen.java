@@ -430,7 +430,7 @@ public class IngameScreen extends GameScreen {
 			throw new IllegalStateException("Unknown stage " + ingameStage);
 		}
 		// the super class only applies the resizing to the active stage
-		resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.app.postRunnable(() -> resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 	}
 
 	@Override
