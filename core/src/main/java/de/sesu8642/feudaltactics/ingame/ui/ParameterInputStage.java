@@ -32,7 +32,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private static final long INPUT_HEIGHT_PX = 79;
 	private static final int INPUT_PADDING_PX = 20;
-
+	private static final int INPUT_LEFT_PX = 450;
+	private static final int INPUT_RIGTH_PX = 150;
 	// for map centering calculation
 	/** Outer padding around all the inputs. */
 	public static final int OUTER_PADDING_PX = 10;
@@ -130,8 +131,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
 				.padLeft(INPUT_PADDING_PX);
 		rootTable.row();
-		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
-				OUTER_PADDING_PX);
+		rootTable.add(playButton).colspan(4).width(500).right().fillX().pad(INPUT_PADDING_PX / 3F, INPUT_LEFT_PX, OUTER_PADDING_PX,
+		INPUT_RIGTH_PX);
 		this.addActor(rootTable);
 	}
 
