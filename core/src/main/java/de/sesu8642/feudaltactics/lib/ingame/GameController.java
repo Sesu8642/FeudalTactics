@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Queue;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
@@ -30,9 +31,15 @@ public class GameController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	public static final Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
-			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
-			new Color(0F, 1F, 0F, 1) };
+	public static Color blue = new Color(0.2F, 0.45F, 0.8F, 1);
+	public static Color orange = new Color(0.75F, 0.5F, 0F, 1);
+	public static Color pink = new Color(1F, 0.67F, 0.67F, 1);
+	public static Color yellow = new Color(1F, 1F, 0F, 1);
+	public static Color white = new Color(1F, 1F, 1F, 1);
+	public static Color green = new Color(0F, 1F, 0F, 1);
+
+	public static Color[] colorBank = { orange, blue, pink, yellow, white, green };
+	public static Color[] PLAYER_COLORS = new Color[colorBank.length];
 
 	private final EventBus eventBus;
 	private final ExecutorService botTurnExecutor;
@@ -102,6 +109,10 @@ public class GameController {
 		ArrayList<Player> players = new ArrayList<>();
 		int remainingHumanPlayers = mapParams.getHumanPlayerNo();
 		int remainingBotPlayers = mapParams.getBotPlayerNo();
+		
+		Color userColor = mapParams.getUserColor();
+		PLAYER_COLORS = setColors(colorBank, userColor);
+
 		for (Color color : PLAYER_COLORS) {
 			if (remainingHumanPlayers > 0) {
 				remainingHumanPlayers--;
@@ -115,6 +126,25 @@ public class GameController {
 		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass(), mapParams.getDensity(), null,
 				mapParams.getSeed());
 		eventBus.post(new GameStateChangeEvent(gameState));
+	}
+	
+	// Set the color order depending on the user color choice
+	public static Color[] setColors(Color[] colorBankColors, Color userColor) {
+		Color[] colors = new Color[colorBankColors.length];
+		Queue<Color> colorQueue = new Queue<Color>();
+
+		for (Color color : colorBankColors) {
+			if (color.equals(userColor))
+				colorQueue.addFirst(color);
+			else
+				colorQueue.addLast(color);
+		}
+
+		for (int i = 0; i < colorQueue.size; i++) {
+			colors[i] = colorQueue.get(i);
+		}
+
+		return colors;
 	}
 
 	/**

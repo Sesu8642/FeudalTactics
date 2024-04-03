@@ -2,6 +2,8 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
+import com.badlogic.gdx.graphics.Color;
+
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 /** Value object: preferences for a new game. */
@@ -10,6 +12,7 @@ public class NewGamePreferences {
 	private Intelligence botIntelligence;
 	private MapSizes mapSize;
 	private Densities density;
+	private UserColors userColor;
 
 	/**
 	 * Constructor.
@@ -18,10 +21,11 @@ public class NewGamePreferences {
 	 * @param mapSize         size of the map for this game
 	 * @param density         density of the map for this game
 	 */
-	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density) {
+	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density, UserColors userColor) {
 		this.botIntelligence = botIntelligence;
 		this.mapSize = mapSize;
 		this.density = density;
+		this.userColor = userColor;
 	}
 
 	public Intelligence getBotIntelligence() {
@@ -46,6 +50,14 @@ public class NewGamePreferences {
 
 	public void setDensity(Densities density) {
 		this.density = density;
+	}
+
+	public UserColors getUserColor() {
+		return userColor;
+	}
+
+	public void setUserColor(UserColors userColor) {
+		this.userColor = userColor;
 	}
 
 	/** Map sizes that can be generated. */
@@ -76,6 +88,23 @@ public class NewGamePreferences {
 
 		public float getDensityFloat() {
 			return this.densityFloat;
+		}
+	}
+
+	/** User colors that can be generated. */
+	public enum UserColors {
+		BLUE(new Color(0.2F, 0.45F, 0.8F, 1)), ORANGE(new Color(0.75F, 0.5F, 0F, 1)),
+		GREEN(new Color(0F, 1F, 0F, 1)), YELLOW(new Color(1F, 1F, 0F, 1)),
+		PINK(new Color(1F, 0.67F, 0.67F, 1)), WHITE(new Color(1F, 1F, 1F, 1));
+
+		private Color kingdomColor;
+
+		private UserColors(Color kingdomColor) {
+			this.kingdomColor = kingdomColor;
+		}
+
+		public Color getKingdomColor() {
+			return this.kingdomColor;
 		}
 	}
 

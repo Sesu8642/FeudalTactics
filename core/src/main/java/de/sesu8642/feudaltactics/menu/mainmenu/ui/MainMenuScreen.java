@@ -72,7 +72,7 @@ public class MainMenuScreen extends GameScreen {
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 			eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
 					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize().getAmountOfTiles(),
-							savedPrefs.getDensity().getDensityFloat())));
+							savedPrefs.getDensity().getDensityFloat(), savedPrefs.getUserColor().getKingdomColor())));
 		}));
 		// tutorial button
 		buttons.get(1).addListener(new ExceptionLoggingChangeListener(

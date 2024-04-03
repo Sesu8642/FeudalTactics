@@ -2,6 +2,8 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
+import com.badlogic.gdx.graphics.Color;
+
 /** Parameter class for map generation. Immutable class. */
 public class MapParameters {
 	private int humanPlayerNo;
@@ -9,6 +11,7 @@ public class MapParameters {
 	private Long seed;
 	private int landMass;
 	private float density;
+	private Color userColor;
 
 	/**
 	 * Constructor.
@@ -19,12 +22,13 @@ public class MapParameters {
 	 * @param landMass      number of tiles to generate
 	 * @param density       map density to use for generation
 	 */
-	public MapParameters(int humanPlayerNo, int botPlayerNo, Long seed, int landMass, float density) {
+	public MapParameters(int humanPlayerNo, int botPlayerNo, Long seed, int landMass, float density, Color userColor) {
 		this.humanPlayerNo = humanPlayerNo;
 		this.botPlayerNo = botPlayerNo;
 		this.seed = seed;
 		this.landMass = landMass;
 		this.density = density;
+		this.userColor = userColor;
 	}
 
 	/**
@@ -34,12 +38,13 @@ public class MapParameters {
 	 * @param landMass number of tiles to generate
 	 * @param density  map density to use for generation
 	 */
-	public MapParameters(Long seed, int landMass, float density) {
+	public MapParameters(Long seed, int landMass, float density, Color userColor) {
 		this.humanPlayerNo = 1;
 		this.botPlayerNo = 5;
 		this.seed = seed;
 		this.landMass = landMass;
 		this.density = density;
+		this.userColor = userColor;
 	}
 
 	public int getHumanPlayerNo() {
@@ -60,6 +65,10 @@ public class MapParameters {
 
 	public float getDensity() {
 		return density;
+	}
+
+	public Color getUserColor() {
+		return userColor;
 	}
 
 	@Override
