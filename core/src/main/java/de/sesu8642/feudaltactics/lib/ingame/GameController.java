@@ -31,6 +31,7 @@ public class GameController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+	/** All colors available to bots and user in the game. */
 	public static Color blue = new Color(0.2F, 0.45F, 0.8F, 1);
 	public static Color orange = new Color(0.75F, 0.5F, 0F, 1);
 	public static Color pink = new Color(1F, 0.67F, 0.67F, 1);
@@ -109,7 +110,7 @@ public class GameController {
 		ArrayList<Player> players = new ArrayList<>();
 		int remainingHumanPlayers = mapParams.getHumanPlayerNo();
 		int remainingBotPlayers = mapParams.getBotPlayerNo();
-		
+
 		Color userColor = mapParams.getUserColor();
 		PLAYER_COLORS = setColors(colorBank, userColor);
 
@@ -127,8 +128,14 @@ public class GameController {
 				mapParams.getSeed());
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
-	
-	// Set the color order depending on the user color choice
+
+	/**
+	 * Set the color order depending on the user color choice
+	 * 
+	 * @param colorBankColors Array of all six possible colors.
+	 * @param userColor       The color the user has chosen for their kingdom.
+	 * @return Array with the user color in the zero index.
+	 */
 	public static Color[] setColors(Color[] colorBankColors, Color userColor) {
 		Color[] colors = new Color[colorBankColors.length];
 		Queue<Color> colorQueue = new Queue<Color>();

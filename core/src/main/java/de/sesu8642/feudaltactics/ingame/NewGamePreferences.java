@@ -20,6 +20,7 @@ public class NewGamePreferences {
 	 * @param botIntelligence intelligence of the bot players for the game
 	 * @param mapSize         size of the map for this game
 	 * @param density         density of the map for this game
+	 * @param userColor       color user selects for their kingdom
 	 */
 	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density, UserColors userColor) {
 		this.botIntelligence = botIntelligence;

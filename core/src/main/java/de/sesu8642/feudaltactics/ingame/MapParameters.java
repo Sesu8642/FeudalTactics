@@ -21,6 +21,7 @@ public class MapParameters {
 	 * @param seed          map seed to use for generating the map
 	 * @param landMass      number of tiles to generate
 	 * @param density       map density to use for generation
+	 * @param userColor     color user selects for their kingdom
 	 */
 	public MapParameters(int humanPlayerNo, int botPlayerNo, Long seed, int landMass, float density, Color userColor) {
 		this.humanPlayerNo = humanPlayerNo;
@@ -34,9 +35,10 @@ public class MapParameters {
 	/**
 	 * Constructor. Assumes one human player vs. 5 bots.
 	 * 
-	 * @param seed     map seed to use for generating the map
-	 * @param landMass number of tiles to generate
-	 * @param density  map density to use for generation
+	 * @param seed      map seed to use for generating the map
+	 * @param landMass  number of tiles to generate
+	 * @param density   map density to use for generation
+	 * @param userColor color user selects for their kingdom
 	 */
 	public MapParameters(Long seed, int landMass, float density, Color userColor) {
 		this.humanPlayerNo = 1;
