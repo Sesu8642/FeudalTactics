@@ -32,15 +32,15 @@ public class GameController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	/** All colors available to bots and user in the game. */
-	public static final Color blue = new Color(0.2F, 0.45F, 0.8F, 1);
-	public static final Color orange = new Color(0.75F, 0.5F, 0F, 1);
-	public static final Color pink = new Color(1F, 0.67F, 0.67F, 1);
-	public static final Color yellow = new Color(1F, 1F, 0F, 1);
-	public static final Color white = new Color(1F, 1F, 1F, 1);
-	public static final Color green = new Color(0F, 1F, 0F, 1);
+	public static Color blue = new Color(0.2F, 0.45F, 0.8F, 1);
+	public static Color orange = new Color(0.75F, 0.5F, 0F, 1);
+	public static Color pink = new Color(1F, 0.67F, 0.67F, 1);
+	public static Color yellow = new Color(1F, 1F, 0F, 1);
+	public static Color white = new Color(1F, 1F, 1F, 1);
+	public static Color green = new Color(0F, 1F, 0F, 1);
 
-	public static final Color[] colorBank = { orange, blue, pink, yellow, white, green };
-	public static Color[] playerColors = new Color[colorBank.length];
+	public static Color[] colorBank = { orange, blue, pink, yellow, white, green };
+	public static Color[] PLAYER_COLORS = new Color[colorBank.length];
 
 	private final EventBus eventBus;
 	private final ExecutorService botTurnExecutor;
@@ -112,9 +112,9 @@ public class GameController {
 		int remainingBotPlayers = mapParams.getBotPlayerNo();
 
 		Color userColor = mapParams.getUserColor();
-		playerColors = setPlayerColors(colorBank, userColor);
+		PLAYER_COLORS = setColors(colorBank, userColor);
 
-		for (Color color : playerColors) {
+		for (Color color : PLAYER_COLORS) {
 			if (remainingHumanPlayers > 0) {
 				remainingHumanPlayers--;
 				players.add(new Player(color, Type.LOCAL_PLAYER));
@@ -136,16 +136,15 @@ public class GameController {
 	 * @param userColor       The color the user has chosen for their kingdom.
 	 * @return Array with the user color in the zero index.
 	 */
-	public Color[] setPlayerColors(Color[] colorBankColors, Color userColor) {
+	public static Color[] setColors(Color[] colorBankColors, Color userColor) {
 		Color[] colors = new Color[colorBankColors.length];
 		Queue<Color> colorQueue = new Queue<Color>();
 
 		for (Color color : colorBankColors) {
-			if (color.equals(userColor)) {
+			if (color.equals(userColor))
 				colorQueue.addFirst(color);
-			} else {
+			else
 				colorQueue.addLast(color);
-			}
 		}
 
 		for (int i = 0; i < colorQueue.size; i++) {
