@@ -8,4 +8,5 @@ By making a contribution to this project, I certify that I multi-license my cont
 | 2023-02-22 | Peter Serwylo (serwylop, peter@serwylo.com) |
 | 2023-04-21 | @mueller-ma |
 | 2023-06-05 | John Cole (jhcole) |
-| 2024-02-21 | Matthew Wadle (mwadle, matthewwadle@gmail.com)
+| 2024-02-21 | Matthew Wadle (mwadle, matthewwadle@gmail.com) |
+| 2024-04-05 | Anthony Clayton (AnthonyClayton12, anthonyclayton12@gmail.com) 
