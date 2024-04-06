@@ -39,8 +39,8 @@ public class GameController {
 	public static final Color white = new Color(1F, 1F, 1F, 1);
 	public static final Color green = new Color(0F, 1F, 0F, 1);
 
-	public static Color[] colorBank = { orange, blue, pink, yellow, white, green };
-	public static Color[] PLAYER_COLORS = new Color[colorBank.length];
+	public static final Color[] colorBank = { blue, orange, pink, yellow, white, green };
+	public Color[] playerColors = new Color[colorBank.length];
 
 	private final EventBus eventBus;
 	private final ExecutorService botTurnExecutor;
@@ -112,7 +112,7 @@ public class GameController {
 		int remainingBotPlayers = mapParams.getBotPlayerNo();
 
 		Color userColor = mapParams.getUserColor();
-		PLAYER_COLORS = setColors(colorBank, userColor);
+		playerColors = setPlayerColors(colorBank, userColor);
 
 		for (Color color : playerColors) {
 			if (remainingHumanPlayers > 0) {
