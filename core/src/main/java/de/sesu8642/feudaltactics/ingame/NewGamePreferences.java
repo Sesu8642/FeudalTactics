@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.ingame;
 
 import com.badlogic.gdx.graphics.Color;
 
+import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 /** Value object: preferences for a new game. */
@@ -94,9 +95,8 @@ public class NewGamePreferences {
 
 	/** User colors that can be generated. */
 	public enum UserColors {
-		BLUE(new Color(0.2F, 0.45F, 0.8F, 1)), ORANGE(new Color(0.75F, 0.5F, 0F, 1)),
-		GREEN(new Color(0F, 1F, 0F, 1)), YELLOW(new Color(1F, 1F, 0F, 1)),
-		PINK(new Color(1F, 0.67F, 0.67F, 1)), WHITE(new Color(1F, 1F, 1F, 1));
+		BLUE(GameController.BLUE), ORANGE(GameController.ORANGE), GREEN(GameController.GREEN),
+		YELLOW(GameController.YELLOW), PINK(GameController.PINK), WHITE(GameController.WHITE);
 
 		private Color kingdomColor;
 

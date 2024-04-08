@@ -32,15 +32,13 @@ public class GameController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	/** All colors available to bots and user in the game. */
-	public static final Color blue = new Color(0.2F, 0.45F, 0.8F, 1);
-	public static final Color orange = new Color(0.75F, 0.5F, 0F, 1);
-	public static final Color pink = new Color(1F, 0.67F, 0.67F, 1);
-	public static final Color yellow = new Color(1F, 1F, 0F, 1);
-	public static final Color white = new Color(1F, 1F, 1F, 1);
-	public static final Color green = new Color(0F, 1F, 0F, 1);
-
-	public static final Color[] colorBank = { blue, orange, pink, yellow, white, green };
-	public Color[] playerColors = new Color[colorBank.length];
+	public static final Color BLUE = new Color(0.2F, 0.45F, 0.8F, 1);
+	public static final Color ORANGE = new Color(0.75F, 0.5F, 0F, 1);
+	public static final Color PINK = new Color(1F, 0.67F, 0.67F, 1);
+	public static final Color YELLOW = new Color(1F, 1F, 0F, 1);
+	public static final Color WHITE = new Color(1F, 1F, 1F, 1);
+	public static final Color GREEN = new Color(0F, 1F, 0F, 1);
+	public static final Color[] COLOR_BANK = { BLUE, ORANGE, PINK, YELLOW, WHITE, GREEN };
 
 	private final EventBus eventBus;
 	private final ExecutorService botTurnExecutor;
@@ -111,8 +109,7 @@ public class GameController {
 		int remainingHumanPlayers = mapParams.getHumanPlayerNo();
 		int remainingBotPlayers = mapParams.getBotPlayerNo();
 
-		Color userColor = mapParams.getUserColor();
-		playerColors = setPlayerColors(colorBank, userColor);
+		Color[] playerColors = determinePlayerColors(mapParams.getUserColor());
 
 		for (Color color : playerColors) {
 			if (remainingHumanPlayers > 0) {
@@ -130,17 +127,16 @@ public class GameController {
 	}
 
 	/**
-	 * Set the color order depending on the user color choice
+	 * Set the color order depending on the user color choice.
 	 * 
-	 * @param colorBankColors Array of all six possible colors.
-	 * @param userColor       The color the user has chosen for their kingdom.
+	 * @param userColor The color the user has chosen for their kingdom.
 	 * @return Array with the user color in the zero index.
 	 */
-	public Color[] setPlayerColors(Color[] colorBankColors, Color userColor) {
-		Color[] colors = new Color[colorBankColors.length];
-		Queue<Color> colorQueue = new Queue<Color>();
+	private Color[] determinePlayerColors(Color userColor) {
+		Color[] colors = new Color[COLOR_BANK.length];
+		Queue<Color> colorQueue = new Queue<>();
 
-		for (Color color : colorBankColors) {
+		for (Color color : COLOR_BANK) {
 			if (color.equals(userColor)) {
 				colorQueue.addFirst(color);
 			} else {
