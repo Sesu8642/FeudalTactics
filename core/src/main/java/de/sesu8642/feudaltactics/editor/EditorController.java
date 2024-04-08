@@ -40,9 +40,9 @@ public class EditorController {
 	public void generateEmptyGameState() {
 		gameState = new GameState();
 		ArrayList<Player> players = new ArrayList<>();
-		players.add(new Player(GameController.PLAYER_COLORS[0], Type.LOCAL_PLAYER));
-		for (int i = 1; i < GameController.PLAYER_COLORS.length; i++) {
-			players.add(new Player(GameController.PLAYER_COLORS[i], Type.LOCAL_BOT));
+		players.add(new Player(GameController.COLOR_BANK[0], Type.LOCAL_PLAYER));
+		for (int i = 1; i < GameController.COLOR_BANK.length; i++) {
+			players.add(new Player(GameController.COLOR_BANK[i], Type.LOCAL_BOT));
 		}
 		GameStateHelper.initializeMap(gameState, players, 0, 0, 0F, null);
 		eventBus.post(new GameStateChangeEvent(gameState));

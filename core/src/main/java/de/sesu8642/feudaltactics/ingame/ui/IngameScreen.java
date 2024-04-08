@@ -198,7 +198,8 @@ public class IngameScreen extends GameScreen {
 		eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 				new MapParameters(parameterInputStage.getSeedParam(),
 						parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-						parameterInputStage.getMapDensityParam().getDensityFloat())));
+						parameterInputStage.getMapDensityParam().getDensityFloat(),
+						parameterInputStage.getUserColor().getKingdomColor())));
 		centerMap();
 		activateStage(IngameStages.PARAMETERS);
 	}
@@ -486,16 +487,18 @@ public class IngameScreen extends GameScreen {
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
-				parameterInputStage.densitySelect)
+				parameterInputStage.densitySelect, parameterInputStage.colorSelect)
 				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
 					eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 							new MapParameters(parameterInputStage.getSeedParam(),
 									parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-									parameterInputStage.getMapDensityParam().getDensityFloat())));
+									parameterInputStage.getMapDensityParam().getDensityFloat(),
+									parameterInputStage.getUserColor().getKingdomColor())));
 					centerMap();
 					newGamePrefDao
 							.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
-									parameterInputStage.getMapSizeParam(), parameterInputStage.getMapDensityParam()));
+									parameterInputStage.getMapSizeParam(), parameterInputStage.getMapDensityParam(),
+									parameterInputStage.getUserColor()));
 				})));
 
 		parameterInputStage.playButton
