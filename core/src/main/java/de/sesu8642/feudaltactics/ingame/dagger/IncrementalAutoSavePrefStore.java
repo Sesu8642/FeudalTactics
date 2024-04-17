@@ -10,6 +10,6 @@ import javax.inject.Qualifier;
 /** Binding annotation. **/
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoSavePrefStore {
+public @interface IncrementalAutoSavePrefStore {
 
 }

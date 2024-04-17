@@ -354,16 +354,17 @@ public class InputValidationHelper {
 	/**
 	 * Checks whether a player is allowed undo the previous action.
 	 * 
-	 * @param gameState     game state of the current game
-	 * @param player        player attempting the action
-	 * @param noOfAutoSaves number of available autosaves
+	 * @param gameState      game state of the current game
+	 * @param player         player attempting the action
+	 * @param isUndoPossible whether undoing is possible from the repository's
+	 *                       perspective
 	 * @return whether the action is allowed
 	 */
-	public static boolean checkUndoAction(GameState gameState, Player player, int noOfAutoSaves) {
+	public static boolean checkUndoAction(GameState gameState, Player player, boolean isUndoPossible) {
 		if (!isCorrectPlayersTurn(gameState, player)) {
 			return false;
 		}
-		return (noOfAutoSaves > 1);
+		return isUndoPossible;
 	}
 
 	private static boolean isWater(HexTile tile) {

@@ -148,7 +148,7 @@ public class LocalIngameInputHandler {
 			return;
 		}
 		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get(),
-				autoSaveRepo.getNoOfAutoSaves())) {
+				autoSaveRepo.isUndoPossible())) {
 			gameController.undoLastAction();
 		}
 	}

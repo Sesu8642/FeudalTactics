@@ -77,9 +77,16 @@ public class IngameDaggerModule {
 
 	@Provides
 	@Singleton
-	@AutoSavePrefStore
-	static Preferences provideAutoSavePrefStore(@PreferencesPrefixProperty String prefix) {
-		return Gdx.app.getPreferences(prefix + AutoSaveRepository.AUTO_SAVE_PREFERENCES_NAME);
+	@FullAutoSavePrefStore
+	static Preferences provideFullAutoSavePrefStore(@PreferencesPrefixProperty String prefix) {
+		return Gdx.app.getPreferences(prefix + AutoSaveRepository.FULL_AUTO_SAVE_PREFERENCES_NAME);
+	}
+
+	@Provides
+	@Singleton
+	@IncrementalAutoSavePrefStore
+	static Preferences provideIncrementalAutoSavePrefStore(@PreferencesPrefixProperty String prefix) {
+		return Gdx.app.getPreferences(prefix + AutoSaveRepository.INCREMENTAL_AUTO_SAVE_PREFERENCES_NAME);
 	}
 
 	@Provides

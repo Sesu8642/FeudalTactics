@@ -79,7 +79,7 @@ public class GameInitializer {
 				crashReportDao.markCrashReportAsNonFresh();
 				eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_ON_STARTUP));
 			} else {
-				if (autoSaveRepository.getNoOfAutoSaves() > 0) {
+				if (autoSaveRepository.hasFullAutosave()) {
 					// resume running game
 					eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 					eventBus.post(new GameResumedEvent());

@@ -69,8 +69,7 @@ public class GameController {
 		logger.info("starting game");
 		// autosave before starting the AI thread, to avoid potential
 		// ConcurrentModificationException
-		autoSaveRepo.deleteAllAutoSaveExceptLatestN(0);
-		autosave();
+		autoSaveRepo.autoSaveFullGameState(gameState);
 		// if a bot begins, make it act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
@@ -78,14 +77,10 @@ public class GameController {
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
-	private void autosave() {
-		autoSaveRepo.autoSaveGameState(gameState);
-	}
-
 	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
 		logger.info("loading latest autosave");
-		gameState = autoSaveRepo.getLatestAutoSave();
+		gameState = autoSaveRepo.getCombinedAutoSave();
 		// posting the event must happen before starting the AI thread cause the data
 		// for the renderer will be updated and the AI must not change the gamestate
 		// while it is
@@ -168,7 +163,7 @@ public class GameController {
 	public void activateKingdom(Kingdom kingdom) {
 		logger.debug("activating {}", kingdom);
 		GameStateHelper.activateKingdom(gameState, kingdom);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.activateKingdom(kingdom.getTiles().get(0).getPosition()));
 		// save first because is is relevant for the undo button status
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
@@ -181,7 +176,7 @@ public class GameController {
 	public void pickupObject(HexTile tile) {
 		logger.debug("picking up object from {}", tile);
 		GameStateHelper.pickupObject(gameState, tile);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.pickUp(tile.getPosition()));
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -193,7 +188,7 @@ public class GameController {
 	public void placeOwn(HexTile tile) {
 		logger.debug("placing held object on own {}", tile);
 		GameStateHelper.placeOwn(gameState, tile);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.placeOwn(tile.getPosition()));
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -205,7 +200,7 @@ public class GameController {
 	public void combineUnits(HexTile tile) {
 		logger.debug("combining held unit with unit on {}", tile);
 		GameStateHelper.combineUnits(gameState, tile);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.combineUnits(tile.getPosition()));
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -217,7 +212,7 @@ public class GameController {
 	public void conquer(HexTile tile) {
 		logger.debug("conquering {}", tile);
 		GameStateHelper.conquer(gameState, tile);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.conquer(tile.getPosition()));
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -234,9 +229,7 @@ public class GameController {
 		} else {
 			logger.info("human player turn begins");
 			botAi.setSkipDisplayingTurn(false);
-			autosave();
-			// clear autosaves from previous turn
-			autoSaveRepo.deleteAllAutoSaveExceptLatestN(1);
+			autoSaveRepo.autoSaveFullGameState(gameState);
 			eventBus.post(new GameStateChangeEvent(gameState));
 		}
 	}
@@ -270,7 +263,7 @@ public class GameController {
 	public void buyPeasant() {
 		logger.debug("buying peasant");
 		GameStateHelper.buyPeasant(gameState);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.buyPeasant());
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -278,21 +271,16 @@ public class GameController {
 	public void buyCastle() {
 		logger.debug("buying castle");
 		GameStateHelper.buyCastle(gameState);
-		autosave();
+		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.buyCastle());
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/** Undoes the last action. */
 	public void undoLastAction() {
 		logger.debug("undoing last action");
-		if (autoSaveRepo.getNoOfAutoSaves() > 1) {
-			// 1 means the current state is the only one saved
-			// remove the current state from autosaves
-			autoSaveRepo.deleteLatestAutoSave();
-			// load the previous state
-			GameState loaded = autoSaveRepo.getLatestAutoSave();
-			gameState = loaded;
-		}
+		autoSaveRepo.deleteLatestIncrementalSave();
+		GameState loaded = autoSaveRepo.getCombinedAutoSave();
+		gameState = loaded;
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 

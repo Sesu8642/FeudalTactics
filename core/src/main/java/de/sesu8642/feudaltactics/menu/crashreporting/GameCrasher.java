@@ -39,16 +39,23 @@ public class GameCrasher {
 		try {
 			String template = "Date: %s\n" + "\n" + "Game version: %s\n" + "\n" + "Platform: %s\n" + "\n"
 					+ "Platform version: %s\n" + "\n" + "Thread: %s\n" + "\n" + "Thrown:\n" + "%s\n" + "\n"
-					+ "Last autosave:\n" + "%s\n" + "\n" + "Previous logs:\n" + "%s";
+					+ "Last full save:\n" + "%s\n" + "\n" + "Incremental saves:\n" + "%s\n" + "\n" + "Previous logs:\n"
+					+ "%s";
 			String lastAutoSave;
 			try {
-				lastAutoSave = autoSaveRepository.getLatestAutoSaveAsString();
+				lastAutoSave = autoSaveRepository.getFullSaveAsString();
 			} catch (Exception e) {
 				lastAutoSave = Throwables.getStackTraceAsString(e);
 			}
+			String incrementalSaves;
+			try {
+				incrementalSaves = autoSaveRepository.getIncrementalSavesAsString();
+			} catch (Exception e) {
+				incrementalSaves = Throwables.getStackTraceAsString(e);
+			}
 			return String.format(template, new Date(), gameVersion, Gdx.app.getType(), Gdx.app.getVersion(),
 					Thread.currentThread().getName(), Throwables.getStackTraceAsString(throwable), lastAutoSave,
-					previousLogs);
+					incrementalSaves, previousLogs);
 		} catch (Exception e) {
 			return Throwables.getStackTraceAsString(e);
 		}
@@ -65,7 +72,7 @@ public class GameCrasher {
 		crashReportDao.saveCrashReport(crashReportText);
 		// The game state may lead to the same crash over and over again. Better delete
 		// it.
-		autoSaveRepository.deleteAllAutoSaveExceptLatestN(0);
+		autoSaveRepository.deleteAllAutoSaves();
 		FeudalTactics.game.setScreen(new CrashingScreen(throwable));
 	}
 

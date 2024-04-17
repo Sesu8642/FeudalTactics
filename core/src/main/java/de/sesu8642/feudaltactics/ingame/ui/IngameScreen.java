@@ -264,7 +264,7 @@ public class IngameScreen extends GameScreen {
 				// TODO: the repo shouldn't be needed here, would be better to create a
 				// viewmodel somewhere else
 				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
-						autoSaveRepo.getNoOfAutoSaves());
+						autoSaveRepo.isUndoPossible());
 				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
 				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
 				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
@@ -376,20 +376,20 @@ public class IngameScreen extends GameScreen {
 	private void showLostMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			switch ((byte) result) {
-				case 1:
-					// exit button
-					exitToMenu();
-					break;
-				case 2:
-					// retry button
-					resetGame();
-					break;
-				case 0:
-					// spectate button
-					isSpectateMode = true;
-					break;
-				default:
-					break;
+			case 1:
+				// exit button
+				exitToMenu();
+				break;
+			case 2:
+				// retry button
+				resetGame();
+				break;
+			case 0:
+				// spectate button
+				isSpectateMode = true;
+				break;
+			default:
+				break;
 			}
 		});
 		endDialog.button("Exit", (byte) 1);
