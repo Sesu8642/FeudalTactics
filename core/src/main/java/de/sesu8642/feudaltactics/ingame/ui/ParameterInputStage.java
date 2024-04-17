@@ -91,9 +91,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 		Label sizeLabel = new Label("Map\nSize", skin);
 		sizeSelect = new SelectBox<>(skin);
-		// xxlarge is temporarily disabled because of performance problems
-		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", /* "XXLarge" */
-		};
+		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", "XXLarge" };
 		sizeSelect.setItems(sizes);
 
 		Label densityLabel = new Label("Map\nDensity", skin);
