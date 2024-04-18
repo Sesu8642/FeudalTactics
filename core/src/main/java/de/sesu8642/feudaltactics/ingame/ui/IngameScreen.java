@@ -280,7 +280,7 @@ public class IngameScreen extends GameScreen {
                      hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
                  } else {
                      // Disable buttons for enemy kingdoms
-                     hudStage.setActiveTurnButtonEnabledStatus(false, false, false, false);
+                     hudStage.setActiveTurnButtonEnabledStatus(true, false, false, false);
                  }
             }
             // display messages
@@ -306,7 +306,7 @@ public class IngameScreen extends GameScreen {
                 uiChangeActions.add(() -> hudStage.showEnemyTurnButtons());
             }
             // Disable buttons for enemy kingdoms
-            hudStage.setActiveTurnButtonEnabledStatus(false, false, false, false);
+            hudStage.setActiveTurnButtonEnabledStatus(true, false, false, false);
         }
         hudStage.setInfoText(infoText);
         parameterInputStage.updateSeed(newGameState.getSeed());
