@@ -21,7 +21,7 @@ public class PreferencesSlide extends Slide {
 
 	private final SelectBox<Boolean> forgottenKingdomSelectBox;
 	private final SelectBox<Boolean> showEnemyTurnsSelectBox;
-
+	private final SelectBox<Boolean> unitsAtRiskSelectBox;
 	/**
 	 * Constructor.
 	 * 
@@ -36,6 +36,8 @@ public class PreferencesSlide extends Slide {
 		forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Warn about forgotten kingdoms",
 				skin);
 		showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Show enemy turns", skin);
+
+		unitsAtRiskSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Units are at Risk", skin);
 
 		// add a row to fill the rest of the space in order for the other options to be
 		// at the top of the page
@@ -64,6 +66,10 @@ public class PreferencesSlide extends Slide {
 
 	public SelectBox<Boolean> getShowEnemyTurnsSelectBox() {
 		return showEnemyTurnsSelectBox;
+	}
+
+	public SelectBox<Boolean> getUnitsAtRiskSelectBox() {
+		return unitsAtRiskSelectBox;
 	}
 
 }

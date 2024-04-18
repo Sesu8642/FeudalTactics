@@ -32,19 +32,21 @@ public class InputValidationHelper {
 		if (isWater(tile)) {
 			return false;
 		}
-		if (tile.getKingdom().getPlayer() != player) {
-        return true;
-        }
-		//if (player != tile.getPlayer()) {
-		//	return false;
-		//}
+		Kingdom kingdom = tile.getKingdom();
+		if (kingdom == null) {
+			return false; // Handle the case where HexTile has no associated Kingdom
+		}
+	
+		if (player != kingdom.getPlayer()) {
+			if (isCorrectPlayersTurn(gameState, player)) {
+				return true;
+			}
+			return false;
+		}
 		if (gameState.getHeldObject() != null) {
 			return false;
 		}
-		if (tile.getKingdom() == null) {
-			return false;
-		}
-		if (gameState.getActiveKingdom() == tile.getKingdom()) {
+		if (gameState.getActiveKingdom() == kingdom) {
 			return false;
 		}
 		return true;
@@ -101,9 +103,11 @@ public class InputValidationHelper {
 		if (isWater(tile)) {
 			return false;
 		}
+
 		if (gameState.getHeldObject() == null) {
 			return false;
 		}
+
 		if (player != tile.getPlayer()) {
 			return false;
 		}
@@ -266,6 +270,7 @@ public class InputValidationHelper {
 		if (isWater(tile)) {
 			return false;
 		}
+		
 		if (gameState.getHeldObject() == null) {
 			return false;
 		}

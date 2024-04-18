@@ -179,6 +179,11 @@ public class IngameScreen extends GameScreen {
 					"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
 					this::endHumanPlayerTurn);
 			confirmDialog.show(hudStage);
+		} else if (GameStateHelper.arePlayerUnitsAtRisk(cachedGameState, winnerBeforeBotTurn)) {
+			Dialog confirmDialog = dialogFactory.createConfirmDialog(
+					"Your kingdom salary is negative, your units may die upon ending your turn.\nAre you sure you want to end your turn?\n",
+					this::endHumanPlayerTurn);
+					confirmDialog.show(hudStage);
 		} else {
 			endHumanPlayerTurn();
 		}
@@ -250,8 +255,9 @@ public class IngameScreen extends GameScreen {
                  int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
                  int result = income - salaries;
                  int savings = kingdom.getSavings();
+				 int tiles = kingdom.getTiles().size();
                  String resultText = result < 0 ? String.valueOf(result) : "+" + result;
-                 infoText = "Savings: " + savings + " (" + resultText + ")";
+                 infoText = "Savings: " + savings + " (" + resultText + ")" + "\nKingdom Size: " + tiles + " tiles";
              } else {
                  infoText = "Your turn";
              }

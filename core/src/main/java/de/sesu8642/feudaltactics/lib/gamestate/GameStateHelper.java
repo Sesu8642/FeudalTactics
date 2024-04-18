@@ -975,6 +975,24 @@ public class GameStateHelper {
 		return false;
 	}
 
+    /**
+     * Determines whether a player's units are at risk due to negative salary.
+     * 
+     * @param gameState game state of the current game
+     * @param player    player attempting the action
+     * @return true if player's units are at risk, false otherwise
+     */
+    public static boolean arePlayerUnitsAtRisk(GameState gameState, Player player) {
+        Kingdom activeKingdom = gameState.getActiveKingdom();
+		int income = GameStateHelper.getKingdomIncome(activeKingdom);
+        int salaries = GameStateHelper.getKingdomSalaries(gameState, activeKingdom);
+        int result = income - salaries;
+        if (result < 0) {
+            return true;
+        }
+        return false;
+	}
+
 	/**
 	 * Determines which local player is responsible for any inputs.
 	 * 

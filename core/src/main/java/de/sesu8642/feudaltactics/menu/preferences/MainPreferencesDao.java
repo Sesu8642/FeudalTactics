@@ -17,6 +17,7 @@ public class MainPreferencesDao {
 
 	private static final String WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME = "warnAboutForgottenKingdoms";
 	private static final String SHOW_ENEMY_TURNS_NAME = "showEnemyTurns";
+	private static final String WARN_KINGDOM_UNITS_AT_RISK = "areKingdomUnitsatRisk";
 
 	private final Preferences prefStore;
 
@@ -33,6 +34,8 @@ public class MainPreferencesDao {
 	public void saveMainPreferences(MainGamePreferences prefs) {
 		prefStore.putBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, prefs.isWarnAboutForgottenKingdoms());
 		prefStore.putBoolean(SHOW_ENEMY_TURNS_NAME, prefs.isShowEnemyTurns());
+		prefStore.putBoolean(WARN_KINGDOM_UNITS_AT_RISK, prefs.areKingdomUnitsatRisk());
+
 		prefStore.flush();
 	}
 
@@ -44,7 +47,8 @@ public class MainPreferencesDao {
 	public MainGamePreferences getMainPreferences() {
 		boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, true);
 		boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME, true);
-		return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns);
+		boolean areKingdomUnitsatRisk = prefStore.getBoolean(WARN_KINGDOM_UNITS_AT_RISK, true);
+		return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns, areKingdomUnitsatRisk);
 	}
 
 }

@@ -64,9 +64,9 @@ public class PreferencesStage extends SlideStage {
 	private void sendPreferencesChangedEvent() {
 		eventBus.post(new MainPreferencesChangeEvent(
 				new MainGamePreferences(preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
-						preferencesSlide.getShowEnemyTurnsSelectBox().getSelected())));
+						preferencesSlide.getShowEnemyTurnsSelectBox().getSelected(), preferencesSlide.getUnitsAtRiskSelectBox().getSelected())));
 	}
-
+	
 	@Override
 	public void reset() {
 		super.reset();

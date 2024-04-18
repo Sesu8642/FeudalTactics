@@ -9,6 +9,7 @@ public class MainGamePreferences {
 
 	private boolean warnAboutForgottenKingdoms;
 	private boolean showEnemyTurns;
+	private boolean areKingdomUnitsatRisk;
 
 	/**
 	 * Constructor.
@@ -19,10 +20,19 @@ public class MainGamePreferences {
 	 * @param showEnemyTurns             whether to visualize the enemies doing
 	 *                                   their turns
 	 */
-	public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns) {
+	public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns, boolean areKingdomUnitsatRisk) {
 		super();
 		this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
 		this.showEnemyTurns = showEnemyTurns;
+		this.areKingdomUnitsatRisk = areKingdomUnitsatRisk;
+	}
+
+	public boolean areKingdomUnitsatRisk() {
+		return areKingdomUnitsatRisk;
+	}
+
+	public void setAreKingdomUnitsatRisk(boolean areKingdomUnitsatRisk) {
+		this.areKingdomUnitsatRisk = areKingdomUnitsatRisk;
 	}
 
 	public boolean isWarnAboutForgottenKingdoms() {
