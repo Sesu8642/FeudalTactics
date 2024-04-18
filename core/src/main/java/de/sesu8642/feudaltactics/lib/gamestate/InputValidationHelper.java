@@ -32,9 +32,12 @@ public class InputValidationHelper {
 		if (isWater(tile)) {
 			return false;
 		}
-		if (player != tile.getPlayer()) {
-			return false;
-		}
+		if (tile.getKingdom().getPlayer() != player) {
+        return true;
+        }
+		//if (player != tile.getPlayer()) {
+		//	return false;
+		//}
 		if (gameState.getHeldObject() != null) {
 			return false;
 		}
