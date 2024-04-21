@@ -97,7 +97,7 @@ public class LocalIngameInputHandler {
 				Kingdom clickedKingdom = tile.getKingdom();
 				if (clickedKingdom != null && !InputValidationHelper.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {
 					// Display statistics of the enemy kingdom
-					gameController.displayBotAIStats(clickedKingdom);
+					gameController.displayBotAiStats(clickedKingdom);
 				}
 			}
 		}
