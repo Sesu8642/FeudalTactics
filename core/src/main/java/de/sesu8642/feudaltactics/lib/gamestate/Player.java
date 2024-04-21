@@ -57,15 +57,6 @@ public class Player {
 		return color;
 	}
 
-	/**
-     * Get the name of the color.
-     *
-     * @return The name of the color, or "Unknown" if the color is not in the map.
-     */
-    public String getColorName() {
-        return colorToName.getOrDefault(color, "Unknown");
-    }
-
 	public boolean isDefeated() {
 		return defeated;
 	}
@@ -76,6 +67,15 @@ public class Player {
 
 	public Type getType() {
 		return type;
+	}
+	
+	/**
+     * Get the name of the color.
+     *
+     * @return The name of the color, or "Unknown" if the color is not in the map.
+     */
+    public String getColorName() {
+        return colorToName.getOrDefault(color, "Unknown");
 	}
 
 	/**
