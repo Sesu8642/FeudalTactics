@@ -80,7 +80,7 @@ public class IngameScreen extends GameScreen {
 	private final FeudalTacticsGestureDetector gestureDetector;
 
 	private ParameterInputStage parameterInputStage;
-	private HudStage hudStage;
+	private static HudStage hudStage;
 	private MenuStage menuStage;
 
 	private DialogFactory dialogFactory;
@@ -222,95 +222,109 @@ public class IngameScreen extends GameScreen {
 	}
 
 	/**
+	 * Displays the respective kingdom information to the UI
+	 * 
+	 * @param gameState new game state
+	 * @param kingdom the clicked kingdom
+	 */
+	public static void displayBotAiStatistics(GameState gameState, Kingdom kingdom) {
+		int income = GameStateHelper.getKingdomIncome(kingdom);
+		int salaries = GameStateHelper.getKingdomSalaries(gameState, kingdom);
+		int result = income - salaries;
+		int savings = kingdom.getSavings();
+		int tiles = kingdom.getTiles().size();
+		String kingdomColor = kingdom.getPlayer().getColorName();
+		String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+		String botAIInfo = "Enemy Kingdom " + kingdomColor + ":\nSavings: " + savings + " (" 
+							+ resultText + ")" + "\nKingdom Size: " + tiles + " tiles";
+		hudStage.setInfoText(botAIInfo);
+	}
+
+	/**
 	 * Adjusts all the UI elements that need to be adjusted and displays dialogs if
 	 * appropriate.
 	 * 
 	 * @param gameState new game state
 	 */
+	public void handleGameStateChange(GameState gameState) {
+		boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
+		boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
+		isLocalPlayerTurn = isLocalPlayerTurnNew;
+		boolean winnerChanged = winnerBeforeBotTurn != gameState.getWinner();
 
-	 public void handleGameStateChange(GameState gameState) {
-         boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
-         boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
-         isLocalPlayerTurn = isLocalPlayerTurnNew;
-         boolean winnerChanged = winnerBeforeBotTurn != gameState.getWinner();
-
-         cachedGameState = gameState;
-         // update the UI
-         GameState newGameState = gameState;
-         // hand content
-         if (newGameState.getHeldObject() != null) {
-             hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
-         } else {
-             hudStage.updateHandContent(null);
-         }
-         // seed
-         menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
-         String infoText = "";
-         if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
-             Player localPlayer = newGameState.getActivePlayer();
-             // info text
-             Kingdom kingdom = newGameState.getActiveKingdom();
-             if (kingdom != null) {
-                 int income = GameStateHelper.getKingdomIncome(kingdom);
-                 int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
-                 int result = income - salaries;
-                 int savings = kingdom.getSavings();
-				 int tiles = kingdom.getTiles().size();
-                 String resultText = result < 0 ? String.valueOf(result) : "+" + result;
-                 infoText = "Savings: " + savings + " (" + resultText + ")" + "\nKingdom Size: " + tiles + " tiles";
-             } else {
-                 infoText = "Your turn";
-             }
-             // buttons
-             if (hudStage.isEnemyTurnButtonsShown()) {
-                 uiChangeActions.add(() -> hudStage.showPlayerTurnButtons());
-             }
-             Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
-             if (playerOptional.isPresent()) {
-                 Player player = playerOptional.get();
-                 // TODO: the repo shouldn't be needed here, would be better to create a
-                 // viewmodel somewhere else
-                 boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
-                         autoSaveRepo.getNoOfAutoSaves());
-                 boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
-                 boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
-                 boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
-                 // Adjust button availability based on the type of kingdom (player's own or enemy)
-                 if (kingdom != null && kingdom.getPlayer() == localPlayer) {
-                     hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
-                 } else {
-                     // Disable buttons for enemy kingdoms
-                     hudStage.setActiveTurnButtonEnabledStatus(true, false, false, false);
-                 }
-            }
-            // display messages
-            if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
-                if (localPlayer.isDefeated()) {
-                    // Game is over; player lost
-                    uiChangeActions.add(this::showLostMessageWithoutSpectate);
-                } else {
-                    // Game is over; player won
-                    uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
-                }
-            } else if (localPlayer.isDefeated() && !isSpectateMode) {
-               // Local player lost but game isn't over; offer a spectate option
-               uiChangeActions.add(this::showLostMessage);
-            } else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
-               // winner changed
-               uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
-                       newGameState.getWinner().getColor()));
-            }
-        } else {
-            infoText = "Enemy turn";
-            if (!hudStage.isEnemyTurnButtonsShown()) {
-                uiChangeActions.add(() -> hudStage.showEnemyTurnButtons());
-            }
-            // Disable buttons for enemy kingdoms
-            hudStage.setActiveTurnButtonEnabledStatus(true, false, false, false);
-        }
-        hudStage.setInfoText(infoText);
-        parameterInputStage.updateSeed(newGameState.getSeed());
-     }
+		cachedGameState = gameState;
+		// update the UI
+		GameState newGameState = gameState;
+		// hand content
+		if (newGameState.getHeldObject() != null) {
+			hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
+		} else {
+			hudStage.updateHandContent(null);
+		}
+		// seed
+		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
+		String infoText = "";
+		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+			Player localPlayer = newGameState.getActivePlayer();
+			// info text
+			Kingdom kingdom = newGameState.getActiveKingdom();
+			if (kingdom != null) {
+				int income = GameStateHelper.getKingdomIncome(kingdom);
+				int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
+				int result = income - salaries;
+				int savings = kingdom.getSavings();
+				int tiles = kingdom.getTiles().size();
+				String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+				infoText = "Savings: " + savings + " (" + resultText + ")" + "\nKingdom Size: " + tiles + " tiles";
+			} else {
+				infoText = "Your turn";
+			}
+			// buttons
+			if (hudStage.isEnemyTurnButtonsShown()) {
+				uiChangeActions.add(() -> hudStage.showPlayerTurnButtons());
+			}
+			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
+			if (playerOptional.isPresent()) {
+				Player player = playerOptional.get();
+				// TODO: the repo shouldn't be needed here, would be better to create a
+				// viewmodel somewhere else
+				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
+						autoSaveRepo.getNoOfAutoSaves());
+				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
+				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
+				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
+				// Adjust button availability based on the type of kingdom (player's own or enemy)
+				if (kingdom != null && kingdom.getPlayer() == localPlayer) {
+					hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+				}
+				
+			}
+			// display messages
+			if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
+				if (localPlayer.isDefeated()) {
+					// Game is over; player lost
+					uiChangeActions.add(this::showLostMessageWithoutSpectate);
+				} else {
+					// Game is over; player won
+					uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
+				}
+			} else if (localPlayer.isDefeated() && !isSpectateMode) {
+				// Local player lost but game isn't over; offer a spectate option
+				uiChangeActions.add(this::showLostMessage);
+			} else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
+				// winner changed
+				uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
+						newGameState.getWinner().getColor()));
+			}
+		} else {
+			infoText = "Enemy turn";
+			if (!hudStage.isEnemyTurnButtonsShown()) {
+				uiChangeActions.add(() -> hudStage.showEnemyTurnButtons());
+			}
+		}
+		hudStage.setInfoText(infoText);
+		parameterInputStage.updateSeed(newGameState.getSeed());
+	}
 
 	/** Toggles the pause menu. */
 	public void togglePause() {

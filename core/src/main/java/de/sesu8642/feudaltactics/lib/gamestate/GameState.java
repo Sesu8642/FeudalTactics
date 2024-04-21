@@ -75,7 +75,6 @@ public class GameState {
 	public Kingdom getActiveKingdom() {
 		return activeKingdom;
 	}
-
 	public void setActiveKingdom(Kingdom activeKingdom) {
 		this.activeKingdom = activeKingdom;
 	}

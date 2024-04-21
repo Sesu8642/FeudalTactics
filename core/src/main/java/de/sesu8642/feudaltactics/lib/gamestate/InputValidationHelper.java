@@ -17,6 +17,8 @@ public class InputValidationHelper {
 		throw new AssertionError();
 	}
 
+
+
 	/**
 	 * Checks whether a player is allowed to change the active kingdom.
 	 * 
@@ -32,25 +34,21 @@ public class InputValidationHelper {
 		if (isWater(tile)) {
 			return false;
 		}
-		Kingdom kingdom = tile.getKingdom();
-		if (kingdom == null) {
-			return false; // Handle the case where HexTile has no associated Kingdom
-		}
-	
-		if (player != kingdom.getPlayer()) {
-			if (isCorrectPlayersTurn(gameState, player)) {
-				return true;
-			}
+		if (player != tile.getPlayer()) {
 			return false;
 		}
 		if (gameState.getHeldObject() != null) {
 			return false;
 		}
-		if (gameState.getActiveKingdom() == kingdom) {
+		if (tile.getKingdom() == null) {
+			return false;
+		}
+		if (gameState.getActiveKingdom() == tile.getKingdom()) {
 			return false;
 		}
 		return true;
 	}
+
 
 	/**
 	 * Checks whether a player is allowed to pick up an object.
@@ -374,7 +372,7 @@ public class InputValidationHelper {
 		return (noOfAutoSaves > 1);
 	}
 
-	private static boolean isWater(HexTile tile) {
+	public static boolean isWater(HexTile tile) {
 		return (tile == null);
 	}
 

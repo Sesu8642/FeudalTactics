@@ -8,6 +8,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.badlogic.gdx.graphics.glutils.GLVersion.Type;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.Subscribe;
@@ -27,6 +28,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
 import de.sesu8642.feudaltactics.lib.gamestate.InputValidationHelper;
+import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.ingame.GameController;
@@ -90,7 +92,16 @@ public class LocalIngameInputHandler {
 		if (InputValidationHelper.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {
 			// activate kingdom
 			gameController.activateKingdom(tile.getKingdom());
+		} else {
+			if (!InputValidationHelper.isWater(tile)) {
+				Kingdom clickedKingdom = tile.getKingdom();
+				if (clickedKingdom != null && !InputValidationHelper.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {
+					// Display statistics of the enemy kingdom
+					gameController.displayBotAIStats(clickedKingdom);
+				}
+			}
 		}
+		
 		TapAction action = determineTapAction(player, tile, event.getCount());
 		switch (action) {
 		case PICK_UP:

@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
-import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 
 /**
  * Helper class that is used to modify a {@link GameState} in a way that
@@ -413,6 +412,7 @@ public class GameStateHelper {
 		gameState.setActiveKingdom(kingdom);
 	}
 
+
 	/**
 	 * Picks up an object.
 	 * 
@@ -485,8 +485,6 @@ public class GameStateHelper {
     }
 
 
-
-
 	/**
 	 * Conquers an enemy tile.
 	 * 
@@ -512,16 +510,8 @@ public class GameStateHelper {
 				throw new AssertionError(String.format("tile could not be removed from its kingdom: '%s'", tile));
 			}
 		}
-
-		// *** Highlighted change: Assign the conquered tile to the active player's kingdom ***
 		tile.setKingdom(gameState.getActiveKingdom());
-		// Ensure that the active kingdom is always the local player's kingdom
-		if (gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
-			tile.setKingdom(GameStateHelper.getPlayerKingdom(gameState, gameState.getActivePlayer()));
-		} 
 		tile.getKingdom().getTiles().add(tile);
-		// *** End of highlighted change ***
-
 		ArrayList<HexTile> oldKingdomNeighborTiles = new ArrayList<>();
 		List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
 		for (HexTile neighborTile : neighborTiles) {
@@ -600,6 +590,7 @@ public class GameStateHelper {
 		gameState.setHeldObject(null);
 	}
 
+	
 	private static void combineKingdoms(GameState gameState, Kingdom masterKingdom, Kingdom slaveKingdom) {
 		// master kingdom will determine the new capital
 		masterKingdom.setSavings(masterKingdom.getSavings() + slaveKingdom.getSavings());

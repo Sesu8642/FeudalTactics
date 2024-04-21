@@ -2,6 +2,8 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import com.badlogic.gdx.graphics.Color;
@@ -13,6 +15,18 @@ public class Player {
 	private Type type;
 	private boolean defeated = false;
 
+	// Mapping of color names to hexadecimal representations
+	private static final Map<Color, String> colorToName = new HashMap<>();
+
+	static {
+        colorToName.put(new Color(0.2F, 0.45F, 0.8F, 1), "Blue");
+        colorToName.put(new Color(0.75F, 0.5F, 0F, 1), "Orange");
+        colorToName.put(new Color(1F, 0.67F, 0.67F, 1), "Pink");
+        colorToName.put(new Color(1F, 1F, 0F, 1), "Yellow");
+        colorToName.put(new Color(1F, 1F, 1F, 1), "White");
+        colorToName.put(new Color(0F, 1F, 0F, 1), "Green");
+    }
+	
 	/** Type of a player. **/
 	public enum Type {
 		LOCAL_PLAYER, LOCAL_BOT, REMOTE
@@ -42,6 +56,15 @@ public class Player {
 	public Color getColor() {
 		return color;
 	}
+
+	/**
+     * Get the name of the color.
+     *
+     * @return The name of the color, or "Unknown" if the color is not in the map.
+     */
+    public String getColorName() {
+        return colorToName.getOrDefault(color, "Unknown");
+    }
 
 	public boolean isDefeated() {
 		return defeated;

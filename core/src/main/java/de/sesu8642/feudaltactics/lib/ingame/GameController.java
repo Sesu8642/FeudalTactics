@@ -25,6 +25,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 
 /** Controller for playing the game. */
 public class GameController {
@@ -171,6 +172,14 @@ public class GameController {
 		autosave();
 		// save first because is is relevant for the undo button status
 		eventBus.post(new GameStateChangeEvent(gameState));
+	}
+
+	
+	public void displayBotAiStats(Kingdom kingdom) {
+		if (kingdom != null && kingdom.getPlayer().getType() != Type.LOCAL_PLAYER) {
+			// Display BotAI statistics
+			IngameScreen.displayBotAiStatistics(gameState, kingdom);
+		}
 	}
 
 	/**
