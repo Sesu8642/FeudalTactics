@@ -188,7 +188,7 @@ public class IngameScreen extends GameScreen {
 			endHumanPlayerTurn();
 		}
 	}
-
+	
 	private void endHumanPlayerTurn() {
 		winnerBeforeBotTurn = cachedGameState.getWinner();
 		// isLocalPlayerTurn needs to be set here because if the bot turns are not
@@ -222,7 +222,7 @@ public class IngameScreen extends GameScreen {
 	}
 
 	/**
-	 * Displays the respective kingdom information to the UI
+	 * Displays the non-local player kingdom information to the UI
 	 * 
 	 * @param gameState new game state
 	 * @param kingdom the clicked kingdom
@@ -237,6 +237,7 @@ public class IngameScreen extends GameScreen {
 		String resultText = result < 0 ? String.valueOf(result) : "+" + result;
 		String botAIInfo = "Enemy Kingdom " + kingdomColor + ":\nSavings: " + savings + " (" 
 							+ resultText + ")" + "\nKingdom Size: " + tiles + " tiles";
+		System.out.println(botAIInfo);
 		hudStage.setInfoText(botAIInfo);
 	}
 
