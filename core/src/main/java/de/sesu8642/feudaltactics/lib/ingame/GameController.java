@@ -174,7 +174,11 @@ public class GameController {
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
-	
+	/**
+	 * Displays a non-player kingdom's info
+	 * 
+	 * @param kingdom kingdom to display info
+	 */
 	public void displayBotAiStats(Kingdom kingdom) {
 		if (kingdom != null && kingdom.getPlayer().getType() != Type.LOCAL_PLAYER) {
 			// Display BotAI statistics
