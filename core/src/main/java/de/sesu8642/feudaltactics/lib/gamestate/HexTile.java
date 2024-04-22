@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 /** A tile of land on the map. **/
 public class HexTile implements Comparable<HexTile> {
 
-	private static final Exception NullPointerException = null;
 	private Player player;
 	private MapObject content;
 	private Kingdom kingdom;

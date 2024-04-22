@@ -237,7 +237,6 @@ public class IngameScreen extends GameScreen {
 		String resultText = result < 0 ? String.valueOf(result) : "+" + result;
 		String botAIInfo = "Enemy Kingdom " + kingdomColor + ":\nSavings: " + savings + " (" 
 							+ resultText + ")" + "\nKingdom Size: " + tiles + " tiles";
-		System.out.println(botAIInfo);
 		hudStage.setInfoText(botAIInfo);
 	}
 
@@ -294,10 +293,7 @@ public class IngameScreen extends GameScreen {
 				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
 				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
 				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
-				// Adjust button availability based on the type of kingdom (player's own or enemy)
-				if (kingdom != null && kingdom.getPlayer() == localPlayer) {
-					hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
-				}
+				hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
 				
 			}
 			// display messages
