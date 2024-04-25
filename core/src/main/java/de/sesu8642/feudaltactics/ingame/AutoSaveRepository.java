@@ -65,6 +65,8 @@ public class AutoSaveRepository {
 
 	private int currentUndoDepth;
 
+	private long idCounter;
+
 	@Inject
 	public AutoSaveRepository(@FullAutoSavePrefStore Preferences fullAutoSavePrefStore,
 			@IncrementalAutoSavePrefStore Preferences incrementalAutoSavePrefStore) {
@@ -73,6 +75,7 @@ public class AutoSaveRepository {
 
 		fullSaveJson.setSerializer(GameState.class, new GameStateSerializer());
 		currentUndoDepth = incrementalAutoSavePrefStore.getInteger(CURRENT_UNDO_DEPTH_NAME, 0);
+		idCounter = getLatestIncrementalSaveKey().map(Long::parseLong).orElse(0L);
 	}
 
 	/**
@@ -85,6 +88,7 @@ public class AutoSaveRepository {
 		fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveString);
 		fullAutoSavePrefStore.flush();
 		incrementalAutoSavePrefStore.clear();
+		incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, currentUndoDepth);
 		incrementalAutoSavePrefStore.flush();
 	}
 
@@ -93,8 +97,6 @@ public class AutoSaveRepository {
 	 * save.
 	 */
 	public void autoSaveIncrementalPlayerMove(PlayerMove playerMove) {
-		logger.debug("autosaving incremental player move");
-
 		// after undoing sth and doing a new move, the player can undo this new move
 		// again
 		if (currentUndoDepth > 0) {
@@ -122,12 +124,13 @@ public class AutoSaveRepository {
 
 		// using current time as key
 		String saveStringIncrement = incrementalSaveJson.toJson(playerMove);
-		incrementalAutoSavePrefStore.putString(String.valueOf(System.currentTimeMillis()), saveStringIncrement);
+		incrementalAutoSavePrefStore.putString(String.valueOf(++idCounter), saveStringIncrement);
 		incrementalAutoSavePrefStore.flush();
 	}
 
 	private void mergeIncrementalSavesIntoFull(GameState fullSave, Collection<PlayerMove> incrementalSaves) {
 		for (PlayerMove increment : incrementalSaves) {
+			logger.debug("merging player move {} into full gamestate", increment.getPlayerActionType());
 			GameStateHelper.applyPlayerMove(fullSave, increment);
 		}
 	}
