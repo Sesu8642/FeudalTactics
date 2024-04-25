@@ -19,8 +19,6 @@ import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
-import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
@@ -155,71 +153,40 @@ public class GameController {
 		logger.debug("clicked: {}", gameState.getMap().get(hexCoords));
 	}
 
-	/**
-	 * Activates a kingdom.
-	 * 
-	 * @param kingdom kingdom to activate
-	 */
-	public void activateKingdom(Kingdom kingdom) {
-		logger.debug("activating {}", kingdom);
-		GameStateHelper.activateKingdom(gameState, kingdom);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.activateKingdom(kingdom.getTiles().get(0).getPosition()));
-		// save first because is is relevant for the undo button status
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
+	public void carryOutPlayerMove(PlayerMove move) {
+		logger.debug("carrying out player move {}", move);
+		switch (move.getPlayerActionType()) {
+		// fall-through intentional
+		case PICK_UP:
+		case PLACE_OWN:
+		case COMBINE_UNITS:
+		case CONQUER:
+		case BUY_PEASANT:
+		case BUY_CASTLE:
+		case BUY_AND_PLACE_PEASANT:
+		case BUY_AND_PLACE_CASTLE:
+		case ACTIVATE_KINGDOM:
+			GameStateHelper.applyPlayerMove(gameState, move);
+			autoSaveRepo.autoSaveIncrementalPlayerMove(move);
+			// save first because is is relevant for the undo button status
+			eventBus.post(new GameStateChangeEvent(gameState));
+			break;
+		case UNDO_LAST_MOVE:
+			undoLastMove();
+			break;
+		case END_TURN:
+			endTurn();
+			break;
+		default:
+			throw new IllegalStateException("Unknown player move type " + move.getPlayerActionType());
+		}
 
-	/**
-	 * Picks up an object.
-	 * 
-	 * @param tile tile that contains the object
-	 */
-	public void pickupObject(HexTile tile) {
-		logger.debug("picking up object from {}", tile);
-		GameStateHelper.pickupObject(gameState, tile);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.pickUp(tile.getPosition()));
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/**
-	 * Places a held object on a tile in the own kingdom.
-	 * 
-	 * @param tile tile to place to object on
-	 */
-	public void placeOwn(HexTile tile) {
-		logger.debug("placing held object on own {}", tile);
-		GameStateHelper.placeOwn(gameState, tile);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.placeOwn(tile.getPosition()));
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/**
-	 * Combines the held unit with a unit on the map.
-	 * 
-	 * @param tile tile that contains the unit on the map
-	 */
-	public void combineUnits(HexTile tile) {
-		logger.debug("combining held unit with unit on {}", tile);
-		GameStateHelper.combineUnits(gameState, tile);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.combineUnits(tile.getPosition()));
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/**
-	 * Conquers an enemy tile.
-	 * 
-	 * @param tile tile to conquer
-	 */
-	public void conquer(HexTile tile) {
-		logger.debug("conquering {}", tile);
-		GameStateHelper.conquer(gameState, tile);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.conquer(tile.getPosition()));
-		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
 	 * Ends the turn.
 	 */
-	public void endTurn() {
+	void endTurn() {
 		logger.debug("ending turn of {}", gameState.getActivePlayer());
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
@@ -259,25 +226,9 @@ public class GameController {
 		botAi.setSkipDisplayingTurn(true);
 	}
 
-	/** Buys a peasant. */
-	public void buyPeasant() {
-		logger.debug("buying peasant");
-		GameStateHelper.buyPeasant(gameState);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.buyPeasant());
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/** Buys a castle. */
-	public void buyCastle() {
-		logger.debug("buying castle");
-		GameStateHelper.buyCastle(gameState);
-		autoSaveRepo.autoSaveIncrementalPlayerMove(PlayerMove.buyCastle());
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
 	/** Undoes the last action. */
-	public void undoLastAction() {
-		logger.debug("undoing last action");
+	private void undoLastMove() {
+		logger.debug("undoing last move");
 		autoSaveRepo.deleteLatestIncrementalSave();
 		GameState loaded = autoSaveRepo.getCombinedAutoSave();
 		gameState = loaded;

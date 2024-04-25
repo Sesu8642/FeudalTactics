@@ -1014,11 +1014,19 @@ public class GameStateHelper {
 		case BUY_CASTLE:
 			buyCastle(gameState);
 			break;
+		case BUY_AND_PLACE_PEASANT:
+			buyPeasant(gameState);
+			placeOwn(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case BUY_AND_PLACE_CASTLE:
+			buyCastle(gameState);
+			placeOwn(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
 		case ACTIVATE_KINGDOM:
 			activateKingdom(gameState, gameState.getMap().get(move.getTilePosition()).getKingdom());
 			break;
 		default:
-			throw new IllegalStateException("Unknown player move type " + move.getPlayerActionType());
+			throw new IllegalStateException("Unexpected player move type " + move.getPlayerActionType());
 		}
 	}
 }

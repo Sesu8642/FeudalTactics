@@ -13,7 +13,8 @@ public class PlayerMove {
 	 * Types of possible player moves.
 	 */
 	public enum PlayerMoveType {
-		PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER, BUY_PEASANT, BUY_CASTLE, ACTIVATE_KINGDOM
+		PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER, BUY_PEASANT, BUY_CASTLE, BUY_AND_PLACE_PEASANT,
+		BUY_AND_PLACE_CASTLE, ACTIVATE_KINGDOM, UNDO_LAST_MOVE, END_TURN
 	}
 
 	private PlayerMoveType playerMoveType;
@@ -29,32 +30,48 @@ public class PlayerMove {
 		this.tilePosition = tilePosition;
 	}
 
-	static PlayerMove pickUp(Vector2 tilePosition) {
+	public static PlayerMove pickUp(Vector2 tilePosition) {
 		return new PlayerMove(PlayerMoveType.PICK_UP, tilePosition);
 	}
 
-	static PlayerMove placeOwn(Vector2 tilePosition) {
+	public static PlayerMove placeOwn(Vector2 tilePosition) {
 		return new PlayerMove(PlayerMoveType.PLACE_OWN, tilePosition);
 	}
 
-	static PlayerMove combineUnits(Vector2 tilePosition) {
+	public static PlayerMove combineUnits(Vector2 tilePosition) {
 		return new PlayerMove(PlayerMoveType.COMBINE_UNITS, tilePosition);
 	}
 
-	static PlayerMove conquer(Vector2 tilePosition) {
+	public static PlayerMove conquer(Vector2 tilePosition) {
 		return new PlayerMove(PlayerMoveType.CONQUER, tilePosition);
 	}
 
-	static PlayerMove buyPeasant() {
+	public static PlayerMove buyPeasant() {
 		return new PlayerMove(PlayerMoveType.BUY_PEASANT, null);
 	}
 
-	static PlayerMove buyCastle() {
+	public static PlayerMove buyCastle() {
 		return new PlayerMove(PlayerMoveType.BUY_CASTLE, null);
 	}
 
-	static PlayerMove activateKingdom(Vector2 tilePosition) {
+	public static PlayerMove buyAndPlacePeasant(Vector2 tilePosition) {
+		return new PlayerMove(PlayerMoveType.BUY_AND_PLACE_PEASANT, tilePosition);
+	}
+
+	public static PlayerMove buyAndPlaceCastle(Vector2 tilePosition) {
+		return new PlayerMove(PlayerMoveType.BUY_AND_PLACE_CASTLE, tilePosition);
+	}
+
+	public static PlayerMove activateKingdom(Vector2 tilePosition) {
 		return new PlayerMove(PlayerMoveType.ACTIVATE_KINGDOM, tilePosition);
+	}
+
+	public static PlayerMove undoLastMove() {
+		return new PlayerMove(PlayerMoveType.UNDO_LAST_MOVE, null);
+	}
+
+	public static PlayerMove endTurn() {
+		return new PlayerMove(PlayerMoveType.END_TURN, null);
 	}
 
 	public PlayerMoveType getPlayerActionType() {
@@ -63,6 +80,11 @@ public class PlayerMove {
 
 	public Vector2 getTilePosition() {
 		return tilePosition;
+	}
+
+	@Override
+	public String toString() {
+		return playerMoveType + ", tilePosition=" + tilePosition;
 	}
 
 }

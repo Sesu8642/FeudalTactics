@@ -22,25 +22,20 @@ import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.Blocking;
-import de.sesu8642.feudaltactics.lib.gamestate.Castle;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.HexMapHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
 import de.sesu8642.feudaltactics.lib.gamestate.InputValidationHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.ingame.GameController;
+import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 
 /** Handles inputs of a local player in-game. **/
 @Singleton
 public class LocalIngameInputHandler {
 
-	private enum TapAction {
-		NONE, PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER, BUY_AND_PLACE_PEASANT
-	}
-
-	private GameController gameController;
-	private AutoSaveRepository autoSaveRepo;
+	private final GameController gameController;
+	private final InputValidationHelper inputValidationHelper;
 
 	/**
 	 * Constructor.
@@ -48,25 +43,18 @@ public class LocalIngameInputHandler {
 	 * @param gameController game controller
 	 */
 	@Inject
-	public LocalIngameInputHandler(GameController gameController, AutoSaveRepository autoSaveRepo) {
+	public LocalIngameInputHandler(GameController gameController, InputValidationHelper inputValidationHelper) {
 		this.gameController = gameController;
-		this.autoSaveRepo = autoSaveRepo;
+		this.inputValidationHelper = inputValidationHelper;
 	}
 
-	/**
-	 * Event handler for back button input events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleBackInput(BackInputEvent event) {
+	private void carryOutPlayerMoveIfLegal(PlayerMove move) {
 		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
 		if (!playerOptional.isPresent()) {
 			return;
 		}
-		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get(),
-				autoSaveRepo.getNoOfAutoSaves())) {
-			gameController.undoLastAction();
+		if (inputValidationHelper.checkPlayerMove(gameController.getGameState(), playerOptional.get(), move)) {
+			gameController.carryOutPlayerMove(move);
 		}
 	}
 
@@ -85,44 +73,14 @@ public class LocalIngameInputHandler {
 		Player player = playerOptional.get();
 		Map<Vector2, HexTile> map = gameController.getGameState().getMap();
 		HexTile tile = map.get(hexCoords);
-		// print info
+
 		gameController.printTileInfo(hexCoords);
-		if (InputValidationHelper.checkChangeActiveKingdom(gameController.getGameState(), player, tile)) {
-			// activate kingdom
-			gameController.activateKingdom(tile.getKingdom());
-		}
-		TapAction action = determineTapAction(player, tile, event.getCount());
-		switch (action) {
-		case PICK_UP:
-			if (InputValidationHelper.checkPickupObject(gameController.getGameState(), player, tile)) {
-				gameController.pickupObject(tile);
-			}
-			break;
-		case PLACE_OWN:
-			if (InputValidationHelper.checkPlaceOwn(gameController.getGameState(), player, tile)) {
-				gameController.placeOwn(tile);
-			}
-			break;
-		case COMBINE_UNITS:
-			if (InputValidationHelper.checkCombineUnits(gameController.getGameState(), player, tile)) {
-				gameController.combineUnits(tile);
-			}
-			break;
-		case CONQUER:
-			if (InputValidationHelper.checkConquer(gameController.getGameState(), player, tile)) {
-				gameController.conquer(tile);
-			}
-			break;
-		case BUY_AND_PLACE_PEASANT:
-			if (InputValidationHelper.checkBuyAndPlaceUnitInstantly(gameController.getGameState(), playerOptional.get(),
-					tile)) {
-				gameController.buyPeasant();
-				gameController.placeOwn(tile);
-			}
-		case NONE:
-			break;
-		default:
-			throw new IllegalStateException("Unknown action " + action);
+
+		carryOutPlayerMoveIfLegal(PlayerMove.activateKingdom(hexCoords));
+
+		Optional<PlayerMove> moveOptional = determineTapMove(player, tile, event.getCount());
+		if (moveOptional.isPresent()) {
+			carryOutPlayerMoveIfLegal(moveOptional.get());
 		}
 	}
 
@@ -137,20 +95,23 @@ public class LocalIngameInputHandler {
 	}
 
 	/**
+	 * Event handler for back button input events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleBackInput(BackInputEvent event) {
+		carryOutPlayerMoveIfLegal(PlayerMove.undoLastMove());
+	}
+
+	/**
 	 * Event handler for undo move events.
 	 * 
 	 * @param event event to handle
 	 */
 	@Subscribe
 	public void handleUndoMove(UndoMoveEvent event) {
-		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
-		if (!playerOptional.isPresent()) {
-			return;
-		}
-		if (InputValidationHelper.checkUndoAction(gameController.getGameState(), playerOptional.get(),
-				autoSaveRepo.isUndoPossible())) {
-			gameController.undoLastAction();
-		}
+		carryOutPlayerMoveIfLegal(PlayerMove.undoLastMove());
 	}
 
 	/**
@@ -160,13 +121,7 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleBuyPeasant(BuyPeasantEvent event) {
-		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
-		if (!playerOptional.isPresent()) {
-			return;
-		}
-		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Unit.class)) {
-			gameController.buyPeasant();
-		}
+		carryOutPlayerMoveIfLegal(PlayerMove.buyPeasant());
 	}
 
 	/**
@@ -176,13 +131,7 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleBuyCastle(BuyCastleEvent event) {
-		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
-		if (!playerOptional.isPresent()) {
-			return;
-		}
-		if (InputValidationHelper.checkBuyObject(gameController.getGameState(), playerOptional.get(), Castle.class)) {
-			gameController.buyCastle();
-		}
+		carryOutPlayerMoveIfLegal(PlayerMove.buyCastle());
 	}
 
 	/**
@@ -193,17 +142,7 @@ public class LocalIngameInputHandler {
 	@Subscribe
 	public void handleBuyAndPlaceCastle(BuyAndPlaceCastleEvent event) {
 		Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
-		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
-		if (!playerOptional.isPresent()) {
-			return;
-		}
-		Map<Vector2, HexTile> map = gameController.getGameState().getMap();
-		HexTile tile = map.get(hexCoords);
-		if (InputValidationHelper.checkBuyAndPlaceCastleInstantly(gameController.getGameState(), playerOptional.get(),
-				tile)) {
-			gameController.buyCastle();
-			gameController.placeOwn(tile);
-		}
+		carryOutPlayerMoveIfLegal(PlayerMove.buyAndPlaceCastle(hexCoords));
 	}
 
 	/**
@@ -213,13 +152,7 @@ public class LocalIngameInputHandler {
 	 */
 	@Subscribe
 	public void handleEndTurn(EndTurnEvent event) {
-		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
-		if (!playerOptional.isPresent()) {
-			return;
-		}
-		if (InputValidationHelper.checkEndTurn(gameController.getGameState(), playerOptional.get())) {
-			gameController.endTurn();
-		}
+		carryOutPlayerMoveIfLegal(PlayerMove.endTurn());
 	}
 
 	/**
@@ -232,25 +165,25 @@ public class LocalIngameInputHandler {
 		gameController.startGame();
 	}
 
-	private TapAction determineTapAction(Player player, HexTile tile, int count) {
+	private Optional<PlayerMove> determineTapMove(Player player, HexTile tile, int count) {
 		if (tile == null) {
-			return TapAction.NONE;
+			return Optional.empty();
 		}
 		if (gameController.getGameState().getHeldObject() == null) {
 			if (count == 2) {
-				return TapAction.BUY_AND_PLACE_PEASANT;
+				return Optional.of(PlayerMove.buyAndPlacePeasant(tile.getPosition()));
 			}
-			return TapAction.PICK_UP;
+			return Optional.of(PlayerMove.pickUp(tile.getPosition()));
 		} else {
 			if (tile.getPlayer() != null && tile.getPlayer() == player) {
 				if (tile.getContent() == null
 						|| ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
-					return TapAction.PLACE_OWN;
+					return Optional.of(PlayerMove.placeOwn(tile.getPosition()));
 				} else {
-					return TapAction.COMBINE_UNITS;
+					return Optional.of(PlayerMove.combineUnits(tile.getPosition()));
 				}
 			} else {
-				return TapAction.CONQUER;
+				return Optional.of(PlayerMove.conquer(tile.getPosition()));
 			}
 		}
 	}

@@ -2,19 +2,63 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
+import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
+import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 
 /**
  * Utility class that checks whether certain user action are allowed according
  * to the rules.
  */
+@Singleton
 public class InputValidationHelper {
 
-	private InputValidationHelper() {
-		// utility class -> prevent instantiation
-		throw new AssertionError();
+	private final AutoSaveRepository autoSaveRepo;
+
+	@Inject
+	public InputValidationHelper(AutoSaveRepository autoSaveRepo) {
+		this.autoSaveRepo = autoSaveRepo;
+	}
+
+	public boolean checkPlayerMove(GameState gameState, Player player, PlayerMove move) {
+		switch (move.getPlayerActionType()) {
+		case PICK_UP:
+			return checkPickupObject(gameState, player, findTileAtPosition(gameState, move.getTilePosition()));
+		case PLACE_OWN:
+			return checkPlaceOwn(gameState, player, findTileAtPosition(gameState, move.getTilePosition()));
+		case COMBINE_UNITS:
+			return checkCombineUnits(gameState, player, findTileAtPosition(gameState, move.getTilePosition()));
+		case CONQUER:
+			return checkConquer(gameState, player, findTileAtPosition(gameState, move.getTilePosition()));
+		case BUY_PEASANT:
+			return checkBuyObject(gameState, player, Unit.class);
+		case BUY_CASTLE:
+			return checkBuyObject(gameState, player, Castle.class);
+		case BUY_AND_PLACE_PEASANT:
+			return checkBuyAndPlaceUnitInstantly(gameState, player,
+					findTileAtPosition(gameState, move.getTilePosition()));
+		case BUY_AND_PLACE_CASTLE:
+			return checkBuyAndPlaceCastleInstantly(gameState, player,
+					findTileAtPosition(gameState, move.getTilePosition()));
+		case ACTIVATE_KINGDOM:
+			return checkChangeActiveKingdom(gameState, player, findTileAtPosition(gameState, move.getTilePosition()));
+		case END_TURN:
+			return checkEndTurn(gameState, player);
+		case UNDO_LAST_MOVE:
+			return checkUndoAction(gameState, player, autoSaveRepo.isUndoPossible());
+		default:
+			throw new IllegalStateException("Unknown player move type " + move.getPlayerActionType());
+		}
+	}
+
+	private static HexTile findTileAtPosition(GameState gameState, Vector2 position) {
+		return gameState.getMap().get(position);
 	}
 
 	/**

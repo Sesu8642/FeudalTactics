@@ -35,7 +35,6 @@ import de.sesu8642.feudaltactics.events.moves.BuyPeasantEvent;
 import de.sesu8642.feudaltactics.events.moves.EndTurnEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.events.moves.UndoMoveEvent;
-import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
@@ -51,6 +50,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
+import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -66,24 +66,24 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 @Singleton
 public class IngameScreen extends GameScreen {
 
-	private TextureAtlas textureAtlas;
+	private final TextureAtlas textureAtlas;
 
-	private AutoSaveRepository autoSaveRepo;
-	private MainPreferencesDao mainPrefsDao;
+	private final MainPreferencesDao mainPrefsDao;
 
-	private OrthographicCamera ingameCamera;
+	private final OrthographicCamera ingameCamera;
 
-	private MapRenderer mapRenderer;
-	private InputMultiplexer inputMultiplexer;
-	private EventBus eventBus;
-	private CombinedInputProcessor inputProcessor;
+	private final MapRenderer mapRenderer;
+	private final InputMultiplexer inputMultiplexer;
+	private final EventBus eventBus;
+	private final CombinedInputProcessor inputProcessor;
 	private final FeudalTacticsGestureDetector gestureDetector;
+	private final InputValidationHelper inputValidationHelper;
 
-	private ParameterInputStage parameterInputStage;
-	private HudStage hudStage;
-	private MenuStage menuStage;
+	private final ParameterInputStage parameterInputStage;
+	private final HudStage hudStage;
+	private final MenuStage menuStage;
 
-	private DialogFactory dialogFactory;
+	private final DialogFactory dialogFactory;
 
 	/** Cached version of the game state from the game controller. */
 	private GameState cachedGameState;
@@ -140,16 +140,15 @@ public class IngameScreen extends GameScreen {
 	 * @param parameterInputStage  stage for the new game parameter input UI
 	 */
 	@Inject
-	public IngameScreen(TextureAtlas textureAtlas, AutoSaveRepository autoSaveRepo, MainPreferencesDao mainPrefsDao,
+	public IngameScreen(TextureAtlas textureAtlas, MainPreferencesDao mainPrefsDao,
 			NewGamePreferencesDao newGamePrefDao, @IngameCamera OrthographicCamera ingameCamera,
 			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
 			@IngameRenderer MapRenderer mapRenderer, DialogFactory confirmDialogFactory, EventBus eventBus,
 			CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
-			InputMultiplexer inputMultiplexer, HudStage hudStage, IngameMenuStage menuStage,
-			ParameterInputStage parameterInputStage) {
+			InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer, HudStage hudStage,
+			IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
 		this.textureAtlas = textureAtlas;
-		this.autoSaveRepo = autoSaveRepo;
 		this.mainPrefsDao = mainPrefsDao;
 		this.newGamePrefDao = newGamePrefDao;
 		this.ingameCamera = ingameCamera;
@@ -157,6 +156,7 @@ public class IngameScreen extends GameScreen {
 		this.dialogFactory = confirmDialogFactory;
 		this.inputMultiplexer = inputMultiplexer;
 		this.gestureDetector = gestureDetector;
+		this.inputValidationHelper = inputValidationHelper;
 		this.eventBus = eventBus;
 		this.inputProcessor = inputProcessor;
 		this.hudStage = hudStage;
@@ -261,10 +261,8 @@ public class IngameScreen extends GameScreen {
 			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
 			if (playerOptional.isPresent()) {
 				Player player = playerOptional.get();
-				// TODO: the repo shouldn't be needed here, would be better to create a
-				// viewmodel somewhere else
-				boolean canUndo = InputValidationHelper.checkUndoAction(newGameState, player,
-						autoSaveRepo.isUndoPossible());
+				boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player,
+						PlayerMove.undoLastMove());
 				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
 				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
 				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
@@ -495,10 +493,9 @@ public class IngameScreen extends GameScreen {
 									parameterInputStage.getMapDensityParam().getDensityFloat(),
 									parameterInputStage.getUserColor().getKingdomColor())));
 					centerMap();
-					newGamePrefDao
-							.saveNewGamePreferences(new NewGamePreferences(parameterInputStage.getBotIntelligence(),
-									parameterInputStage.getMapSizeParam(), parameterInputStage.getMapDensityParam(),
-									parameterInputStage.getUserColor()));
+					newGamePrefDao.saveNewGamePreferences(new NewGamePreferences(
+							parameterInputStage.getBotIntelligence(), parameterInputStage.getMapSizeParam(),
+							parameterInputStage.getMapDensityParam(), parameterInputStage.getUserColor()));
 				})));
 
 		parameterInputStage.playButton
