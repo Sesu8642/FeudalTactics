@@ -6,7 +6,7 @@ filter: Linear, Linear
 repeat: none
 button
   rotate: false
-  xy: 174, 415
+  xy: 165, 669
   size: 102, 114
   split: 49, 50, 49, 62
   orig: 102, 114
@@ -14,7 +14,7 @@ button
   index: -1
 button-arcade
   rotate: false
-  xy: 174, 201
+  xy: 1, 291
   size: 96, 96
   split: 0, 0, 0, 0
   pad: 21, 21, 18, 27
@@ -23,7 +23,7 @@ button-arcade
   index: -1
 button-arcade-pressed
   rotate: false
-  xy: 165, 103
+  xy: 1, 193
   size: 96, 96
   split: 0, 0, 0, 0
   pad: 21, 21, 21, 24
@@ -32,7 +32,7 @@ button-arcade-pressed
   index: -1
 button-pressed
   rotate: false
-  xy: 174, 299
+  xy: 1, 389
   size: 102, 114
   split: 33, 33, 42, 36
   pad: 28, 28, 30, 24
@@ -41,7 +41,7 @@ button-pressed
   index: -1
 button-small
   rotate: false
-  xy: 442, 793
+  xy: 557, 854
   size: 45, 45
   split: 18, 18, 18, 18
   orig: 45, 45
@@ -49,7 +49,7 @@ button-small
   index: -1
 button-small-pressed
   rotate: false
-  xy: 395, 793
+  xy: 340, 738
   size: 45, 45
   split: 18, 18, 18, 18
   orig: 45, 45
@@ -57,65 +57,30 @@ button-small-pressed
   index: -1
 checkbox-off
   rotate: false
-  xy: 165, 59
+  xy: 632, 925
   size: 50, 42
   orig: 50, 42
   offset: 0, 0
   index: -1
 checkbox-on
   rotate: false
-  xy: 934, 980
+  xy: 165, 625
   size: 50, 42
   orig: 50, 42
   offset: 0, 0
   index: -1
-eye-1
-  rotate: false
-  xy: 1, 394
-  size: 171, 171
-  orig: 171, 171
-  offset: 0, 0
-  index: -1
-eye-2
-  rotate: false
-  xy: 1, 221
-  size: 171, 171
-  orig: 171, 171
-  offset: 0, 0
-  index: -1
 list
   rotate: false
-  xy: 219, 668
+  xy: 1, 505
   size: 114, 114
   split: 48, 48, 42, 48
   pad: 48, 48, 9, 9
   orig: 114, 114
   offset: 0, 0
   index: -1
-logo
-  rotate: false
-  xy: 1, 567
-  size: 216, 215
-  orig: 216, 215
-  offset: 0, 0
-  index: -1
-pixthulhu
-  rotate: false
-  xy: 219, 531
-  size: 103, 135
-  orig: 103, 135
-  offset: 0, 0
-  index: -1
-portrait
-  rotate: false
-  xy: 501, 836
-  size: 129, 130
-  orig: 129, 130
-  offset: 0, 0
-  index: -1
 progress-bar-health
   rotate: false
-  xy: 1, 932
+  xy: 1, 933
   size: 498, 90
   split: 138, 69, 0, 0
   pad: 117, 45, 18, 18
@@ -124,14 +89,14 @@ progress-bar-health
   index: -1
 progress-bar-health-knob
   rotate: false
-  xy: 501, 968
+  xy: 501, 969
   size: 336, 54
   orig: 336, 54
   offset: 0, 0
   index: -1
 progress-bar-horizontal
   rotate: false
-  xy: 324, 621
+  xy: 105, 458
   size: 9, 45
   split: 3, 3, 3, 3
   orig: 9, 45
@@ -139,14 +104,14 @@ progress-bar-horizontal
   index: -1
 progress-bar-horizontal-knob
   rotate: false
-  xy: 272, 258
+  xy: 99, 348
   size: 1, 39
   orig: 1, 39
   offset: 0, 0
   index: -1
 progress-bar-mana
   rotate: false
-  xy: 1, 840
+  xy: 1, 841
   size: 498, 90
   split: 138, 69, 0, 0
   pad: 117, 45, 18, 18
@@ -155,14 +120,14 @@ progress-bar-mana
   index: -1
 progress-bar-mana-knob
   rotate: false
-  xy: 1, 784
+  xy: 1, 785
   size: 336, 54
   orig: 336, 54
   offset: 0, 0
   index: -1
 progress-bar-vertical
   rotate: false
-  xy: 839, 969
+  xy: 117, 610
   size: 45, 9
   split: 3, 3, 3, 3
   orig: 45, 9
@@ -170,14 +135,14 @@ progress-bar-vertical
   index: -1
 progress-bar-vertical-knob
   rotate: false
-  xy: 335, 695
+  xy: 984, 1022
   size: 39, 1
   orig: 39, 1
   offset: 0, 0
   index: -1
 scrollbar-horizontal
   rotate: false
-  xy: 278, 341
+  xy: 475, 796
   size: 21, 43
   split: 9, 9, 17, 17
   pad: 0, 0, 0, 0
@@ -186,7 +151,7 @@ scrollbar-horizontal
   index: -1
 scrollbar-horizontal-knob
   rotate: false
-  xy: 839, 980
+  xy: 839, 981
   size: 93, 42
   split: 24, 24, 0, 0
   pad: 0, 0, 0, 0
@@ -195,7 +160,7 @@ scrollbar-horizontal-knob
   index: -1
 scrollbar-vertical
   rotate: false
-  xy: 174, 544
+  xy: 269, 685
   size: 43, 21
   split: 17, 17, 9, 9
   pad: 0, 0, 0, 0
@@ -204,7 +169,7 @@ scrollbar-vertical
   index: -1
 scrollbar-vertical-knob
   rotate: false
-  xy: 278, 436
+  xy: 117, 515
   size: 42, 93
   split: 0, 0, 24, 24
   pad: 0, 0, 0, 0
@@ -213,7 +178,7 @@ scrollbar-vertical-knob
   index: -1
 select-box
   rotate: false
-  xy: 632, 900
+  xy: 501, 901
   size: 129, 66
   split: 9, 69, 9, 30
   pad: 16, 76, 13, 12
@@ -222,7 +187,7 @@ select-box
   index: -1
 slider-horizontal
   rotate: false
-  xy: 1, 1
+  xy: 339, 785
   size: 84, 54
   split: 36, 36, 15, 15
   pad: 0, 0, 0, 0
@@ -231,14 +196,14 @@ slider-horizontal
   index: -1
 slider-knob
   rotate: false
-  xy: 339, 784
+  xy: 501, 845
   size: 54, 54
   orig: 54, 54
   offset: 0, 0
   index: -1
 slider-vertical
   rotate: false
-  xy: 335, 698
+  xy: 1, 30
   size: 54, 84
   split: 15, 15, 36, 36
   pad: 0, 0, 0, 0
@@ -247,7 +212,7 @@ slider-vertical
   index: -1
 split-pane-horizontal
   rotate: false
-  xy: 278, 386
+  xy: 63, 143
   size: 24, 48
   split: 3, 3, 3, 3
   pad: 0, 0, 0, 0
@@ -256,7 +221,7 @@ split-pane-horizontal
   index: -1
 split-pane-vertical
   rotate: false
-  xy: 87, 31
+  xy: 934, 999
   size: 48, 24
   split: 3, 3, 3, 3
   pad: 0, 0, 0, 0
@@ -265,7 +230,7 @@ split-pane-vertical
   index: -1
 textfield
   rotate: false
-  xy: 763, 891
+  xy: 269, 708
   size: 69, 75
   split: 21, 21, 21, 21
   pad: 28, 28, 23, 23
@@ -274,28 +239,28 @@ textfield
   index: -1
 touchpad
   rotate: false
-  xy: 1, 57
+  xy: 1, 621
   size: 162, 162
   orig: 162, 162
   offset: 0, 0
   index: -1
 touchpad-knob
   rotate: false
-  xy: 694, 847
+  xy: 425, 788
   size: 48, 51
   orig: 48, 51
   offset: 0, 0
   index: -1
 white
   rotate: false
-  xy: 263, 198
+  xy: 839, 978
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 217, 74
+  xy: 1, 1
   size: 27, 27
   split: 9, 9, 9, 9
   orig: 27, 27
@@ -303,7 +268,7 @@ window
   index: -1
 window-round
   rotate: false
-  xy: 632, 823
+  xy: 1, 116
   size: 60, 75
   split: 18, 18, 18, 18
   pad: 29, 29, 36, 37
