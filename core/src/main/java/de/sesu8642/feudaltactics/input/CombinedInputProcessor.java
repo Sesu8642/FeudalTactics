@@ -197,4 +197,9 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 		Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
 		return worldCoords;
 	}
+
+	@Override
+	public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
 }

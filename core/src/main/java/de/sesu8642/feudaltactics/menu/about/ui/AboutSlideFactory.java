@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
@@ -42,7 +43,7 @@ public class AboutSlideFactory {
 		String imagePath = "square_logo_64.png";
 		Slide slide = new Slide(skin, "About FeudalTactics");
 		slide.getTable().add(new Image(new Texture(imagePath))).row();
-		slide.getTable().add(slide.newNiceLabel(text1)).center().row();
+		slide.getTable().add(new Label(text1, skin)).center().row();
 		slide.addLabel(text2);
 		return slide;
 	}

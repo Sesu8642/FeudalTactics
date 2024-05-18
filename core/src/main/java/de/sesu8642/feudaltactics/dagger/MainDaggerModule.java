@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
+import com.ray3k.stripe.FreeTypeSkin;
 
 import dagger.Module;
 import dagger.Provides;
@@ -46,7 +47,7 @@ public class MainDaggerModule {
 	@Provides
 	@Singleton
 	static Skin provideSkin() {
-		return new Skin(Gdx.files.internal("skin/pixthulhu-ui.json"));
+		return new FreeTypeSkin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 	}
 
 	@Provides

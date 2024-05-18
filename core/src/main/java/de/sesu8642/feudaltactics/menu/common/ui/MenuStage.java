@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -64,8 +65,8 @@ public class MenuStage extends ResizableResettableStage {
 			TextButton button = new TextButton(buttonText, skin);
 			buttons.add(button);
 		}
-		bottomLeftLabel = new Label("", skin);
-		bottomRightLabel = new Label("", skin);
+		bottomLeftLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+		bottomRightLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);

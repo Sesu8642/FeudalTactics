@@ -37,7 +37,7 @@ public class CrashReportSlide extends Slide {
 	public CrashReportSlide(Skin skin) {
 		super(skin, "Report a Crash");
 
-		descriptionLabel = newNiceLabel(
+		descriptionLabel = new Label(
 				"Feudal Tactics previously crashed. Please report the following information via email or GitHub.",
 				skin);
 		descriptionLabel.setWrap(true);

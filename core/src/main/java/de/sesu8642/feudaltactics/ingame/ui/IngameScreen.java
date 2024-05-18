@@ -176,7 +176,7 @@ public class IngameScreen extends GameScreen {
 		if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)
 				&& mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
 			Dialog confirmDialog = dialogFactory.createConfirmDialog(
-					"You might have forgotten to do your moves for a kingdom.\nAre you sure you want to end your turn?\n",
+					"You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to end your turn?\n",
 					this::endHumanPlayerTurn);
 			confirmDialog.show(hudStage);
 		} else {
@@ -354,10 +354,10 @@ public class IngameScreen extends GameScreen {
 		});
 		endDialog.button("Exit", (byte) 1);
 		if (win) {
-			endDialog.text("VICTORY! Your Enemies give up.\n\nDo you wish to continue?");
+			endDialog.text("VICTORY! Your Enemies surrender.\n\nDo you wish to continue?\n");
 			endDialog.button("Replay", (byte) 2);
 		} else {
-			endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?");
+			endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?\n");
 			endDialog.button("Retry", (byte) 2);
 		}
 		endDialog.button("Continue", (byte) 0);
@@ -367,7 +367,7 @@ public class IngameScreen extends GameScreen {
 	private void showAllEnemiesDefeatedMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> exitToMenu());
 		endDialog.button("Exit");
-		endDialog.text("VICTORY! You deafeated all your enemies.");
+		endDialog.text("VICTORY! You deafeated all your enemies.\n");
 		endDialog.show(hudStage);
 	}
 
@@ -395,7 +395,7 @@ public class IngameScreen extends GameScreen {
 			endDialog.button("Spectate", (byte) 0);
 		}
 		endDialog.button("Retry", (byte) 2);
-		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.");
+		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.\n");
 		endDialog.show(hudStage);
 	}
 

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -28,6 +29,7 @@ import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
 
 /**
@@ -122,7 +124,7 @@ public class HudStage extends ResizableResettableStage {
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
 		thumbImage.setColor(FeudalTactics.buttonIconColor);
-		infoTextLabel = new Label("", skin);
+		infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
@@ -220,10 +222,6 @@ public class HudStage extends ResizableResettableStage {
 
 	public void setInfoText(String newText) {
 		infoTextLabel.setText(newText);
-	}
-
-	public void setFontScale(Float fontScale) {
-		infoTextLabel.setFontScale(fontScale);
 	}
 
 	@Override

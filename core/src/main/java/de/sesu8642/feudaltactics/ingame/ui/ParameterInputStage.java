@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -25,6 +26,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.UserColors;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 
 /**
  * {@link Stage} for displaying the input mask for a new game.
@@ -79,27 +81,27 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private void initUi() {
 		// note about checktyle: widgets are declared in the order they appear in the UI
-		Label colorLabel = new Label("Kingdom\nColor", skin);
+		Label colorLabel = new Label("Kingdom\nColor", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		colorSelect = new SelectBox<>(skin);
 		String[] kingdomColors = { "Blue", "Orange", "Green", "Yellow", "Pink", "White" };
 		colorSelect.setItems(kingdomColors);
 
-		Label difficultyLabel = new Label("CPU\nDifficulty", skin);
+		Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		difficultySelect = new SelectBox<>(skin);
 		String[] difficulties = { "Easy", "Medium", "Hard", "Very hard" };
 		difficultySelect.setItems(difficulties);
 
-		Label sizeLabel = new Label("Map\nSize", skin);
+		Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		sizeSelect = new SelectBox<>(skin);
 		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", "XXLarge" };
 		sizeSelect.setItems(sizes);
 
-		Label densityLabel = new Label("Map\nDensity", skin);
+		Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		densitySelect = new SelectBox<>(skin);
 		String[] densities = { "Dense", "Medium   ", "Loose" };
 		densitySelect.setItems(densities);
 
-		Label seedLabel = new Label("Seed", skin);
+		Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
