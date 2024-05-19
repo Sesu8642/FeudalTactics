@@ -8,6 +8,7 @@ Based on the [pixthulu-ui skin](https://github.com/czyzby/gdx-skins/tree/master/
  * replaced bitmap font with freeType FreeSans
  * changed font styles
  * removed some unused textures
+ * added some colors
 
 # Using the skin
 

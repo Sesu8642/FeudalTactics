@@ -12,4 +12,8 @@ public final class SkinConstants {
 	public static final String FONT_HEADLINE = "headline";
 	public static final String FONT_OVERLAY = "overlay";
 
+	public static final String COLOR_HIGHLIGHT2 = "highlight2";
+	public static final String COLOR_DISABLED = "disabled";
+	public static final String COLOR_BACKGROUND = "background";
+
 }

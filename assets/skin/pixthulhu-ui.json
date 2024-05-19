@@ -1,5 +1,11 @@
 {
 com.badlogic.gdx.graphics.Color: {
+	background: {
+		r: 0
+		g: 0.2
+		b: 0.8
+		a: 1
+	}
 	black: {
 		r: 0
 		g: 0
@@ -12,6 +18,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 1
 	}
+	disabled: {
+		r: 0.7490196
+		g: 0.7490196
+		b: 0.7490196
+		a: 1
+	}
 	field: {
 		r: 0.5058824
 		g: 0.9372549
@@ -22,6 +34,12 @@ com.badlogic.gdx.graphics.Color: {
 		r: 0.29411766
 		g: 0.5529412
 		b: 0.54509807
+		a: 1
+	}
+	highlight2: {
+		r: 1
+		g: 0.7019608
+		b: 0.14901961
 		a: 1
 	}
 	red: {

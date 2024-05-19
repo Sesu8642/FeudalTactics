@@ -771,6 +771,16 @@ jsonData: {
 			class: com.ray3k.skincomposer.data.ColorData
 			color: {
 				r: 0
+				g: 0.2
+				b: 0.8
+				a: 1
+			}
+			name: background
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0
 				g: 0
 				b: 0
 				a: 1
@@ -786,6 +796,16 @@ jsonData: {
 				a: 1
 			}
 			name: blue
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0.7490196
+				g: 0.7490196
+				b: 0.7490196
+				a: 1
+			}
+			name: disabled
 		}
 		{
 			class: com.ray3k.skincomposer.data.ColorData
@@ -806,6 +826,16 @@ jsonData: {
 				a: 1
 			}
 			name: highlight
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 1
+				g: 0.7019608
+				b: 0.14901961
+				a: 1
+			}
+			name: highlight2
 		}
 		{
 			class: com.ray3k.skincomposer.data.ColorData

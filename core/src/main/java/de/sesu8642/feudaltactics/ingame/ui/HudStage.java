@@ -25,7 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableMap;
 
-import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -80,7 +79,7 @@ public class HudStage extends ResizableResettableStage {
 		// TODO: put the buttons in a custom skin
 		menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
 				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
-		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		menuButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		menuButton.getImageCell().expand().fill();
 
 		// buttons visible during the local player turn
@@ -109,7 +108,7 @@ public class HudStage extends ResizableResettableStage {
 		enemyTurnButtons.add(skipButton);
 		for (ImageButton button : enemyTurnButtons) {
 			button.getImageCell().expand().fill();
-			button.getImage().setColor(FeudalTactics.buttonIconColor);
+			button.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		}
 
 		handStack = new Stack();
@@ -119,11 +118,11 @@ public class HudStage extends ResizableResettableStage {
 		Sprite handSprite = new Sprite(textureAtlas.createSprite("hand"));
 		handSprite.setFlip(true, false);
 		Image handImage = new Image(handSprite);
-		handImage.setColor(FeudalTactics.buttonIconColor);
+		handImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		Sprite thumbSprite = new Sprite(textureAtlas.createSprite("hand_thumb"));
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
-		thumbImage.setColor(FeudalTactics.buttonIconColor);
+		thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 
 		rootTable = new Table();
@@ -195,10 +194,10 @@ public class HudStage extends ResizableResettableStage {
 	private void setButtonEnabledStatus(boolean enabled, ImageButton button) {
 		if (enabled) {
 			button.setTouchable(Touchable.enabled);
-			button.getImage().setColor(FeudalTactics.buttonIconColor);
+			button.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		} else {
 			button.setTouchable(Touchable.disabled);
-			button.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+			button.getImage().setColor(skin.getColor(SkinConstants.COLOR_DISABLED));
 		}
 	}
 
