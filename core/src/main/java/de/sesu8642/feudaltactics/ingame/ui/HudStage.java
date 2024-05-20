@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -14,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,9 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.collect.ImmutableMap;
 
-import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
@@ -35,9 +33,6 @@ import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
  * {@link Stage} that displays the in-game heads up display.
  */
 public class HudStage extends ResizableResettableStage {
-
-	static final Map<Speed, String> SPEED_BUTTON_TEXTURE_NAMES = ImmutableMap.of(Speed.HALF, "0.5x", Speed.NORMAL, "1x",
-			Speed.TIMES_TWO, "2x");
 
 	private TextureAtlas textureAtlas;
 	private Skin skin;
@@ -60,6 +55,10 @@ public class HudStage extends ResizableResettableStage {
 
 	private boolean enemyTurnButtonsShown = false;
 
+	ImageButtonStyle halfSpeedButtonStyle;
+	ImageButtonStyle regularSpeedButtonStyle;
+	ImageButtonStyle doubleSpeedButtonStyle;
+
 	/**
 	 * Constructor.
 	 * 
@@ -76,21 +75,23 @@ public class HudStage extends ResizableResettableStage {
 	}
 
 	private void initUi() {
-		// TODO: put the buttons in a custom skin
-		menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
-				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
+		halfSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_HALF, ImageButtonStyle.class);
+		regularSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_REGULAR, ImageButtonStyle.class);
+		doubleSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_DOUBLE, ImageButtonStyle.class);
+
+		menuButton = new ImageButton(skin.get(SkinConstants.BUTTON_PAUSE, ImageButtonStyle.class));
 		menuButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		menuButton.getImageCell().expand().fill();
 
 		// buttons visible during the local player turn
-		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
-				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
-		buyPeasantButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_peasant")),
-				new SpriteDrawable(textureAtlas.createSprite("buy_peasant_pressed")));
-		buyCastleButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_castle")),
-				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
-		endTurnButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("end_turn")),
-				new SpriteDrawable(textureAtlas.createSprite("end_turn_pressed")));
+		ImageButtonStyle style = skin.get(SkinConstants.BUTTON_UNDO, ImageButtonStyle.class);
+		ImageButtonStyle style2 = new ImageButtonStyle();
+
+		undoButton = new ImageButton(new SpriteDrawable(skin.getAtlas().createSprite("undo")),
+				new SpriteDrawable(skin.getAtlas().createSprite("undo_pressed")));
+		buyPeasantButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_PEASANT, ImageButtonStyle.class));
+		buyCastleButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_CASTLE, ImageButtonStyle.class));
+		endTurnButton = new ImageButton(skin.get(SkinConstants.BUTTON_END_TURN, ImageButtonStyle.class));
 		playerTurnButtons.add(undoButton);
 		playerTurnButtons.add(buyPeasantButton);
 		playerTurnButtons.add(buyCastleButton);
@@ -100,10 +101,8 @@ public class HudStage extends ResizableResettableStage {
 		}
 
 		// buttons visible during enemies' turns
-		speedButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("1x")),
-				new SpriteDrawable(textureAtlas.createSprite("1x_pressed")));
-		skipButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("skip_turn")),
-				new SpriteDrawable(textureAtlas.createSprite("skip_turn_pressed")));
+		speedButton = new ImageButton(regularSpeedButtonStyle);
+		skipButton = new ImageButton(skin.get(SkinConstants.BUTTON_SKIP_TURN, ImageButtonStyle.class));
 		enemyTurnButtons.add(speedButton);
 		enemyTurnButtons.add(skipButton);
 		for (ImageButton button : enemyTurnButtons) {
@@ -115,11 +114,11 @@ public class HudStage extends ResizableResettableStage {
 		handContentTable = new Table();
 		handContent = new Image();
 
-		Sprite handSprite = new Sprite(textureAtlas.createSprite("hand"));
+		Sprite handSprite = skin.getSprite(SkinConstants.SPRITE_HAND);
 		handSprite.setFlip(true, false);
 		Image handImage = new Image(handSprite);
 		handImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
-		Sprite thumbSprite = new Sprite(textureAtlas.createSprite("hand_thumb"));
+		Sprite thumbSprite = skin.getSprite(SkinConstants.SPRITE_HAND_THUMB);
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
 		thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));

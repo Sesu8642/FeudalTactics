@@ -244,6 +244,46 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		down: button-pressed
 		checked: button-pressed
 	}
+	undo: {
+		imageUp: undo
+		imageDown: undo_pressed
+	}
+	buy_peasant: {
+		imageUp: buy_peasant
+		imageDown: buy_peasant_pressed
+	}
+	buy_castle: {
+		imageUp: buy_castle
+		imageDown: buy_castle_pressed
+	}
+	end_turn: {
+		imageUp: end_turn
+		imageDown: end_turn_pressed
+	}
+	half_speed: {
+		imageUp: 0.5x
+		imageDown: 0.5x_pressed
+	}
+	regular_speed: {
+		imageUp: 1x
+		imageDown: 1x_pressed
+	}
+	double_speed: {
+		imageUp: 2x
+		imageDown: 2x_pressed
+	}
+	skip_turn: {
+		imageUp: skip_turn
+		imageDown: skip_turn_pressed
+	}
+	pause: {
+		imageUp: pause
+		imageDown: pause_pressed
+	}
+	die: {
+		imageUp: die
+		imageDown: die_pressed
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {

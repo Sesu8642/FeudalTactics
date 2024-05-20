@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
@@ -65,8 +64,6 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 /** {@link Screen} for playing a map. */
 @Singleton
 public class IngameScreen extends GameScreen {
-
-	private final TextureAtlas textureAtlas;
 
 	private final MainPreferencesDao mainPrefsDao;
 
@@ -148,7 +145,6 @@ public class IngameScreen extends GameScreen {
 			InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer, HudStage hudStage,
 			IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
-		this.textureAtlas = textureAtlas;
 		this.mainPrefsDao = mainPrefsDao;
 		this.newGamePrefDao = newGamePrefDao;
 		this.ingameCamera = ingameCamera;
@@ -525,12 +521,21 @@ public class IngameScreen extends GameScreen {
 			}
 			currentBotSpeed = Speed.values()[nextSpeedIndex];
 			eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
-			hudStage.speedButton.setStyle(new ImageButtonStyle(null, null, null,
-					new SpriteDrawable(
-							textureAtlas.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed))),
-					new SpriteDrawable(textureAtlas
-							.createSprite(HudStage.SPEED_BUTTON_TEXTURE_NAMES.get(currentBotSpeed) + "_pressed")),
-					null));
+			ImageButtonStyle newStyle = null;
+			switch (nextSpeedIndex) {
+			case 0:
+				newStyle = hudStage.halfSpeedButtonStyle;
+				break;
+			case 1:
+				newStyle = hudStage.regularSpeedButtonStyle;
+				break;
+			case 2:
+				newStyle = hudStage.doubleSpeedButtonStyle;
+				break;
+			default:
+				throw new IllegalStateException("Unknown speed index " + currentSpeedIndex);
+			}
+			hudStage.speedButton.setStyle(newStyle);
 		}));
 
 		hudStage.skipButton

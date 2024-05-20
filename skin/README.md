@@ -9,6 +9,7 @@ Based on the [pixthulu-ui skin](https://github.com/czyzby/gdx-skins/tree/master/
  * changed font styles
  * removed some unused textures
  * added some colors
+ * added custom graphics
 
 # Using the skin
 

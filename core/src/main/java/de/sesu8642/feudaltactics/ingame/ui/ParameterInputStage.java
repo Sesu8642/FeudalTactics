@@ -5,9 +5,9 @@ package de.sesu8642.feudaltactics.ingame.ui;
 import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
@@ -52,7 +51,6 @@ public class ParameterInputStage extends ResizableResettableStage {
 	 */
 	public static final long TOTAL_INPUT_WIDTH = 519;
 
-	private TextureAtlas textureAtlas;
 	private Skin skin;
 
 	private Table rootTable;
@@ -67,14 +65,12 @@ public class ParameterInputStage extends ResizableResettableStage {
 	/**
 	 * Constructor.
 	 * 
-	 * @param viewport     viewport for the stage
-	 * @param textureAtlas texture atlas containing the button textures
-	 * @param skin         game skin
+	 * @param viewport viewport for the stage
+	 * @param skin     game skin
 	 */
 	@Inject
-	public ParameterInputStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+	public ParameterInputStage(@MenuViewport Viewport viewport, Skin skin) {
 		super(viewport);
-		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
 	}
@@ -105,9 +101,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
-		randomButton = new ImageButton(skin);
-		randomButton.getStyle().imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
-		randomButton.getStyle().imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
+		randomButton = new ImageButton(skin.get(SkinConstants.BUTTON_DIE, ImageButtonStyle.class));
 		randomButton.getImageCell().expand().fill();
 
 		playButton = new TextButton("Play", skin);
