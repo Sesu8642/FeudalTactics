@@ -181,6 +181,13 @@ hand_thumb
   orig: 64, 64
   offset: 0, 0
   index: -1
+hexagon_character export
+  rotate: false
+  xy: 183, 580
+  size: 48, 43
+  orig: 48, 43
+  offset: 0, 0
+  index: -1
 list
   rotate: false
   xy: 1, 505
@@ -427,12 +434,5 @@ window-round
   split: 18, 18, 18, 18
   pad: 29, 29, 36, 37
   orig: 60, 75
-  offset: 0, 0
-  index: -1
-hexagon_character export
-  rotate: false
-  xy: 183, 580
-  size: 48, 43
-  orig: 48, 43
   offset: 0, 0
   index: -1

@@ -41,6 +41,7 @@ public class HudStage extends ResizableResettableStage {
 	private Stack handStack;
 	private Table handContentTable;
 	private Image handContent;
+	Label infoHexagonLabel;
 	Label infoTextLabel;
 	ImageButton undoButton;
 	ImageButton endTurnButton;
@@ -119,13 +120,18 @@ public class HudStage extends ResizableResettableStage {
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
 		thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+
+		infoHexagonLabel = new Label("", skin.get(SkinConstants.FONT_HEXAGON, LabelStyle.class));
+
 		infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
-		rootTable.add(infoTextLabel).left().top().pad(10);
+		rootTable.add(infoHexagonLabel).left().top().pad(10);
+		rootTable.add(infoTextLabel).left().top().pad(10).expandX();
 		rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
 		rootTable.row();
+		rootTable.add();
 		rootTable.add();
 		rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
 		rootTable.row();
@@ -136,7 +142,7 @@ public class HudStage extends ResizableResettableStage {
 		bottomTable.add(buyPeasantButton);
 		bottomTable.add(buyCastleButton);
 		bottomTable.add(endTurnButton);
-		rootTable.add(bottomTable).fill().expand().bottom().colspan(2)
+		rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
 				.height(ValueWithSize.percentSize(0.1F, rootTable));
 
 		handStack.add(handImage);

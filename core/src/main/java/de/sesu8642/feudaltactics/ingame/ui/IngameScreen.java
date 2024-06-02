@@ -243,6 +243,8 @@ public class IngameScreen extends GameScreen {
 			}
 		}
 		hudStage.infoTextLabel.setText(hudStageInfoText);
+		hudStage.infoHexagonLabel.setText(String.format("[#%s]h",
+				MapRenderer.PLAYER_COLOR_PALETTE.get(gameState.getActivePlayer().getPlayerIndex())));
 		parameterInputStage.updateSeed(newGameState.getSeed());
 	}
 

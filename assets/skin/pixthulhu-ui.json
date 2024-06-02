@@ -313,6 +313,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	overlay: {
 		font: Overlay
 	}
+	bestagon: {
+		font: bestagon
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
