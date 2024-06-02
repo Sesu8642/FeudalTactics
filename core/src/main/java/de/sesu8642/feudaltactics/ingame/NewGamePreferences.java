@@ -2,9 +2,6 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
-import com.badlogic.gdx.graphics.Color;
-
-import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 /** Value object: preferences for a new game. */
@@ -13,21 +10,21 @@ public class NewGamePreferences {
 	private Intelligence botIntelligence;
 	private MapSizes mapSize;
 	private Densities density;
-	private UserColors userColor;
+	private int startingPosition;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param botIntelligence intelligence of the bot players for the game
-	 * @param mapSize         size of the map for this game
-	 * @param density         density of the map for this game
-	 * @param userColor       color user selects for their kingdom
+	 * @param botIntelligence  intelligence of the bot players for the game
+	 * @param mapSize          size of the map for this game
+	 * @param density          density of the map for this game
+	 * @param startingPosition starting position index of the human player
 	 */
-	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density, UserColors userColor) {
+	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density, int startingPosition) {
 		this.botIntelligence = botIntelligence;
 		this.mapSize = mapSize;
 		this.density = density;
-		this.userColor = userColor;
+		this.startingPosition = startingPosition;
 	}
 
 	public Intelligence getBotIntelligence() {
@@ -54,12 +51,12 @@ public class NewGamePreferences {
 		this.density = density;
 	}
 
-	public UserColors getUserColor() {
-		return userColor;
+	public int getStartingPosition() {
+		return startingPosition;
 	}
 
-	public void setUserColor(UserColors userColor) {
-		this.userColor = userColor;
+	public void setStartingPosition(int startingPosition) {
+		this.startingPosition = startingPosition;
 	}
 
 	/** Map sizes that can be generated. */
@@ -90,22 +87,6 @@ public class NewGamePreferences {
 
 		public float getDensityFloat() {
 			return this.densityFloat;
-		}
-	}
-
-	/** User colors that can be generated. */
-	public enum UserColors {
-		BLUE(GameController.BLUE), ORANGE(GameController.ORANGE), GREEN(GameController.GREEN),
-		YELLOW(GameController.YELLOW), PINK(GameController.PINK), WHITE(GameController.WHITE);
-
-		private Color kingdomColor;
-
-		private UserColors(Color kingdomColor) {
-			this.kingdomColor = kingdomColor;
-		}
-
-		public Color getKingdomColor() {
-			return this.kingdomColor;
 		}
 	}
 

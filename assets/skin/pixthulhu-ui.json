@@ -1,4 +1,12 @@
 {
+com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	bestagon: {
+		file: hexagon_character export.fnt
+		scaledSize: -1
+		markupEnabled: true
+		flip: false
+	}
+}
 com.badlogic.gdx.graphics.Color: {
 	background: {
 		r: 0
@@ -314,6 +322,13 @@ com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 		selection: field
 		background: list
 	}
+	colorselect: {
+		font: bestagon
+		fontColorSelected: white
+		fontColorUnselected: white
+		selection: field
+		background: list
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: {
@@ -348,6 +363,13 @@ com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 		background: select-box
 		scrollStyle: default
 		listStyle: default
+	}
+	colorselect: {
+		font: bestagon
+		fontColor: white
+		background: select-box
+		scrollStyle: default
+		listStyle: colorselect
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {

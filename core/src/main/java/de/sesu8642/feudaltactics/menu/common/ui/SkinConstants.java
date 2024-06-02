@@ -2,6 +2,9 @@
 
 package de.sesu8642.feudaltactics.menu.common.ui;
 
+/**
+ * Constants for names used in the skin.
+ */
 public final class SkinConstants {
 
 	private SkinConstants() {
@@ -29,5 +32,7 @@ public final class SkinConstants {
 
 	public static final String SPRITE_HAND = "hand";
 	public static final String SPRITE_HAND_THUMB = "hand_thumb";
+
+	public static final String SELECT_BOX_STYLE_COLOR_SELECT = "colorselect";
 
 }

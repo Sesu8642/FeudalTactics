@@ -13,7 +13,6 @@ import javax.inject.Singleton;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -118,7 +117,6 @@ public class IngameScreen extends GameScreen {
 	/**
 	 * Constructor.
 	 * 
-	 * @param autoSaveRepo         repo for interacting with autosave persistence
 	 * @param mainPrefsDao         dao for main preferences
 	 * @param newGamePrefDao       dao for new game preferences
 	 * @param ingameCamera         camera for viewing the map
@@ -192,10 +190,9 @@ public class IngameScreen extends GameScreen {
 		clearCache();
 		eventBus.post(new GameExitedEvent());
 		eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-				new MapParameters(parameterInputStage.getSeedParam(),
+				new MapParameters(parameterInputStage.getStartingPosition(), parameterInputStage.getSeedParam(),
 						parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-						parameterInputStage.getMapDensityParam().getDensityFloat(),
-						parameterInputStage.getUserColor().getKingdomColor())));
+						parameterInputStage.getMapDensityParam().getDensityFloat())));
 		centerMap();
 		activateStage(IngameStages.PARAMETERS);
 	}
@@ -235,60 +232,66 @@ public class IngameScreen extends GameScreen {
 		}
 		// seed
 		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
-		String infoText = "";
+		String hudStageInfoText = "";
 		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
-			Player localPlayer = newGameState.getActivePlayer();
-			// info text
-			Kingdom kingdom = newGameState.getActiveKingdom();
-			if (kingdom != null) {
-				int income = GameStateHelper.getKingdomIncome(kingdom);
-				int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
-				int result = income - salaries;
-				int savings = kingdom.getSavings();
-				String resultText = result < 0 ? String.valueOf(result) : "+" + result;
-				infoText = "Savings: " + savings + " (" + resultText + ")";
-			} else {
-				infoText = "Your turn";
-			}
-			// buttons
-			if (hudStage.isEnemyTurnButtonsShown()) {
-				uiChangeActions.add(() -> hudStage.showPlayerTurnButtons());
-			}
-			Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
-			if (playerOptional.isPresent()) {
-				Player player = playerOptional.get();
-				boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player,
-						PlayerMove.undoLastMove());
-				boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
-				boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
-				boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
-				hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
-			}
-			// display messages
-			if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
-				if (localPlayer.isDefeated()) {
-					// Game is over; player lost
-					uiChangeActions.add(this::showLostMessageWithoutSpectate);
-				} else {
-					// Game is over; player won
-					uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
-				}
-			} else if (localPlayer.isDefeated() && !isSpectateMode) {
-				// Local player lost but game isn't over; offer a spectate option
-				uiChangeActions.add(this::showLostMessage);
-			} else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
-				// winner changed
-				uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER,
-						newGameState.getWinner().getColor()));
-			}
+			hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
+					newGameState);
 		} else {
-			infoText = "Enemy turn";
+			hudStageInfoText = "Enemy turn";
 			if (!hudStage.isEnemyTurnButtonsShown()) {
-				uiChangeActions.add(() -> hudStage.showEnemyTurnButtons());
+				uiChangeActions.add(hudStage::showEnemyTurnButtons);
 			}
 		}
-		hudStage.setInfoText(infoText);
+		hudStage.infoTextLabel.setText(hudStageInfoText);
 		parameterInputStage.updateSeed(newGameState.getSeed());
+	}
+
+	private String handleGameStateChangeHumanPlayerTurn(boolean humanPlayerTurnJustStarted, boolean winnerChanged,
+			GameState newGameState) {
+		String infoText;
+		Player localPlayer = newGameState.getActivePlayer();
+		// info text
+		Kingdom kingdom = newGameState.getActiveKingdom();
+		if (kingdom != null) {
+			int income = GameStateHelper.getKingdomIncome(kingdom);
+			int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
+			int result = income - salaries;
+			int savings = kingdom.getSavings();
+			String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+			infoText = "Savings: " + savings + " (" + resultText + ")";
+		} else {
+			infoText = "Your turn";
+		}
+		// buttons
+		if (hudStage.isEnemyTurnButtonsShown()) {
+			uiChangeActions.add(hudStage::showPlayerTurnButtons);
+		}
+		Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
+		if (playerOptional.isPresent()) {
+			Player player = playerOptional.get();
+			boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player, PlayerMove.undoLastMove());
+			boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
+			boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
+			boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
+			hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+		}
+		// display messages
+		if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
+			if (localPlayer.isDefeated()) {
+				// Game is over; player lost
+				uiChangeActions.add(this::showLostMessageWithoutSpectate);
+			} else {
+				// Game is over; player won
+				uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
+			}
+		} else if (localPlayer.isDefeated() && !isSpectateMode) {
+			// Local player lost but game isn't over; offer a spectate option
+			uiChangeActions.add(this::showLostMessage);
+		} else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
+			// winner changed
+			uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER));
+		}
+		return infoText;
 	}
 
 	/** Toggles the pause menu. */
@@ -330,8 +333,7 @@ public class IngameScreen extends GameScreen {
 		}
 	}
 
-	private void showGiveUpGameMessage(boolean win, Color winningPlayerColor) {
-		// TODO: make this nicer and display the color of the winning player
+	private void showGiveUpGameMessage(boolean win) {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			switch ((byte) result) {
 			case 1:
@@ -481,17 +483,17 @@ public class IngameScreen extends GameScreen {
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
-				parameterInputStage.densitySelect, parameterInputStage.colorSelect)
+				parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect)
 				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
 					eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-							new MapParameters(parameterInputStage.getSeedParam(),
+							new MapParameters(parameterInputStage.getStartingPosition(),
+									parameterInputStage.getSeedParam(),
 									parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-									parameterInputStage.getMapDensityParam().getDensityFloat(),
-									parameterInputStage.getUserColor().getKingdomColor())));
+									parameterInputStage.getMapDensityParam().getDensityFloat())));
 					centerMap();
 					newGamePrefDao.saveNewGamePreferences(new NewGamePreferences(
 							parameterInputStage.getBotIntelligence(), parameterInputStage.getMapSizeParam(),
-							parameterInputStage.getMapDensityParam(), parameterInputStage.getUserColor()));
+							parameterInputStage.getMapDensityParam(), parameterInputStage.getStartingPosition()));
 				})));
 
 		parameterInputStage.playButton
@@ -548,6 +550,7 @@ public class IngameScreen extends GameScreen {
 		parameterInputStage.difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
 		parameterInputStage.sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
 		parameterInputStage.densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
+		parameterInputStage.startingPositionSelect.setSelectedIndex(prefs.getStartingPosition());
 	}
 
 	public OrthographicCamera getCamera() {

@@ -39,9 +39,9 @@ public class HudStage extends ResizableResettableStage {
 
 	private Table rootTable;
 	private Stack handStack;
-	private Label infoTextLabel;
 	private Table handContentTable;
 	private Image handContent;
+	Label infoTextLabel;
 	ImageButton undoButton;
 	ImageButton endTurnButton;
 	ImageButton buyPeasantButton;
@@ -84,9 +84,6 @@ public class HudStage extends ResizableResettableStage {
 		menuButton.getImageCell().expand().fill();
 
 		// buttons visible during the local player turn
-		ImageButtonStyle style = skin.get(SkinConstants.BUTTON_UNDO, ImageButtonStyle.class);
-		ImageButtonStyle style2 = new ImageButtonStyle();
-
 		undoButton = new ImageButton(new SpriteDrawable(skin.getAtlas().createSprite("undo")),
 				new SpriteDrawable(skin.getAtlas().createSprite("undo_pressed")));
 		buyPeasantButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_PEASANT, ImageButtonStyle.class));
@@ -216,10 +213,6 @@ public class HudStage extends ResizableResettableStage {
 		for (ImageButton button : enemyTurnButtons) {
 			bottomTable.add(button);
 		}
-	}
-
-	public void setInfoText(String newText) {
-		infoTextLabel.setText(newText);
 	}
 
 	@Override

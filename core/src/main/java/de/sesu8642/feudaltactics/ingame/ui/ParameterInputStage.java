@@ -2,6 +2,9 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -21,7 +24,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.UserColors;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -43,7 +45,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	public static final long BUTTON_HEIGHT_PX = 114;
 
 	/** Height of all parameter inputs combined. */
-	public static final long TOTAL_INPUT_HEIGHT = 4 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
+	public static final long TOTAL_INPUT_HEIGHT = 5 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
 			+ OUTER_PADDING_PX;
 
 	/**
@@ -54,7 +56,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 	private Skin skin;
 
 	private Table rootTable;
-	SelectBox<String> colorSelect;
+
+	SelectBox<String> startingPositionSelect;
 	SelectBox<String> sizeSelect;
 	SelectBox<String> densitySelect;
 	SelectBox<String> difficultySelect;
@@ -77,10 +80,15 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	private void initUi() {
 		// note about checktyle: widgets are declared in the order they appear in the UI
-		Label colorLabel = new Label("Kingdom\nColor", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-		colorSelect = new SelectBox<>(skin);
-		String[] kingdomColors = { "Blue", "Orange", "Green", "Yellow", "Pink", "White" };
-		colorSelect.setItems(kingdomColors);
+
+		Label startingPositionLabel = new Label("Starting\nPosition", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+		startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
+
+		// markup must be enabled in the font for this coloring to work
+		// h is a hexagon chraracter in the font
+		List<String> startingPositions = de.sesu8642.feudaltactics.renderer.MapRenderer.PLAYER_COLOR_PALETTE.stream()
+				.map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
+		startingPositionSelect.setItems(startingPositions.toArray(new String[0]));
 
 		Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		difficultySelect = new SelectBox<>(skin);
@@ -120,8 +128,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
 		rootTable.add().expandY();
 		rootTable.row();
-		rootTable.add(colorLabel);
-		rootTable.add(colorSelect).colspan(2).fillX();
+		rootTable.add(startingPositionLabel);
+		rootTable.add(startingPositionSelect).colspan(2).fillX();
 		rootTable.add().expandX();
 		rootTable.row();
 		rootTable.add(difficultyLabel);
@@ -177,8 +185,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 		return Intelligence.values()[difficultySelect.getSelectedIndex()];
 	}
 
-	public UserColors getUserColor() {
-		return UserColors.values()[colorSelect.getSelectedIndex()];
+	public int getStartingPosition() {
+		return startingPositionSelect.getSelectedIndex();
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.google.common.collect.ImmutableList;
 
 import de.sesu8642.feudaltactics.lib.gamestate.Capital;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
@@ -46,6 +47,9 @@ public class MapRenderer {
 	public static final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
 	public static final float HEXTILE_WIDTH = HexMapHelper.HEX_OUTER_RADIUS * 2;
 	public static final float HEXTILE_HEIGHT = HexMapHelper.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
+	public static final List<Color> PLAYER_COLOR_PALETTE = ImmutableList.of(new Color(0.2F, 0.45F, 0.8F, 1),
+			new Color(0.75F, 0.5F, 0F, 1), new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1),
+			new Color(1F, 1F, 1F, 1), new Color(0F, 1F, 0F, 1));
 
 	/**
 	 * Map of sprite names and their sprites. Functions as cache to avoid frequent
@@ -137,7 +141,7 @@ public class MapRenderer {
 			// create tiles
 			DrawTile drawTile = new DrawTile();
 			drawTile.mapCoords = mapCoords;
-			drawTile.color = tile.getPlayer().getColor();
+			drawTile.color = PLAYER_COLOR_PALETTE.get(tile.getPlayer().getPlayerIndex());
 			// create beaches on the edges
 			List<HexTile> neighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
 			if (neighbors.get(0) == null) {

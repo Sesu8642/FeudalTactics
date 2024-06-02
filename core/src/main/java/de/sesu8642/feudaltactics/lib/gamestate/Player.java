@@ -4,12 +4,10 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 
 import java.util.Objects;
 
-import com.badlogic.gdx.graphics.Color;
-
 /** A human or bot player participating in a game. **/
 public class Player {
 
-	private Color color;
+	private int playerIndex;
 	private Type type;
 	private boolean defeated = false;
 
@@ -21,26 +19,30 @@ public class Player {
 	public Player() {
 	}
 
-	public Player(Color color, Type type) {
-		this.color = color;
+	public Player(int playerIndex, Type type) {
+		this.playerIndex = playerIndex;
 		this.type = type;
 	}
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param color    color this player's tiles have
-	 * @param defeated whether this player is defeated
-	 * @param type     player type
+	 * @param playerIndex index to differentiate players, e.g. to assign colors
+	 * @param defeated    whether this player is defeated
+	 * @param type        player type
 	 */
-	public Player(Color color, boolean defeated, Type type) {
-		this.color = color;
-		this.defeated = defeated;
+	public Player(int playerIndex, Type type, boolean defeated) {
+		this.playerIndex = playerIndex;
 		this.type = type;
+		this.defeated = defeated;
 	}
 
-	public Color getColor() {
-		return color;
+	public int getPlayerIndex() {
+		return playerIndex;
+	}
+
+	public void setPlayerIndex(int playerIndex) {
+		this.playerIndex = playerIndex;
 	}
 
 	public boolean isDefeated() {
@@ -56,20 +58,19 @@ public class Player {
 	}
 
 	/**
-	 * Returns a deep copy of the original. Exception: color field is the same
-	 * instance as the original one
+	 * Returns a deep copy of the original.
 	 * 
 	 * @return copy
 	 */
 	public static Player copyOf(Player original) {
-		return new Player(original.getColor(), original.isDefeated(), original.getType());
+		return new Player(original.getPlayerIndex(), original.getType(), original.isDefeated());
 	}
 
 	@Override
 	public int hashCode() {
 		// calculating with enum strings because the hashcode must be consistent across
 		// runs
-		return Objects.hash(color, defeated, type.toString());
+		return Objects.hash(defeated, playerIndex, type.toString());
 	}
 
 	@Override
@@ -84,12 +85,12 @@ public class Player {
 			return false;
 		}
 		Player other = (Player) obj;
-		return Objects.equals(color, other.color) && defeated == other.defeated && type == other.type;
+		return defeated == other.defeated && playerIndex == other.playerIndex && type == other.type;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Player [color=%s, type=%s, defeated=%s]", color, type, defeated);
+		return "Player [playerIndex=" + playerIndex + ", type=" + type + ", defeated=" + defeated + "]";
 	}
 
 }

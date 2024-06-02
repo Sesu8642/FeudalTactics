@@ -91,7 +91,7 @@ button-small
   index: -1
 button-small-pressed
   rotate: false
-  xy: 183, 525
+  xy: 183, 480
   size: 45, 45
   split: 18, 18, 18, 18
   orig: 45, 45
@@ -222,7 +222,7 @@ progress-bar-health-knob
   index: -1
 progress-bar-horizontal
   rotate: false
-  xy: 171, 442
+  xy: 604, 722
   size: 9, 45
   split: 3, 3, 3, 3
   orig: 9, 45
@@ -286,7 +286,7 @@ scrollbar-horizontal-knob
   index: -1
 scrollbar-vertical
   rotate: false
-  xy: 183, 502
+  xy: 233, 555
   size: 43, 21
   split: 17, 17, 9, 9
   pad: 0, 0, 0, 0
@@ -386,7 +386,7 @@ touchpad
   index: -1
 touchpad-knob
   rotate: false
-  xy: 183, 572
+  xy: 183, 527
   size: 48, 51
   orig: 48, 51
   offset: 0, 0
@@ -427,5 +427,12 @@ window-round
   split: 18, 18, 18, 18
   pad: 29, 29, 36, 37
   orig: 60, 75
+  offset: 0, 0
+  index: -1
+hexagon_character export
+  rotate: false
+  xy: 183, 580
+  size: 48, 43
+  orig: 48, 43
   offset: 0, 0
   index: -1
