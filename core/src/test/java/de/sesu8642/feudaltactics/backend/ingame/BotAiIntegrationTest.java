@@ -26,7 +26,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.google.common.eventbus.EventBus;
@@ -40,8 +39,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateSerializer;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
@@ -195,12 +194,12 @@ class BotAiIntegrationTest {
 
 	private GameState createGameState(Float landMass, Float density, Long seed) {
 		List<Player> players = new ArrayList<>();
-		players.add(new Player(new Color(0.2F, 0.45F, 0.8F, 1), Type.LOCAL_BOT));
-		players.add(new Player(new Color(0.75F, 0.5F, 0F, 1), Type.LOCAL_BOT));
-		players.add(new Player(new Color(1F, 0.67F, 0.67F, 1), Type.LOCAL_BOT));
-		players.add(new Player(new Color(1F, 1F, 0F, 1), Type.LOCAL_BOT));
-		players.add(new Player(new Color(1F, 1F, 1F, 1), Type.LOCAL_BOT));
-		players.add(new Player(new Color(0F, 1F, 0F, 1), Type.LOCAL_BOT));
+		players.add(new Player(0, Type.LOCAL_BOT));
+		players.add(new Player(1, Type.LOCAL_BOT));
+		players.add(new Player(2, Type.LOCAL_BOT));
+		players.add(new Player(3, Type.LOCAL_BOT));
+		players.add(new Player(4, Type.LOCAL_BOT));
+		players.add(new Player(5, Type.LOCAL_BOT));
 		GameState result = new GameState();
 		GameStateHelper.initializeMap(result, players, landMass, density, 0.2F, seed);
 		return result;
