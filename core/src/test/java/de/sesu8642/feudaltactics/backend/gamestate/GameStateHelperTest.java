@@ -17,8 +17,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import com.badlogic.gdx.graphics.Color;
-
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
@@ -32,9 +30,9 @@ class GameStateHelperTest {
 	@BeforeEach
 	void init() {
 		players = new ArrayList<>();
-		players.add(new Player(new Color(1, 0, 0, 0), Type.LOCAL_BOT));
-		players.add(new Player(new Color(0, 1, 0, 0), Type.LOCAL_BOT));
-		players.add(new Player(new Color(0, 0, 1, 0), Type.LOCAL_PLAYER));
+		players.add(new Player(0, Type.LOCAL_BOT));
+		players.add(new Player(1, Type.LOCAL_BOT));
+		players.add(new Player(2, Type.LOCAL_PLAYER));
 	}
 
 	@Test

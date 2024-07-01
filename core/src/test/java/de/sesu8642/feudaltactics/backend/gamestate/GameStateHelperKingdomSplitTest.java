@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import de.sesu8642.feudaltactics.ApplicationStub;
@@ -29,17 +28,17 @@ import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.MapObject;
 import de.sesu8642.feudaltactics.lib.gamestate.PalmTree;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Tree;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
-import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 
 /** Tests for GameStateHelper class related to splitting a kingdom. */
 class GameStateHelperKingdomSplitTest {
 
-	Player player1 = new Player(new Color(1, 0, 0, 0), Type.LOCAL_PLAYER);
+	Player player1 = new Player(0, Type.LOCAL_PLAYER);
 
-	Player player2 = new Player(new Color(0, 0, 1, 0), Type.LOCAL_PLAYER);
+	Player player2 = new Player(1, Type.LOCAL_PLAYER);
 
 	List<Player> players = Arrays.asList(player1, player2);
 
