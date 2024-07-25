@@ -5,6 +5,7 @@ buildscript {
         mavenCentral()
         gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url 'https://jitpack.io' }
         google()
     }
     dependencies {
@@ -27,7 +28,7 @@ allprojects {
         
         guavaVersion = '31.1-android'
         daggerVersion = '2.33'
-        junitVersion = '5.9.2'
+        junitVersion = '5.10.2'
         mockitoVersion = '4.7.0'
     }
 
@@ -50,6 +51,8 @@ project(":desktop") {
         implementation project(":core")
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        
+        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
 }
 
@@ -65,6 +68,12 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
+        
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
+		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
     }
 }
 
@@ -73,6 +82,7 @@ project(":core") {
 
     dependencies {
     	api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    	
     	implementation("com.google.guava:guava:$guavaVersion") {
     	// exclude transitive dependencies mainly to avoid dealing with their licenses
     	// these dependencies are optional https://github.com/google/guava/issues/2824#issuecomment-544171665
@@ -88,6 +98,9 @@ project(":core") {
 		annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
         
         implementation 'org.slf4j:slf4j-jdk14:2.0.6'
+        
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        implementation 'com.github.raeleus.stripe:freetype:2.0.0'
         
 	    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
 		testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"

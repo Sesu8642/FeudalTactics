@@ -46,7 +46,7 @@ public class PreferencesSlide extends Slide {
 	}
 
 	private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin) {
-		Label newLabel = Slide.newNiceLabel(labelText, skin);
+		Label newLabel = new Label(labelText, skin);
 		newLabel.setWrap(true);
 		preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
 		SelectBox<Boolean> newSelectBox = new SelectBox<>(skin);

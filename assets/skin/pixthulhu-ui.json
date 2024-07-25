@@ -1,25 +1,19 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
-	font: {
-		file: font-export.fnt
+	bestagon: {
+		file: hexagon_character export.fnt
 		scaledSize: -1
-		markupEnabled: false
-		flip: false
-	}
-	subtitle: {
-		file: font-subtitle-export.fnt
-		scaledSize: -1
-		markupEnabled: false
-		flip: false
-	}
-	title: {
-		file: font-title-export.fnt
-		scaledSize: -1
-		markupEnabled: false
+		markupEnabled: true
 		flip: false
 	}
 }
 com.badlogic.gdx.graphics.Color: {
+	background: {
+		r: 0
+		g: 0.2
+		b: 0.8
+		a: 1
+	}
 	black: {
 		r: 0
 		g: 0
@@ -32,6 +26,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 1
 	}
+	disabled: {
+		r: 0.7490196
+		g: 0.7490196
+		b: 0.7490196
+		a: 1
+	}
 	field: {
 		r: 0.5058824
 		g: 0.9372549
@@ -42,6 +42,12 @@ com.badlogic.gdx.graphics.Color: {
 		r: 0.29411766
 		g: 0.5529412
 		b: 0.54509807
+		a: 1
+	}
+	highlight2: {
+		r: 1
+		g: 0.7019608
+		b: 0.14901961
 		a: 1
 	}
 	red: {
@@ -61,6 +67,126 @@ com.badlogic.gdx.graphics.Color: {
 		g: 1
 		b: 1
 		a: 1
+	}
+}
+com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
+	ButtonText: {
+		font: FreeSansBold.ttf
+		size: 42
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 3
+		borderColor: black
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+	}
+	Headline: {
+		font: FreeSansBold.ttf
+		size: 48
+		mono: false
+		color: black
+		gamma: 1.8
+		renderCount: 1
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+	}
+	Overlay: {
+		font: FreeSans.ttf
+		size: 30
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 1
+		borderColor: black
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+	}
+	SmallerText: {
+		font: FreeSans.ttf
+		size: 24
+		mono: false
+		color: black
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 0
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+	}
+	Text: {
+		font: FreeSans.ttf
+		size: 36
+		mono: false
+		color: black
+		gamma: 1.8
+		renderCount: 1
+		borderWidth: 0
+		borderColor: black
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -116,14 +242,6 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 		down: button-arcade-pressed
 	}
 }
-com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-	default: {
-		checkboxOn: checkbox-on
-		checkboxOff: checkbox-off
-		font: subtitle
-		fontColor: field
-	}
-}
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
 		up: button-small
@@ -134,34 +252,87 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		down: button-pressed
 		checked: button-pressed
 	}
+	undo: {
+		imageUp: undo
+		imageDown: undo_pressed
+	}
+	buy_peasant: {
+		imageUp: buy_peasant
+		imageDown: buy_peasant_pressed
+	}
+	buy_castle: {
+		imageUp: buy_castle
+		imageDown: buy_castle_pressed
+	}
+	end_turn: {
+		imageUp: end_turn
+		imageDown: end_turn_pressed
+	}
+	half_speed: {
+		imageUp: 0.5x
+		imageDown: 0.5x_pressed
+	}
+	regular_speed: {
+		imageUp: 1x
+		imageDown: 1x_pressed
+	}
+	double_speed: {
+		imageUp: 2x
+		imageDown: 2x_pressed
+	}
+	skip_turn: {
+		imageUp: skip_turn
+		imageDown: skip_turn_pressed
+	}
+	pause: {
+		imageUp: pause
+		imageDown: pause_pressed
+	}
+	die: {
+		imageUp: die
+		imageDown: die_pressed
+	}
+	copy: {
+		imageUp: copy
+		imageDown: tick
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
-		font: subtitle
-		fontColor: field
+		font: ButtonText
+		fontColor: white
 		up: button
 		down: button-pressed
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: font
+		font: Text
 		fontColor: white
 	}
-	subtitle: {
-		font: subtitle
-		fontColor: white
+	headline: {
+		font: Headline
+		fontColor: black
 	}
-	title: {
-		font: title
-		fontColor: white
+	overlay: {
+		font: Overlay
+	}
+	bestagon: {
+		font: bestagon
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
-		font: subtitle
+		font: Overlay
 		fontColorSelected: white
-		fontColorUnselected: field
+		fontColorUnselected: white
+		selection: field
+		background: list
+	}
+	colorselect: {
+		font: bestagon
+		fontColorSelected: white
+		fontColorUnselected: white
 		selection: field
 		background: list
 	}
@@ -194,11 +365,18 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: subtitle
-		fontColor: red
+		font: ButtonText
+		fontColor: white
 		background: select-box
 		scrollStyle: default
 		listStyle: default
+	}
+	colorselect: {
+		font: bestagon
+		fontColor: white
+		background: select-box
+		scrollStyle: default
+		listStyle: colorselect
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
@@ -221,28 +399,15 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		font: subtitle
-		fontColor: field
+		font: ButtonText
+		fontColor: white
 		up: button-small
 		down: button-small-pressed
-	}
-	toggle: {
-		font: subtitle
-		fontColor: field
-		up: button
-		down: button-pressed
-		checked: button-pressed
-	}
-	arcade: {
-		font: font
-		fontColor: field
-		up: button-arcade
-		down: button-arcade-pressed
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: font
+		font: SmallerText
 		fontColor: black
 		background: textfield
 		cursor: black
@@ -263,11 +428,11 @@ com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
 		background: window-round
-		titleFont: font
+		titleFont: Overlay
 	}
 	round: {
 		background: window-round
-		titleFont: font
+		titleFont: Overlay
 	}
 }
 }

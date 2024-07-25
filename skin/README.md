@@ -5,6 +5,11 @@ Based on the [pixthulu-ui skin](https://github.com/czyzby/gdx-skins/tree/master/
 ## Changes from upstream
 
  * `ImageButton` skin uses the same border as the `SelectBox` skin by adapting the 9 patches.
+ * replaced bitmap font with freeType FreeSans
+ * changed font styles
+ * removed some unused textures
+ * added some colors
+ * added custom graphics
 
 # Using the skin
 

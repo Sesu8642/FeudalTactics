@@ -71,8 +71,8 @@ public class MainMenuScreen extends GameScreen {
 			NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
 			eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
 			eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
-					new MapParameters(System.currentTimeMillis(), savedPrefs.getMapSize().getAmountOfTiles(),
-							savedPrefs.getDensity().getDensityFloat())));
+					new MapParameters(savedPrefs.getStartingPosition(), System.currentTimeMillis(),
+							savedPrefs.getMapSize().getAmountOfTiles(), savedPrefs.getDensity().getDensityFloat())));
 		}));
 		// tutorial button
 		buttons.get(1).addListener(new ExceptionLoggingChangeListener(

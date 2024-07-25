@@ -1,0 +1,9 @@
+info face="hexagon_character export" size=12 bold=0 italic=0 charset="" unicode=0 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=1,1
+common lineHeight=41 base=40 scaleW=48 scaleH=43 pages=1 packed=0 alphaChnl=1 redChnl=0 greenChnl=0 blueChnl=0
+page id=0 file="hexagon_character export.png"
+chars count=1
+char id=104 x=1 y=1 width=46 height=41 xoffset=0 yoffset=-1 xadvance=46 page=0 chnl=0 letter="h"
+char id=32 x=0 y=0 width=13 height=0 xoffset=0 yoffset=0 xadvance=13 page=0 chnl=0 letter=" "
+char id=9 x=0 y=0 width=104 height=0 xoffset=0 yoffset=0 xadvance=104 page=0 chnl=0 letter="	"
+
+kernings count=0

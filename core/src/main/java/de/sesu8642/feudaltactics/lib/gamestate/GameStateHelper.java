@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
+import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 
 /**
  * Helper class that is used to modify a {@link GameState} in a way that
@@ -988,5 +989,44 @@ public class GameStateHelper {
 		// if it is a bot's turn, assume the first human player attemted the action
 		return gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER)
 				.findFirst();
+	}
+
+	/**
+	 * Applies the given player action to the given GameState.
+	 */
+	public static void applyPlayerMove(GameState gameState, PlayerMove move) {
+		switch (move.getPlayerActionType()) {
+		case PICK_UP:
+			pickupObject(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case PLACE_OWN:
+			placeOwn(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case COMBINE_UNITS:
+			combineUnits(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case CONQUER:
+			conquer(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case BUY_PEASANT:
+			buyPeasant(gameState);
+			break;
+		case BUY_CASTLE:
+			buyCastle(gameState);
+			break;
+		case BUY_AND_PLACE_PEASANT:
+			buyPeasant(gameState);
+			placeOwn(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case BUY_AND_PLACE_CASTLE:
+			buyCastle(gameState);
+			placeOwn(gameState, gameState.getMap().get(move.getTilePosition()));
+			break;
+		case ACTIVATE_KINGDOM:
+			activateKingdom(gameState, gameState.getMap().get(move.getTilePosition()).getKingdom());
+			break;
+		default:
+			throw new IllegalStateException("Unexpected player move type " + move.getPlayerActionType());
+		}
 	}
 }

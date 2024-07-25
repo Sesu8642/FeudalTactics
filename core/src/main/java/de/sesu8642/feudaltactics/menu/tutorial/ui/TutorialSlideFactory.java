@@ -50,7 +50,7 @@ public class TutorialSlideFactory {
 	}
 
 	private Slide createTutorialSlide1() {
-		String text = "This is a turn based strategy game. You play on an island composed of hexagonal tiles. The color of a tile indicates which player it is owned by. The blue tiles are owned by you. Your goal is to conquer the whole island.";
+		String text = "This is a turn based strategy game. You play on an island composed of hexagonal tiles. The color of a tile indicates which player it is owned by. By default, the blue tiles are owned by you. Your goal is to conquer the whole island.";
 		String imagePath = "tutorial_island.png";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath);
 	}

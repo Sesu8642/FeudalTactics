@@ -21,6 +21,7 @@ public class NewGamePreferencesDao {
 	private static final String NEW_GAME_PREFERENCES_DENSITY_NAME = "density";
 	private static final String NEW_GAME_PREFERENCES_MAP_SIZE_NAME = "mapSize";
 	private static final String NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME = "botIntelligence";
+	private static final String NEW_GAME_PREFERENCES_STARTING_POSITION_NAME = "startingPosition";
 
 	private final Preferences prefStore;
 
@@ -38,6 +39,7 @@ public class NewGamePreferencesDao {
 		prefStore.putInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, prefs.getBotIntelligence().ordinal());
 		prefStore.putInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, prefs.getMapSize().ordinal());
 		prefStore.putInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, prefs.getDensity().ordinal());
+		prefStore.putInteger(NEW_GAME_PREFERENCES_STARTING_POSITION_NAME, prefs.getStartingPosition());
 		prefStore.flush();
 	}
 
@@ -51,7 +53,8 @@ public class NewGamePreferencesDao {
 				.getInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, 0)];
 		MapSizes mapSize = MapSizes.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, 0)];
 		Densities density = Densities.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, 0)];
-		return new NewGamePreferences(botIntelligence, mapSize, density);
+		int startingPosition = prefStore.getInteger(NEW_GAME_PREFERENCES_STARTING_POSITION_NAME, 0);
+		return new NewGamePreferences(botIntelligence, mapSize, density, startingPosition);
 	}
 
 }

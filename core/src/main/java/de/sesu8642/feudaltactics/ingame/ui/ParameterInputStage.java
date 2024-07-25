@@ -2,14 +2,17 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -17,7 +20,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
@@ -25,6 +27,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 
 /**
  * {@link Stage} for displaying the input mask for a new game.
@@ -42,7 +45,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	public static final long BUTTON_HEIGHT_PX = 114;
 
 	/** Height of all parameter inputs combined. */
-	public static final long TOTAL_INPUT_HEIGHT = 4 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
+	public static final long TOTAL_INPUT_HEIGHT = 5 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
 			+ OUTER_PADDING_PX;
 
 	/**
@@ -50,10 +53,11 @@ public class ParameterInputStage extends ResizableResettableStage {
 	 */
 	public static final long TOTAL_INPUT_WIDTH = 519;
 
-	private TextureAtlas textureAtlas;
 	private Skin skin;
 
 	private Table rootTable;
+
+	SelectBox<String> startingPositionSelect;
 	SelectBox<String> sizeSelect;
 	SelectBox<String> densitySelect;
 	SelectBox<String> difficultySelect;
@@ -65,50 +69,53 @@ public class ParameterInputStage extends ResizableResettableStage {
 	/**
 	 * Constructor.
 	 * 
-	 * @param viewport     viewport for the stage
-	 * @param textureAtlas texture atlas containing the button textures
-	 * @param skin         game skin
+	 * @param viewport viewport for the stage
+	 * @param skin     game skin
 	 */
 	@Inject
-	public ParameterInputStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+	public ParameterInputStage(@MenuViewport Viewport viewport, Skin skin) {
 		super(viewport);
-		this.textureAtlas = textureAtlas;
 		this.skin = skin;
 		initUi();
 	}
 
 	private void initUi() {
 		// note about checktyle: widgets are declared in the order they appear in the UI
-		Label difficultyLabel = new Label("CPU\nDifficulty", skin);
+
+		Label startingPositionLabel = new Label("Starting\nPosition",
+				skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+		startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
+
+		// markup must be enabled in the font for this coloring to work
+		// h is a hexagon chraracter in the font
+		List<String> startingPositions = de.sesu8642.feudaltactics.renderer.MapRenderer.PLAYER_COLOR_PALETTE.stream()
+				.map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
+		startingPositionSelect.setItems(startingPositions.toArray(new String[0]));
+
+		Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		difficultySelect = new SelectBox<>(skin);
 		String[] difficulties = { "Easy", "Medium", "Hard", "Very hard" };
 		difficultySelect.setItems(difficulties);
-		Label sizeLabel = new Label("Map\nSize", skin);
+
+		Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		sizeSelect = new SelectBox<>(skin);
-		// xxlarge is temporarily disabled because of performance problems
-		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", /* "XXLarge" */
-		};
+		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", "XXLarge" };
 		sizeSelect.setItems(sizes);
-		Label densityLabel = new Label("Map\nDensity", skin);
+
+		Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		densitySelect = new SelectBox<>(skin);
 		String[] densities = { "Dense", "Medium   ", "Loose" };
 		densitySelect.setItems(densities);
-		Label seedLabel = new Label("Seed", skin);
+
+		Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
-		randomButton = new ImageButton(skin);
-		ImageButtonStyle randomButtonStyle = new ImageButtonStyle(randomButton.getStyle());
-		randomButtonStyle.imageUp = new SpriteDrawable(textureAtlas.createSprite("die"));
-		randomButtonStyle.imageDown = new SpriteDrawable(textureAtlas.createSprite("die_pressed"));
-		randomButton.setStyle(randomButtonStyle);
+
+		randomButton = new ImageButton(skin.get(SkinConstants.BUTTON_DIE, ImageButtonStyle.class));
 		randomButton.getImageCell().expand().fill();
 
-		saveSeedButton = new ImageButton(skin);
-		ImageButtonStyle saveButtonStyle = new ImageButtonStyle(saveSeedButton.getStyle());
-		saveButtonStyle.imageUp = new SpriteDrawable(textureAtlas.createSprite("copy"));
-		saveButtonStyle.imageDown = new SpriteDrawable(textureAtlas.createSprite("tick"));
-		saveSeedButton.setStyle(saveButtonStyle);
+		saveSeedButton = new ImageButton(skin.get(SkinConstants.BUTTON_COPY, ImageButtonStyle.class));
 		saveSeedButton.getImageCell().expand().fill();
 
 		playButton = new TextButton("Play", skin);
@@ -127,9 +134,12 @@ public class ParameterInputStage extends ResizableResettableStage {
 		rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
 		rootTable.add().expandY();
 		rootTable.row();
+		rootTable.add(startingPositionLabel);
+		rootTable.add(startingPositionSelect).colspan(2).fillX();
+		rootTable.add().expandX();
+		rootTable.row();
 		rootTable.add(difficultyLabel);
 		rootTable.add(difficultySelect).colspan(2).fillX();
-		rootTable.add().expandX();
 		rootTable.row();
 		rootTable.add(sizeLabel);
 		rootTable.add(sizeSelect).colspan(2).fillX();
@@ -181,6 +191,10 @@ public class ParameterInputStage extends ResizableResettableStage {
 
 	public Intelligence getBotIntelligence() {
 		return Intelligence.values()[difficultySelect.getSelectedIndex()];
+	}
+
+	public int getStartingPosition() {
+		return startingPositionSelect.getSelectedIndex();
 	}
 
 	@Override

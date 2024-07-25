@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
@@ -35,8 +36,7 @@ public class Slide {
 		// adding the headline is a hack needed because the slide would get a width of 0
 		// if the the label does not need to wrap (bug?)
 		Table hackTable = new Table();
-		Label headlineLabel = newNiceLabel(headline);
-		headlineLabel.setFontScale(2F);
+		Label headlineLabel = new Label(headline, skin.get(SkinConstants.FONT_HEADLINE, LabelStyle.class));
 		hackTable.add(headlineLabel);
 		table.add(hackTable);
 		table.row();
@@ -49,7 +49,7 @@ public class Slide {
 	 * @return this slide
 	 */
 	public Slide addLabel(String text) {
-		Label label = newNiceLabel(text);
+		Label label = new Label(text, skin);
 		label.setWrap(true);
 		table.add(label).fill().expand();
 		table.row();
@@ -84,40 +84,13 @@ public class Slide {
 		dataTable.defaults().pad(5);
 		for (List<String> rowContent : data) {
 			for (String cellContent : rowContent) {
-				dataTable.add(newNiceLabel(cellContent));
+				dataTable.add(new Label(cellContent, skin));
 			}
 			dataTable.row();
 		}
 		table.add(dataTable);
 		table.row();
 		return this;
-	}
-
-	/**
-	 * Creates a nicely formatted label.
-	 * 
-	 * @param content text for the label
-	 * @return label
-	 */
-	public Label newNiceLabel(String content) {
-		Label result = new Label(content, skin);
-		result.setColor(skin.getColor("black"));
-		result.setFontScale(1.5F);
-		return result;
-	}
-
-	/**
-	 * Creates a nicely formatted label.
-	 * 
-	 * @param content text for the label
-	 * @param skin    game skin
-	 * @return label
-	 */
-	public static Label newNiceLabel(String content, Skin skin) {
-		Label result = new Label(content, skin);
-		result.setColor(skin.getColor("black"));
-		result.setFontScale(1.5F);
-		return result;
 	}
 
 	public Table getTable() {

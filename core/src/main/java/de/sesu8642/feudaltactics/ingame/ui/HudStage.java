@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -14,7 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -22,12 +23,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.collect.ImmutableMap;
 
-import de.sesu8642.feudaltactics.FeudalTactics;
-import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
 
 /**
@@ -35,17 +34,15 @@ import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
  */
 public class HudStage extends ResizableResettableStage {
 
-	static final Map<Speed, String> SPEED_BUTTON_TEXTURE_NAMES = ImmutableMap.of(Speed.HALF, "0.5x", Speed.NORMAL, "1x",
-			Speed.TIMES_TWO, "2x");
-
 	private TextureAtlas textureAtlas;
 	private Skin skin;
 
 	private Table rootTable;
 	private Stack handStack;
-	private Label infoTextLabel;
 	private Table handContentTable;
 	private Image handContent;
+	Label infoHexagonLabel;
+	Label infoTextLabel;
 	ImageButton undoButton;
 	ImageButton endTurnButton;
 	ImageButton buyPeasantButton;
@@ -58,6 +55,10 @@ public class HudStage extends ResizableResettableStage {
 	private List<ImageButton> enemyTurnButtons = new ArrayList<>();
 
 	private boolean enemyTurnButtonsShown = false;
+
+	ImageButtonStyle halfSpeedButtonStyle;
+	ImageButtonStyle regularSpeedButtonStyle;
+	ImageButtonStyle doubleSpeedButtonStyle;
 
 	/**
 	 * Constructor.
@@ -75,21 +76,20 @@ public class HudStage extends ResizableResettableStage {
 	}
 
 	private void initUi() {
-		// TODO: put the buttons in a custom skin
-		menuButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("pause")),
-				new SpriteDrawable(textureAtlas.createSprite("pause_pressed")));
-		menuButton.getImage().setColor(FeudalTactics.buttonIconColor);
+		halfSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_HALF, ImageButtonStyle.class);
+		regularSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_REGULAR, ImageButtonStyle.class);
+		doubleSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_DOUBLE, ImageButtonStyle.class);
+
+		menuButton = new ImageButton(skin.get(SkinConstants.BUTTON_PAUSE, ImageButtonStyle.class));
+		menuButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		menuButton.getImageCell().expand().fill();
 
 		// buttons visible during the local player turn
-		undoButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("undo")),
-				new SpriteDrawable(textureAtlas.createSprite("undo_pressed")));
-		buyPeasantButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_peasant")),
-				new SpriteDrawable(textureAtlas.createSprite("buy_peasant_pressed")));
-		buyCastleButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("buy_castle")),
-				new SpriteDrawable(textureAtlas.createSprite("buy_castle_pressed")));
-		endTurnButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("end_turn")),
-				new SpriteDrawable(textureAtlas.createSprite("end_turn_pressed")));
+		undoButton = new ImageButton(new SpriteDrawable(skin.getAtlas().createSprite("undo")),
+				new SpriteDrawable(skin.getAtlas().createSprite("undo_pressed")));
+		buyPeasantButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_PEASANT, ImageButtonStyle.class));
+		buyCastleButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_CASTLE, ImageButtonStyle.class));
+		endTurnButton = new ImageButton(skin.get(SkinConstants.BUTTON_END_TURN, ImageButtonStyle.class));
 		playerTurnButtons.add(undoButton);
 		playerTurnButtons.add(buyPeasantButton);
 		playerTurnButtons.add(buyCastleButton);
@@ -99,36 +99,39 @@ public class HudStage extends ResizableResettableStage {
 		}
 
 		// buttons visible during enemies' turns
-		speedButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("1x")),
-				new SpriteDrawable(textureAtlas.createSprite("1x_pressed")));
-		skipButton = new ImageButton(new SpriteDrawable(textureAtlas.createSprite("skip_turn")),
-				new SpriteDrawable(textureAtlas.createSprite("skip_turn_pressed")));
+		speedButton = new ImageButton(regularSpeedButtonStyle);
+		skipButton = new ImageButton(skin.get(SkinConstants.BUTTON_SKIP_TURN, ImageButtonStyle.class));
 		enemyTurnButtons.add(speedButton);
 		enemyTurnButtons.add(skipButton);
 		for (ImageButton button : enemyTurnButtons) {
 			button.getImageCell().expand().fill();
-			button.getImage().setColor(FeudalTactics.buttonIconColor);
+			button.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		}
 
 		handStack = new Stack();
 		handContentTable = new Table();
 		handContent = new Image();
 
-		Sprite handSprite = new Sprite(textureAtlas.createSprite("hand"));
+		Sprite handSprite = skin.getSprite(SkinConstants.SPRITE_HAND);
 		handSprite.setFlip(true, false);
 		Image handImage = new Image(handSprite);
-		handImage.setColor(FeudalTactics.buttonIconColor);
-		Sprite thumbSprite = new Sprite(textureAtlas.createSprite("hand_thumb"));
+		handImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+		Sprite thumbSprite = skin.getSprite(SkinConstants.SPRITE_HAND_THUMB);
 		thumbSprite.setFlip(true, false);
 		Image thumbImage = new Image(thumbSprite);
-		thumbImage.setColor(FeudalTactics.buttonIconColor);
-		infoTextLabel = new Label("", skin);
+		thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+
+		infoHexagonLabel = new Label("", skin.get(SkinConstants.FONT_HEXAGON, LabelStyle.class));
+
+		infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
-		rootTable.add(infoTextLabel).left().top().pad(10);
+		rootTable.add(infoHexagonLabel).left().top().pad(10);
+		rootTable.add(infoTextLabel).left().top().pad(10).expandX();
 		rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
 		rootTable.row();
+		rootTable.add();
 		rootTable.add();
 		rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
 		rootTable.row();
@@ -139,7 +142,7 @@ public class HudStage extends ResizableResettableStage {
 		bottomTable.add(buyPeasantButton);
 		bottomTable.add(buyCastleButton);
 		bottomTable.add(endTurnButton);
-		rootTable.add(bottomTable).fill().expand().bottom().colspan(2)
+		rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
 				.height(ValueWithSize.percentSize(0.1F, rootTable));
 
 		handStack.add(handImage);
@@ -193,10 +196,10 @@ public class HudStage extends ResizableResettableStage {
 	private void setButtonEnabledStatus(boolean enabled, ImageButton button) {
 		if (enabled) {
 			button.setTouchable(Touchable.enabled);
-			button.getImage().setColor(FeudalTactics.buttonIconColor);
+			button.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		} else {
 			button.setTouchable(Touchable.disabled);
-			button.getImage().setColor(FeudalTactics.disabledButtonIconColor);
+			button.getImage().setColor(skin.getColor(SkinConstants.COLOR_DISABLED));
 		}
 	}
 
@@ -216,14 +219,6 @@ public class HudStage extends ResizableResettableStage {
 		for (ImageButton button : enemyTurnButtons) {
 			bottomTable.add(button);
 		}
-	}
-
-	public void setInfoText(String newText) {
-		infoTextLabel.setText(newText);
-	}
-
-	public void setFontScale(Float fontScale) {
-		infoTextLabel.setFontScale(fontScale);
 	}
 
 	@Override

@@ -2,14 +2,12 @@
 
 package de.sesu8642.feudaltactics.lib.ingame;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
 
@@ -18,9 +16,6 @@ import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
-import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
-import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -29,10 +24,6 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 public class GameController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-
-	public static final Color[] PLAYER_COLORS = { new Color(0.2F, 0.45F, 0.8F, 1), new Color(0.75F, 0.5F, 0F, 1),
-			new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1), new Color(1F, 1F, 1F, 1),
-			new Color(0F, 1F, 0F, 1) };
 
 	private final EventBus eventBus;
 	private final ExecutorService botTurnExecutor;
@@ -63,8 +54,7 @@ public class GameController {
 		logger.info("starting game");
 		// autosave before starting the AI thread, to avoid potential
 		// ConcurrentModificationException
-		autoSaveRepo.deleteAllAutoSaveExceptLatestN(0);
-		autosave();
+		autoSaveRepo.autoSaveFullGameState(gameState);
 		// if a bot begins, make it act
 		if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
 			startBotTurn();
@@ -72,14 +62,10 @@ public class GameController {
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
-	private void autosave() {
-		autoSaveRepo.autoSaveGameState(gameState);
-	}
-
 	/** Loads the latest autosave. */
 	public void loadLatestAutosave() {
 		logger.info("loading latest autosave");
-		gameState = autoSaveRepo.getLatestAutoSave();
+		gameState = autoSaveRepo.getCombinedAutoSave();
 		// posting the event must happen before starting the AI thread cause the data
 		// for the renderer will be updated and the AI must not change the gamestate
 		// while it is
@@ -99,21 +85,9 @@ public class GameController {
 		logger.info("generating a new game state with bot intelligence {} and {}", botIntelligence, mapParams);
 		gameState = new GameState();
 		gameState.setBotIntelligence(botIntelligence);
-		ArrayList<Player> players = new ArrayList<>();
-		int remainingHumanPlayers = mapParams.getHumanPlayerNo();
-		int remainingBotPlayers = mapParams.getBotPlayerNo();
-		for (Color color : PLAYER_COLORS) {
-			if (remainingHumanPlayers > 0) {
-				remainingHumanPlayers--;
-				players.add(new Player(color, Type.LOCAL_PLAYER));
-			} else if (remainingBotPlayers > 0) {
-				players.add(new Player(color, Type.LOCAL_BOT));
-			} else {
-				break;
-			}
-		}
-		GameStateHelper.initializeMap(gameState, players, mapParams.getLandMass(), mapParams.getDensity(), null,
-				mapParams.getSeed());
+
+		GameStateHelper.initializeMap(gameState, mapParams.getPlayers(), mapParams.getLandMass(),
+				mapParams.getDensity(), null, mapParams.getSeed());
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -127,70 +101,42 @@ public class GameController {
 	}
 
 	/**
-	 * Activates a kingdom.
-	 * 
-	 * @param kingdom kingdom to activate
+	 * Carries out the given move.
 	 */
-	public void activateKingdom(Kingdom kingdom) {
-		logger.debug("activating {}", kingdom);
-		GameStateHelper.activateKingdom(gameState, kingdom);
-		autosave();
-		// save first because is is relevant for the undo button status
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
+	public void carryOutPlayerMove(PlayerMove move) {
+		logger.debug("carrying out player move {}", move);
+		switch (move.getPlayerActionType()) {
+		// fall-through intentional
+		case PICK_UP:
+		case PLACE_OWN:
+		case COMBINE_UNITS:
+		case CONQUER:
+		case BUY_PEASANT:
+		case BUY_CASTLE:
+		case BUY_AND_PLACE_PEASANT:
+		case BUY_AND_PLACE_CASTLE:
+		case ACTIVATE_KINGDOM:
+			GameStateHelper.applyPlayerMove(gameState, move);
+			autoSaveRepo.autoSaveIncrementalPlayerMove(move);
+			// save first because is is relevant for the undo button status
+			eventBus.post(new GameStateChangeEvent(gameState));
+			break;
+		case UNDO_LAST_MOVE:
+			undoLastMove();
+			break;
+		case END_TURN:
+			endTurn();
+			break;
+		default:
+			throw new IllegalStateException("Unknown player move type " + move.getPlayerActionType());
+		}
 
-	/**
-	 * Picks up an object.
-	 * 
-	 * @param tile tile that contains the object
-	 */
-	public void pickupObject(HexTile tile) {
-		logger.debug("picking up object from {}", tile);
-		GameStateHelper.pickupObject(gameState, tile);
-		autosave();
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/**
-	 * Places a held object on a tile in the own kingdom.
-	 * 
-	 * @param tile tile to place to object on
-	 */
-	public void placeOwn(HexTile tile) {
-		logger.debug("placing held object on own {}", tile);
-		GameStateHelper.placeOwn(gameState, tile);
-		autosave();
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/**
-	 * Combines the held unit with a unit on the map.
-	 * 
-	 * @param tile tile that contains the unit on the map
-	 */
-	public void combineUnits(HexTile tile) {
-		logger.debug("combining held unit with unit on {}", tile);
-		GameStateHelper.combineUnits(gameState, tile);
-		autosave();
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/**
-	 * Conquers an enemy tile.
-	 * 
-	 * @param tile tile to conquer
-	 */
-	public void conquer(HexTile tile) {
-		logger.debug("conquering {}", tile);
-		GameStateHelper.conquer(gameState, tile);
-		autosave();
-		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
 	/**
 	 * Ends the turn.
 	 */
-	public void endTurn() {
+	void endTurn() {
 		logger.debug("ending turn of {}", gameState.getActivePlayer());
 		// update gameState
 		gameState = GameStateHelper.endTurn(gameState);
@@ -200,9 +146,7 @@ public class GameController {
 		} else {
 			logger.info("human player turn begins");
 			botAi.setSkipDisplayingTurn(false);
-			autosave();
-			// clear autosaves from previous turn
-			autoSaveRepo.deleteAllAutoSaveExceptLatestN(1);
+			autoSaveRepo.autoSaveFullGameState(gameState);
 			eventBus.post(new GameStateChangeEvent(gameState));
 		}
 	}
@@ -232,33 +176,12 @@ public class GameController {
 		botAi.setSkipDisplayingTurn(true);
 	}
 
-	/** Buys a peasant. */
-	public void buyPeasant() {
-		logger.debug("buying peasant");
-		GameStateHelper.buyPeasant(gameState);
-		autosave();
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
-	/** Buys a castle. */
-	public void buyCastle() {
-		logger.debug("buying castle");
-		GameStateHelper.buyCastle(gameState);
-		autosave();
-		eventBus.post(new GameStateChangeEvent(gameState));
-	}
-
 	/** Undoes the last action. */
-	public void undoLastAction() {
-		logger.debug("undoing last action");
-		if (autoSaveRepo.getNoOfAutoSaves() > 1) {
-			// 1 means the current state is the only one saved
-			// remove the current state from autosaves
-			autoSaveRepo.deleteLatestAutoSave();
-			// load the previous state
-			GameState loaded = autoSaveRepo.getLatestAutoSave();
-			gameState = loaded;
-		}
+	private void undoLastMove() {
+		logger.debug("undoing last move");
+		autoSaveRepo.deleteLatestIncrementalSave();
+		GameState loaded = autoSaveRepo.getCombinedAutoSave();
+		gameState = loaded;
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 

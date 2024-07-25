@@ -41,7 +41,7 @@ public class GameControllerEventHandler {
 	@Subscribe
 	public void handleGameExited(GameExitedEvent event) {
 		gameController.cancelBotTurn();
-		autoSaveRepo.deleteAllAutoSaveExceptLatestN(0);
+		autoSaveRepo.deleteAllAutoSaves();
 	}
 
 	/**

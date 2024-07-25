@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Color;
 
 import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
@@ -14,11 +13,6 @@ public class FeudalTactics extends Game {
 	// this needs to be accessed somehow by the other classes and cannot be provided
 	// by DI because it is created by the launcher
 	public static FeudalTactics game;
-
-	// TODO: put those in a custom skin
-	public static final Color buttonIconColor = new Color(1, 0.7F, 0.15F, 1);
-	public static final Color disabledButtonIconColor = new Color(0.75F, 0.75F, 0.75F, 1);
-	public static final Color backgroundColor = new Color(0, 0.2f, 0.8f, 1);
 
 	private FeudalTacticsComponent component;
 

@@ -10,18 +10,21 @@ public class NewGamePreferences {
 	private Intelligence botIntelligence;
 	private MapSizes mapSize;
 	private Densities density;
+	private int startingPosition;
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param botIntelligence intelligence of the bot players for the game
-	 * @param mapSize         size of the map for this game
-	 * @param density         density of the map for this game
+	 * @param botIntelligence  intelligence of the bot players for the game
+	 * @param mapSize          size of the map for this game
+	 * @param density          density of the map for this game
+	 * @param startingPosition starting position index of the human player
 	 */
-	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density) {
+	public NewGamePreferences(Intelligence botIntelligence, MapSizes mapSize, Densities density, int startingPosition) {
 		this.botIntelligence = botIntelligence;
 		this.mapSize = mapSize;
 		this.density = density;
+		this.startingPosition = startingPosition;
 	}
 
 	public Intelligence getBotIntelligence() {
@@ -46,6 +49,14 @@ public class NewGamePreferences {
 
 	public void setDensity(Densities density) {
 		this.density = density;
+	}
+
+	public int getStartingPosition() {
+		return startingPosition;
+	}
+
+	public void setStartingPosition(int startingPosition) {
+		this.startingPosition = startingPosition;
 	}
 
 	/** Map sizes that can be generated. */
