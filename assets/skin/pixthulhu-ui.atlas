@@ -146,6 +146,27 @@ copy
   orig: 32, 32
   offset: 0, 0
   index: -1
+copy_pressed
+  rotate: false
+  xy: 99, 226
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+copy_pressed_tick
+  rotate: false
+  xy: 233, 521
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+copy_tick
+  rotate: false
+  xy: 230, 487
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 die
   rotate: false
   xy: 501, 835
@@ -391,13 +412,6 @@ textfield
   orig: 69, 75
   offset: 0, 0
   index: -1
-tick
-  rotate: false
-  xy: 99, 226
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
 touchpad
   rotate: false
   xy: 1, 621
@@ -428,7 +442,7 @@ undo_pressed
   index: -1
 white
   rotate: false
-  xy: 491, 838
+  xy: 230, 524
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

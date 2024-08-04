@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -26,6 +27,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 
@@ -62,7 +64,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 	SelectBox<String> densitySelect;
 	SelectBox<String> difficultySelect;
 	ImageButton randomButton;
-	ImageButton saveSeedButton;
+	ImageTextButton saveSeedButton;
 	TextButton playButton;
 	TextField seedTextField;
 
@@ -115,7 +117,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		randomButton = new ImageButton(skin.get(SkinConstants.BUTTON_DIE, ImageButtonStyle.class));
 		randomButton.getImageCell().expand().fill();
 
-		saveSeedButton = new ImageButton(skin.get(SkinConstants.BUTTON_COPY, ImageButtonStyle.class));
+		saveSeedButton = new CopyButton("", skin);
 		saveSeedButton.getImageCell().expand().fill();
 
 		playButton = new TextButton("Play", skin);
