@@ -294,6 +294,12 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		up: button-small
 		down: button-small-pressed
 	}
+	paste: {
+		imageUp: paste
+		imageDown: paste_pressed
+		up: button-small
+		down: button-small-pressed
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {

@@ -32,6 +32,7 @@ public final class SkinConstants {
 	public static final String BUTTON_DIE = "die";
 	public static final String BUTTON_COPY = "copy";
 	public static final String BUTTON_COPY_TICK = "copy_tick";
+	public static final String BUTTON_PASTE = "paste";
 
 	public static final String SPRITE_HAND = "hand";
 	public static final String SPRITE_HAND_THUMB = "hand_thumb";

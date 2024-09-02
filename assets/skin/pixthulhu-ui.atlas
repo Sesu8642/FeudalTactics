@@ -225,6 +225,20 @@ list
   orig: 114, 114
   offset: 0, 0
   index: -1
+paste
+  rotate: false
+  xy: 171, 446
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+paste_pressed
+  rotate: false
+  xy: 205, 446
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 pause
   rotate: false
   xy: 491, 769
@@ -257,7 +271,7 @@ progress-bar-health-knob
   index: -1
 progress-bar-horizontal
   rotate: false
-  xy: 171, 442
+  xy: 133, 247
   size: 9, 45
   split: 3, 3, 3, 3
   orig: 9, 45
