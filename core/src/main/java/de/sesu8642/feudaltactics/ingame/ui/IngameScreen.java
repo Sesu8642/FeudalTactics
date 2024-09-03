@@ -77,7 +77,7 @@ public class IngameScreen extends GameScreen {
 
 	private final ParameterInputStage parameterInputStage;
 	private final HudStage hudStage;
-	private final MenuStage menuStage;
+	private final IngameMenuStage menuStage;
 
 	private final DialogFactory dialogFactory;
 
@@ -231,7 +231,7 @@ public class IngameScreen extends GameScreen {
 			hudStage.updateHandContent(null);
 		}
 		// seed
-		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
+		menuStage.setSeed(newGameState.getSeed().toString());
 		String hudStageInfoText = "";
 		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
 			hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
