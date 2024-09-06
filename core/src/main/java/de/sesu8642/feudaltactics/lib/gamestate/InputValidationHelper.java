@@ -279,14 +279,10 @@ public class InputValidationHelper {
 		if (!ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
 			return false;
 		}
-		if (((Unit) gameState.getHeldObject()).getUnitType() != UnitTypes.PEASANT
-				&& ((Unit) tile.getContent()).getUnitType() != UnitTypes.PEASANT) {
-			// not at least one peasant
-			return false;
-		}
-		if (((Unit) gameState.getHeldObject()).getUnitType() == UnitTypes.BARON
-				|| ((Unit) tile.getContent()).getUnitType() == UnitTypes.BARON) {
-			// cannot upgrade a baron
+		int heldUnitStrength = ((Unit) gameState.getHeldObject()).getStrength();
+		int tileUnitStrength = ((Unit) tile.getContent()).getStrength();
+		if (heldUnitStrength + tileUnitStrength > UnitTypes.strongest().strength()) {
+			// cannot create unit stronger than the strongest unit
 			return false;
 		}
 		return true;
