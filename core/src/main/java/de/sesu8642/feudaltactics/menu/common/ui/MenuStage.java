@@ -10,16 +10,12 @@ import java.util.Set;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -32,8 +28,8 @@ public class MenuStage extends ResizableResettableStage {
 
 	private Table rootTable;
 	private List<TextButton> buttons = new ArrayList<>();
-	private Label bottomLeftLabel;
-	private Label bottomRightLabel;
+	private Table bottomLeftTable;
+	private Table bottomRightTable;
 	Set<Disposable> disposables = new HashSet<>();
 	private MapRenderer mapRenderer;
 	private Skin skin;
@@ -43,8 +39,6 @@ public class MenuStage extends ResizableResettableStage {
 	 * Constructor.
 	 * 
 	 * @param viewport    viewport for the stage
-	 * @param buttonData  map of button titles and callbacks that are executed when
-	 *                    the buttons are clicked
 	 * @param camera      camera to use
 	 * @param mapRenderer renderer for the sea background
 	 * @param skin        game skin
@@ -55,18 +49,18 @@ public class MenuStage extends ResizableResettableStage {
 		this.camera = camera;
 		this.mapRenderer = mapRenderer;
 		this.skin = skin;
-		initUI(buttonTexts);
+		initUi(buttonTexts);
 	}
 
-	private void initUI(List<String> buttonTexts) {
+	private void initUi(List<String> buttonTexts) {
 		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
 		disposables.add(logoTexture);
 		for (String buttonText : buttonTexts) {
 			TextButton button = new TextButton(buttonText, skin);
 			buttons.add(button);
 		}
-		bottomLeftLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-		bottomRightLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+		bottomLeftTable = new Table();
+		bottomRightTable = new Table();
 
 		rootTable = new Table();
 		rootTable.setFillParent(true);
@@ -80,36 +74,22 @@ public class MenuStage extends ResizableResettableStage {
 			rootTable.row();
 		}
 		rootTable.row();
-		rootTable.add(bottomLeftLabel).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
-		rootTable.add(bottomRightLabel).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
+		rootTable.add(bottomLeftTable).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
+		rootTable.add(bottomRightTable).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 
 		this.addActor(rootTable);
 	}
 
-	public void setBottomLeftLabelText(String text) {
-		bottomLeftLabel.setText(text);
-	}
-
-	/**
-	 * Makes the bottom label a clickable link to the given URI.
-	 * 
-	 * @param uri link target
-	 */
-	public void setBottomLeftLabelLink(String uri) {
-		bottomLeftLabel.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.net.openURI(uri);
-			}
-		});
-	}
-
-	public void setBottomRightLabelText(String text) {
-		bottomRightLabel.setText(text);
-	}
-
 	public List<TextButton> getButtons() {
 		return buttons;
+	}
+
+	protected Table getBottomLeftTable() {
+		return bottomLeftTable;
+	}
+
+	protected Table getBottomRightTable() {
+		return bottomRightTable;
 	}
 
 	@Override

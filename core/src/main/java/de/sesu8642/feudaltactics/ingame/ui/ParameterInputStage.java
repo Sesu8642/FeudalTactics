@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -19,13 +20,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 
@@ -34,24 +35,27 @@ import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
  */
 public class ParameterInputStage extends ResizableResettableStage {
 
-	private static final long INPUT_HEIGHT_PX = 79;
+	private static final long INPUT_HEIGHT_PX = 74;
 	private static final int INPUT_PADDING_PX = 20;
 
 	// for map centering calculation
 	/** Outer padding around all the inputs. */
 	public static final int OUTER_PADDING_PX = 10;
 
-	/** Height of the play button + bottom padding. */
-	public static final long BUTTON_HEIGHT_PX = 114;
+	/** Height of the play button. */
+	public static final long BUTTON_HEIGHT_PX = 85;
+
+	/** Padding below all the inputs. */
+	public static final long BOTTOM_PADDING_PX = 11;
 
 	/** Height of all parameter inputs combined. */
-	public static final long TOTAL_INPUT_HEIGHT = 5 * (INPUT_HEIGHT_PX + INPUT_PADDING_PX) + BUTTON_HEIGHT_PX
-			+ OUTER_PADDING_PX;
+	public static final long TOTAL_INPUT_HEIGHT = OUTER_PADDING_PX + 5 * INPUT_PADDING_PX + BUTTON_HEIGHT_PX
+			+ 6 * INPUT_HEIGHT_PX;
 
 	/**
 	 * Width of all parameter inputs combined; depends on label texts and used font.
 	 */
-	public static final long TOTAL_INPUT_WIDTH = 519;
+	public static final long TOTAL_INPUT_WIDTH = 457;
 
 	private Skin skin;
 
@@ -62,6 +66,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 	SelectBox<String> densitySelect;
 	SelectBox<String> difficultySelect;
 	ImageButton randomButton;
+	ImageTextButton copyButton;
+	ImageButton pasteButton;
 	TextButton playButton;
 	TextField seedTextField;
 
@@ -81,7 +87,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 	private void initUi() {
 		// note about checktyle: widgets are declared in the order they appear in the UI
 
-		Label startingPositionLabel = new Label("Starting\nPosition", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+		Label startingPositionLabel = new Label("Starting\nPosition",
+				skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
 		// markup must be enabled in the font for this coloring to work
@@ -109,10 +116,15 @@ public class ParameterInputStage extends ResizableResettableStage {
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
 		seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
 		seedTextField.setMaxLength(18);
+
 		randomButton = new ImageButton(skin.get(SkinConstants.BUTTON_DIE, ImageButtonStyle.class));
 		randomButton.getImageCell().expand().fill();
 
-		playButton = new TextButton("Play", skin);
+		copyButton = new CopyButton("", skin, true);
+		copyButton.getImageCell().expand().fill();
+
+		pasteButton = new ImageButton(skin.get(SkinConstants.BUTTON_PASTE, ImageButtonStyle.class));
+		pasteButton.getImageCell().expand().fill();
 
 		/*
 		 * The longest text on the screen is the seed text field. It allows for 18
@@ -122,31 +134,39 @@ public class ParameterInputStage extends ResizableResettableStage {
 		float maxSeedNumberWidth = new GlyphLayout(seedTextField.getStyle().font, "7").width;
 		float seedTextFieldWidth = maxSeedNumberWidth * 20;
 
+		Table seedTable = new Table();
+		seedTable.defaults().uniformX();
+		seedTable.add(seedTextField).colspan(3).fill().expand();
+		seedTable.row();
+		seedTable.add(randomButton).fillX().height(INPUT_HEIGHT_PX);
+		seedTable.add(copyButton).fillX().height(INPUT_HEIGHT_PX);
+		seedTable.add(pasteButton).fillX().height(INPUT_HEIGHT_PX);
+
+		playButton = new TextButton("Play", skin);
+
 		rootTable = new Table();
-		rootTable.setFillParent(true);
 		rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);
 		rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
+		rootTable.setFillParent(true);
 		rootTable.add().expandY();
 		rootTable.row();
-		rootTable.add(startingPositionLabel);
-		rootTable.add(startingPositionSelect).colspan(2).fillX();
+		rootTable.add(seedLabel);
+		rootTable.add(seedTable).minWidth(seedTextFieldWidth).fillX();
 		rootTable.add().expandX();
 		rootTable.row();
+		rootTable.add(startingPositionLabel);
+		rootTable.add(startingPositionSelect).fillX().minHeight(INPUT_HEIGHT_PX);
+		rootTable.row();
 		rootTable.add(difficultyLabel);
-		rootTable.add(difficultySelect).colspan(2).fillX();
+		rootTable.add(difficultySelect).fillX();
 		rootTable.row();
 		rootTable.add(sizeLabel);
-		rootTable.add(sizeSelect).colspan(2).fillX();
+		rootTable.add(sizeSelect).fillX();
 		rootTable.row();
 		rootTable.add(densityLabel);
-		rootTable.add(densitySelect).colspan(2).fillX();
+		rootTable.add(densitySelect).fillX();
 		rootTable.row();
-		rootTable.add(seedLabel);
-		rootTable.add(seedTextField).minWidth(seedTextFieldWidth);
-		rootTable.add(randomButton).height(Value.percentHeight(1, seedTextField)).width(Value.percentHeight(1))
-				.padLeft(INPUT_PADDING_PX);
-		rootTable.row();
-		rootTable.add(playButton).colspan(4).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
+		rootTable.add(playButton).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
 				OUTER_PADDING_PX);
 		this.addActor(rootTable);
 	}

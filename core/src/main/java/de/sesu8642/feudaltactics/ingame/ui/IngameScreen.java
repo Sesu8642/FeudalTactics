@@ -77,7 +77,7 @@ public class IngameScreen extends GameScreen {
 
 	private final ParameterInputStage parameterInputStage;
 	private final HudStage hudStage;
-	private final MenuStage menuStage;
+	private final IngameMenuStage menuStage;
 
 	private final DialogFactory dialogFactory;
 
@@ -231,7 +231,7 @@ public class IngameScreen extends GameScreen {
 			hudStage.updateHandContent(null);
 		}
 		// seed
-		menuStage.setBottomRightLabelText("Seed: " + newGameState.getSeed().toString());
+		menuStage.bottomRightLabel.setText("Seed " + newGameState.getSeed().toString());
 		String hudStageInfoText = "";
 		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
 			hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
@@ -467,25 +467,36 @@ public class IngameScreen extends GameScreen {
 		List<TextButton> buttons = menuStage.getButtons();
 		buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
 			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-					() -> exitToMenu());
+					this::exitToMenu);
 			confirmDialog.show(menuStage);
 		}));
 		// retry button
 		buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
 			Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-					() -> resetGame());
+					this::resetGame);
 			confirmDialog.show(menuStage);
 		}));
 		// continue button
 		buttons.get(2).addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.HUD)));
+		// copy button
+		menuStage.copyButton.addListener(new ExceptionLoggingChangeListener(
+				() -> Gdx.app.getClipboard().setContents(menuStage.bottomRightLabel.getText().toString())));
 	}
 
 	private void addParameterInputListeners() {
 		parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
 				() -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
 
+		parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
+			parameterInputStage.seedTextField.setText(Gdx.app.getClipboard().getContents());
+		}));
+
+		parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
+				() -> Gdx.app.getClipboard().setContents(parameterInputStage.seedTextField.getText())));
+
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
-				parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect)
+				parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
+				parameterInputStage.pasteButton)
 				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
 					eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 							new MapParameters(parameterInputStage.getStartingPosition(),
@@ -505,7 +516,7 @@ public class IngameScreen extends GameScreen {
 	private void addHudListeners() {
 		hudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new UndoMoveEvent())));
 
-		hudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(() -> handleEndTurnAttempt()));
+		hudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(this::handleEndTurnAttempt));
 
 		hudStage.buyPeasantButton
 				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyPeasantEvent())));

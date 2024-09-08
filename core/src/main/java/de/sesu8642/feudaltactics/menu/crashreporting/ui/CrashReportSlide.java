@@ -6,12 +6,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
 
+import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 // this is not just a slide created by a factory because it needs the additional accessors for text
@@ -22,7 +24,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 public class CrashReportSlide extends Slide {
 
 	final Label descriptionLabel;
-	final TextButton copyButton;
+	final ImageTextButton copyButton;
 	final TextArea textArea;
 	final TextButton sendMailButton;
 	final TextButton openGithubButton;
@@ -46,7 +48,7 @@ public class CrashReportSlide extends Slide {
 		textArea = new TextArea("", skin);
 		textArea.setDisabled(true);
 
-		copyButton = new TextButton("Copy", skin);
+		copyButton = new CopyButton("Copy", skin, true);
 		sendMailButton = new TextButton("Send Email", skin);
 		openGithubButton = new TextButton("Open GitHub", skin);
 

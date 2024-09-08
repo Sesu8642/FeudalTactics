@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 
@@ -95,12 +96,22 @@ public class GameInitializer {
 				// first start after update
 				logger.info("game was updated from version {} to {}", previousVersion, gameVersion);
 				gameVersionDao.saveChangelogState(true);
+				cleanUpAfterUpdate();
 			}
 
 			// save current game version
 			gameVersionDao.saveGameVersion(gameVersion);
 		} catch (Exception e) {
 			logger.error("unexpected exception during application start", e);
+		}
+	}
+
+	private void cleanUpAfterUpdate() {
+		Preferences oldPrefs = Gdx.app.getPreferences("FeudalTactics_autoSavePreferences");
+		if (!oldPrefs.get().isEmpty()) {
+			// apparently preferences cannot be deleted easily but at least clear them
+			oldPrefs.clear();
+			oldPrefs.flush();
 		}
 	}
 

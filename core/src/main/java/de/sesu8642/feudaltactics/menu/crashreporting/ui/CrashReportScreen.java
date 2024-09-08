@@ -5,8 +5,6 @@ package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,8 +37,6 @@ public class CrashReportScreen extends GameScreen {
 	private EventBus eventBus;
 	private final CrashReportStage crashReportStage;
 	private final CrashReportDao crashReportDao;
-	private final ScheduledExecutorService copyButtonFeedbackExecutorService;
-	private ScheduledFuture<?> copyButtonFeedBackFuture;
 	/**
 	 * Whether the screen is shown on startup. Causes the splash screen to be shown
 	 * on finish instead of the menu.
@@ -56,7 +52,6 @@ public class CrashReportScreen extends GameScreen {
 		this.eventBus = eventBus;
 		this.crashReportStage = crashReportStage;
 		this.crashReportDao = crashReportDao;
-		this.copyButtonFeedbackExecutorService = copyButtonFeedbackExecutorService;
 		registerEventListeners();
 	}
 
@@ -100,14 +95,6 @@ public class CrashReportScreen extends GameScreen {
 		crashReportStage.crashReportSlide.copyButton.addListener(new ExceptionLoggingChangeListener(() -> {
 			logger.debug("copying bug report info to clipboard.");
 			Gdx.app.getClipboard().setContents(crashReportStage.crashReportSlide.textArea.getText());
-			// give feedback to the user by setting the button text to "done" for a moment
-			crashReportStage.crashReportSlide.copyButton.setText("Done");
-			if (copyButtonFeedBackFuture != null) {
-				copyButtonFeedBackFuture.cancel(false);
-			}
-			copyButtonFeedBackFuture = copyButtonFeedbackExecutorService.schedule(
-					() -> Gdx.app.postRunnable(() -> crashReportStage.crashReportSlide.copyButton.setText("Copy")),
-					1000, TimeUnit.MILLISECONDS);
 		}));
 		crashReportStage.crashReportSlide.openGithubButton.addListener(new ExceptionLoggingChangeListener(() -> {
 			logger.debug("opening GitHub issue URI.");

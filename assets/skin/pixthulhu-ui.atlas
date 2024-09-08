@@ -139,6 +139,34 @@ checkbox-on
   orig: 50, 42
   offset: 0, 0
   index: -1
+copy
+  rotate: false
+  xy: 99, 260
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+copy_pressed
+  rotate: false
+  xy: 99, 226
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+copy_pressed_tick
+  rotate: false
+  xy: 233, 521
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+copy_tick
+  rotate: false
+  xy: 230, 487
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 die
   rotate: false
   xy: 501, 835
@@ -197,6 +225,20 @@ list
   orig: 114, 114
   offset: 0, 0
   index: -1
+paste
+  rotate: false
+  xy: 171, 446
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+paste_pressed
+  rotate: false
+  xy: 205, 446
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 pause
   rotate: false
   xy: 491, 769
@@ -229,7 +271,7 @@ progress-bar-health-knob
   index: -1
 progress-bar-horizontal
   rotate: false
-  xy: 604, 722
+  xy: 133, 247
   size: 9, 45
   split: 3, 3, 3, 3
   orig: 9, 45
@@ -237,7 +279,7 @@ progress-bar-horizontal
   index: -1
 progress-bar-horizontal-knob
   rotate: false
-  xy: 623, 794
+  xy: 830, 928
   size: 1, 39
   orig: 1, 39
   offset: 0, 0
@@ -359,7 +401,7 @@ slider-vertical
   index: -1
 split-pane-horizontal
   rotate: false
-  xy: 99, 244
+  xy: 604, 719
   size: 24, 48
   split: 3, 3, 3, 3
   pad: 0, 0, 0, 0
@@ -414,7 +456,7 @@ undo_pressed
   index: -1
 white
   rotate: false
-  xy: 491, 838
+  xy: 230, 524
   size: 1, 1
   orig: 1, 1
   offset: 0, 0

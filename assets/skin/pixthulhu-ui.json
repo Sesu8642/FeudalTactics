@@ -291,14 +291,50 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	die: {
 		imageUp: die
 		imageDown: die_pressed
+		up: button-small
+		down: button-small-pressed
+	}
+	paste: {
+		imageUp: paste
+		imageDown: paste_pressed
+		up: button-small
+		down: button-small-pressed
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
 		font: ButtonText
 		fontColor: white
-		up: button
-		down: button-pressed
+		up: button-small
+		down: button-small-pressed
+	}
+	copy: {
+		imageUp: copy
+		imageDown: copy_pressed
+		font: ButtonText
+		fontColor: white
+		up: button-small
+		down: button-small-pressed
+	}
+	copy_tick: {
+		imageUp: copy_tick
+		imageDown: copy_pressed_tick
+		font: ButtonText
+		fontColor: white
+		up: button-small
+		down: button-small-pressed
+	}
+	copy_no_background: {
+		imageUp: copy
+		imageDown: copy_pressed
+		font: ButtonText
+		fontColor: white
+	}
+	copy_tick_no_background: {
+		imageUp: copy_tick
+		imageDown: copy_pressed_tick
+		font: ButtonText
+		fontColor: white
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
