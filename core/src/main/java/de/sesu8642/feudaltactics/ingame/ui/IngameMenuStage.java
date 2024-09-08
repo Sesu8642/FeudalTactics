@@ -19,18 +19,20 @@ import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
- * Stage for the ingame "pause" menu.
+ * Stage for the in-game "pause" menu.
  */
 @Singleton
 public class IngameMenuStage extends MenuStage {
 
 	private static final List<String> BUTTON_TEXTS = ImmutableList.of("Exit", "Retry", "Continue");
-	private Label bottomRightLabel;
+	public Label bottomRightLabel;
+	public CopyButton copyButton;
 
 	/**
 	 * Constructor. See {@link MenuStage#MenuStage}
@@ -42,10 +44,8 @@ public class IngameMenuStage extends MenuStage {
 		super(viewport, BUTTON_TEXTS, camera, mapRenderer, skin);
 		bottomRightLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		getBottomRightTable().add(bottomRightLabel);
-	}
-
-	public void setSeed(String seed) {
-		bottomRightLabel.setText("Seed " + seed);
+		copyButton = new CopyButton("", skin, false);
+		getBottomRightTable().add(copyButton);
 	}
 
 }

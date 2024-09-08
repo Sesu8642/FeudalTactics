@@ -324,6 +324,18 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 		up: button-small
 		down: button-small-pressed
 	}
+	copy_no_background: {
+		imageUp: copy
+		imageDown: copy_pressed
+		font: ButtonText
+		fontColor: white
+	}
+	copy_tick_no_background: {
+		imageUp: copy_tick
+		imageDown: copy_pressed_tick
+		font: ButtonText
+		fontColor: white
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {

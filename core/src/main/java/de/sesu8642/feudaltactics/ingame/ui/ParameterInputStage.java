@@ -120,7 +120,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 		randomButton = new ImageButton(skin.get(SkinConstants.BUTTON_DIE, ImageButtonStyle.class));
 		randomButton.getImageCell().expand().fill();
 
-		copyButton = new CopyButton("", skin);
+		copyButton = new CopyButton("", skin, true);
 		copyButton.getImageCell().expand().fill();
 
 		pasteButton = new ImageButton(skin.get(SkinConstants.BUTTON_PASTE, ImageButtonStyle.class));

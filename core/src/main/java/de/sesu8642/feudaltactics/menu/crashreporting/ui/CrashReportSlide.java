@@ -48,7 +48,7 @@ public class CrashReportSlide extends Slide {
 		textArea = new TextArea("", skin);
 		textArea.setDisabled(true);
 
-		copyButton = new CopyButton("Copy", skin);
+		copyButton = new CopyButton("Copy", skin, true);
 		sendMailButton = new TextButton("Send Email", skin);
 		openGithubButton = new TextButton("Open GitHub", skin);
 

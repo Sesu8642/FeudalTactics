@@ -231,7 +231,7 @@ public class IngameScreen extends GameScreen {
 			hudStage.updateHandContent(null);
 		}
 		// seed
-		menuStage.setSeed(newGameState.getSeed().toString());
+		menuStage.bottomRightLabel.setText("Seed " + newGameState.getSeed().toString());
 		String hudStageInfoText = "";
 		if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
 			hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
@@ -478,6 +478,9 @@ public class IngameScreen extends GameScreen {
 		}));
 		// continue button
 		buttons.get(2).addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.HUD)));
+		// copy button
+		menuStage.copyButton.addListener(new ExceptionLoggingChangeListener(
+				() -> Gdx.app.getClipboard().setContents(menuStage.bottomRightLabel.getText().toString())));
 	}
 
 	private void addParameterInputListeners() {
