@@ -2,9 +2,6 @@
 
 package de.sesu8642.feudaltactics.dagger;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
-
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -30,10 +27,6 @@ import de.sesu8642.feudaltactics.renderer.dagger.RendererDaggerModule;
 public interface FeudalTacticsComponent {
 
 	GameInitializer getGameInitializer();
-
-	ExecutorService getBotAiExecutor();
-
-	ScheduledExecutorService getCopyButtonExecutor();
 
 	GameCrasher getGameCrasher();
 

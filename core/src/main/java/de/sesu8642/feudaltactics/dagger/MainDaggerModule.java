@@ -2,9 +2,6 @@
 
 package de.sesu8642.feudaltactics.dagger;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import javax.inject.Singleton;
 
 import org.slf4j.Logger;
@@ -14,7 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.SubscriberExceptionContext;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.ray3k.stripe.FreeTypeSkin;
 
@@ -33,14 +29,11 @@ public class MainDaggerModule {
 	@Provides
 	@Singleton
 	static EventBus provideEventBus() {
-		return new EventBus(new SubscriberExceptionHandler() {
-			@Override
-			public void handleException(Throwable exception, SubscriberExceptionContext context) {
-				Logger logger = LoggerFactory.getLogger(SubscriberExceptionHandler.class.getName());
-				logger.error(String.format(
-						"an unexpected error happened while handling the event %s in method %s of subscriber %s",
-						context.getEvent(), context.getSubscriberMethod(), context.getSubscriber()), exception);
-			}
+		return new EventBus((exception, context) -> {
+			Logger logger = LoggerFactory.getLogger(SubscriberExceptionHandler.class.getName());
+			logger.error(String.format(
+					"an unexpected error happened while handling the event %s in method %s of subscriber %s",
+					context.getEvent(), context.getSubscriberMethod(), context.getSubscriber()), exception);
 		});
 	}
 
@@ -53,12 +46,6 @@ public class MainDaggerModule {
 	@Provides
 	static InputMultiplexer provideInputMultiplexer() {
 		return new InputMultiplexer();
-	}
-
-	@Provides
-	@Singleton
-	static ScheduledExecutorService provideCopyButtonFeedbackExecutorService() {
-		return Executors.newSingleThreadScheduledExecutor();
 	}
 
 }

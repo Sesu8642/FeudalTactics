@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.ScheduledExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -46,8 +45,7 @@ public class CrashReportScreen extends GameScreen {
 	/** Constructor. */
 	@Inject
 	public CrashReportScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-			CrashReportStage crashReportStage, CrashReportDao crashReportDao,
-			ScheduledExecutorService copyButtonFeedbackExecutorService) {
+			CrashReportStage crashReportStage, CrashReportDao crashReportDao) {
 		super(camera, viewport, crashReportStage);
 		this.eventBus = eventBus;
 		this.crashReportStage = crashReportStage;

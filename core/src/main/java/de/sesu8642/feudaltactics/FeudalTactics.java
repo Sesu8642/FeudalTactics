@@ -30,9 +30,6 @@ public class FeudalTactics extends Game {
 
 	@Override
 	public void dispose() {
-		// shutdown executor services to kill all background threads
-		component.getBotAiExecutor().shutdownNow();
-		component.getCopyButtonExecutor().shutdownNow();
 		super.dispose();
 	}
 
