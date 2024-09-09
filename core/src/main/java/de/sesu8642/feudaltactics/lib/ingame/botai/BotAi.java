@@ -375,6 +375,10 @@ public class BotAi {
 			pickedUpUnits.removeUnit(UnitTypes.KNIGHT);
 			pickedUpUnits.addUnit(UnitTypes.BARON);
 			return true;
+		} else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 2) {
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.addUnit(UnitTypes.BARON);
 		} else if (pickedUpUnits.ofType(UnitTypes.KNIGHT) >= 1
 				&& (GameStateHelper.getKingdomIncome(kingdom)
 						- getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
