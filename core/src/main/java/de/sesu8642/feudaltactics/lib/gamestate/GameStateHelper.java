@@ -447,29 +447,14 @@ public class GameStateHelper {
 	 */
 	public static void combineUnits(GameState gameState, HexTile tile) {
 		// place resulting unit as held object
-		// the unit that is not the peasant will be upgraded
-		Unit oldUnit;
-		if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
-			oldUnit = (Unit) gameState.getHeldObject();
-		} else {
-			oldUnit = (Unit) tile.getContent();
-		}
-		UnitTypes newUnitType = null;
-		switch (oldUnit.getUnitType()) {
-		case PEASANT:
-			newUnitType = UnitTypes.SPEARMAN;
-			break;
-		case SPEARMAN:
-			newUnitType = UnitTypes.KNIGHT;
-			break;
-		case KNIGHT:
-			newUnitType = UnitTypes.BARON;
-			break;
-		default:
-			break;
-		}
+		Unit heldUnit = (Unit) gameState.getHeldObject();
+		Unit tileUnit = (Unit) tile.getContent();
+
+		int newStrength = heldUnit.getStrength() + tileUnit.getStrength();
+		UnitTypes newUnitType = UnitTypes.ofStrength(newStrength);
+
 		Unit newUnit = new Unit(newUnitType);
-		newUnit.setCanAct(((Unit) tile.getContent()).isCanAct());
+		newUnit.setCanAct(tileUnit.isCanAct());
 		gameState.setHeldObject(newUnit);
 		placeObject(gameState, tile);
 	}

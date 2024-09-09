@@ -375,6 +375,12 @@ public class BotAi {
 			pickedUpUnits.removeUnit(UnitTypes.KNIGHT);
 			pickedUpUnits.addUnit(UnitTypes.BARON);
 			return true;
+		} else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 2) {
+			// combine two spearmen
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
+			pickedUpUnits.addUnit(UnitTypes.BARON);
+			return true;
 		} else if (pickedUpUnits.ofType(UnitTypes.KNIGHT) >= 1
 				&& (GameStateHelper.getKingdomIncome(kingdom)
 						- getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
@@ -383,6 +389,16 @@ public class BotAi {
 			// buy 1 peasant and combine with an existing knight
 			kingdom.setSavings(kingdom.getSavings() - Unit.COST);
 			pickedUpUnits.removeUnit(UnitTypes.KNIGHT);
+			pickedUpUnits.addUnit(UnitTypes.BARON);
+			return true;
+		} else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 1
+				&& (GameStateHelper.getKingdomIncome(kingdom)
+						- getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
+						+ UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
+				&& kingdom.getSavings() >= 2 * Unit.COST) {
+			// buy 2 peasants and combine with an existing spearman
+			kingdom.setSavings(kingdom.getSavings() - (2 * Unit.COST));
+			pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
 			pickedUpUnits.addUnit(UnitTypes.BARON);
 			return true;
 		} else if (canKingdomSustainNewUnit(gameState, kingdom, pickedUpUnits, UnitTypes.BARON)) {
