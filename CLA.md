@@ -11,3 +11,4 @@ By making a contribution to this project, I certify that I multi-license my cont
 | 2023-10-29 | @Mina928 | 
 | 2024-02-21 | Matthew Wadle (mwadle, matthewwadle@gmail.com) |
 | 2024-04-05 | Anthony Clayton (AnthonyClayton12, anthonyclayton12@gmail.com) 
+| 2024-09-13 | @junefish
