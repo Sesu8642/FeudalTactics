@@ -281,14 +281,14 @@ public class IngameScreen extends GameScreen {
 		if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
 			if (localPlayer.isDefeated()) {
 				// Game is over; player lost
-				uiChangeActions.add(this::showLostMessageWithoutSpectate);
+				uiChangeActions.add(this::showEnemyWonMessage);
 			} else {
 				// Game is over; player won
 				uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
 			}
 		} else if (localPlayer.isDefeated() && !isSpectateMode) {
 			// Local player lost but game isn't over; offer a spectate option
-			uiChangeActions.add(this::showLostMessage);
+			uiChangeActions.add(this::showPlayerDefeatedMessage);
 		} else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
 			// winner changed
 			uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER));
@@ -371,7 +371,7 @@ public class IngameScreen extends GameScreen {
 		endDialog.show(hudStage);
 	}
 
-	private void showLostMessage() {
+	private void showPlayerDefeatedMessage() {
 		Dialog endDialog = dialogFactory.createDialog(result -> {
 			switch ((byte) result) {
 			case 1:
@@ -391,18 +391,31 @@ public class IngameScreen extends GameScreen {
 			}
 		});
 		endDialog.button("Exit", (byte) 1);
-		if (!isSpectateMode) {
-			endDialog.button("Spectate", (byte) 0);
-		}
+		endDialog.button("Spectate", (byte) 0);
 		endDialog.button("Retry", (byte) 2);
-		endDialog.text("DEFEAT! All of your kingdoms were conquered by the enemy.\n");
+		endDialog.text("DEFEAT! All your kingdoms were conquered by the enemy.\n");
 		endDialog.show(hudStage);
 	}
 
-	private void showLostMessageWithoutSpectate() {
-		// Set isSpectateMode to true so that the dialog spectate option is not offered.
-		isSpectateMode = true;
-		showLostMessage();
+	private void showEnemyWonMessage() {
+		Dialog endDialog = dialogFactory.createDialog(result -> {
+			switch ((byte) result) {
+			case 1:
+				// exit button
+				exitToMenu();
+				break;
+			case 2:
+				// retry button
+				resetGame();
+				break;
+			default:
+				break;
+			}
+		});
+		endDialog.button("Exit", (byte) 1);
+		endDialog.button("Retry", (byte) 2);
+		endDialog.text("DEFEAT! Your enemy won the game.\n");
+		endDialog.show(hudStage);
 	}
 
 	void activateStage(IngameStages ingameStage) {
