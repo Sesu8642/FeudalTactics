@@ -1,11 +1,8 @@
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 package de.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Game;
-
-import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
+import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 
 /** The game's entry point. */
 public class FeudalTactics extends Game {
@@ -20,8 +17,6 @@ public class FeudalTactics extends Game {
 	public void create() {
 		game = this;
 
-		// Eclipse cannot resolve this. See https://stackoverflow.com/a/31669111 for
-		// more information.
 		component = DaggerFeudalTacticsComponent.create();
 
 		GameInitializer gameInitializer = component.getGameInitializer();
@@ -40,5 +35,5 @@ public class FeudalTactics extends Game {
 	public FeudalTacticsComponent getComponent() {
 		return component;
 	}
-
+	
 }

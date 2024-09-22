@@ -7,11 +7,12 @@
     <stringAttribute key="java_home" value=""/>
     <listAttribute key="jvm_arguments"/>
     <booleanAttribute key="offline_mode" value="false"/>
+    <booleanAttribute key="org.eclipse.debug.core.ATTR_FORCE_SYSTEM_CONSOLE_ENCODING" value="false"/>
     <booleanAttribute key="override_workspace_settings" value="false"/>
     <booleanAttribute key="show_console_view" value="true"/>
     <booleanAttribute key="show_execution_view" value="true"/>
     <listAttribute key="tasks">
-        <listEntry value="desktop:run"/>
+        <listEntry value="lwjgl:run"/>
     </listAttribute>
-    <stringAttribute key="working_dir" value="${workspace_loc:/Feudal Tactics-core}/.."/>
+    <stringAttribute key="working_dir" value="${workspace_loc:/FeudalTactics-parent}"/>
 </launchConfiguration>

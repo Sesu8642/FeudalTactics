@@ -1,117 +1,78 @@
 buildscript {
+  repositories {
+    mavenCentral()
+    maven { url 'https://s01.oss.sonatype.org' }
+    gradlePluginPortal()
+    mavenLocal()
+    google()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+  }
+  dependencies {
+    classpath "com.android.tools.build:gradle:8.1.4"
 
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url 'https://jitpack.io' }
-        google()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2' 
-    }
+  }
 }
 
 allprojects {
-    apply plugin: "eclipse"
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
 
-    version = '1.2.1'
-    ext {
-        appName = "Feudal Tactics"
-        gdxVersion = '1.11.0'
-        roboVMVersion = '2.3.16'
-        box2DLightsVersion = '1.5'
-        ashleyVersion = '1.7.4'
-        aiVersion = '1.8.2'
-        gdxControllersVersion = '2.2.1'
-        
-        guavaVersion = '31.1-android'
-        daggerVersion = '2.33'
-        junitVersion = '5.10.2'
-        mockitoVersion = '4.7.0'
+  // This allows you to "Build and run using IntelliJ IDEA", an option in IDEA's Settings.
+  idea {
+    module {
+      outputDir file('build/classes/java/main')
+      testOutputDir file('build/classes/java/test')
     }
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "https://jitpack.io" }
-    }
+  }
 }
 
-project(":desktop") {
-    apply plugin: "java-library"
+configure(subprojects - project(':android')) {
+  apply plugin: 'java-library'
+  /*
+  * Newer Java versions technically work but only some APIs work on older Android versions via desugaring.
+  * I would only upgrade if there was an automatic check to prevent compatibility issues.
+  * There is the Android lint tool that can be called via a Gradle task but I couldn't get it to scan the core classes.
+  */
+  sourceCompatibility = 8
 
+  // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
+  // The article can be helpful when using assets.txt in your project.
+  tasks.register('generateAssetList') {
+    inputs.dir("${project.rootDir}/assets/")
+    // projectFolder/assets
+    File assetsFolder = new File("${project.rootDir}/assets/")
+    // projectFolder/assets/assets.txt
+    File assetsFile = new File(assetsFolder, "assets.txt")
+    // delete that file in case we've already created it
+    assetsFile.delete()
 
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        
-        api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+    // iterate through all files inside that folder
+    // convert it to a relative path
+    // and append it to the file assets.txt
+    fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.each {
+      assetsFile.append(it + "\n")
     }
+  }
+  processResources.dependsOn 'generateAssetList'
+
+  compileJava {
+    options.incremental = true
+  }
 }
 
-project(":android") {
-	apply plugin: "com.android.application"
-
-    configurations { natives }
-
-    dependencies {
-        implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
-        
-        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-arm64-v8a"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
-		natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
-    }
+subprojects {
+  version = '$projectVersion'
+  ext.appName = 'FeudalTactics'
+  repositories {
+    mavenCentral()
+    maven { url 'https://s01.oss.sonatype.org' }
+    // You may want to remove the following line if you have errors downloading dependencies.
+    mavenLocal()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://jitpack.io' }
+  }
 }
 
-project(":core") {
-    apply plugin: "java-library"
-
-    dependencies {
-    	api "com.badlogicgames.gdx:gdx:$gdxVersion"
-    	
-    	implementation("com.google.guava:guava:$guavaVersion") {
-    	// exclude transitive dependencies mainly to avoid dealing with their licenses
-    	// these dependencies are optional https://github.com/google/guava/issues/2824#issuecomment-544171665
-    	// failureaccess is apparently needed
-    	exclude group:"com.google.guava", module: "listenablefuture"
-    	// these dependencies are seemingly only needed at compile time of Guava
-    	exclude group:"com.google.code.findbugs", module: "jsr305"
-    	exclude group:"org.checkerframework", module: "checker-qual"
-    	exclude group:"com.google.errorprone", module: "error_prone_annotations"
-    	exclude group:"com.google.j2objc", module: "j2objc-annotations"
-    	}
-    	implementation "com.google.dagger:dagger:$daggerVersion"
-		annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
-        
-        implementation 'org.slf4j:slf4j-jdk14:2.0.6'
-        
-        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        implementation 'com.github.raeleus.stripe:freetype:2.0.0'
-        
-	    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
-		testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
-	    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
-	     	
-		testImplementation "org.mockito:mockito-core:$mockitoVersion"
-		testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
-    }
-    
-	test {
-	    useJUnitPlatform()
-	}
-
-}
+eclipse.project.name = 'FeudalTactics' + '-parent'

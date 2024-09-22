@@ -8,7 +8,7 @@
 # include property in project.properties.
 #
 # For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+#   https://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
 
@@ -21,12 +21,13 @@
 
 -verbose
 
+-dontwarn android.support.**
 -dontwarn com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
-# Required if using Gdx-Controllers extension
+# Needed by the gdx-controllers official extension.
 -keep class com.badlogic.gdx.controllers.android.AndroidControllers
 
-# Required if using Box2D extension
+# Needed by the Box2D official extension.
 -keepclassmembers class com.badlogic.gdx.physics.box2d.World {
    boolean contactFilter(long, long);
    void    beginContact(long);
@@ -36,3 +37,28 @@
    boolean reportFixture(long);
    float   reportRayFixture(long, float, float, float, float, float);
 }
+
+# You will need the next three lines if you use scene2d for UI or gameplay.
+# If you don't use scene2d at all, you can remove or comment out the next line:
+-keep public class com.badlogic.gdx.scenes.scene2d.** { *; }
+# You will need the next two lines if you use BitmapFont or any scene2d.ui text:
+-keep public class com.badlogic.gdx.graphics.g2d.BitmapFont { *; }
+# You will probably need this line in most cases:
+-keep public class com.badlogic.gdx.graphics.Color { *; }
+
+# These two lines are used with mapping files; see https://developer.android.com/build/shrink-code#retracing
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile
+
+# custom addition: ignore those to make the build work
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.DoNotCall
+-dontwarn com.google.errorprone.annotations.DoNotMock
+-dontwarn com.google.errorprone.annotations.ForOverride
+-dontwarn com.google.errorprone.annotations.InlineMe
+-dontwarn com.google.errorprone.annotations.concurrent.GuardedBy
+-dontwarn com.google.errorprone.annotations.concurrent.LazyInit
+-dontwarn com.google.j2objc.annotations.ReflectionSupport
+-dontwarn com.google.j2objc.annotations.RetainedWith
+-dontwarn com.google.j2objc.annotations.Weak
+-dontwarn javax.annotation.CheckForNull

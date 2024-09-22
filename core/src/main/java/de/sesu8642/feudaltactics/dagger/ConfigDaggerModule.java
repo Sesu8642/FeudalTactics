@@ -26,6 +26,9 @@ public class ConfigDaggerModule {
 	static Properties provideGameConfig() {
 		Properties config = new Properties();
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		if (classLoader == null) {
+			classLoader = ClassLoader.getSystemClassLoader();
+		}
 		try (InputStream inputStream = classLoader.getResourceAsStream("gameconfig.properties")) {
 			config.load(inputStream);
 		} catch (IOException e) {
