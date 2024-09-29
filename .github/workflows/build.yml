@@ -26,13 +26,13 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build Desktop
-        run: ./gradlew desktop:dist
+        run: ./gradlew lwjgl3:jar
 
       - name: Upload desktop jar
         uses: actions/upload-artifact@v3
         with:
           name: Desktop jar
-          path: ./desktop//build/libs/*.jar
+          path: ./lwjgl3//build/libs/*.jar
 
 
   build_android:
