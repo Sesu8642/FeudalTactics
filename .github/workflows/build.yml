@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       # trying to be close to the f-droid build to detect failures early
-      image: registry.gitlab.com/fdroid/fdroidserver:buildserver-bullseye
+      image: registry.gitlab.com/fdroid/fdroidserver:buildserver-bookworm
     env:
       ANDROID_HOME: /opt/android-sdk
     steps:
