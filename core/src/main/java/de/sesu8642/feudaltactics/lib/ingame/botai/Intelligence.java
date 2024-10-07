@@ -4,9 +4,9 @@ package de.sesu8642.feudaltactics.lib.ingame.botai;
 
 /** Possible intelligence levels for the AI. */
 public enum Intelligence {
-	LEVEL_1(0.5F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, false),
-	LEVEL_2(0.8F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, false, true),
-	LEVEL_3(1F, 4, false, 25, 20, true, true), LEVEL_4(1F, 7, true, 25, 20, true, true);
+	LEVEL_1(0.5F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 5, false, false),
+	LEVEL_2(0.8F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 5, false, true),
+	LEVEL_3(1F, 4, false, 25, 20, 0, true, true), LEVEL_4(1F, 7, true, 25, 20, 0, true, true);
 
 	/** Chance that the bot will even try to conquer anything in a given turn. */
 	public final float chanceToConquerPerTurn;
@@ -39,28 +39,35 @@ public enum Intelligence {
 	public final int protectWithUnitScoreTreshold;
 
 	/**
+	 * Offense tile scores for other bot players will be increased by this amount to
+	 * make the game easier for the human players.
+	 */
+	public final int attackOtherBotsBias;
+
+	/**
 	 * Whether to defend smartly: i.e. considering how many tiles are protected. If
 	 * false, the defense score of every tile is 0. This means that (basically)
 	 * random tiles near the border are protected.
 	 */
-	boolean smartDefending;
+	public final boolean smartDefending;
 
 	/**
 	 * Whether to attack smartly: prefer enemy kingdom tiles over unconnected ones,
 	 * destroy castles etc. If false, the offense score of every tile is 0. This
 	 * means that (basically) random tiles are conquered.
 	 */
-	boolean smartAttacking;
+	public final boolean smartAttacking;
 
 	private Intelligence(float chanceToConquerPerTurn, int blockingObjectRemovalScoreTreshold,
 			boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
-			int protectWithUnitScoreTreshold, boolean smartDefending, boolean smartAttacking) {
+			int protectWithUnitScoreTreshold, int attackOtherBotsBias, boolean smartDefending, boolean smartAttacking) {
 		this.chanceToConquerPerTurn = chanceToConquerPerTurn;
 		this.blockingObjectRemovalScoreTreshold = blockingObjectRemovalScoreTreshold;
 		this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;
-		this.smartDefending = smartDefending;
 		this.protectWithCastleScoreTreshold = protectWithCastleScoreTreshold;
 		this.protectWithUnitScoreTreshold = protectWithUnitScoreTreshold;
+		this.attackOtherBotsBias = attackOtherBotsBias;
+		this.smartDefending = smartDefending;
 		this.smartAttacking = smartAttacking;
 	}
 

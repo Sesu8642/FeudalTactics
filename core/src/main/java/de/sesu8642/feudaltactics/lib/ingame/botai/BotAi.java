@@ -36,6 +36,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
 import de.sesu8642.feudaltactics.lib.gamestate.InputValidationHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.PalmTree;
+import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Tree;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
@@ -704,6 +705,10 @@ public class BotAi {
 		if (!intelligence.smartAttacking) {
 			score = 0;
 		}
+		if (tile.getPlayer().getType() == Type.LOCAL_BOT) {			
+			score += intelligence.attackOtherBotsBias;
+		}
+		
 		return new OffenseTileScoreInfo(tile, score, requiredStrength);
 	}
 
