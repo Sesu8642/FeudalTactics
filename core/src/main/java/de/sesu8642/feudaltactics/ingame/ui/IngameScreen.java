@@ -509,19 +509,23 @@ public class IngameScreen extends GameScreen {
 
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
 				parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
-				parameterInputStage.pasteButton)
+				parameterInputStage.pasteButton, parameterInputStage.difficultySelect)
 				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
 					eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
 							new MapParameters(parameterInputStage.getStartingPosition(),
 									parameterInputStage.getSeedParam(),
 									parameterInputStage.getMapSizeParam().getAmountOfTiles(),
 									parameterInputStage.getMapDensityParam().getDensityFloat())));
-					centerMap();
 					newGamePrefDao.saveNewGamePreferences(new NewGamePreferences(
 							parameterInputStage.getBotIntelligence(), parameterInputStage.getMapSizeParam(),
 							parameterInputStage.getMapDensityParam(), parameterInputStage.getStartingPosition()));
 				})));
-
+		// only the settings that visually change the map need to cause centering
+		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
+				parameterInputStage.densitySelect, parameterInputStage.pasteButton)
+				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
+					centerMap();
+				})));
 		parameterInputStage.playButton
 				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
 	}
