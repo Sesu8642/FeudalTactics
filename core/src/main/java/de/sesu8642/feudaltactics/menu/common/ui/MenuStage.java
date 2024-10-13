@@ -66,7 +66,7 @@ public class MenuStage extends ResizableResettableStage {
 		rootTable.setFillParent(true);
 		rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
 		Image logo = new Image(logoTexture);
-		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).width(Value.percentHeight(1.91F));
+		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).minHeight(150).width(Value.percentHeight(1.91F));
 		rootTable.row();
 		rootTable.defaults().minHeight(100).pad(5);
 		for (TextButton button : buttons) {
