@@ -56,7 +56,7 @@ public class InformationMenuDaggerModule {
 			Skin skin) {
 		Slide licenseSlide = new Slide(skin, "Dependency Licenses").addLabel(dependencyLicensesText);
 		return new SlideStage(viewport, Collections.singletonList(licenseSlide),
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
 				camera, skin);
 	}
 

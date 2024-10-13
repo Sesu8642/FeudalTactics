@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.ingame.ui;
+package de.sesu8642.feudaltactics.menu.information.ui;
 
 import java.util.List;
 
@@ -19,33 +19,31 @@ import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
- * Stage for the in-game "pause" menu.
+ * Stage for the information menu section. Second page.
  */
 @Singleton
-public class IngameMenuStage extends MenuStage {
+public class InformationMenuPage2Stage extends MenuStage {
 
-	private static final List<String> BUTTON_TEXTS = List.of("Exit", "Retry", "Continue");
-	public Label bottomRightLabel;
-	public CopyButton copyButton;
+	private static final List<String> BUTTON_TEXTS = List.of("Changelog", "Dependency Licenses",
+			"Privacy Policy", "Page 1", "Back");
 
 	/**
 	 * Constructor. See {@link MenuStage#MenuStage}
 	 */
 	@Inject
-	public IngameMenuStage(EventBus eventBus, @MenuViewport Viewport viewport,
+	public InformationMenuPage2Stage(EventBus eventBus, @MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
 			@VersionProperty String gameVersion) {
 		super(viewport, BUTTON_TEXTS, camera, mapRenderer, skin);
-		bottomRightLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+		Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
+				skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		getBottomRightTable().add(bottomRightLabel);
-		copyButton = new CopyButton("", skin, false);
-		getBottomRightTable().add(copyButton);
+
 	}
 
 }

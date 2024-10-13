@@ -21,26 +21,23 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 
 @Singleton
-public class InformationMenuScreen extends GameScreen {
+public class InformationMenuPage1Screen extends GameScreen {
 
 	@Inject
-	public InformationMenuScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera,
-			@MenuViewport Viewport viewport, InformationMenuStage menuStage) {
+	public InformationMenuPage1Screen(EventBus eventBus, @MenuCamera OrthographicCamera camera,
+			@MenuViewport Viewport viewport, InformationMenuPage1Stage menuStage) {
 		super(camera, viewport, menuStage);
 		List<TextButton> buttons = menuStage.getButtons();
 		buttons.get(0).addListener(new ExceptionLoggingChangeListener(
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN))));
-		buttons.get(1).addListener(new ExceptionLoggingChangeListener(
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN))));
+		buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> Gdx.net
+				.openURI("https://matrix.to/#/#feudal-tactics-community:matrix.org")));
 		buttons.get(2).addListener(new ExceptionLoggingChangeListener(() -> eventBus
-				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.DEPENDENCY_LICENSES_SCREEN))));
-		buttons.get(3).addListener(new ExceptionLoggingChangeListener(() -> Gdx.net
-				.openURI("https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt")));
-		buttons.get(4).addListener(new ExceptionLoggingChangeListener(() -> eventBus
 				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_IN_MAIN_MENU))));
-		buttons.get(5).addListener(new ExceptionLoggingChangeListener(
+		buttons.get(3).addListener(new ExceptionLoggingChangeListener(() -> eventBus
+				.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2))));
+		buttons.get(4).addListener(new ExceptionLoggingChangeListener(
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN))));
-
 	}
 
 }

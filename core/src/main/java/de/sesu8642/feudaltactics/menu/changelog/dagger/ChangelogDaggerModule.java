@@ -74,7 +74,7 @@ public class ChangelogDaggerModule {
 			@ChangelogText String changelogText, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
 		Slide changelogSlide = new Slide(skin, "Changelog").addLabel(changelogText);
 		return new SlideStage(viewport, Collections.singletonList(changelogSlide),
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
 				camera, skin);
 	}
 

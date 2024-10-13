@@ -6,6 +6,7 @@ A medieval strategy game with countless unique and challenging levels. You play 
 [![Google Play](https://img.shields.io/static/v1?label=Google&message=Play&color=306bc0&logo=google-play)](https://play.google.com/store/apps/details?id=de.sesu8642.feudaltactics)
 [![itch.io](https://img.shields.io/static/v1?label=itch.io&message=Feudal%20Tactics&color=306bc0&logo=itch.io)](https://sesu8642.itch.io/feudal-tactics)
 [![Flathub](https://img.shields.io/flathub/v/de.sesu8642.feudaltactics?&color=306bc0&logo=flathub)](https://flathub.org/apps/details/de.sesu8642.feudaltactics)
+[![Matrix Community](https://img.shields.io/badge/Matrix-Community-blue?logo=matrix)](https://matrix.to/#/#feudal-tactics-community:matrix.org)
 
 ![Ingame Screenshot](metadata/en-US/images/sevenInchScreenshots/1.png)
 

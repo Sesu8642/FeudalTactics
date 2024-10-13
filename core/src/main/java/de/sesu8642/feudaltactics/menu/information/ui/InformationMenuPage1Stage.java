@@ -24,19 +24,18 @@ import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
- * Stage for the information menu section.
+ * Stage for the information menu section. First page.
  */
 @Singleton
-public class InformationMenuStage extends MenuStage {
+public class InformationMenuPage1Stage extends MenuStage {
 
-	private static final List<String> BUTTON_TEXTS = ImmutableList.of("About", "Changelog", "Dependency Licenses",
-			"Privacy Policy", "Report Crash", "Back");
+	private static final List<String> BUTTON_TEXTS = List.of("About", "Community (Matrix)", "Report Crash", "Page 2", "Back");
 
 	/**
 	 * Constructor. See {@link MenuStage#MenuStage}
 	 */
 	@Inject
-	public InformationMenuStage(EventBus eventBus, @MenuViewport Viewport viewport,
+	public InformationMenuPage1Stage(EventBus eventBus, @MenuViewport Viewport viewport,
 			@MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
 			@VersionProperty String gameVersion) {
 		super(viewport, BUTTON_TEXTS, camera, mapRenderer, skin);
