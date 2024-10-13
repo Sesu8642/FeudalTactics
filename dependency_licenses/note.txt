@@ -1,3 +1,3 @@
 - view the dependency tree using: ./gradlew core:dependencies
-- same for desktop, android
+- same for lwjgl3, android
 - annotationProcessor and lintClassPath sections are not included because their code does not end up the binaries as far as I can tell

@@ -27,8 +27,11 @@ dependencies {
 
   implementation 'org.slf4j:slf4j-jdk14:2.0.6'
 
-  implementation 'com.github.raeleus.stripe:freetype:2.0.0'
-
+  implementation('com.github.raeleus.stripe:freetype:2.0.0') {
+      // looks like this is not needed for what we do 
+	  exclude group:"com.github.tommyettinger", module: "regexodus"
+  }
+  
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
@@ -67,8 +70,10 @@ processResources {
 			license_texts += "\n" + dirDetails.file.name
 			license_texts += "\n" + "-".multiply(dirDetails.file.name.length() * 1.2)
 			fileTree(dir: dirDetails.file.path).visit { FileVisitDetails fileDetails -> 
-				license_texts += "\n\n" + fileDetails.file.name
-				license_texts += "\n" + fileDetails.file.text
+				if (!fileDetails.isDirectory()) {
+					license_texts += "\n\n" + fileDetails.file.name
+					license_texts += "\n" + fileDetails.file.text
+				}
 			}
 		}
 	}
