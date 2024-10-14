@@ -29,18 +29,22 @@
     <screenshot type="default">
       <image>
         https://raw.githubusercontent.com/sesu8642/FeudalTactics/master/metadata/en-US/images/featureGraphic.png</image>
+      <caption>Feature graphic</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/sesu8642/FeudalTactics/master/metadata/en-US/images/sevenInchScreenshots/1.png</image>
+      <caption>In-game screenshot of a game that was recently started</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/sesu8642/FeudalTactics/master/metadata/en-US/images/sevenInchScreenshots/2.png</image>
+      <caption>In-game screenshot of the map generation screen</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/sesu8642/FeudalTactics/master/metadata/en-US/images/sevenInchScreenshots/3.png</image>
+      <caption>In-game screenshot of a game after a few rounds</caption>
     </screenshot>
   </screenshots>
 
