@@ -35,7 +35,7 @@ public class SplashScreenStage extends MenuStage {
 	public SplashScreenStage(@MenuViewport Viewport viewport, @MenuBackgroundCamera OrthographicCamera camera,
 			MainMenuScreen mainMenuScreen, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
 		// using a menu stage without buttons here
-		super(viewport, List.of(), camera, mapRenderer, skin);
+		super(viewport, ImmutableList.of(), camera, mapRenderer, skin);
 		Label bottomRightLabel = new Label("By Sesu8642", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		getBottomRightTable().add(bottomRightLabel);
 	}

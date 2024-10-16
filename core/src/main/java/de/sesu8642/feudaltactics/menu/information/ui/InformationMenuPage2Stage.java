@@ -29,7 +29,7 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 @Singleton
 public class InformationMenuPage2Stage extends MenuStage {
 
-	private static final List<String> BUTTON_TEXTS = List.of("Changelog", "Dependency Licenses",
+	private static final List<String> BUTTON_TEXTS = ImmutableList.of("Changelog", "Dependency Licenses",
 			"Privacy Policy", "Page 1", "Back");
 
 	/**

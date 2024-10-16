@@ -30,7 +30,7 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 @Singleton
 public class IngameMenuStage extends MenuStage {
 
-	private static final List<String> BUTTON_TEXTS = List.of("Exit", "Retry", "Continue");
+	private static final List<String> BUTTON_TEXTS = ImmutableList.of("Exit", "Retry", "Continue");
 	public Label bottomRightLabel;
 	public CopyButton copyButton;
 
