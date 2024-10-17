@@ -5,10 +5,11 @@ Many thanks to Sean O'Connor for his game Slay which this game is heavily inspir
 
 Many thanks to Amit Patel for his guide to hexagonal grids on redblobgames.com!
 
-Assets
+
+Skin
 ======
 
-Pixthulhu UI Ver. 1
+based on Pixthulhu UI Ver. 1
 
 Created by Raymond "Raeleus" Buckley
 Visit ray3k.wordpress.com for games, tutorials, and much more!git res
