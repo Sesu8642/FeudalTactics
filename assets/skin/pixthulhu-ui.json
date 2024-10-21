@@ -92,7 +92,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'\n"
 	}
 	Headline: {
 		font: FreeSansBold.ttf
@@ -115,7 +115,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'\n"
 	}
 	Overlay: {
 		font: FreeSans.ttf
@@ -139,7 +139,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'\n"
 	}
 	SmallerText: {
 		font: FreeSans.ttf
@@ -162,7 +162,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'\n"
 	}
 	Text: {
 		font: FreeSans.ttf
@@ -186,7 +186,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]!?=+-.;_/\\*~#\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'\n"
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
