@@ -92,7 +92,7 @@ public class TutorialSlideFactory {
 	}
 
 	private Slide createTutorialSlide7() {
-		String text = "The user interface contains the following elements:\n1. Finaces of the selected kingdom. (income in brackets)\n2. Selected kingdom: outlined in white; tiles that can be conquered outlined in red\n3. Picked up object\n4. Pause\n5. Undo action\n6. Buy Peasant for 10 coins\n7. Buy castle for 15 coins\n8. End turn";
+		String text = "The user interface contains the following elements:\n1. Turn indicator: displays the color of the player whose turn it currently is. \n2. Finaces of the selected kingdom. (income in brackets)\n3. Selected kingdom: outlined in white; tiles that can be conquered outlined in red\n4. Picked up object\n5. Pause\n6. Undo action\n7. Buy Peasant for 10 coins\n8. Buy castle for 15 coins\n9. End turn";
 		String imagePath = "tutorial_ui.png";
 		String text2 = "There are several shortcuts available:\n- undo move: Android or mouse back button\n- buy peasant: right mouse button click\n- buy and place peasant in own kingdom: double tap/click\n- buy castle: middle mouse button click\n- buy and place castle: long press/click";
 		return new Slide(skin, HEADLINE).addLabel(text).addImage(imagePath).addLabel(text2);
