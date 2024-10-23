@@ -2,7 +2,7 @@ Feudal Tactics 1.3.0
 
 Join the new Feudal Tactics Community on Matrix! See Information menu.
 
-This update brings several new features and QOL improvements. Highlights include:
+This update brings several new features and improvements. Highlights include:
 - changed game rule: combining two spearmen is now possible
 - the seed can now be copied and pasted easily
 - new option to choose the starting position and color
