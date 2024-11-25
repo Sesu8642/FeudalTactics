@@ -2,30 +2,17 @@
 
 package de.sesu8642.feudaltactics.menu.information.dagger;
 
-import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Singleton;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.eventbus.EventBus;
-import com.google.common.io.Resources;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
-import de.sesu8642.feudaltactics.exceptions.InitializationException;
-import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
-import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
-import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
-import de.sesu8642.feudaltactics.menu.common.ui.Slide;
-import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 
 /** Dagger module for the information sub-menu and its items. */
 @Module
@@ -39,33 +26,34 @@ public class InformationMenuDaggerModule {
 	@Provides
 	@Singleton
 	@DependencyLicenses
-	static String provideDependencyLicensesText() {
-		try {
-			URL url = Resources.getResource("licenses.txt");
-			return Resources.toString(url, StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			throw new InitializationException("Dependency licenses cannot be read!", e);
+	static Map<String, Map<String, String>> provideDependencyLicenses() {
+		FileHandle assetsFileHandle = Gdx.files.internal("assets.txt");
+		String assetListText = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
+		String[] assets = assetListText.split("\n");
+		// outer map key: dependency name, inner map key: file name, outer map value:
+		// file contents
+		Map<String, Map<String, String>> result = new HashMap<>();
+		for (int i = 0; i < assets.length; i++) {
+			String assetPath = assets[i];
+			if (!assetPath.startsWith("dependency_licenses/")) {
+				continue;
+			}
+			String[] pathParts = assetPath.split("/");
+			String fileName = pathParts[pathParts.length - 1];
+			StringBuilder dependencyNameBuilder = new StringBuilder();
+			for (int j = 1; j < pathParts.length - 1; j++) {
+				if (dependencyNameBuilder.length() > 0) {
+					dependencyNameBuilder.append(" - ");
+				}
+				dependencyNameBuilder.append(pathParts[j]);
+			}
+			String dependencyName = dependencyNameBuilder.toString();
+			FileHandle fileHandle = Gdx.files.internal(assetPath);
+			String fileContents = fileHandle.readString(StandardCharsets.UTF_8.name());
+			result.putIfAbsent(dependencyName, new HashMap<>());
+			result.get(dependencyName).put(fileName, fileContents);
 		}
-	}
-
-	@Provides
-	@Singleton
-	@DependencyLicensesStage
-	static SlideStage provideDependencyLicensesStage(EventBus eventBus, @MenuViewport Viewport viewport,
-			@DependencyLicenses String dependencyLicensesText, @MenuBackgroundCamera OrthographicCamera camera,
-			Skin skin) {
-		Slide licenseSlide = new Slide(skin, "Dependency Licenses").addLabel(dependencyLicensesText);
-		return new SlideStage(viewport, Collections.singletonList(licenseSlide),
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
-				camera, skin);
-	}
-
-	@Provides
-	@Singleton
-	@DependencyLicensesScreen
-	static GameScreen provideDependencyLicensesScreen(@MenuCamera OrthographicCamera camera,
-			@MenuViewport Viewport viewport, @DependencyLicensesStage SlideStage dependencyLicensesStage) {
-		return new GameScreen(camera, viewport, dependencyLicensesStage);
+		return result;
 	}
 
 }

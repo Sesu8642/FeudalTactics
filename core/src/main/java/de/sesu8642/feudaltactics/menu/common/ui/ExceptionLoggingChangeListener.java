@@ -19,6 +19,11 @@ public class ExceptionLoggingChangeListener implements EventListener {
 
 	private final Runnable listener;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param listener runnable to be executed on change
+	 */
 	public ExceptionLoggingChangeListener(Runnable listener) {
 		this.listener = listener;
 	}

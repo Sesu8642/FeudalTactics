@@ -74,10 +74,13 @@ public class GameScreen implements Screen {
 		activeStage.dispose();
 	}
 
+	/**
+	 * Switches to a new stage. Doesn't set it as the active InputProcessor.
+	 */
 	protected void setActiveStage(ResizableResettableStage activeStage) {
 		this.activeStage = activeStage;
 	}
-
+	
 	public ResizableResettableStage getActiveStage() {
 		return activeStage;
 	}

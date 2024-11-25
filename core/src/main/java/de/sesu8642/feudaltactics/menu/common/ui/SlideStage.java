@@ -35,6 +35,7 @@ public class SlideStage extends ResizableResettableStage {
 	private Table currentSlide;
 	private TextButton backButton;
 	private TextButton nextButton;
+	private ScrollPane scrollPane;
 	private Container<Table> slideContainer = new Container<>();
 	private Runnable finishedCallback;
 
@@ -91,7 +92,7 @@ public class SlideStage extends ResizableResettableStage {
 
 		Stack slideAreaStack = new Stack(backgroundArea, slideContainer);
 
-		ScrollPane scrollPane = new ScrollPane(slideAreaStack, skin);
+		scrollPane = new ScrollPane(slideAreaStack, skin);
 		scrollPane.setFadeScrollBars(false);
 		scrollPane.setOverscroll(false, false);
 
@@ -149,6 +150,7 @@ public class SlideStage extends ResizableResettableStage {
 		nextButton.setText(nextButtonText);
 		currentSlide = slides.get(0);
 		slideContainer.setActor(currentSlide);
+		scrollPane.setScrollY(0);
 	}
 
 	@Override
@@ -178,5 +180,5 @@ public class SlideStage extends ResizableResettableStage {
 	public void setFinishedCallback(Runnable finishedCallback) {
 		this.finishedCallback = finishedCallback;
 	}
-
+	
 }

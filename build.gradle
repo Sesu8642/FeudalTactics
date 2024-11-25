@@ -50,9 +50,14 @@ configure(subprojects - project(':android')) {
     // iterate through all files inside that folder
     // convert it to a relative path
     // and append it to the file assets.txt
-    fileTree(assetsFolder).collect { assetsFolder.relativePath(it) }.each {
-      assetsFile.append(it + "\n")
-    }
+
+    // customization: using a different method that doesn't resolve symlinks 
+    fileTree(assetsFolder).visit { FileVisitDetails visitDetails -> 
+		if (!visitDetails.directory) {
+		assetsFile.append(visitDetails.relativePath + "\n")
+		}
+	}
+    
   }
   processResources.dependsOn 'generateAssetList'
 

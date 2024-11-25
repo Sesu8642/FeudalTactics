@@ -59,27 +59,6 @@ processResources {
 	duplicatesStrategy = "exclude"
 }
 
-// build license info text file
-	def license_texts = ''
-	// read prefix text
-	license_texts += file('../dependency_licenses/licenses_pre.txt').text
-	// iterate directories containing the dependency licenses
-	def base_dir = file("../dependency_licenses")
-	fileTree(dir: "../dependency_licenses").visit { FileVisitDetails dirDetails -> 
-		if (dirDetails.directory) {
-			license_texts += "\n" + dirDetails.file.name
-			license_texts += "\n" + "-".multiply(dirDetails.file.name.length() * 1.2)
-			fileTree(dir: dirDetails.file.path).visit { FileVisitDetails fileDetails -> 
-				if (!fileDetails.isDirectory()) {
-					license_texts += "\n\n" + fileDetails.file.name
-					license_texts += "\n" + fileDetails.file.text
-				}
-			}
-		}
-	}
-	// write the result
-	new File("$resources_dest_path/licenses.txt").text = license_texts
-	
 // build full changelog
 	def changelog_dir = "../metadata/en-US/changelogs/"
 	def changelog = ''

@@ -19,6 +19,7 @@ public class Slide {
 	private static final float MAX_RESPONSIVE_IMAGE_WIDTH = Gdx.graphics.getDensity() * 1500F;
 
 	private Skin skin;
+	private Label headlineLabel;
 	private Table table = new Table();
 
 	/**
@@ -36,7 +37,7 @@ public class Slide {
 		// adding the headline is a hack needed because the slide would get a width of 0
 		// if the the label does not need to wrap (bug?)
 		Table hackTable = new Table();
-		Label headlineLabel = new Label(headline, skin.get(SkinConstants.FONT_HEADLINE, LabelStyle.class));
+		headlineLabel = new Label(headline, skin.get(SkinConstants.FONT_HEADLINE, LabelStyle.class));
 		hackTable.add(headlineLabel);
 		table.add(hackTable);
 		table.row();
@@ -95,6 +96,13 @@ public class Slide {
 
 	public Table getTable() {
 		return table;
+	}
+	
+	/**
+	 * Setter for the headline.
+	 */
+	public void setHeadline(String headline) {
+		headlineLabel.setText(headline);
 	}
 
 }
