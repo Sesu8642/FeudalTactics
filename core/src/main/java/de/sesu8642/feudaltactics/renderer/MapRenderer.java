@@ -40,6 +40,14 @@ import de.sesu8642.feudaltactics.lib.gamestate.Unit;
  */
 public class MapRenderer {
 
+	/**
+	 * If the stateTime reaches this value, it will be reduced by this value.
+	 * The reason is that the stateTime must stay relatively small because of float limitations.
+	 * See https://github.com/libgdx/libgdx/issues/7536.
+	 * The subtracted amount must be a multiple of the animation duration.
+	 * Equal to one day in seconds.
+	 */
+	private static final float STATE_TIME_THRESHOLD = 24 * 60 * 60f;
 	public static final float SPRITE_SIZE_MULTIPLIER = 1.05F;
 	public static final float LINE_EXTENSION = 0.14F;
 	public static final float WATER_TILE_SIZE = 12;
@@ -379,7 +387,7 @@ public class MapRenderer {
 		HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
 		HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
 		spriteBatch.setProjectionMatrix(camera.combined);
-		stateTime += Gdx.graphics.getDeltaTime();
+		updateStateTime(Gdx.graphics.getDeltaTime());
 		// get the correct frames
 		for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
 			frames.put(content.getKey(), (content.getValue()).getKeyFrame(stateTime, true));
@@ -631,14 +639,23 @@ public class MapRenderer {
 		camera.update();
 	}
 
+	/**
+	 * See {@link MapRenderer#STATE_TIME_THRESHOLD}
+	 */
+	private void updateStateTime(float delta) {
+		stateTime += delta;
+		if (stateTime >= STATE_TIME_THRESHOLD) {
+			stateTime -= STATE_TIME_THRESHOLD;
+		}
+	}
+	
+	/**
+	 * Disposes all the disposables used.
+	 */
 	public void dispose() {
 		spriteBatch.dispose();
 	}
-
-	public void resize() {
-		spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, HEXTILE_WIDTH, HEXTILE_HEIGHT);
-	}
-
+		
 	private class DrawTile {
 		Vector2 mapCoords;
 		Color color;
