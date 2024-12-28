@@ -2,20 +2,18 @@
 
 package de.sesu8642.feudaltactics.menu.information.ui;
 
-import java.util.Arrays;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Collections;
 
 /**
  * {@link Stage} that displays all the dependencies. Clicking them should open
@@ -24,16 +22,16 @@ import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 @Singleton
 public class DependencyLicensesStage extends SlideStage {
 
-	final DependencyListSlide dependencyListSlide;
+    final DependencyListSlide dependencyListSlide;
 
-	/**
-	 * Constructor.
-	 */
-	@Inject
-	public DependencyLicensesStage(EventBus eventBus, DependencyListSlide dependencyListSlide,
-			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
-		super(viewport, Arrays.asList(dependencyListSlide), camera, skin);
-		this.dependencyListSlide = dependencyListSlide;
-	}
+    /**
+     * Constructor.
+     */
+    @Inject
+    public DependencyLicensesStage(EventBus eventBus, DependencyListSlide dependencyListSlide,
+                                   @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
+        super(viewport, Collections.singletonList(dependencyListSlide), camera, skin);
+        this.dependencyListSlide = dependencyListSlide;
+    }
 
 }

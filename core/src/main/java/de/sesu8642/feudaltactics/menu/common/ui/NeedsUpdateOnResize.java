@@ -8,6 +8,6 @@ package de.sesu8642.feudaltactics.menu.common.ui;
  */
 public interface NeedsUpdateOnResize {
 
-	void updateOnResize(int width, int height);
+    void updateOnResize(int width, int height);
 
 }

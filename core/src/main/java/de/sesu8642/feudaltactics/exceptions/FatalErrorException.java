@@ -8,26 +8,26 @@ package de.sesu8642.feudaltactics.exceptions;
  **/
 public class FatalErrorException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public FatalErrorException() {
-		super();
-	}
+    public FatalErrorException() {
+        super();
+    }
 
-	public FatalErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    public FatalErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 
-	public FatalErrorException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public FatalErrorException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public FatalErrorException(String message) {
-		super(message);
-	}
+    public FatalErrorException(String message) {
+        super(message);
+    }
 
-	public FatalErrorException(Throwable cause) {
-		super(cause);
-	}
+    public FatalErrorException(Throwable cause) {
+        super(cause);
+    }
 
 }

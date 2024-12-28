@@ -2,12 +2,13 @@
 
 package de.sesu8642.feudaltactics.menu.about.dagger;
 
+import javax.inject.Qualifier;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import javax.inject.Qualifier;
-
-/** Binding annotation. **/
+/**
+ * Binding annotation.
+ **/
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AboutScreen {

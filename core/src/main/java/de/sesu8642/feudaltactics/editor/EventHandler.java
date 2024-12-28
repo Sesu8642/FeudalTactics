@@ -2,35 +2,36 @@
 
 package de.sesu8642.feudaltactics.editor;
 
-import javax.inject.Inject;
-
 import com.google.common.eventbus.Subscribe;
-
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 
-/** Handles events (except key/tap inputs). **/
+import javax.inject.Inject;
+
+/**
+ * Handles events (except key/tap inputs).
+ **/
 public class EventHandler {
 
-	private EditorController editorController;
+    private final EditorController editorController;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param editorController editor controller
-	 */
-	@Inject
-	public EventHandler(EditorController editorController) {
-		this.editorController = editorController;
-	}
+    /**
+     * Constructor.
+     *
+     * @param editorController editor controller
+     */
+    @Inject
+    public EventHandler(EditorController editorController) {
+        this.editorController = editorController;
+    }
 
-	/**
-	 * Event handler for map re-generation events.
-	 * 
-	 * @param event event to handle
-	 */
-	@Subscribe
-	public void handleRegenerateMap(RegenerateMapEvent event) {
-		editorController.generateEmptyGameState();
-	}
+    /**
+     * Event handler for map re-generation events.
+     *
+     * @param event event to handle
+     */
+    @Subscribe
+    public void handleRegenerateMap(RegenerateMapEvent event) {
+        editorController.generateEmptyGameState();
+    }
 
 }

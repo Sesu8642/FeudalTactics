@@ -2,19 +2,21 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
-/** Everything that can be the content of a tile is a map object. **/
+/**
+ * Everything that can be the content of a tile is a map object.
+ **/
 public interface MapObject {
 
-	String getSpriteName();
+    String getSpriteName();
 
-	/**
-	 * Getter for strength.
-	 * 
-	 * @return The strength of this object which determines the capability of the
-	 *         object to protect or attack in combat.
-	 */
-	int getStrength();
+    /**
+     * Getter for strength.
+     *
+     * @return The strength of this object which determines the capability of the
+     * object to protect or attack in combat.
+     */
+    int getStrength();
 
-	MapObject getCopy();
+    MapObject getCopy();
 
 }

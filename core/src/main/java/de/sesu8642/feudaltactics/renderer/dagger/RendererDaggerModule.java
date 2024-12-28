@@ -2,41 +2,42 @@
 
 package de.sesu8642.feudaltactics.renderer.dagger;
 
-import javax.inject.Singleton;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 import dagger.Module;
 import dagger.Provides;
 
-/** Dagger module for rendering. */
+import javax.inject.Singleton;
+
+/**
+ * Dagger module for rendering.
+ */
 @Module
 public class RendererDaggerModule {
 
-	private RendererDaggerModule() {
-		// prevent instantiation
-		throw new AssertionError();
-	}
+    private RendererDaggerModule() {
+        // prevent instantiation
+        throw new AssertionError();
+    }
 
-	// the actual renderers are created in the modules where they are used
+    // the actual renderers are created in the modules where they are used
 
-	@Provides
-	@Singleton
-	static TextureAtlas provideTextureAtlas() {
-		return new TextureAtlas(Gdx.files.internal("textures.atlas"));
-	}
+    @Provides
+    @Singleton
+    static TextureAtlas provideTextureAtlas() {
+        return new TextureAtlas(Gdx.files.internal("textures.atlas"));
+    }
 
-	@Provides
-	static ShapeRenderer provideShapeRenderer() {
-		return new ShapeRenderer();
-	}
+    @Provides
+    static ShapeRenderer provideShapeRenderer() {
+        return new ShapeRenderer();
+    }
 
-	@Provides
-	static SpriteBatch provideSpriteBatch() {
-		return new SpriteBatch();
-	}
+    @Provides
+    static SpriteBatch provideSpriteBatch() {
+        return new SpriteBatch();
+    }
 
 }

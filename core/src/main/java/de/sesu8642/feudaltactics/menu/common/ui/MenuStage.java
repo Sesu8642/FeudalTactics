@@ -2,120 +2,115 @@
 
 package de.sesu8642.feudaltactics.menu.common.ui;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Value;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Generic {@link Stage} for displaying an in-game menu.
  */
 public class MenuStage extends ResizableResettableStage {
 
-	private Table rootTable;
-	private List<TextButton> buttons = new ArrayList<>();
-	private Table bottomLeftTable;
-	private Table bottomRightTable;
-	Set<Disposable> disposables = new HashSet<>();
-	private MapRenderer mapRenderer;
-	private Skin skin;
-	private OrthographicCamera camera;
+    private final List<TextButton> buttons = new ArrayList<>();
+    private final MapRenderer mapRenderer;
+    private final Skin skin;
+    private final OrthographicCamera camera;
+    Set<Disposable> disposables = new HashSet<>();
+    private Table rootTable;
+    private Table bottomLeftTable;
+    private Table bottomRightTable;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param viewport    viewport for the stage
-	 * @param camera      camera to use
-	 * @param mapRenderer renderer for the sea background
-	 * @param skin        game skin
-	 */
-	public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera, MapRenderer mapRenderer,
-			Skin skin) {
-		super(viewport);
-		this.camera = camera;
-		this.mapRenderer = mapRenderer;
-		this.skin = skin;
-		initUi(buttonTexts);
-	}
+    /**
+     * Constructor.
+     *
+     * @param viewport    viewport for the stage
+     * @param camera      camera to use
+     * @param mapRenderer renderer for the sea background
+     * @param skin        game skin
+     */
+    public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera, MapRenderer mapRenderer,
+                     Skin skin) {
+        super(viewport);
+        this.camera = camera;
+        this.mapRenderer = mapRenderer;
+        this.skin = skin;
+        initUi(buttonTexts);
+    }
 
-	private void initUi(List<String> buttonTexts) {
-		Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
-		disposables.add(logoTexture);
-		for (String buttonText : buttonTexts) {
-			TextButton button = new TextButton(buttonText, skin);
-			buttons.add(button);
-		}
-		bottomLeftTable = new Table();
-		bottomRightTable = new Table();
+    private void initUi(List<String> buttonTexts) {
+        Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
+        disposables.add(logoTexture);
+        for (String buttonText : buttonTexts) {
+            TextButton button = new TextButton(buttonText, skin);
+            buttons.add(button);
+        }
+        bottomLeftTable = new Table();
+        bottomRightTable = new Table();
 
-		rootTable = new Table();
-		rootTable.setFillParent(true);
-		rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
-		Image logo = new Image(logoTexture);
-		rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).minHeight(150).width(Value.percentHeight(1.91F));
-		rootTable.row();
-		rootTable.defaults().minHeight(100).pad(5);
-		for (TextButton button : buttons) {
-			rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
-			rootTable.row();
-		}
-		rootTable.row();
-		rootTable.add(bottomLeftTable).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
-		rootTable.add(bottomRightTable).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
+        rootTable = new Table();
+        rootTable.setFillParent(true);
+        rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
+        Image logo = new Image(logoTexture);
+        rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).minHeight(150).width(Value.percentHeight(1.91F));
+        rootTable.row();
+        rootTable.defaults().minHeight(100).pad(5);
+        for (TextButton button : buttons) {
+            rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
+            rootTable.row();
+        }
+        rootTable.row();
+        rootTable.add(bottomLeftTable).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
+        rootTable.add(bottomRightTable).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 
-		this.addActor(rootTable);
-	}
+        this.addActor(rootTable);
+    }
 
-	public List<TextButton> getButtons() {
-		return buttons;
-	}
+    public List<TextButton> getButtons() {
+        return buttons;
+    }
 
-	protected Table getBottomLeftTable() {
-		return bottomLeftTable;
-	}
+    protected Table getBottomLeftTable() {
+        return bottomLeftTable;
+    }
 
-	protected Table getBottomRightTable() {
-		return bottomRightTable;
-	}
+    protected Table getBottomRightTable() {
+        return bottomRightTable;
+    }
 
-	@Override
-	public void updateOnResize(int width, int height) {
-		rootTable.pack();
-		camera.viewportHeight = height;
-		camera.viewportWidth = width;
-		camera.update();
-	}
+    @Override
+    public void updateOnResize(int width, int height) {
+        rootTable.pack();
+        camera.viewportHeight = height;
+        camera.viewportWidth = width;
+        camera.update();
+    }
 
-	@Override
-	public void draw() {
-		mapRenderer.render();
-		super.draw();
-	}
+    @Override
+    public void draw() {
+        mapRenderer.render();
+        super.draw();
+    }
 
-	@Override
-	public void dispose() {
-		super.dispose();
-		for (Disposable disposable : disposables) {
-			disposable.dispose();
-		}
-	}
+    @Override
+    public void dispose() {
+        super.dispose();
+        for (Disposable disposable : disposables) {
+            disposable.dispose();
+        }
+    }
 
-	@Override
-	public void reset() {
-		// nothing to reset
-	}
+    @Override
+    public void reset() {
+        // nothing to reset
+    }
 }

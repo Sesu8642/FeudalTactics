@@ -10,12 +10,12 @@ import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
  */
 class TileScoreInfo {
 
-	public final HexTile tile;
-	public final int score;
+    public final HexTile tile;
+    public final int score;
 
-	public TileScoreInfo(HexTile tile, int score) {
-		this.tile = tile;
-		this.score = score;
-	}
+    public TileScoreInfo(HexTile tile, int score) {
+        this.tile = tile;
+        this.score = score;
+    }
 
 }

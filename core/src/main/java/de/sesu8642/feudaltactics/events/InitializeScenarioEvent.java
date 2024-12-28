@@ -10,35 +10,35 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
  */
 public class InitializeScenarioEvent {
 
-	private Intelligence botIntelligence;
-	private ScenarioMap scenarioMap;
+    private Intelligence botIntelligence;
+    private ScenarioMap scenarioMap;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param botIntelligence bot intelligence
-	 * @param scenarioMap     map to be loaded
-	 */
-	public InitializeScenarioEvent(Intelligence botIntelligence, ScenarioMap scenarioMap) {
-		super();
-		this.botIntelligence = botIntelligence;
-		this.scenarioMap = scenarioMap;
-	}
+    /**
+     * Constructor.
+     *
+     * @param botIntelligence bot intelligence
+     * @param scenarioMap     map to be loaded
+     */
+    public InitializeScenarioEvent(Intelligence botIntelligence, ScenarioMap scenarioMap) {
+        super();
+        this.botIntelligence = botIntelligence;
+        this.scenarioMap = scenarioMap;
+    }
 
-	public Intelligence getBotIntelligence() {
-		return botIntelligence;
-	}
+    public Intelligence getBotIntelligence() {
+        return botIntelligence;
+    }
 
-	public void setBotIntelligence(Intelligence botIntelligence) {
-		this.botIntelligence = botIntelligence;
-	}
+    public void setBotIntelligence(Intelligence botIntelligence) {
+        this.botIntelligence = botIntelligence;
+    }
 
-	public ScenarioMap getScenarioMap() {
-		return scenarioMap;
-	}
+    public ScenarioMap getScenarioMap() {
+        return scenarioMap;
+    }
 
-	public void setScenarioMap(ScenarioMap scenarioMap) {
-		this.scenarioMap = scenarioMap;
-	}
+    public void setScenarioMap(ScenarioMap scenarioMap) {
+        this.scenarioMap = scenarioMap;
+    }
 
 }

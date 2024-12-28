@@ -7,12 +7,12 @@ package de.sesu8642.feudaltactics.events;
  */
 public class CenterMapUIEvent {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param gameState game state to be centered
-	 */
-	public CenterMapUIEvent() {
-	}
+    /**
+     * Constructor.
+     *
+     * @param gameState game state to be centered
+     */
+    public CenterMapUIEvent() {
+    }
 
 }

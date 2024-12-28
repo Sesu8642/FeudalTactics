@@ -12,113 +12,115 @@ import java.util.Objects;
  **/
 public class Unit implements MapObject {
 
-	public static final int COST = 10;
+    public static final int COST = 10;
 
-	private boolean canAct = true;
-	private UnitTypes unitType;
+    private boolean canAct = true;
+    private UnitTypes unitType;
 
-	/** Type of a unit determining its strength and sprite. **/
-	public enum UnitTypes {
-		PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"), BARON(4, 54, "baron");
+    // only for deserialization
+    @Deprecated
+    public Unit() {
+        super();
+    }
 
-		private int strength;
-		private int salary;
-		private String spriteName;
+    public Unit(UnitTypes unitType) {
+        super();
+        this.unitType = unitType;
+    }
 
-		UnitTypes(int strength, int salary, String spriteName) {
-			this.strength = strength;
-			this.salary = salary;
-			this.spriteName = spriteName;
-		}
+    @Override
+    public String getSpriteName() {
+        return unitType.spriteName();
+    }
 
-		public int strength() {
-			return strength;
-		}
+    public UnitTypes getUnitType() {
+        return unitType;
+    }
 
-		public int salary() {
-			return salary;
-		}
+    @Override
+    public int getStrength() {
+        return unitType.strength();
+    }
 
-		public String spriteName() {
-			return spriteName;
-		}
+    public boolean isCanAct() {
+        return canAct;
+    }
 
-		public static UnitTypes ofStrength(int strength) {
-			return Arrays.stream(UnitTypes.values()).filter(unitType -> unitType.strength() == strength).findAny()
-					.orElseThrow(() -> new AssertionError("Cannot find unit with requested strength " + strength));
-		}
+    public void setCanAct(boolean canAct) {
+        this.canAct = canAct;
+    }
 
-		public static UnitTypes strongest() {
-			return UnitTypes.BARON;
-		}
-	}
+    @Override
+    public Unit getCopy() {
+        Unit newUnit = new Unit(this.getUnitType());
+        newUnit.setCanAct(this.canAct);
+        return newUnit;
+    }
 
-	// only for deserialization
-	@Deprecated
-	public Unit() {
-		super();
-	}
+    @Override
+    public String toString() {
+        String superStr = super.toString();
+        return superStr + ", Type: " + unitType.toString() + ", CanAct: " + canAct;
+    }
 
-	public Unit(UnitTypes unitType) {
-		super();
-		this.unitType = unitType;
-	}
+    @Override
+    public int hashCode() {
+        // calculating with enum strings because the hashcode must be consistent across
+        // runs
+        return Objects.hash(canAct, unitType.toString());
+    }
 
-	@Override
-	public String getSpriteName() {
-		return unitType.spriteName();
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Unit other = (Unit) obj;
+        return canAct == other.canAct && unitType == other.unitType;
+    }
 
-	public UnitTypes getUnitType() {
-		return unitType;
-	}
+    /**
+     * Type of a unit determining its strength and sprite.
+     **/
+    public enum UnitTypes {
+        PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"), BARON(4, 54, "baron");
 
-	@Override
-	public int getStrength() {
-		return unitType.strength();
-	}
+        private final int strength;
+        private final int salary;
+        private final String spriteName;
 
-	public boolean isCanAct() {
-		return canAct;
-	}
+        UnitTypes(int strength, int salary, String spriteName) {
+            this.strength = strength;
+            this.salary = salary;
+            this.spriteName = spriteName;
+        }
 
-	public void setCanAct(boolean canAct) {
-		this.canAct = canAct;
-	}
+        public static UnitTypes ofStrength(int strength) {
+            return Arrays.stream(UnitTypes.values()).filter(unitType -> unitType.strength() == strength).findAny()
+                    .orElseThrow(() -> new AssertionError("Cannot find unit with requested strength " + strength));
+        }
 
-	@Override
-	public Unit getCopy() {
-		Unit newUnit = new Unit(this.getUnitType());
-		newUnit.setCanAct(this.canAct);
-		return newUnit;
-	}
+        public static UnitTypes strongest() {
+            return UnitTypes.BARON;
+        }
 
-	@Override
-	public String toString() {
-		String superStr = super.toString();
-		return superStr + ", Type: " + unitType.toString() + ", CanAct: " + canAct;
-	}
+        public int strength() {
+            return strength;
+        }
 
-	@Override
-	public int hashCode() {
-		// calculating with enum strings because the hashcode must be consistent across
-		// runs
-		return Objects.hash(canAct, unitType.toString());
-	}
+        public int salary() {
+            return salary;
+        }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		Unit other = (Unit) obj;
-		return canAct == other.canAct && unitType == other.unitType;
-	}
+        public String spriteName() {
+            return spriteName;
+        }
+    }
 
 }

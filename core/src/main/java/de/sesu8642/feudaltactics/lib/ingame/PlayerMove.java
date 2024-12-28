@@ -9,82 +9,81 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class PlayerMove {
 
-	/**
-	 * Types of possible player moves.
-	 */
-	public enum PlayerMoveType {
-		PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER, BUY_PEASANT, BUY_CASTLE, BUY_AND_PLACE_PEASANT,
-		BUY_AND_PLACE_CASTLE, ACTIVATE_KINGDOM, UNDO_LAST_MOVE, END_TURN
-	}
+    private PlayerMoveType playerMoveType;
+    private Vector2 tilePosition;
 
-	private PlayerMoveType playerMoveType;
+    private PlayerMove() {
+        // for JSON serialization only
+    }
 
-	private Vector2 tilePosition;
+    private PlayerMove(PlayerMoveType playerMoveType, Vector2 tilePosition) {
+        this.playerMoveType = playerMoveType;
+        this.tilePosition = tilePosition;
+    }
 
-	private PlayerMove() {
-		// for JSON serialization only
-	}
+    public static PlayerMove pickUp(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.PICK_UP, tilePosition);
+    }
 
-	private PlayerMove(PlayerMoveType playerMoveType, Vector2 tilePosition) {
-		this.playerMoveType = playerMoveType;
-		this.tilePosition = tilePosition;
-	}
+    public static PlayerMove placeOwn(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.PLACE_OWN, tilePosition);
+    }
 
-	public static PlayerMove pickUp(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.PICK_UP, tilePosition);
-	}
+    public static PlayerMove combineUnits(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.COMBINE_UNITS, tilePosition);
+    }
 
-	public static PlayerMove placeOwn(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.PLACE_OWN, tilePosition);
-	}
+    public static PlayerMove conquer(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.CONQUER, tilePosition);
+    }
 
-	public static PlayerMove combineUnits(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.COMBINE_UNITS, tilePosition);
-	}
+    public static PlayerMove buyPeasant() {
+        return new PlayerMove(PlayerMoveType.BUY_PEASANT, null);
+    }
 
-	public static PlayerMove conquer(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.CONQUER, tilePosition);
-	}
+    public static PlayerMove buyCastle() {
+        return new PlayerMove(PlayerMoveType.BUY_CASTLE, null);
+    }
 
-	public static PlayerMove buyPeasant() {
-		return new PlayerMove(PlayerMoveType.BUY_PEASANT, null);
-	}
+    public static PlayerMove buyAndPlacePeasant(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.BUY_AND_PLACE_PEASANT, tilePosition);
+    }
 
-	public static PlayerMove buyCastle() {
-		return new PlayerMove(PlayerMoveType.BUY_CASTLE, null);
-	}
+    public static PlayerMove buyAndPlaceCastle(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.BUY_AND_PLACE_CASTLE, tilePosition);
+    }
 
-	public static PlayerMove buyAndPlacePeasant(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.BUY_AND_PLACE_PEASANT, tilePosition);
-	}
+    public static PlayerMove activateKingdom(Vector2 tilePosition) {
+        return new PlayerMove(PlayerMoveType.ACTIVATE_KINGDOM, tilePosition);
+    }
 
-	public static PlayerMove buyAndPlaceCastle(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.BUY_AND_PLACE_CASTLE, tilePosition);
-	}
+    public static PlayerMove undoLastMove() {
+        return new PlayerMove(PlayerMoveType.UNDO_LAST_MOVE, null);
+    }
 
-	public static PlayerMove activateKingdom(Vector2 tilePosition) {
-		return new PlayerMove(PlayerMoveType.ACTIVATE_KINGDOM, tilePosition);
-	}
+    public static PlayerMove endTurn() {
+        return new PlayerMove(PlayerMoveType.END_TURN, null);
+    }
 
-	public static PlayerMove undoLastMove() {
-		return new PlayerMove(PlayerMoveType.UNDO_LAST_MOVE, null);
-	}
+    public PlayerMoveType getPlayerActionType() {
+        return playerMoveType;
+    }
 
-	public static PlayerMove endTurn() {
-		return new PlayerMove(PlayerMoveType.END_TURN, null);
-	}
+    public Vector2 getTilePosition() {
+        return tilePosition;
+    }
 
-	public PlayerMoveType getPlayerActionType() {
-		return playerMoveType;
-	}
+    @Override
+    public String toString() {
+        return playerMoveType + ", tilePosition=" + tilePosition;
+    }
 
-	public Vector2 getTilePosition() {
-		return tilePosition;
-	}
-
-	@Override
-	public String toString() {
-		return playerMoveType + ", tilePosition=" + tilePosition;
-	}
+    /**
+     * Types of possible player moves.
+     */
+    public enum PlayerMoveType {
+        PICK_UP, PLACE_OWN, COMBINE_UNITS, CONQUER, BUY_PEASANT, BUY_CASTLE, BUY_AND_PLACE_PEASANT,
+        BUY_AND_PLACE_CASTLE, ACTIVATE_KINGDOM, UNDO_LAST_MOVE, END_TURN
+    }
 
 }

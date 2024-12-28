@@ -2,12 +2,11 @@
 
 package de.sesu8642.feudaltactics.menu.common.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Change listener that causes a proper crash that is logged if an unexpected
@@ -15,30 +14,30 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
  */
 public class ExceptionLoggingChangeListener implements EventListener {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-	private final Runnable listener;
+    private final Runnable listener;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param listener runnable to be executed on change
-	 */
-	public ExceptionLoggingChangeListener(Runnable listener) {
-		this.listener = listener;
-	}
+    /**
+     * Constructor.
+     *
+     * @param listener runnable to be executed on change
+     */
+    public ExceptionLoggingChangeListener(Runnable listener) {
+        this.listener = listener;
+    }
 
-	@Override
-	public boolean handle(Event event) {
-		if (!(event instanceof ChangeEvent)) {
-			return false;
-		}
-		try {
-			listener.run();
-		} catch (Exception e) {
-			logger.error("an unexpected exception happened in a change listener", e);
-		}
-		return false;
-	}
+    @Override
+    public boolean handle(Event event) {
+        if (!(event instanceof ChangeEvent)) {
+            return false;
+        }
+        try {
+            listener.run();
+        } catch (Exception e) {
+            logger.error("an unexpected exception happened in a change listener", e);
+        }
+        return false;
+    }
 
 }

@@ -4,26 +4,28 @@ package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 
-/** Event: Speed of bot turns is changed. */
+/**
+ * Event: Speed of bot turns is changed.
+ */
 public class BotTurnSpeedChangedEvent {
 
-	private Speed speed;
+    private Speed speed;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param speed new speed.
-	 */
-	public BotTurnSpeedChangedEvent(Speed speed) {
-		this.speed = speed;
-	}
+    /**
+     * Constructor.
+     *
+     * @param speed new speed.
+     */
+    public BotTurnSpeedChangedEvent(Speed speed) {
+        this.speed = speed;
+    }
 
-	public Speed getSpeed() {
-		return speed;
-	}
+    public Speed getSpeed() {
+        return speed;
+    }
 
-	public void setSpeed(Speed speed) {
-		this.speed = speed;
-	}
+    public void setSpeed(Speed speed) {
+        this.speed = speed;
+    }
 
 }

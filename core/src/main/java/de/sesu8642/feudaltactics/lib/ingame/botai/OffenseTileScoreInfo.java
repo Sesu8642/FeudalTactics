@@ -10,14 +10,14 @@ import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
  */
 class OffenseTileScoreInfo {
 
-	public final HexTile tile;
-	public final int score;
-	public final int requiredStrength;
+    public final HexTile tile;
+    public final int score;
+    public final int requiredStrength;
 
-	public OffenseTileScoreInfo(HexTile tile, int score, int requiredStrength) {
-		this.tile = tile;
-		this.score = score;
-		this.requiredStrength = requiredStrength;
-	}
+    public OffenseTileScoreInfo(HexTile tile, int score, int requiredStrength) {
+        this.tile = tile;
+        this.score = score;
+        this.requiredStrength = requiredStrength;
+    }
 
 }

@@ -2,13 +2,15 @@
 
 package de.sesu8642.feudaltactics.events;
 
-/** Event: Displaying of bot turn is skipped. */
+/**
+ * Event: Displaying of bot turn is skipped.
+ */
 public class BotTurnSkippedEvent {
 
-	/**
-	 * Constructor.
-	 */
-	public BotTurnSkippedEvent() {
-	}
+    /**
+     * Constructor.
+     */
+    public BotTurnSkippedEvent() {
+    }
 
 }
