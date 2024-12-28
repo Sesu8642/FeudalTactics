@@ -298,7 +298,7 @@
     <module name="NoWhitespaceBeforeCaseDefaultColon"/>
     <module name="OverloadMethodsDeclarationOrder"/>
     <module name="ConstructorsDeclarationGrouping"/>
-    <module name="VariableDeclarationUsageDistance"/>
+    <!--module name="VariableDeclarationUsageDistance"/-->
     <!--module name="CustomImportOrder">
       <property name="sortImportsInGroupAlphabetically" value="true"/>
       <property name="separateLineBetweenGroups" value="true"/>
@@ -352,7 +352,7 @@
     <module name="JavadocParagraph">
       <property name="allowNewlineParagraph" value="false"/>
     </module>
-    <module name="RequireEmptyLineBeforeBlockTagGroup"/>
+    <!--module name="RequireEmptyLineBeforeBlockTagGroup" /-->
     <module name="AtclauseOrder">
       <property name="tagOrder" value="@param, @return, @throws, @deprecated"/>
       <property name="target"
@@ -369,7 +369,7 @@
       <property name="scope" value="protected"/>
       <property name="allowMissingPropertyJavadoc" value="true"/>
       <property name="allowedAnnotations" value="Override, Test"/>
-      <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,
+      <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF,
                                    COMPACT_CTOR_DEF"/>
     </module>
     <module name="SuppressionXpathSingleFilter">

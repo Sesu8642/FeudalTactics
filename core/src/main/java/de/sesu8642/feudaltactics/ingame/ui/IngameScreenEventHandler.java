@@ -46,7 +46,7 @@ public class IngameScreenEventHandler {
 	 */
 	@Subscribe
 	public void handleGameStart(GameStartEvent event) {
-		ingameScreen.activateStage(IngameStages.HUD);
+		Gdx.app.postRunnable(() -> ingameScreen.activateStage(IngameStages.HUD));
 	}
 
 	/**
@@ -60,9 +60,7 @@ public class IngameScreenEventHandler {
 		// the ingame screen is set in postRunnable as well and in
 		// IngameScreen#show, the parameter input stage is activated which MUST happen
 		// before this, otherwise the wrong state will be shown
-		Gdx.app.postRunnable(() -> {
-			ingameScreen.activateStage(IngameStages.HUD);
-		});
+		Gdx.app.postRunnable(() -> ingameScreen.activateStage(IngameStages.HUD));
 	}
 
 	/**

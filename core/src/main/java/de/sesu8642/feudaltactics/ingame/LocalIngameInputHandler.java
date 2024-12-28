@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.Subscribe;
 
+import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.TapInputEvent;
 import de.sesu8642.feudaltactics.events.input.BackInputEvent;
@@ -92,6 +93,16 @@ public class LocalIngameInputHandler {
 	@Subscribe
 	public void handleRegenerateMap(RegenerateMapEvent event) {
 		gameController.generateGameState(event.getBotIntelligence(), event.getMapParams());
+	}
+	
+	/**
+	 * Event handler for scenario initialization events.
+	 * 
+	 * @param event event to handle
+	 */
+	@Subscribe
+	public void handleInitializeScenario(InitializeScenarioEvent event) {
+		gameController.initializeScenario(event.getBotIntelligence(), event.getScenarioMap());
 	}
 
 	/**

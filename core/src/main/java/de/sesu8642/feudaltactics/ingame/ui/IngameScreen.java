@@ -47,13 +47,16 @@ import de.sesu8642.feudaltactics.lib.gamestate.InputValidationHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
+import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.Margin;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
@@ -80,6 +83,7 @@ public class IngameScreen extends GameScreen {
 	private final IngameMenuStage menuStage;
 
 	private final DialogFactory dialogFactory;
+	private final TutorialDialogFactory tutorialDialogFactory;
 
 	/** Cached version of the game state from the game controller. */
 	private GameState cachedGameState;
@@ -117,37 +121,39 @@ public class IngameScreen extends GameScreen {
 	/**
 	 * Constructor.
 	 * 
-	 * @param mainPrefsDao         dao for main preferences
-	 * @param newGamePrefDao       dao for new game preferences
-	 * @param ingameCamera         camera for viewing the map
-	 * @param viewport             viewport for the menus
-	 * @param menuCamera           camera for the menus
-	 * @param mapRenderer          renderer for the map
-	 * @param confirmDialogFactory factory for creating confirm dialogs
-	 * @param eventBus             event bus
-	 * @param inputProcessor       input processor for user inputs that is added to
-	 *                             the input multiplexer
-	 * @param gestureDetector      gesture detector
-	 * @param inputMultiplexer     input multiplexer that stages are added to as
-	 *                             processors
-	 * @param hudStage             stage for heads up display UI
-	 * @param menuStage            stage for the pause menu UI
-	 * @param parameterInputStage  stage for the new game parameter input UI
+	 * @param mainPrefsDao        dao for main preferences
+	 * @param newGamePrefDao      dao for new game preferences
+	 * @param ingameCamera        camera for viewing the map
+	 * @param viewport            viewport for the menus
+	 * @param menuCamera          camera for the menus
+	 * @param mapRenderer         renderer for the map
+	 * @param dialogFactory       factory for creating confirm dialogs
+	 * @param eventBus            event bus
+	 * @param inputProcessor      input processor for user inputs that is added to
+	 *                            the input multiplexer
+	 * @param gestureDetector     gesture detector
+	 * @param inputMultiplexer    input multiplexer that stages are added to as
+	 *                            processors
+	 * @param hudStage            stage for heads up display UI
+	 * @param menuStage           stage for the pause menu UI
+	 * @param parameterInputStage stage for the new game parameter input UI
 	 */
 	@Inject
 	public IngameScreen(TextureAtlas textureAtlas, MainPreferencesDao mainPrefsDao,
 			NewGamePreferencesDao newGamePrefDao, @IngameCamera OrthographicCamera ingameCamera,
 			@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
-			@IngameRenderer MapRenderer mapRenderer, DialogFactory confirmDialogFactory, EventBus eventBus,
-			CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
-			InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer, HudStage hudStage,
-			IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
+			@IngameRenderer MapRenderer mapRenderer, DialogFactory dialogFactory,
+			TutorialDialogFactory tutorialDialogFactory, EventBus eventBus, CombinedInputProcessor inputProcessor,
+			FeudalTacticsGestureDetector gestureDetector, InputValidationHelper inputValidationHelper,
+			InputMultiplexer inputMultiplexer, HudStage hudStage, IngameMenuStage menuStage,
+			ParameterInputStage parameterInputStage) {
 		super(ingameCamera, viewport, hudStage);
 		this.mainPrefsDao = mainPrefsDao;
 		this.newGamePrefDao = newGamePrefDao;
 		this.ingameCamera = ingameCamera;
 		this.mapRenderer = mapRenderer;
-		this.dialogFactory = confirmDialogFactory;
+		this.dialogFactory = dialogFactory;
+		this.tutorialDialogFactory = tutorialDialogFactory;
 		this.inputMultiplexer = inputMultiplexer;
 		this.gestureDetector = gestureDetector;
 		this.inputValidationHelper = inputValidationHelper;
@@ -221,7 +227,10 @@ public class IngameScreen extends GameScreen {
 		isLocalPlayerTurn = isLocalPlayerTurnNew;
 		boolean winnerChanged = winnerBeforeBotTurn != gameState.getWinner();
 
-		cachedGameState = gameState;
+		boolean objectiveProgressed = cachedGameState != null
+				&& gameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
+
+		cachedGameState = GameStateHelper.getCopy(gameState);
 		// update the UI
 		GameState newGameState = gameState;
 		// hand content
@@ -246,6 +255,10 @@ public class IngameScreen extends GameScreen {
 		hudStage.infoHexagonLabel.setText(String.format("[#%s]h",
 				MapRenderer.PLAYER_COLOR_PALETTE.get(gameState.getActivePlayer().getPlayerIndex())));
 		parameterInputStage.updateSeed(newGameState.getSeed());
+
+		if (objectiveProgressed) {
+			showGameOrObjectiveInfo();
+		}
 	}
 
 	private String handleGameStateChangeHumanPlayerTurn(boolean humanPlayerTurnJustStarted, boolean winnerChanged,
@@ -294,6 +307,16 @@ public class IngameScreen extends GameScreen {
 			uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER));
 		}
 		return infoText;
+	}
+
+	private void showGameOrObjectiveInfo() {
+		System.out.println(cachedGameState.getScenarioMap());
+		if (cachedGameState.getScenarioMap() == ScenarioMap.NONE) {
+			// regular sandbox game
+			showGameDetails();
+		} else if (cachedGameState.getScenarioMap() == ScenarioMap.TUTORIAL) {
+			showTutorialObjectiveMessage(cachedGameState.getObjectiveProgress());
+		}
 	}
 
 	/** Toggles the pause menu. */
@@ -418,6 +441,28 @@ public class IngameScreen extends GameScreen {
 		endDialog.show(hudStage);
 	}
 
+	private void showGameDetails() {
+		NewGamePreferences prefs = newGamePrefDao.getNewGamePreferences();
+		StringBuilder gameDetailsBuilder = new StringBuilder();
+		gameDetailsBuilder.append(String.format("Round: %s", cachedGameState.getRound()));
+		gameDetailsBuilder.append(String.format("\nSeed: %s", cachedGameState.getSeed()));
+		gameDetailsBuilder.append(String.format("\nStarting Position: %s", prefs.getStartingPosition() + 1));
+		gameDetailsBuilder.append(String.format("\nCPU Difficulty: %s",
+				EnumDisplayNameProvider.getDisplayName(prefs.getBotIntelligence())));
+		gameDetailsBuilder
+				.append(String.format("\nMap Size: %s", EnumDisplayNameProvider.getDisplayName(prefs.getMapSize())));
+		gameDetailsBuilder
+				.append(String.format("\nMap Density: %s", EnumDisplayNameProvider.getDisplayName(prefs.getDensity())));
+		FeudalTacticsDialog dialog = dialogFactory.createInformationDialogWithCopyButton(gameDetailsBuilder.toString(), () -> {
+		});
+		dialog.show(hudStage);
+	}
+
+	private void showTutorialObjectiveMessage(int newProgress) {
+		Dialog dialog = tutorialDialogFactory.createDialog(newProgress);
+		dialog.show(hudStage);
+	}
+
 	void activateStage(IngameStages ingameStage) {
 		inputMultiplexer.clear();
 		switch (ingameStage) {
@@ -523,9 +568,7 @@ public class IngameScreen extends GameScreen {
 		// only the settings that visually change the map need to cause centering
 		Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
 				parameterInputStage.densitySelect, parameterInputStage.pasteButton)
-				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
-					centerMap();
-				})));
+				.forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(this::centerMap)));
 		parameterInputStage.playButton
 				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
 	}
@@ -542,6 +585,8 @@ public class IngameScreen extends GameScreen {
 				.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyCastleEvent())));
 
 		hudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.MENU)));
+
+		hudStage.infoButton.addListener(new ExceptionLoggingChangeListener(this::showGameOrObjectiveInfo));
 
 		hudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
 			// determine the next speed level with overflow, skipping Speed.INSTANT which is

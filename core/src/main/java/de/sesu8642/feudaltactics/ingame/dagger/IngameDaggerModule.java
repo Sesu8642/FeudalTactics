@@ -22,6 +22,7 @@ import de.sesu8642.feudaltactics.dagger.EnableDeepWaterRenderingProperty;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioGameStateLoader;
 import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
@@ -44,9 +45,15 @@ public class IngameDaggerModule {
 
 	@Provides
 	@Singleton
+	static ScenarioGameStateLoader provideScenarioGameStateLoader() {
+		return new ScenarioGameStateLoader();
+	}
+	
+	@Provides
+	@Singleton
 	static GameController provideGameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi,
-			AutoSaveRepository autoSaveRepo) {
-		return new GameController(eventBus, botTurnExecutor, botAi, autoSaveRepo);
+			AutoSaveRepository autoSaveRepo, ScenarioGameStateLoader scenarioGameStateLoader) {
+		return new GameController(eventBus, botTurnExecutor, botAi, autoSaveRepo, scenarioGameStateLoader);
 	}
 
 	@Provides

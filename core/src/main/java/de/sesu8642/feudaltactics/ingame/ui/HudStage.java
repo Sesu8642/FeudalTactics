@@ -50,6 +50,7 @@ public class HudStage extends ResizableResettableStage {
 	ImageButton speedButton;
 	ImageButton skipButton;
 	ImageButton menuButton;
+	ImageButton infoButton;
 	private Table bottomTable;
 	private List<ImageButton> playerTurnButtons = new ArrayList<>();
 	private List<ImageButton> enemyTurnButtons = new ArrayList<>();
@@ -83,6 +84,10 @@ public class HudStage extends ResizableResettableStage {
 		menuButton = new ImageButton(skin.get(SkinConstants.BUTTON_PAUSE, ImageButtonStyle.class));
 		menuButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 		menuButton.getImageCell().expand().fill();
+		
+		infoButton = new ImageButton(skin.get(SkinConstants.BUTTON_INFO, ImageButtonStyle.class));
+		infoButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+		infoButton.getImageCell().expand().fill();
 
 		// buttons visible during the local player turn
 		undoButton = new ImageButton(new SpriteDrawable(skin.getAtlas().createSprite("undo")),
@@ -130,6 +135,10 @@ public class HudStage extends ResizableResettableStage {
 		rootTable.add(infoHexagonLabel).left().top().pad(10);
 		rootTable.add(infoTextLabel).left().top().pad(10).expandX();
 		rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
+		rootTable.row();
+		rootTable.add();
+		rootTable.add();
+		rootTable.add(infoButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
 		rootTable.row();
 		rootTable.add();
 		rootTable.add();

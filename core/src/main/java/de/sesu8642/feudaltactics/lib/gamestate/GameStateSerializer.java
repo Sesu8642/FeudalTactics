@@ -41,6 +41,10 @@ public class GameStateSerializer implements Serializer<GameState> {
 	private static final String SEED_NAME = "seed";
 	private static final String ROUND_FIELD_NAME = "round";
 	private static final String ROUND_NAME = "round";
+	private static final String OBJECTIVE_PROGRESS_FIELD_NAME = "objectiveProgress";
+	private static final String OBJECTIVE_PROGRESS_NAME = "objective_progress";
+	private static final String SCENARIO_MAP_FIELD_NAME = "scenarioMap";
+	private static final String SCENARIO_MAP_NAME = "scenario_map";
 
 	Integer lastId = 0;
 
@@ -115,6 +119,8 @@ public class GameStateSerializer implements Serializer<GameState> {
 			json.writeValue(ACTIVE_KINGDOM_ID_NAME, getId(idMap, object.getActiveKingdom()));
 		}
 		json.writeField(object, ROUND_FIELD_NAME, ROUND_NAME);
+		json.writeField(object, OBJECTIVE_PROGRESS_FIELD_NAME, OBJECTIVE_PROGRESS_NAME);
+		json.writeField(object, SCENARIO_MAP_FIELD_NAME, SCENARIO_MAP_NAME);
 		json.writeObjectEnd();
 	}
 
@@ -195,6 +201,10 @@ public class GameStateSerializer implements Serializer<GameState> {
 		result.setSeed(seedJson.asLong());
 		JsonValue roundJson = jsonData.get(ROUND_NAME);
 		result.setRound(roundJson.asInt());
+		JsonValue objectiveProgessJson = jsonData.get(OBJECTIVE_PROGRESS_NAME);
+		result.setObjectiveProgress(objectiveProgessJson.asInt());
+		JsonValue scenarioMapJson = jsonData.get(SCENARIO_MAP_NAME);
+		result.setScenarioMap(ScenarioMap.valueOf(scenarioMapJson.asString()));
 		if (jsonData.has(WINNER_ID_NAME)) {
 			Integer winnerId = jsonData.getInt(WINNER_ID_NAME);
 			Player winner = (Player) reverseIdMap.get(winnerId);

@@ -104,6 +104,10 @@ public class GameStateHelper {
 
 		result.setRound(original.getRound());
 
+		result.setObjectiveProgress(original.getObjectiveProgress());
+
+		result.setScenarioMap(original.getScenarioMap());
+
 		return result;
 	}
 
@@ -1012,6 +1016,20 @@ public class GameStateHelper {
 			break;
 		default:
 			throw new IllegalStateException("Unexpected player move type " + move.getPlayerActionType());
+		}
+		applyScenarioEvents(gameState);
+	}
+
+	private static void applyScenarioEvents(GameState gameState) {
+		switch (gameState.getScenarioMap()) {
+		case TUTORIAL:
+			TutorialProgressChecker.updateProgress(gameState);
+			break;
+		case NONE:
+			// no scenario
+			break;
+		default:
+			throw new IllegalStateException("Unknown Scenario: " + gameState.getScenarioMap());
 		}
 	}
 }

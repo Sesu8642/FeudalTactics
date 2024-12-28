@@ -17,12 +17,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 
+import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -76,7 +80,11 @@ public class MainMenuScreen extends GameScreen {
 		}));
 		// tutorial button
 		buttons.get(1).addListener(new ExceptionLoggingChangeListener(
-				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.TUTORIAL_SCREEN))));
+				() -> {
+					eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+					eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
+					eventBus.post(new GameStartEvent());
+					}));
 		// preferences button
 		buttons.get(2).addListener(new ExceptionLoggingChangeListener(
 				() -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN))));

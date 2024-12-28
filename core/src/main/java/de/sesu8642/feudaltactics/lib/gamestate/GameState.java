@@ -24,6 +24,8 @@ public class GameState {
 	private MapObject heldObject = null;
 	private Intelligence botIntelligence = Intelligence.LEVEL_1;
 	private Long seed;
+	private int objectiveProgress = 0;
+	private ScenarioMap scenarioMap = ScenarioMap.NONE;
 
 	/** A round consists of one turn per player. */
 	private int round = 0;
@@ -116,12 +118,28 @@ public class GameState {
 		this.round = round;
 	}
 
+	public int getObjectiveProgress() {
+		return objectiveProgress;
+	}
+
+	public void setObjectiveProgress(int objectiveProgress) {
+		this.objectiveProgress = objectiveProgress;
+	}
+
+	public ScenarioMap getScenarioMap() {
+		return scenarioMap;
+	}
+
+	public void setScenarioMap(ScenarioMap scenarioMap) {
+		this.scenarioMap = scenarioMap;
+	}
+
 	@Override
 	public int hashCode() {
 		// calculating with enum strings because the hashcode must be consistent across
 		// runs
-		return Objects.hash(activeKingdom, botIntelligence.toString(), heldObject, kingdoms, map, playerTurn, players,
-				round, seed, winner);
+		return Objects.hash(activeKingdom, botIntelligence.toString(), heldObject, kingdoms, map, objectiveProgress,
+				playerTurn, players, round, scenarioMap.toString(), seed, winner);
 	}
 
 	@Override
@@ -138,8 +156,9 @@ public class GameState {
 		GameState other = (GameState) obj;
 		return Objects.equals(activeKingdom, other.activeKingdom) && botIntelligence == other.botIntelligence
 				&& Objects.equals(heldObject, other.heldObject) && Objects.equals(kingdoms, other.kingdoms)
-				&& Objects.equals(map, other.map) && playerTurn == other.playerTurn
-				&& Objects.equals(players, other.players) && round == other.round && Objects.equals(seed, other.seed)
+				&& Objects.equals(map, other.map) && objectiveProgress == other.objectiveProgress
+				&& playerTurn == other.playerTurn && Objects.equals(players, other.players) && round == other.round
+				&& scenarioMap == other.scenarioMap && Objects.equals(seed, other.seed)
 				&& Objects.equals(winner, other.winner);
 	}
 

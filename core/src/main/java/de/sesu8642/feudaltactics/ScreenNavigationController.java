@@ -31,7 +31,6 @@ import de.sesu8642.feudaltactics.menu.mainmenu.ui.MainMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
-import de.sesu8642.feudaltactics.menu.tutorial.dagger.TutorialScreen;
 
 /**
  * Controller for navigating between screens.
@@ -45,7 +44,6 @@ public class ScreenNavigationController {
 	private SplashScreen splashScreen;
 	private IngameScreen ingameScreen;
 	private GameScreen mainMenuScreen;
-	private GameScreen tutorialScreen;
 	private GameScreen aboutScreen;
 	private GameScreen preferencesScreen;
 	private GameScreen informationMenuScreen;
@@ -65,8 +63,7 @@ public class ScreenNavigationController {
 	@Inject
 	public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
 			EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
-			MainMenuScreen mainMenuScreen, @TutorialScreen GameScreen tutorialScreen,
-			@AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
+			MainMenuScreen mainMenuScreen, @AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
 			InformationMenuPage1Screen informationMenuScreen, InformationMenuPage2Screen informationMenuScreen2,
 			DependencyLicensesScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
 			CrashReportScreen crashReportScreen, GameControllerEventHandler gameLogicEventHandler,
@@ -79,7 +76,6 @@ public class ScreenNavigationController {
 		this.splashScreen = splashScreen;
 		this.ingameScreen = ingameScreen;
 		this.mainMenuScreen = mainMenuScreen;
-		this.tutorialScreen = tutorialScreen;
 		this.aboutScreen = aboutScreen;
 		this.preferencesScreen = preferencesScreen;
 		this.informationMenuScreen = informationMenuScreen;
@@ -125,9 +121,6 @@ public class ScreenNavigationController {
 		case EDITOR_SCREEN:
 			transitionToEditorScreen();
 			break;
-		case TUTORIAL_SCREEN:
-			changeScreen(tutorialScreen);
-			break;
 		case ABOUT_SCREEN:
 			changeScreen(aboutScreen);
 			break;
@@ -162,7 +155,7 @@ public class ScreenNavigationController {
 		Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
 				.forEach(object -> eventBus.register(object));
 	}
-
+	
 	private void transitionToEditorScreen() {
 		changeScreen(ingameScreen);
 		Stream.of(editorInputHandler, editorEventHandler, ingameScreen, rendererEventHandler)

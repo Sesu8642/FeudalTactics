@@ -29,6 +29,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
+import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
  * {@link Stage} for displaying the input mask for a new game.
@@ -85,32 +86,27 @@ public class ParameterInputStage extends ResizableResettableStage {
 	}
 
 	private void initUi() {
-		// note about checktyle: widgets are declared in the order they appear in the UI
-
 		Label startingPositionLabel = new Label("Starting\nPosition",
 				skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
 		// markup must be enabled in the font for this coloring to work
 		// h is a hexagon chraracter in the font
-		List<String> startingPositions = de.sesu8642.feudaltactics.renderer.MapRenderer.PLAYER_COLOR_PALETTE.stream()
+		List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
 				.map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
 		startingPositionSelect.setItems(startingPositions.toArray(new String[0]));
 
 		Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		difficultySelect = new SelectBox<>(skin);
-		String[] difficulties = { "Easy", "Medium", "Hard", "Very hard" };
-		difficultySelect.setItems(difficulties);
+		difficultySelect.setItems(EnumDisplayNameProvider.DIFFICULTIES);
 
 		Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		sizeSelect = new SelectBox<>(skin);
-		String[] sizes = { "Small", "Medium   ", "Large", "XLarge", "XXLarge" };
-		sizeSelect.setItems(sizes);
+		sizeSelect.setItems(EnumDisplayNameProvider.MAP_SIZES);
 
 		Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		densitySelect = new SelectBox<>(skin);
-		String[] densities = { "Dense", "Medium   ", "Loose" };
-		densitySelect.setItems(densities);
+		densitySelect.setItems(EnumDisplayNameProvider.DENSITIES);
 
 		Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
 		seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);

@@ -300,6 +300,10 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 		up: button-small
 		down: button-small-pressed
 	}
+	info: {
+		imageUp: info
+		imageDown: info_pressed
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {

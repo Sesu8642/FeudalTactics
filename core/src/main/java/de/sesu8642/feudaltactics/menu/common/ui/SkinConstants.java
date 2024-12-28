@@ -29,6 +29,7 @@ public final class SkinConstants {
 	public static final String BUTTON_END_TURN = "end_turn";
 	public static final String BUTTON_SKIP_TURN = "skip_turn";
 	public static final String BUTTON_PAUSE = "pause";
+	public static final String BUTTON_INFO = "info";
 	public static final String BUTTON_DIE = "die";
 	public static final String BUTTON_COPY = "copy";
 	public static final String BUTTON_COPY_TICK = "copy_tick";

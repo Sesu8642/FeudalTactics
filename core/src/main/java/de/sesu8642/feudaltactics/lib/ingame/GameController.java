@@ -17,6 +17,8 @@ import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioGameStateLoader;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
@@ -29,23 +31,19 @@ public class GameController {
 	private final ExecutorService botTurnExecutor;
 	private final BotAi botAi;
 	private final AutoSaveRepository autoSaveRepo;
+	private final ScenarioGameStateLoader scenarioGameStateLoader;
 	private Future<?> botTurnFuture;
 
 	/** State of the currently running game. */
 	private GameState gameState;
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param eventBus event bus
-	 * @param botAi    bot AI
-	 */
+	
 	public GameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi,
-			AutoSaveRepository autoSaveRepo) {
+			AutoSaveRepository autoSaveRepo, ScenarioGameStateLoader scenarioGameStateLoader) {
 		this.eventBus = eventBus;
 		this.botTurnExecutor = botTurnExecutor;
 		this.botAi = botAi;
 		this.autoSaveRepo = autoSaveRepo;
+		this.scenarioGameStateLoader = scenarioGameStateLoader;
 		gameState = new GameState();
 	}
 
@@ -60,6 +58,9 @@ public class GameController {
 			startBotTurn();
 		}
 		eventBus.post(new GameStateChangeEvent(gameState));
+		if (gameState.getScenarioMap() != ScenarioMap.NONE) {
+			progressObjective();
+		}
 	}
 
 	/** Loads the latest autosave. */
@@ -88,6 +89,22 @@ public class GameController {
 
 		GameStateHelper.initializeMap(gameState, mapParams.getPlayers(), mapParams.getLandMass(),
 				mapParams.getDensity(), null, mapParams.getSeed());
+		eventBus.post(new GameStateChangeEvent(gameState));
+	}
+
+	/**
+	 * Loads a scenario map.
+	 * 
+	 * @param botIntelligence intelligence of the bot players
+	 * @param scenarioMap     map to load
+	 */
+	public void initializeScenario(Intelligence botIntelligence, ScenarioMap scenarioMap) {
+		logger.info("initializing a game state with bot intelligence {} and scenario map {}", botIntelligence, scenarioMap);
+		
+		gameState = scenarioGameStateLoader.loadScenarioGameState(scenarioMap);
+		
+		gameState.setBotIntelligence(botIntelligence);
+		gameState.setScenarioMap(scenarioMap);
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
@@ -182,6 +199,12 @@ public class GameController {
 		autoSaveRepo.deleteLatestIncrementalSave();
 		GameState loaded = autoSaveRepo.getCombinedAutoSave();
 		gameState = loaded;
+		eventBus.post(new GameStateChangeEvent(gameState));
+	}
+	
+	/** Progresses the current objective. */
+	public void progressObjective() {
+		gameState.setObjectiveProgress(gameState.getObjectiveProgress() + 1);
 		eventBus.post(new GameStateChangeEvent(gameState));
 	}
 
