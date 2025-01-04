@@ -97,7 +97,7 @@ public class MapRenderer {
         this.textureAtlas = textureAtlas;
         this.enableDeepWaterRendering = enableDeepWaterRendering;
 
-        tileRegion = textureAtlas.findRegion("tile_bw");
+        tileRegion = textureAtlas.findRegion(HexTile.SPRITE_NAME);
         shieldRegion = textureAtlas.findRegion("shield");
         waterAnimation = getAnimationFromName("water");
         beachSandAnimation = getAnimationFromName("beach_sand");
@@ -205,7 +205,7 @@ public class MapRenderer {
             tiles.put(tile.getPosition(), drawTile);
 
             // create content (units etc)
-            MapObject tileContent = tile.getContent();
+            TileContent tileContent = tile.getContent();
             if (tileContent != null) {
                 boolean animate = false;
                 if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
@@ -262,9 +262,11 @@ public class MapRenderer {
                     case 4:
                         shields.put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
                                 drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
+                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
+                                drawTile.darken);
                         shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x + SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
+                        shields.put(new Vector2(mapCoords.x + SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
+                                drawTile.darken);
                         break;
                     case 3:
                         shields.put(new Vector2(mapCoords.x - SHIELD_SIZE * 1.5F, mapCoords.y - SHIELD_SIZE / 2),
@@ -275,7 +277,8 @@ public class MapRenderer {
                                 drawTile.darken);
                         break;
                     case 2:
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
+                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
+                                drawTile.darken);
                         shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
                         break;
                     case 1:

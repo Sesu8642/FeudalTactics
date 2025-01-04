@@ -2,7 +2,8 @@
 
 /**
  * This file uses some code derived from Amits guide (https://www.redblobgames.com/grids/hexagons/implementation.html).
- * His code is licensed under CC0 as specified in one of his comments on the page as well as the header in the generated java code linked on the page.
+ * His code is licensed under CC0 as specified in one of his comments on the page as well as the header in the
+ * generated java code linked on the page.
  */
 
 package de.sesu8642.feudaltactics.lib.gamestate;
@@ -143,6 +144,15 @@ public class HexMapHelper {
             tile.setCachedNeighborTiles(cachedNeighbors);
         }
         return cachedNeighbors;
+    }
+
+    /**
+     * Clears neighbor tile cache for the whole map.
+     */
+    public static void clearNeighborTileCache(Map<Vector2, HexTile> map) {
+        for (HexTile tile : map.values()) {
+            tile.setCachedNeighborTiles(null);
+        }
     }
 
     /**

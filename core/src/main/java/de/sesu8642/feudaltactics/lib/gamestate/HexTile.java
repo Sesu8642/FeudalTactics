@@ -12,8 +12,10 @@ import java.util.Objects;
  **/
 public class HexTile implements Comparable<HexTile> {
 
+    public static String SPRITE_NAME = "tile_bw";
+
     private Player player;
-    private MapObject content;
+    private TileContent content;
     private Kingdom kingdom;
     private Vector2 position;
     private List<HexTile> cachedNeighborTiles;
@@ -34,11 +36,11 @@ public class HexTile implements Comparable<HexTile> {
         this.player = player;
     }
 
-    public MapObject getContent() {
+    public TileContent getContent() {
         return content;
     }
 
-    public void setContent(MapObject content) {
+    public void setContent(TileContent content) {
         this.content = content;
     }
 

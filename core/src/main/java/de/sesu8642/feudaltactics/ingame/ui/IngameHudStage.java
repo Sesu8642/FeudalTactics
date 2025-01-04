@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -24,7 +23,7 @@ import java.util.List;
 /**
  * {@link Stage} that displays the in-game heads up display.
  */
-public class HudStage extends ResizableResettableStage {
+public class IngameHudStage extends ResizableResettableStage {
 
     private final TextureAtlas textureAtlas;
     private final Skin skin;
@@ -58,7 +57,7 @@ public class HudStage extends ResizableResettableStage {
      * @param skin         game skin
      */
     @Inject
-    public HudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+    public IngameHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
         super(viewport);
         this.textureAtlas = textureAtlas;
         this.skin = skin;
@@ -79,8 +78,7 @@ public class HudStage extends ResizableResettableStage {
         infoButton.getImageCell().expand().fill();
 
         // buttons visible during the local player turn
-        undoButton = new ImageButton(new SpriteDrawable(skin.getAtlas().createSprite("undo")),
-                new SpriteDrawable(skin.getAtlas().createSprite("undo_pressed")));
+        undoButton = new ImageButton(skin.get(SkinConstants.BUTTON_UNDO, ImageButtonStyle.class));
         buyPeasantButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_PEASANT, ImageButtonStyle.class));
         buyCastleButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_CASTLE, ImageButtonStyle.class));
         endTurnButton = new ImageButton(skin.get(SkinConstants.BUTTON_END_TURN, ImageButtonStyle.class));

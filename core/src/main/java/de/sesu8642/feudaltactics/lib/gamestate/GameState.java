@@ -22,7 +22,7 @@ public class GameState {
     private LinkedHashMap<Vector2, HexTile> map = new LinkedHashMap<>();
     private List<Kingdom> kingdoms;
     private Kingdom activeKingdom = null;
-    private MapObject heldObject = null;
+    private TileContent heldObject = null;
     private Intelligence botIntelligence = Intelligence.LEVEL_1;
     private Long seed;
     private int objectiveProgress = 0;
@@ -85,11 +85,11 @@ public class GameState {
         this.activeKingdom = activeKingdom;
     }
 
-    public MapObject getHeldObject() {
+    public TileContent getHeldObject() {
         return heldObject;
     }
 
-    public void setHeldObject(MapObject heldObject) {
+    public void setHeldObject(TileContent heldObject) {
         this.heldObject = heldObject;
     }
 

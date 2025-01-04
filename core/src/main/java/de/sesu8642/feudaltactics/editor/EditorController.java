@@ -5,11 +5,11 @@ package de.sesu8642.feudaltactics.editor;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
-import de.sesu8642.feudaltactics.lib.gamestate.GameState;
-import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
-import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,8 +21,14 @@ import java.util.ArrayList;
 @Singleton
 public class EditorController {
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     private final EventBus eventBus;
+    private final ScenarioGameStateLoader scenarioGameStateLoader;
     private GameState gameState;
+
+    private TileContent heldTileContent;
+    private Integer heldTilePlayerIndex;
 
     /**
      * Constructor.
@@ -30,8 +36,9 @@ public class EditorController {
      * @param eventBus event bus
      */
     @Inject
-    public EditorController(EventBus eventBus) {
+    public EditorController(EventBus eventBus, ScenarioGameStateLoader scenarioGameStateLoader) {
         this.eventBus = eventBus;
+        this.scenarioGameStateLoader = scenarioGameStateLoader;
         gameState = new GameState();
     }
 
@@ -49,21 +56,38 @@ public class EditorController {
         eventBus.post(new GameStateChangeEvent(gameState));
     }
 
-    /**
-     * Creates a tile.
-     */
-    public void createTile(Vector2 hexCoords) {
-        HexTile existingTile = gameState.getMap().get(hexCoords);
-        int newTilePlayerIndex = 0;
-        if (existingTile != null) {
-            newTilePlayerIndex = gameState.getPlayers().indexOf(existingTile.getPlayer()) + 1;
-        }
-        if (newTilePlayerIndex > gameState.getPlayers().size() - 1) {
-            GameStateHelper.deleteTile(gameState, hexCoords);
-        } else {
-            Player newPlayer = gameState.getPlayers().get(newTilePlayerIndex);
+    public void placeHeldObject(Vector2 hexCoords) {
+        if (heldTilePlayerIndex != null) {
+            Player newPlayer =
+                    gameState.getPlayers().stream()
+                            .filter(player -> player.getPlayerIndex() == heldTilePlayerIndex).findAny().get();
             GameStateHelper.placeTile(gameState, hexCoords, newPlayer);
+        } else if (heldTileContent != null) {
+            HexTile tile = gameState.getMap().get(hexCoords);
+            if (tile != null) {
+                logger.debug("placing object {} on tile at position {}", heldTileContent.getClass().getName(),
+                        hexCoords);
+                GameStateHelper.placeTileContent(gameState, tile, heldTileContent);
+            }
+        } else {
+            HexTile tile = gameState.getMap().get(hexCoords);
+            if (tile != null) {
+                logger.debug("deleting tile at position {}", hexCoords);
+                GameStateHelper.deleteTile(gameState, tile);
+            }
         }
+        eventBus.post(new GameStateChangeEvent(gameState));
+    }
+
+    public void updateHandContent(TileContent heldTileContent, Integer heldTilePlayerIndex) {
+        this.heldTileContent = heldTileContent;
+        this.heldTilePlayerIndex = heldTilePlayerIndex;
+    }
+
+    public void initializeScenario(Intelligence botIntelligence, ScenarioMap scenarioMap) {
+        gameState = scenarioGameStateLoader.loadScenarioGameState(scenarioMap);
+
+        gameState.setScenarioMap(scenarioMap);
         eventBus.post(new GameStateChangeEvent(gameState));
     }
 

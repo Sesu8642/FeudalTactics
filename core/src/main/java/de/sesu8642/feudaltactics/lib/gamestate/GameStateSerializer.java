@@ -192,7 +192,7 @@ public class GameStateSerializer implements Serializer<GameState> {
             heldObjJson.addChild(CLASS_NAME, new JsonValue(MAPOBJECTS_CLASS_BASE_NAME + shortClassName));
             heldObjJson.remove(KINGDOM_FIELD_NAME);
             // toString causes an error here... maybe because of the enum?
-            MapObject heldObject = json.fromJson(MapObject.class, heldObjJson.prettyPrint(OutputType.json, 1));
+            TileContent heldObject = json.fromJson(TileContent.class, heldObjJson.prettyPrint(OutputType.json, 1));
             result.setHeldObject(heldObject);
         }
         result.setPlayerTurn(jsonData.getInt(PLAYER_TURN_NAME));

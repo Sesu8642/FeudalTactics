@@ -277,7 +277,7 @@ public class InputValidationHelper {
             if (neighborTile.getKingdom() == gameState.getActiveKingdom()) {
                 isNextoToOwnKingdom = true;
             }
-            MapObject neighborContent = neighborTile.getContent();
+            TileContent neighborContent = neighborTile.getContent();
             // check if there is no stronger object next to it protecting it
             if (tile.getKingdom() != null && neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
                     && neighborContent.getStrength() >= gameState.getHeldObject().getStrength()) {
@@ -380,7 +380,8 @@ public class InputValidationHelper {
                 return checkBuyAndPlaceCastleInstantly(gameState, player,
                         findTileAtPosition(gameState, move.getTilePosition()));
             case ACTIVATE_KINGDOM:
-                return checkChangeActiveKingdom(gameState, player, findTileAtPosition(gameState, move.getTilePosition()));
+                return checkChangeActiveKingdom(gameState, player, findTileAtPosition(gameState,
+                        move.getTilePosition()));
             case END_TURN:
                 return checkEndTurn(gameState, player);
             case UNDO_LAST_MOVE:

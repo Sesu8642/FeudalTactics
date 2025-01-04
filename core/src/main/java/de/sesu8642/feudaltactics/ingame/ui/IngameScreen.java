@@ -57,7 +57,7 @@ public class IngameScreen extends GameScreen {
     private final InputValidationHelper inputValidationHelper;
 
     private final ParameterInputStage parameterInputStage;
-    private final HudStage hudStage;
+    private final IngameHudStage ingameHudStage;
     private final IngameMenuStage menuStage;
 
     private final DialogFactory dialogFactory;
@@ -105,7 +105,7 @@ public class IngameScreen extends GameScreen {
      * @param gestureDetector     gesture detector
      * @param inputMultiplexer    input multiplexer that stages are added to as
      *                            processors
-     * @param hudStage            stage for heads up display UI
+     * @param ingameHudStage      stage for heads up display UI
      * @param menuStage           stage for the pause menu UI
      * @param parameterInputStage stage for the new game parameter input UI
      */
@@ -114,11 +114,12 @@ public class IngameScreen extends GameScreen {
                         NewGamePreferencesDao newGamePrefDao, @IngameCamera OrthographicCamera ingameCamera,
                         @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
                         @IngameRenderer MapRenderer mapRenderer, DialogFactory dialogFactory,
-                        TutorialDialogFactory tutorialDialogFactory, EventBus eventBus, CombinedInputProcessor inputProcessor,
+                        TutorialDialogFactory tutorialDialogFactory, EventBus eventBus,
+                        CombinedInputProcessor inputProcessor,
                         FeudalTacticsGestureDetector gestureDetector, InputValidationHelper inputValidationHelper,
-                        InputMultiplexer inputMultiplexer, HudStage hudStage, IngameMenuStage menuStage,
+                        InputMultiplexer inputMultiplexer, IngameHudStage ingameHudStage, IngameMenuStage menuStage,
                         ParameterInputStage parameterInputStage) {
-        super(ingameCamera, viewport, hudStage);
+        super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
         this.newGamePrefDao = newGamePrefDao;
         this.ingameCamera = ingameCamera;
@@ -130,7 +131,7 @@ public class IngameScreen extends GameScreen {
         this.inputValidationHelper = inputValidationHelper;
         this.eventBus = eventBus;
         this.inputProcessor = inputProcessor;
-        this.hudStage = hudStage;
+        this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
         addIngameMenuListeners();
@@ -147,9 +148,10 @@ public class IngameScreen extends GameScreen {
         if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)
                 && mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
             Dialog confirmDialog = dialogFactory.createConfirmDialog(
-                    "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to end your turn?\n",
+                    "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to end your " +
+                            "turn?\n",
                     this::endHumanPlayerTurn);
-            confirmDialog.show(hudStage);
+            confirmDialog.show(ingameHudStage);
         } else {
             endHumanPlayerTurn();
         }
@@ -206,9 +208,9 @@ public class IngameScreen extends GameScreen {
         GameState newGameState = gameState;
         // hand content
         if (newGameState.getHeldObject() != null) {
-            hudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
+            ingameHudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
         } else {
-            hudStage.updateHandContent(null);
+            ingameHudStage.updateHandContent(null);
         }
         // seed
         menuStage.bottomRightLabel.setText("Seed " + newGameState.getSeed().toString());
@@ -218,12 +220,12 @@ public class IngameScreen extends GameScreen {
                     newGameState);
         } else {
             hudStageInfoText = "Enemy turn";
-            if (!hudStage.isEnemyTurnButtonsShown()) {
-                uiChangeActions.add(hudStage::showEnemyTurnButtons);
+            if (!ingameHudStage.isEnemyTurnButtonsShown()) {
+                uiChangeActions.add(ingameHudStage::showEnemyTurnButtons);
             }
         }
-        hudStage.infoTextLabel.setText(hudStageInfoText);
-        hudStage.infoHexagonLabel.setText(String.format("[#%s]h",
+        ingameHudStage.infoTextLabel.setText(hudStageInfoText);
+        ingameHudStage.infoHexagonLabel.setText(String.format("[#%s]h",
                 MapRenderer.PLAYER_COLOR_PALETTE.get(gameState.getActivePlayer().getPlayerIndex())));
         parameterInputStage.updateSeed(newGameState.getSeed());
 
@@ -249,8 +251,8 @@ public class IngameScreen extends GameScreen {
             infoText = "Your turn";
         }
         // buttons
-        if (hudStage.isEnemyTurnButtonsShown()) {
-            uiChangeActions.add(hudStage::showPlayerTurnButtons);
+        if (ingameHudStage.isEnemyTurnButtonsShown()) {
+            uiChangeActions.add(ingameHudStage::showPlayerTurnButtons);
         }
         Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
         if (playerOptional.isPresent()) {
@@ -259,7 +261,7 @@ public class IngameScreen extends GameScreen {
             boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
             boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
             boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
-            hudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+            ingameHudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
         }
         // display messages
         if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
@@ -296,7 +298,7 @@ public class IngameScreen extends GameScreen {
     public void togglePause() {
         if (getActiveStage() == menuStage) {
             activateStage(IngameStages.HUD);
-        } else if (getActiveStage() == hudStage) {
+        } else if (getActiveStage() == ingameHudStage) {
             activateStage(IngameStages.MENU);
         }
     }
@@ -359,14 +361,14 @@ public class IngameScreen extends GameScreen {
             endDialog.button("Retry", (byte) 2);
         }
         endDialog.button("Continue", (byte) 0);
-        endDialog.show(hudStage);
+        endDialog.show(ingameHudStage);
     }
 
     private void showAllEnemiesDefeatedMessage() {
         Dialog endDialog = dialogFactory.createDialog(result -> exitToMenu());
         endDialog.button("Exit");
         endDialog.text("VICTORY! You defeated all your enemies.\n");
-        endDialog.show(hudStage);
+        endDialog.show(ingameHudStage);
     }
 
     private void showPlayerDefeatedMessage() {
@@ -392,7 +394,7 @@ public class IngameScreen extends GameScreen {
         endDialog.button("Spectate", (byte) 0);
         endDialog.button("Retry", (byte) 2);
         endDialog.text("DEFEAT! All your kingdoms were conquered by the enemy.\n");
-        endDialog.show(hudStage);
+        endDialog.show(ingameHudStage);
     }
 
     private void showEnemyWonMessage() {
@@ -413,7 +415,7 @@ public class IngameScreen extends GameScreen {
         endDialog.button("Exit", (byte) 1);
         endDialog.button("Retry", (byte) 2);
         endDialog.text("DEFEAT! Your enemy won the game.\n");
-        endDialog.show(hudStage);
+        endDialog.show(ingameHudStage);
     }
 
     private void showGameDetails() {
@@ -427,12 +429,12 @@ public class IngameScreen extends GameScreen {
                 String.format("\nMap Density: %s", EnumDisplayNameProvider.getDisplayName(prefs.getDensity()));
         FeudalTacticsDialog dialog = dialogFactory.createInformationDialogWithCopyButton(gameDetailsBuilder, () -> {
         });
-        dialog.show(hudStage);
+        dialog.show(ingameHudStage);
     }
 
     private void showTutorialObjectiveMessage(int newProgress) {
         Dialog dialog = tutorialDialogFactory.createDialog(newProgress);
-        dialog.show(hudStage);
+        dialog.show(ingameHudStage);
     }
 
     void activateStage(IngameStages ingameStage) {
@@ -444,10 +446,10 @@ public class IngameScreen extends GameScreen {
                 setActiveStage(menuStage);
                 break;
             case HUD:
-                inputMultiplexer.addProcessor(hudStage);
+                inputMultiplexer.addProcessor(ingameHudStage);
                 inputMultiplexer.addProcessor(gestureDetector);
                 inputMultiplexer.addProcessor(inputProcessor);
-                setActiveStage(hudStage);
+                setActiveStage(ingameHudStage);
                 break;
             case PARAMETERS:
                 inputMultiplexer.addProcessor(parameterInputStage);
@@ -486,7 +488,7 @@ public class IngameScreen extends GameScreen {
     public void dispose() {
         mapRenderer.dispose();
         parameterInputStage.dispose();
-        hudStage.dispose();
+        ingameHudStage.dispose();
         menuStage.dispose();
         // might try to dispose the same stage twice
         super.dispose();
@@ -546,21 +548,21 @@ public class IngameScreen extends GameScreen {
     }
 
     private void addHudListeners() {
-        hudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new UndoMoveEvent())));
+        ingameHudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new UndoMoveEvent())));
 
-        hudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(this::handleEndTurnAttempt));
+        ingameHudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(this::handleEndTurnAttempt));
 
-        hudStage.buyPeasantButton
+        ingameHudStage.buyPeasantButton
                 .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyPeasantEvent())));
 
-        hudStage.buyCastleButton
+        ingameHudStage.buyCastleButton
                 .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyCastleEvent())));
 
-        hudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.MENU)));
+        ingameHudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.MENU)));
 
-        hudStage.infoButton.addListener(new ExceptionLoggingChangeListener(this::showGameOrObjectiveInfo));
+        ingameHudStage.infoButton.addListener(new ExceptionLoggingChangeListener(this::showGameOrObjectiveInfo));
 
-        hudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
+        ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow, skipping Speed.INSTANT which is
             // used for the other button
             int currentSpeedIndex = currentBotSpeed.ordinal();
@@ -573,21 +575,21 @@ public class IngameScreen extends GameScreen {
             ImageButtonStyle newStyle = null;
             switch (nextSpeedIndex) {
                 case 0:
-                    newStyle = hudStage.halfSpeedButtonStyle;
+                    newStyle = ingameHudStage.halfSpeedButtonStyle;
                     break;
                 case 1:
-                    newStyle = hudStage.regularSpeedButtonStyle;
+                    newStyle = ingameHudStage.regularSpeedButtonStyle;
                     break;
                 case 2:
-                    newStyle = hudStage.doubleSpeedButtonStyle;
+                    newStyle = ingameHudStage.doubleSpeedButtonStyle;
                     break;
                 default:
                     throw new IllegalStateException("Unknown speed index " + currentSpeedIndex);
             }
-            hudStage.speedButton.setStyle(newStyle);
+            ingameHudStage.speedButton.setStyle(newStyle);
         }));
 
-        hudStage.skipButton
+        ingameHudStage.skipButton
                 .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BotTurnSkippedEvent())));
 
     }
@@ -604,8 +606,8 @@ public class IngameScreen extends GameScreen {
         return ingameCamera;
     }
 
-    public HudStage getHudStage() {
-        return hudStage;
+    public IngameHudStage getHudStage() {
+        return ingameHudStage;
     }
 
     public MenuStage getMenuStage() {

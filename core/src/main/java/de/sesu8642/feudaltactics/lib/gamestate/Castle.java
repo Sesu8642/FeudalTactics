@@ -5,7 +5,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 /**
  * Map object representing a castle. Castles are defensive structures.
  **/
-public class Castle implements MapObject {
+public class Castle implements TileContent {
 
     public static final int COST = 15;
     public static final String SPRITE_NAME = "castle";

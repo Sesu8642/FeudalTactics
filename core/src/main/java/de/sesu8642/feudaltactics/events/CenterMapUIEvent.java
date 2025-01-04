@@ -9,8 +9,6 @@ public class CenterMapUIEvent {
 
     /**
      * Constructor.
-     *
-     * @param gameState game state to be centered
      */
     public CenterMapUIEvent() {
     }

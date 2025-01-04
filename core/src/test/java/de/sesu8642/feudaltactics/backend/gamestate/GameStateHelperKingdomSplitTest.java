@@ -92,8 +92,8 @@ class GameStateHelperKingdomSplitTest {
 
     @ParameterizedTest
     @MethodSource("provideMapContents")
-    void conqueringTransformsMapObjects(List<MapObject> mapContentsBefore, int tileIndexToConquer,
-                                        List<MapObject> mapContentsExpected) {
+    void conqueringTransformsMapObjects(List<TileContent> mapContentsBefore, int tileIndexToConquer,
+                                        List<TileContent> mapContentsExpected) {
 
         // create a kingdom of tiles in a straight line filled with the given contents
         // and create another kingdom next to it that attacks

@@ -7,7 +7,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
  * on from generating income. Palm trees spawn on coast tiles and spread to
  * neighboring coast tiles on every turn.
  **/
-public class PalmTree implements MapObject, Blocking {
+public class PalmTree implements TileContent, Blocking {
 
     public static final String SPRITE_NAME = "palm_tree";
     private static final int STRENGTH = 0;

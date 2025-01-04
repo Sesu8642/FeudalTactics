@@ -4,6 +4,8 @@ package de.sesu8642.feudaltactics.editor;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.Subscribe;
+import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
+import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.TapInputEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.HexMapHelper;
 
@@ -36,7 +38,17 @@ public class EditorInputHandler {
     @Subscribe
     public void handleTapInput(TapInputEvent event) {
         Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
-        editorController.createTile(hexCoords);
+        editorController.placeHeldObject(hexCoords);
+    }
+
+    @Subscribe
+    public void handleInitializeScenario(InitializeScenarioEvent event) {
+        editorController.initializeScenario(event.getBotIntelligence(), event.getScenarioMap());
+    }
+
+    @Subscribe
+    public void handleHandContentUpdated(EditorHandContentUpdatedEvent event) {
+        editorController.updateHandContent(event.getHeldTileContent(), event.getHeldTilePlayerIndex());
     }
 
 }

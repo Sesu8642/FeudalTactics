@@ -7,7 +7,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
  * because it cannot be paid. After one turn, a gravestone will turn into a
  * tree.
  **/
-public class Gravestone implements MapObject, Blocking {
+public class Gravestone implements TileContent, Blocking {
 
     public static final String SPRITE_NAME = "gravestone";
     private static final int STRENGTH = 0;

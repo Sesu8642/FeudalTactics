@@ -10,7 +10,7 @@ import java.util.Objects;
  * need to be paid a salary every turn. There are several tiers of units with
  * different strength levels and salaries.
  **/
-public class Unit implements MapObject {
+public class Unit implements TileContent {
 
     public static final int COST = 10;
 

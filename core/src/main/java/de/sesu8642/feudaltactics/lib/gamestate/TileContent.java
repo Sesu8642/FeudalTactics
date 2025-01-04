@@ -3,10 +3,13 @@
 package de.sesu8642.feudaltactics.lib.gamestate;
 
 /**
- * Everything that can be the content of a tile is a map object.
+ * Everything that can be the content of a tile.
  **/
-public interface MapObject {
+public interface TileContent {
 
+    /**
+     * Name of the Sprite of this object in the texture atlas.
+     */
     String getSpriteName();
 
     /**
@@ -17,6 +20,9 @@ public interface MapObject {
      */
     int getStrength();
 
-    MapObject getCopy();
+    /**
+     * Returns a copy of this object.
+     */
+    TileContent getCopy();
 
 }

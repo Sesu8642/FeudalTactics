@@ -11,6 +11,7 @@ import de.sesu8642.feudaltactics.editor.EventHandler;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.ingame.IngameRendererEventHandler;
 import de.sesu8642.feudaltactics.ingame.LocalIngameInputHandler;
+import de.sesu8642.feudaltactics.ingame.ui.EditorScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler;
@@ -48,6 +49,7 @@ public class ScreenNavigationController {
     private final GameScreen informationMenuScreen2;
     private final GameScreen dependencyLicensesScreen;
     private final GameScreen changelogScreen;
+    private final GameScreen editorScreen;
     private final CrashReportScreen crashReportScreen;
     private final GameControllerEventHandler gameLogicEventHandler;
     private final EventHandler editorEventHandler;
@@ -60,11 +62,17 @@ public class ScreenNavigationController {
      */
     @Inject
     public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
-                                      EditorInputHandler editorInputHandler, SplashScreen splashScreen, IngameScreen ingameScreen,
-                                      MainMenuScreen mainMenuScreen, @AboutScreen GameScreen aboutScreen, PreferencesScreen preferencesScreen,
-                                      InformationMenuPage1Screen informationMenuScreen, InformationMenuPage2Screen informationMenuScreen2,
-                                      DependencyLicensesScreen dependencyLicensesScreen, @ChangelogScreen GameScreen changelogScreen,
-                                      CrashReportScreen crashReportScreen, GameControllerEventHandler gameLogicEventHandler,
+                                      EditorInputHandler editorInputHandler, SplashScreen splashScreen,
+                                      IngameScreen ingameScreen,
+                                      MainMenuScreen mainMenuScreen, @AboutScreen GameScreen aboutScreen,
+                                      PreferencesScreen preferencesScreen,
+                                      InformationMenuPage1Screen informationMenuScreen,
+                                      InformationMenuPage2Screen informationMenuScreen2,
+                                      DependencyLicensesScreen dependencyLicensesScreen,
+                                      @ChangelogScreen GameScreen changelogScreen,
+                                      EditorScreen editorScreen,
+                                      CrashReportScreen crashReportScreen,
+                                      GameControllerEventHandler gameLogicEventHandler,
                                       EventHandler editorEventHandler, IngameRendererEventHandler rendererEventHandler,
                                       IngameScreenEventHandler ingameScreenEventHandler,
                                       PreferencesScreenEventHandler preferencesScreenEventHandler) {
@@ -80,6 +88,7 @@ public class ScreenNavigationController {
         this.informationMenuScreen2 = informationMenuScreen2;
         this.dependencyLicensesScreen = dependencyLicensesScreen;
         this.changelogScreen = changelogScreen;
+        this.editorScreen = editorScreen;
         this.crashReportScreen = crashReportScreen;
         this.gameLogicEventHandler = gameLogicEventHandler;
         this.editorEventHandler = editorEventHandler;
@@ -151,13 +160,13 @@ public class ScreenNavigationController {
     private void transitionToIngameScreen() {
         changeScreen(ingameScreen);
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
-                .forEach(object -> eventBus.register(object));
+                .forEach(eventBus::register);
     }
 
     private void transitionToEditorScreen() {
-        changeScreen(ingameScreen);
-        Stream.of(editorInputHandler, editorEventHandler, ingameScreen, rendererEventHandler)
-                .forEach(object -> eventBus.register(object));
+        changeScreen(editorScreen);
+        Stream.of(editorInputHandler, editorEventHandler, editorScreen, rendererEventHandler)
+                .forEach(eventBus::register);
     }
 
     private void transitionToCrashReportScreenInMainMenu() {
