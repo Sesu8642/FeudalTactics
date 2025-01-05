@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.menu.common.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 
@@ -18,7 +18,7 @@ public class FeudalTacticsDialog extends Dialog {
     public static final float DIALOG_PADDING = 20;
     public static final float DIALOG_LABEL_MAX_WIDTH = 600;
 
-    private static final float MAX_RESPONSIVE_IMAGE_WIDTH = Gdx.graphics.getDensity() * 1500F;
+    private static final float MAX_RESPONSIVE_SMALL_IMAGE_WIDTH = Gdx.graphics.getDensity() * 150F;
 
     private final Skin skin;
 
@@ -90,19 +90,21 @@ public class FeudalTacticsDialog extends Dialog {
     }
 
     /**
-     * Adds an image to the dialog fluent style.
+     * Adds an image of a button from the texture atlas to the dialog fluent style.
      *
-     * @param imagePath internal path of the image
+     * @param spriteName name of the button in the skin
      * @return this dialog
      */
-    public FeudalTacticsDialog addImage(String imagePath) {
-        Texture imageTexture = new Texture(Gdx.files.internal(imagePath));
-        Image image = new Image(imageTexture);
-        float aspectRatio = ((float) imageTexture.getHeight()) / ((float) imageTexture.getWidth());
-        this.getContentTable().add(image).prefWidth(0).maxWidth(MAX_RESPONSIVE_IMAGE_WIDTH).height(Value.percentWidth(aspectRatio))
+    public FeudalTacticsDialog addButtonImage(String spriteName) {
+        Sprite sprite = skin.getSprite(spriteName);
+        float aspectRatio = sprite.getHeight() / sprite.getWidth();
+        Image image = new Image(sprite);
+        image.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+        this.getContentTable().add(image).prefWidth(0).maxWidth(MAX_RESPONSIVE_SMALL_IMAGE_WIDTH)
+                .height(Value.percentWidth(aspectRatio))
                 .expand().fill();
         this.getContentTable().row();
         return this;
     }
-
+    
 }

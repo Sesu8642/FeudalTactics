@@ -737,6 +737,7 @@ public class GameStateHelper {
             // reset wasActiveInCurrentTurn
             kingdom.setWasActiveInCurrentTurn(false);
         }
+        applyScenarioEvents(gameState);
         return gameState;
     }
 
@@ -1090,7 +1091,7 @@ public class GameStateHelper {
     private static void applyScenarioEvents(GameState gameState) {
         switch (gameState.getScenarioMap()) {
             case TUTORIAL:
-                TutorialProgressChecker.updateProgress(gameState);
+                ScenarioRuleEnforcerTutorial.updateGameState(gameState);
                 break;
             case NONE:
                 // no scenario

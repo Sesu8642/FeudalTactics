@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.editor;
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -24,6 +25,7 @@ public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     private final EventBus eventBus;
+    private final AutoSaveRepository autoSaveRepo;
     private final ScenarioGameStateLoader scenarioGameStateLoader;
     private GameState gameState;
 
@@ -36,8 +38,10 @@ public class EditorController {
      * @param eventBus event bus
      */
     @Inject
-    public EditorController(EventBus eventBus, ScenarioGameStateLoader scenarioGameStateLoader) {
+    public EditorController(EventBus eventBus, AutoSaveRepository autoSaveRepo,
+                            ScenarioGameStateLoader scenarioGameStateLoader) {
         this.eventBus = eventBus;
+        this.autoSaveRepo = autoSaveRepo;
         this.scenarioGameStateLoader = scenarioGameStateLoader;
         gameState = new GameState();
     }
@@ -77,6 +81,7 @@ public class EditorController {
             }
         }
         eventBus.post(new GameStateChangeEvent(gameState));
+        autoSaveRepo.autoSaveFullGameState(gameState);
     }
 
     public void updateHandContent(TileContent heldTileContent, Integer heldTilePlayerIndex) {

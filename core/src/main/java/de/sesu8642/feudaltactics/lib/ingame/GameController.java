@@ -54,6 +54,10 @@ public class GameController {
      */
     public void startGame() {
         logger.info("starting game");
+        if (gameState.getScenarioMap() != ScenarioMap.NONE) {
+            progressObjective();
+            eventBus.post(new GameStateChangeEvent(gameState));
+        }
         // autosave before starting the AI thread, to avoid potential
         // ConcurrentModificationException
         autoSaveRepo.autoSaveFullGameState(gameState);
@@ -62,9 +66,6 @@ public class GameController {
             startBotTurn();
         }
         eventBus.post(new GameStateChangeEvent(gameState));
-        if (gameState.getScenarioMap() != ScenarioMap.NONE) {
-            progressObjective();
-        }
     }
 
     /**
@@ -105,7 +106,8 @@ public class GameController {
      * @param scenarioMap     map to load
      */
     public void initializeScenario(Intelligence botIntelligence, ScenarioMap scenarioMap) {
-        logger.info("initializing a game state with bot intelligence {} and scenario map {}", botIntelligence, scenarioMap);
+        logger.info("initializing a game state with bot intelligence {} and scenario map {}", botIntelligence,
+                scenarioMap);
 
         gameState = scenarioGameStateLoader.loadScenarioGameState(scenarioMap);
 

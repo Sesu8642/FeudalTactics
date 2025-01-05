@@ -37,7 +37,6 @@ public class ScenarioGameStateLoader {
         } catch (IOException e) {
             throw new FatalErrorException("Unable to load scenario map from " + scenarioMap.mapPath);
         }
-        System.out.println("loaded string is " + loadedString);
         JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
         return json.readValue(GameState.class, loadedStateJsonValue);
     }

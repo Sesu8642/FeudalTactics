@@ -283,7 +283,6 @@ public class IngameScreen extends GameScreen {
     }
 
     private void showGameOrObjectiveInfo() {
-        System.out.println(cachedGameState.getScenarioMap());
         if (cachedGameState.getScenarioMap() == ScenarioMap.NONE) {
             // regular sandbox game
             showGameDetails();
