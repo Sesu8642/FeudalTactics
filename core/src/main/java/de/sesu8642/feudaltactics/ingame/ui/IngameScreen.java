@@ -77,7 +77,7 @@ public class IngameScreen extends GameScreen {
      * Winner of the game before the bot players acted. Used to determine whether
      * the winner changed in order to display a message.
      */
-    private Player winnerBeforeBotTurn;
+    private int winnerBeforeBotTurnPlayerIndex = -1;
     /**
      * Whether it is the local player's turn.
      */
@@ -158,7 +158,9 @@ public class IngameScreen extends GameScreen {
     }
 
     private void endHumanPlayerTurn() {
-        winnerBeforeBotTurn = cachedGameState.getWinner();
+        if (cachedGameState.getWinner() != null) {
+            winnerBeforeBotTurnPlayerIndex = cachedGameState.getWinner().getPlayerIndex();
+        }
         // isLocalPlayerTurn needs to be set here because if the bot turns are not
         // shown, this class would never notice that a bot player was active
         isLocalPlayerTurn = false;
@@ -184,7 +186,7 @@ public class IngameScreen extends GameScreen {
 
     private void clearCache() {
         cachedGameState = null;
-        winnerBeforeBotTurn = null;
+        winnerBeforeBotTurnPlayerIndex = -1;
         isSpectateMode = false;
     }
 
@@ -198,7 +200,9 @@ public class IngameScreen extends GameScreen {
         boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
         boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
         isLocalPlayerTurn = isLocalPlayerTurnNew;
-        boolean winnerChanged = winnerBeforeBotTurn != gameState.getWinner();
+        boolean winnerChanged =
+                gameState.getWinner() != null
+                        && winnerBeforeBotTurnPlayerIndex != gameState.getWinner().getPlayerIndex();
 
         boolean objectiveProgressed = cachedGameState != null
                 && gameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
@@ -248,7 +252,7 @@ public class IngameScreen extends GameScreen {
             String resultText = result < 0 ? String.valueOf(result) : "+" + result;
             infoText = "Savings: " + savings + " (" + resultText + ")";
         } else {
-            infoText = "Your turn";
+            infoText = "Your turn.";
         }
         // buttons
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
