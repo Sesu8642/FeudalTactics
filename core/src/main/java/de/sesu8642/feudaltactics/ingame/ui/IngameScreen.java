@@ -168,14 +168,22 @@ public class IngameScreen extends GameScreen {
     }
 
     private void resetGame() {
-        clearCache();
         eventBus.post(new GameExitedEvent());
-        eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-                new MapParameters(parameterInputStage.getStartingPosition(), parameterInputStage.getSeedParam(),
-                        parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-                        parameterInputStage.getMapDensityParam().getDensityFloat())));
+        GameState previousCachedGameState = cachedGameState;
+        clearCache();
+        if (previousCachedGameState.getScenarioMap() == ScenarioMap.NONE) {
+            eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
+                    new MapParameters(parameterInputStage.getStartingPosition(), parameterInputStage.getSeedParam(),
+                            parameterInputStage.getMapSizeParam().getAmountOfTiles(),
+                            parameterInputStage.getMapDensityParam().getDensityFloat())));
+            activateStage(IngameStages.PARAMETERS);
+        } else {
+            eventBus.post(new InitializeScenarioEvent(previousCachedGameState.getBotIntelligence(),
+                    previousCachedGameState.getScenarioMap()));
+            eventBus.post(new GameStartEvent());
+            activateStage(IngameStages.HUD);
+        }
         centerMap();
-        activateStage(IngameStages.PARAMETERS);
     }
 
     private void exitToMenu() {
