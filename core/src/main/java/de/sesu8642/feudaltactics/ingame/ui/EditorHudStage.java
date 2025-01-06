@@ -78,7 +78,7 @@ public class EditorHudStage extends ResizableResettableStage {
         Image thumbImage = new Image(thumbSprite);
         thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 
-        infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
 
         rootTable = new Table();
         rootTable.setFillParent(true);

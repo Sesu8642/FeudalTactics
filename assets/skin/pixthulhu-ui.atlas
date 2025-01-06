@@ -475,6 +475,13 @@ white
   orig: 1, 1
   offset: 0, 0
   index: -1
+white-pixel
+  rotate: false
+  xy: 491, 834
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
 window
   rotate: false
   xy: 278, 541

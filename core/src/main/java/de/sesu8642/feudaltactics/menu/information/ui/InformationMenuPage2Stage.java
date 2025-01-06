@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
@@ -34,8 +33,9 @@ public class InformationMenuPage2Stage extends MenuStage {
      * Constructor. See {@link MenuStage#MenuStage}
      */
     @Inject
-    public InformationMenuPage2Stage(EventBus eventBus, @MenuViewport Viewport viewport,
-                                     @MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
+    public InformationMenuPage2Stage(@MenuViewport Viewport viewport,
+                                     @MenuBackgroundCamera OrthographicCamera camera,
+                                     @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
                                      @VersionProperty String gameVersion) {
         super(viewport, BUTTON_TEXTS, camera, mapRenderer, skin);
         Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),

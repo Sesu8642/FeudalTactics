@@ -20,6 +20,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0
 		a: 1
 	}
+	black_semi_transparent: {
+		r: 0
+		g: 0
+		b: 0
+		a: 0.44662955
+	}
 	blue: {
 		r: 0
 		g: 0
@@ -226,6 +232,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 			a: 1
 		}
 	}
+	black_semi_transparent: {
+		name: white-pixel
+		color: black_semi_transparent
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
@@ -355,6 +365,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	bestagon: {
 		font: bestagon
+	}
+	overlay_w_bg: {
+		font: Overlay
+		background: black_semi_transparent
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
