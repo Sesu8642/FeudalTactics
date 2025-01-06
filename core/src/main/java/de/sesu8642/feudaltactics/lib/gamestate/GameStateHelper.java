@@ -987,7 +987,8 @@ public class GameStateHelper {
                             hasPeasant = true;
                         }
                     } else if (tile.getContent() != null
-                            && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
+                            && (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+                            || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass()))) {
                         hasTree = true;
                     }
                 }
