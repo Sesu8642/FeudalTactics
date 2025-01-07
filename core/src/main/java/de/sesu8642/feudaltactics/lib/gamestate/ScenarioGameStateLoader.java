@@ -1,14 +1,12 @@
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import com.google.common.io.Resources;
-import de.sesu8642.feudaltactics.exceptions.FatalErrorException;
 
-import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -30,13 +28,9 @@ public class ScenarioGameStateLoader {
      * @return loaded gameState
      */
     public GameState loadScenarioGameState(ScenarioMap scenarioMap) {
-        URL url = Resources.getResource(scenarioMap.mapPath);
-        String loadedString = null;
-        try {
-            loadedString = Resources.toString(url, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new FatalErrorException("Unable to load scenario map from " + scenarioMap.mapPath);
-        }
+        FileHandle assetsFileHandle = Gdx.files.internal(scenarioMap.mapPath);
+        String loadedString = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
+
         JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
         return json.readValue(GameState.class, loadedStateJsonValue);
     }
