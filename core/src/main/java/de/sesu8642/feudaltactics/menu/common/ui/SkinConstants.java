@@ -14,6 +14,7 @@ public final class SkinConstants {
     public static final String COLOR_HIGHLIGHT2 = "highlight2";
     public static final String COLOR_DISABLED = "disabled";
     public static final String COLOR_BACKGROUND = "background";
+    public static final String SEMI_TRANSPARENT_BACKGROUND_DRAWABLE = "black_semi_transparent";
     public static final String BUTTON_SPEED_HALF = "half_speed";
     public static final String BUTTON_SPEED_REGULAR = "regular_speed";
     public static final String BUTTON_SPEED_DOUBLE = "double_speed";

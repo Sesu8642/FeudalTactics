@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -132,14 +133,19 @@ public class IngameHudStage extends ResizableResettableStage {
         rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
         rootTable.row();
 
-        bottomTable = new Table();
+        bottomTable = new Table(skin);
+        bottomTable.setTouchable(Touchable.enabled);
+        // do not propagate clicks on the bottom table to the map
+        bottomTable.addListener(new ClickListener());
+
+        bottomTable.background(SkinConstants.SEMI_TRANSPARENT_BACKGROUND_DRAWABLE);
         bottomTable.defaults().fill().expand().minSize(0);
         bottomTable.add(undoButton);
         bottomTable.add(buyPeasantButton);
         bottomTable.add(buyCastleButton);
         bottomTable.add(endTurnButton);
         rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
-                .height(ValueWithSize.percentSize(0.1F, rootTable));
+                .height(ValueWithSize.percentSizeDensityMin(0.1F, rootTable, 100));
 
         handStack.add(handImage);
         handStack.add(handContentTable);

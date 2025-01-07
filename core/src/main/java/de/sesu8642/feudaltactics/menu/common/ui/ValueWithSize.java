@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.common.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
@@ -22,6 +23,22 @@ public class ValueWithSize extends Value {
             @Override
             public float get(Actor context) {
                 return (float) Math.sqrt(actor.getHeight() * actor.getWidth()) * percent;
+            }
+        };
+    }
+
+    /**
+     * Returns a value that is the smaller of 1. a percentage of the specified actor's size. 2. the pixel density
+     * multiplied by a given multiplier. The context actor is ignored.
+     */
+    public static Value percentSizeDensityMin(final float percent, final Actor actor,
+                                              final int pixelDensityMultiplier) {
+        Objects.requireNonNull(actor);
+        return new Value() {
+            @Override
+            public float get(Actor context) {
+                return (float) Math.min(Math.sqrt(actor.getHeight() * actor.getWidth()) * percent,
+                        Gdx.graphics.getDensity() * pixelDensityMultiplier);
             }
         };
     }
