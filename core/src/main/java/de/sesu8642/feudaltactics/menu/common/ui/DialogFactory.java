@@ -40,20 +40,31 @@ public class DialogFactory {
     }
 
     /**
+     * See {@link #createConfirmDialog(String, Runnable, Runnable)}, without action on cancel.
+     */
+    public FeudalTacticsDialog createConfirmDialog(String message, Runnable actionOnConfirm) {
+        return createConfirmDialog(message, actionOnConfirm, () -> {
+        });
+    }
+
+    /**
      * Creates a new dialog for having the user confirm something or cancel. With a given message and action that is
      * executed on confirmation.
      *
-     * @param message message to display in the dialog
-     * @param action  action to execute on confirmation
+     * @param message         message to display in the dialog
+     * @param actionOnConfirm action to execute on confirmation
+     * @param actionOnCancel  action to execute on cancel
      * @return new dialog
      */
-    public FeudalTacticsDialog createConfirmDialog(String message, Runnable action) {
+    public FeudalTacticsDialog createConfirmDialog(String message, Runnable actionOnConfirm, Runnable actionOnCancel) {
         FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
 
             @Override
             public void result(Object result) {
                 if (Boolean.TRUE == result) {
-                    action.run();
+                    actionOnConfirm.run();
+                } else {
+                    actionOnCancel.run();
                 }
                 this.remove();
             }

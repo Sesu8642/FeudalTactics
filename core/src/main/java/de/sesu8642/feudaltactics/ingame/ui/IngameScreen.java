@@ -145,16 +145,23 @@ public class IngameScreen extends GameScreen {
      * displays it and then ends the turn if confirmed.
      */
     public void handleEndTurnAttempt() {
-        if (GameStateHelper.hasActivePlayerlikelyForgottenKingom(cachedGameState)
-                && mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
-            Dialog confirmDialog = dialogFactory.createConfirmDialog(
-                    "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to end your " +
-                            "turn?\n",
-                    this::endHumanPlayerTurn);
-            confirmDialog.show(ingameHudStage);
-        } else {
-            endHumanPlayerTurn();
+        if (mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
+            Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
+            if (forgottenKingdom.isPresent()) {
+                Dialog confirmDialog = dialogFactory.createConfirmDialog(
+                        "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to" +
+                                " end your turn?\n",
+                        this::endHumanPlayerTurn, () -> {
+                            Kingdom kingdom = forgottenKingdom.get();
+                            eventBus.post(new FocusKingdomEvent(cachedGameState,
+                                    kingdom));
+                            eventBus.post(new ActivateKingdomEvent(kingdom));
+                        });
+                confirmDialog.show(ingameHudStage);
+                return;
+            }
         }
+        endHumanPlayerTurn();
     }
 
     private void endHumanPlayerTurn() {

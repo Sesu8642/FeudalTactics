@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.ingame;
 
 import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.CenterMapEvent;
+import de.sesu8642.feudaltactics.events.FocusKingdomEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -46,6 +47,16 @@ public class IngameRendererEventHandler {
     public void handleMapCentering(CenterMapEvent event) {
         mapRenderer.placeCameraForFullMapView(event.getGameState(), event.getMarginLeftPx(), event.getMarginBottomPx(),
                 event.getMarginRightPx(), event.getMarginTopPx());
+    }
+
+    /**
+     * Event handler for kingdom focusing.
+     *
+     * @param event event to handle
+     */
+    @Subscribe
+    public void handleMapCentering(FocusKingdomEvent event) {
+        mapRenderer.placeCameraForOnKingdom(event.getGameState(), event.getKingdom());
     }
 
 }

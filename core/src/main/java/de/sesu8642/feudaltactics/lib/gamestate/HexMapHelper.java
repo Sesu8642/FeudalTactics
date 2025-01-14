@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains functions to get information about tiles. Uses two kinds of
@@ -203,28 +204,33 @@ public class HexMapHelper {
     }
 
     /**
-     * Returns the dimensions of the current map.
+     * Returns the dimensions of a map.
      *
+     * @param tileCoords coordinates of all the tiles in the map
      * @return map dimensions
      */
-    public static MapDimensions getMapDimensionsInWorldCoords(Map<Vector2, HexTile> map) {
+    public static MapDimensions getMapDimensionsInWorldCoords(Set<Vector2> tileCoords) {
         // get most extreme map coordinates
         float minWorldX = 0;
         float maxWorldX = 0;
         float minWorldY = 0;
         float maxWorldY = 0;
-        for (Vector2 hexCoords : map.keySet()) {
+        boolean firstTile = true;
+        for (Vector2 hexCoords : tileCoords) {
             Vector2 mapCoords = hexCoordsToWorldCoords(hexCoords);
-            if (mapCoords.x < minWorldX) {
+            if (firstTile || mapCoords.x < minWorldX) {
                 minWorldX = mapCoords.x;
-            } else if (mapCoords.x > maxWorldX) {
+            }
+            if (firstTile || mapCoords.x > maxWorldX) {
                 maxWorldX = mapCoords.x;
             }
-            if (mapCoords.y < minWorldY) {
+            if (firstTile || mapCoords.y < minWorldY) {
                 minWorldY = mapCoords.y;
-            } else if (mapCoords.y > maxWorldY) {
+            }
+            if (firstTile || mapCoords.y > maxWorldY) {
                 maxWorldY = mapCoords.y;
             }
+            firstTile = false;
         }
         // calculate dimensions
         // the world coordinates of the tiles are always the center so this must be

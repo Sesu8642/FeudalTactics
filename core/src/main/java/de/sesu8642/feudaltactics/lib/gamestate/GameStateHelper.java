@@ -962,18 +962,17 @@ public class GameStateHelper {
     }
 
     /**
-     * Determines whether a player has likely forgotten to do actions for one of
-     * their kingdoms in the current turn.
+     * Determines the first kingdom a player has likely forgotten to do actions for in the current turn, if any.
      *
      * @param gameState GameState to analyze
-     * @return whether it is the case
+     * @return forgotten kingdom or empty optional
      */
-    public static boolean hasActivePlayerlikelyForgottenKingom(GameState gameState) {
+    public static Optional<Kingdom> getFirstForgottenKingdom(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
                 // can buy castle or any unit that is more expensive
                 if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.class)) {
-                    return true;
+                    return Optional.of(kingdom);
                 }
                 // has unit stronger than peasant
                 boolean hasPeasant = false;
@@ -982,7 +981,7 @@ public class GameStateHelper {
                     if (tile.getContent() != null
                             && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
                         if (tile.getContent().getStrength() > 1) {
-                            return true;
+                            return Optional.of(kingdom);
                         } else if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
                             hasPeasant = true;
                         }
@@ -996,21 +995,21 @@ public class GameStateHelper {
                 // has or can get peasant that can conquer something or destroy tree
                 if (hasPeasant || canBuyPeasant) {
                     if (hasTree) {
-                        return true;
+                        return Optional.of(kingdom);
                     }
                     // there is a neighbor tile which can be conquered by the peasant
                     for (HexTile tile : kingdom.getTiles()) {
                         for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
                             if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()
                                     && getProtectionLevel(gameState, neighborTile) == 0) {
-                                return true;
+                                return Optional.of(kingdom);
                             }
                         }
                     }
                 }
             }
         }
-        return false;
+        return Optional.empty();
     }
 
     /**

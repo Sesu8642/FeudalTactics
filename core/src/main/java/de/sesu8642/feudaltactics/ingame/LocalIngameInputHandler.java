@@ -157,6 +157,16 @@ public class LocalIngameInputHandler {
     }
 
     /**
+     * Event handler for select kingdom events.
+     *
+     * @param event event to handle
+     */
+    @Subscribe
+    public void handleActivateKingdom(ActivateKingdomEvent event) {
+        carryOutPlayerMoveIfLegal(PlayerMove.activateKingdom(event.getKingdom().getTiles().get(0).getPosition()));
+    }
+
+    /**
      * Event handler for game start events.
      *
      * @param event event to handle

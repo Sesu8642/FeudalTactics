@@ -20,6 +20,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 /**
  * Renderer for the map and the water.
@@ -608,7 +609,7 @@ public class MapRenderer {
      */
     public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
                                           long marginRightPx, long marginTopPx) {
-        MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(gameState.getMap());
+        MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(gameState.getMap().keySet());
         // get the factors needed to adjust the camera zoom
         float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
         float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
@@ -623,6 +624,23 @@ public class MapRenderer {
         // offset to apply the margin
         camera.translate(marginRightPx * camera.zoom / 2 - marginLeftPx * camera.zoom / 2,
                 marginTopPx * camera.zoom / 2 - marginBottomPx * camera.zoom / 2);
+        camera.update();
+    }
+
+    /**
+     * Places the camera in the center of a given kingdom, without changing the zoom.
+     *
+     * @param kingdom kingdom to focus
+     */
+    public void placeCameraForOnKingdom(GameState gameState, Kingdom kingdom) {
+        Set<Vector2> kingdomTileCoordinates =
+                gameState.getMap().entrySet().stream().filter(entry ->
+                                kingdom.getTiles().contains(entry.getValue()))
+                        .map(Entry::getKey)
+                        .collect(Collectors.toSet());
+        MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(kingdomTileCoordinates);
+        // move camera to center
+        camera.position.set(dims.getCenter(), 0);
         camera.update();
     }
 
