@@ -29,8 +29,6 @@ public class FeudalTacticsDialog extends Dialog {
         super("", skin);
         this.skin = skin;
         getColor().a = 0; // fixes pop-in; see https://github.com/libgdx/libgdx/issues/3920
-        setMovable(false);
-        setKeepWithinStage(false);
         pad(DIALOG_PADDING);
     }
 
