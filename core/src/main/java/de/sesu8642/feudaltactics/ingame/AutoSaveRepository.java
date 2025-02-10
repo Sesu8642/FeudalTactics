@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +58,8 @@ public class AutoSaveRepository {
 
     private final JsonReader jsonReader = new JsonReader();
 
+    private final ReentrantLock lock = new ReentrantLock(true);
+
     private int currentUndoDepth;
 
     private long idCounter;
@@ -76,14 +79,19 @@ public class AutoSaveRepository {
      * Saves a game state (autosave).
      */
     public void autoSaveFullGameState(GameState gameState) {
-        logger.debug("autosaving full gamestate");
+        lock.lock();
+        try {
+            logger.debug("autosaving full gamestate");
 
-        String saveString = fullSaveJson.toJson(gameState, GameState.class);
-        fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveString);
-        fullAutoSavePrefStore.flush();
-        incrementalAutoSavePrefStore.clear();
-        incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, currentUndoDepth);
-        incrementalAutoSavePrefStore.flush();
+            String saveString = fullSaveJson.toJson(gameState, GameState.class);
+            fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveString);
+            fullAutoSavePrefStore.flush();
+            incrementalAutoSavePrefStore.clear();
+            incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, currentUndoDepth);
+            incrementalAutoSavePrefStore.flush();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -91,35 +99,41 @@ public class AutoSaveRepository {
      * save.
      */
     public void autoSaveIncrementalPlayerMove(PlayerMove playerMove) {
-        // after undoing sth and doing a new move, the player can undo this new move
-        // again
-        if (currentUndoDepth > 0) {
-            incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, --currentUndoDepth);
-            logger.info("undo depth decreased to " + currentUndoDepth);
-        }
-
-        // if there are too many incremental saves, merge them into the last full one
-        if (incrementalAutoSavePrefStore.get().size() >= MAX_INCREMENTAL_SAVES) {
-            logger.info("merging incremental saves into full save");
-            GameState fullSave = getFullSave();
-            SortedMap<Long, PlayerMove> incrementalSaves = getIncrementalSavesInOrder();
-            // keep enough incremental saves to enable undoing moves
-            SortedMap<Long, PlayerMove> incrementalSavesToMerge = incrementalSaves.subMap(incrementalSaves.firstKey(),
-                    new ArrayList<Long>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
-            mergeIncrementalSavesIntoFull(fullSave, incrementalSavesToMerge.values());
-            String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
-            fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveStringFullSave);
-            fullAutoSavePrefStore.flush();
-            for (Long mergedIncrementKey : incrementalSavesToMerge.keySet()) {
-                logger.info("deleting incremental save with key {}", mergedIncrementKey);
-                incrementalAutoSavePrefStore.remove(mergedIncrementKey.toString());
+        lock.lock();
+        try {
+            // after undoing sth and doing a new move, the player can undo this new move
+            // again
+            if (currentUndoDepth > 0) {
+                incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, --currentUndoDepth);
+                logger.info("undo depth decreased to " + currentUndoDepth);
             }
-        }
 
-        // using current time as key
-        String saveStringIncrement = incrementalSaveJson.toJson(playerMove);
-        incrementalAutoSavePrefStore.putString(String.valueOf(++idCounter), saveStringIncrement);
-        incrementalAutoSavePrefStore.flush();
+            // if there are too many incremental saves, merge them into the last full one
+            if (incrementalAutoSavePrefStore.get().size() >= MAX_INCREMENTAL_SAVES) {
+                logger.info("merging incremental saves into full save");
+                GameState fullSave = getFullSave();
+                SortedMap<Long, PlayerMove> incrementalSaves = getIncrementalSavesInOrder();
+                // keep enough incremental saves to enable undoing moves
+                SortedMap<Long, PlayerMove> incrementalSavesToMerge =
+                        incrementalSaves.subMap(incrementalSaves.firstKey(),
+                                new ArrayList<Long>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
+                mergeIncrementalSavesIntoFull(fullSave, incrementalSavesToMerge.values());
+                String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
+                fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveStringFullSave);
+                fullAutoSavePrefStore.flush();
+                for (Long mergedIncrementKey : incrementalSavesToMerge.keySet()) {
+                    logger.info("deleting incremental save with key {}", mergedIncrementKey);
+                    incrementalAutoSavePrefStore.remove(mergedIncrementKey.toString());
+                }
+            }
+
+            // using current time as key
+            String saveStringIncrement = incrementalSaveJson.toJson(playerMove);
+            incrementalAutoSavePrefStore.putString(String.valueOf(++idCounter), saveStringIncrement);
+            incrementalAutoSavePrefStore.flush();
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void mergeIncrementalSavesIntoFull(GameState fullSave, Collection<PlayerMove> incrementalSaves) {
@@ -135,11 +149,16 @@ public class AutoSaveRepository {
      * @return loaded game state
      */
     public GameState getCombinedAutoSave() {
-        GameState lastFullSave = getFullSave();
-        // now apply all the incremental saves on top (oldest first)
-        Collection<PlayerMove> incrementalSaves = getIncrementalSavesInOrder().values();
-        mergeIncrementalSavesIntoFull(lastFullSave, incrementalSaves);
-        return lastFullSave;
+        lock.lock();
+        try {
+            GameState lastFullSave = getFullSave();
+            // now apply all the incremental saves on top (oldest first)
+            Collection<PlayerMove> incrementalSaves = getIncrementalSavesInOrder().values();
+            mergeIncrementalSavesIntoFull(lastFullSave, incrementalSaves);
+            return lastFullSave;
+        } finally {
+            lock.unlock();
+        }
     }
 
     private GameState getFullSave() {
@@ -166,11 +185,16 @@ public class AutoSaveRepository {
      * @return full save as JSON string
      */
     public String getFullSaveAsString() {
-        if (fullAutoSavePrefStore.get().isEmpty()) {
-            throw new SaveLoadingException("No full save available");
+        lock.lock();
+        try {
+            if (fullAutoSavePrefStore.get().isEmpty()) {
+                throw new SaveLoadingException("No full save available");
+            }
+            // cannot be empty if there is a save
+            return fullAutoSavePrefStore.getString(FULL_GAME_SAVE_KEY_NAME);
+        } finally {
+            lock.unlock();
         }
-        // cannot be empty if there is a save
-        return fullAutoSavePrefStore.getString(FULL_GAME_SAVE_KEY_NAME);
     }
 
     /**
@@ -179,20 +203,30 @@ public class AutoSaveRepository {
      * @return string representation of the incremental saves
      */
     public String getIncrementalSavesAsString() {
-        return incrementalAutoSavePrefStore.get().toString();
+        lock.lock();
+        try {
+            return incrementalAutoSavePrefStore.get().toString();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * Deletes the newest autosave.
      */
     public void deleteLatestIncrementalSave() {
-        Optional<String> latestSaveKeyOptional = getLatestIncrementalSaveKey();
-        latestSaveKeyOptional.ifPresent(latestSaveKey -> {
-            incrementalAutoSavePrefStore.remove(latestSaveKey);
-            incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, ++currentUndoDepth);
-            incrementalAutoSavePrefStore.flush();
-            logger.info("undo depth increased to " + currentUndoDepth);
-        });
+        lock.lock();
+        try {
+            Optional<String> latestSaveKeyOptional = getLatestIncrementalSaveKey();
+            latestSaveKeyOptional.ifPresent(latestSaveKey -> {
+                incrementalAutoSavePrefStore.remove(latestSaveKey);
+                incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, ++currentUndoDepth);
+                incrementalAutoSavePrefStore.flush();
+                logger.info("undo depth increased to {}", currentUndoDepth);
+            });
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -211,25 +245,40 @@ public class AutoSaveRepository {
      * Deletes all autosaves: both full ones and increments.
      */
     public void deleteAllAutoSaves() {
-        fullAutoSavePrefStore.clear();
-        fullAutoSavePrefStore.flush();
-        incrementalAutoSavePrefStore.clear();
-        incrementalAutoSavePrefStore.flush();
+        lock.lock();
+        try {
+            fullAutoSavePrefStore.clear();
+            fullAutoSavePrefStore.flush();
+            incrementalAutoSavePrefStore.clear();
+            incrementalAutoSavePrefStore.flush();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * Returns if there is a saved game.
      */
     public boolean hasFullAutosave() {
-        return !fullAutoSavePrefStore.get().isEmpty();
+        lock.lock();
+        try {
+            return !fullAutoSavePrefStore.get().isEmpty();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * Returns if undoing is possible.
      */
     public boolean isUndoPossible() {
-        // one entry is the undo depth
-        return currentUndoDepth < MAX_UNDOS && incrementalAutoSavePrefStore.get().size() > 1;
+        lock.lock();
+        try {
+            // one entry is the undo depth
+            return currentUndoDepth < MAX_UNDOS && incrementalAutoSavePrefStore.get().size() > 1;
+        } finally {
+            lock.unlock();
+        }
     }
 
 }
