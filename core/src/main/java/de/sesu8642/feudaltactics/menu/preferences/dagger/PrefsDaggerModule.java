@@ -8,16 +8,17 @@ import dagger.Module;
 import dagger.Provides;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.menu.preferences.NagPreferencesDao;
 
 import javax.inject.Singleton;
 
 /**
- * Dagger module for the main game preferences.
+ * Dagger module for the game preferences.
  */
 @Module
-public class GamePrefsDaggerModule {
+public class PrefsDaggerModule {
 
-    private GamePrefsDaggerModule() {
+    private PrefsDaggerModule() {
         // prevent instantiation
         throw new AssertionError();
     }
@@ -27,6 +28,13 @@ public class GamePrefsDaggerModule {
     @GamePrefsPrefStore
     static Preferences provideGamePrefsPrefStore(@PreferencesPrefixProperty String prefix) {
         return Gdx.app.getPreferences(prefix + MainPreferencesDao.MAIN_PREFERENCES_NAME);
+    }
+
+    @Provides
+    @Singleton
+    @NagPrefsPrefStore
+    static Preferences provideNagPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
+        return Gdx.app.getPreferences(prefix + NagPreferencesDao.NAG_PREFERENCES_NAME);
     }
 
 }

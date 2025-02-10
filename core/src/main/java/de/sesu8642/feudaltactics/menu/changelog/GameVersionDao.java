@@ -16,47 +16,27 @@ public class GameVersionDao {
 
     public static final String VERSION_PREFERENCES_NAME = "versionPreferences";
     private static final String VERSION_GAME_VERSION_NAME = "gameVersion";
-    private static final String CHANGELOG_STATE_NAME = "showChangeLogNextTime";
 
-    private final Preferences versionPrefs;
+    private final Preferences prefStore;
 
     @Inject
-    public GameVersionDao(@GameVersionPrefStore Preferences versionPrefs) {
-        this.versionPrefs = versionPrefs;
+    public GameVersionDao(@GameVersionPrefStore Preferences prefStore) {
+        this.prefStore = prefStore;
     }
 
     /**
      * Loads the game version.
      */
     public String getGameVersion() {
-        return versionPrefs.getString(VERSION_GAME_VERSION_NAME);
+        return prefStore.getString(VERSION_GAME_VERSION_NAME);
     }
 
     /**
      * Saves the given game version.
-     *
-     * @param version version to save
      */
     public void saveGameVersion(String version) {
-        versionPrefs.putString(VERSION_GAME_VERSION_NAME, version);
-        versionPrefs.flush();
-    }
-
-    /**
-     * Loads changelog state (whether to show the changelog next time).
-     */
-    public boolean getChangelogState() {
-        return versionPrefs.getBoolean(CHANGELOG_STATE_NAME, false);
-    }
-
-    /**
-     * Saves the given changelog state.
-     *
-     * @param state whether to show the changelog next time
-     */
-    public void saveChangelogState(boolean state) {
-        versionPrefs.putBoolean(CHANGELOG_STATE_NAME, state);
-        versionPrefs.flush();
+        prefStore.putString(VERSION_GAME_VERSION_NAME, version);
+        prefStore.flush();
     }
 
 }

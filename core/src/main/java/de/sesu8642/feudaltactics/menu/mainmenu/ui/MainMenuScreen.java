@@ -25,6 +25,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
+import de.sesu8642.feudaltactics.menu.preferences.NagPreferencesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +41,8 @@ public class MainMenuScreen extends GameScreen {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    private final GameVersionDao gameVersionDao;
     private final NewGamePreferencesDao newGamePreferencesDao;
+    private final NagPreferencesDao nagPreferencesDao;
     private final DialogFactory dialogFactory;
     private final EventBus eventBus;
 
@@ -57,11 +58,12 @@ public class MainMenuScreen extends GameScreen {
      */
     @Inject
     public MainMenuScreen(GameVersionDao gameVersionDao, NewGamePreferencesDao newGamePreferencesDao,
-                          @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport, MainMenuStage mainMenuStage,
+                          @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+                          MainMenuStage mainMenuStage, NagPreferencesDao nagPreferencesDao,
                           DialogFactory dialogFactory, EventBus eventBus) {
         super(camera, viewport, mainMenuStage);
-        this.gameVersionDao = gameVersionDao;
         this.newGamePreferencesDao = newGamePreferencesDao;
+        this.nagPreferencesDao = nagPreferencesDao;
         this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
         initUi(mainMenuStage);
@@ -69,37 +71,77 @@ public class MainMenuScreen extends GameScreen {
 
     private void initUi(MenuStage stage) {
         List<TextButton> buttons = stage.getButtons();
+        int i = 0;
         // play button
-        buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
-            NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
-            eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-            eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
-                    new MapParameters(savedPrefs.getStartingPosition(), System.currentTimeMillis(),
-                            savedPrefs.getMapSize().getAmountOfTiles(), savedPrefs.getDensity().getDensityFloat())));
+        buttons.get(i).addListener(new ExceptionLoggingChangeListener(() -> {
+            if (nagPreferencesDao.getShowTutorialNag()) {
+                nagPreferencesDao.setShowTutorialNag(false);
+                showTutorialNag();
+            } else {
+                initSandboxGame();
+            }
         }));
         // tutorial button
-        buttons.get(1).addListener(new ExceptionLoggingChangeListener(
-                () -> {
-                    eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-                    eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
-                    eventBus.post(new GameStartEvent());
-                }));
+        buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
+            initTutorial();
+            if (nagPreferencesDao.getShowTutorialNag()) {
+                nagPreferencesDao.setShowTutorialNag(false);
+            }
+        }));
         // preferences button
-        buttons.get(2).addListener(new ExceptionLoggingChangeListener(
+        buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
                 () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN))));
         // information button
-        buttons.get(3).addListener(new ExceptionLoggingChangeListener(
+        buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
                 () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
+    }
+
+    private void initTutorial() {
+        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+        eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
+        eventBus.post(new GameStartEvent());
+    }
+
+    private void initSandboxGame() {
+        NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
+        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+        eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
+                new MapParameters(savedPrefs.getStartingPosition(), System.currentTimeMillis(),
+                        savedPrefs.getMapSize().getAmountOfTiles(), savedPrefs.getDensity().getDensityFloat())));
     }
 
     @Override
     public void show() {
         super.show();
-        if (gameVersionDao.getChangelogState()) {
+        if (nagPreferencesDao.getShowChangelog()) {
             // show the dialog only once after the update
-            gameVersionDao.saveChangelogState(false);
+            nagPreferencesDao.setShowChangelog(false);
             showNewVersionDialog();
         }
+    }
+
+    private void showTutorialNag() {
+        logger.debug("showing tutorial nag");
+        Dialog tutorialNagDialog = dialogFactory.createDialog(result -> {
+            switch ((byte) result) {
+                case 0:
+                    // no
+                    logger.debug("the user chose to play the tutorial");
+                    initTutorial();
+                    break;
+                case 1:
+                    // yes
+                    logger.debug("the user dismissed the tutorial nag dialog");
+                    initSandboxGame();
+                    break;
+                default:
+                    break;
+            }
+        });
+        tutorialNagDialog.text("Do you know how to play?\n");
+        tutorialNagDialog.button("No", (byte) 0);
+        tutorialNagDialog.button("Yes", (byte) 1);
+        tutorialNagDialog.show(getActiveStage());
     }
 
     private void showNewVersionDialog() {

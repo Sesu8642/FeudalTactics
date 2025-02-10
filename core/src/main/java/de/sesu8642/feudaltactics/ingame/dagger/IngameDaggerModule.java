@@ -52,7 +52,8 @@ public class IngameDaggerModule {
     @Provides
     @Singleton
     static GameController provideGameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi,
-                                                AutoSaveRepository autoSaveRepo, ScenarioGameStateLoader scenarioGameStateLoader) {
+                                                AutoSaveRepository autoSaveRepo,
+                                                ScenarioGameStateLoader scenarioGameStateLoader) {
         return new GameController(eventBus, botTurnExecutor, botAi, autoSaveRepo, scenarioGameStateLoader);
     }
 
@@ -102,5 +103,5 @@ public class IngameDaggerModule {
         return Executors
                 .newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("botai-%d").setDaemon(true).build());
     }
-
+    
 }

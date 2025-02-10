@@ -15,7 +15,6 @@ import javax.inject.Singleton;
 public class MainPreferencesDao {
 
     public static final String MAIN_PREFERENCES_NAME = "gamePreferences";
-
     private static final String WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME = "warnAboutForgottenKingdoms";
     private static final String SHOW_ENEMY_TURNS_NAME = "showEnemyTurns";
 

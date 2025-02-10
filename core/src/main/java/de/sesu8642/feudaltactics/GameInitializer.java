@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Preferences;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
@@ -16,6 +15,7 @@ import de.sesu8642.feudaltactics.exceptions.InitializationException;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
+import de.sesu8642.feudaltactics.menu.preferences.NagPreferencesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,23 +36,29 @@ public class GameInitializer {
 
     private final EventBus eventBus;
     private final GameVersionDao gameVersionDao;
+    private final NagPreferencesDao nagPreferencesDao;
     private final CrashReportDao crashReportDao;
     private final AutoSaveRepository autoSaveRepository;
     private final ScreenNavigationController screenNavigationController;
+    private final DataMigrator dataMigrator;
     private final String gameVersion;
 
     /**
      * Constructor.
      */
     @Inject
-    public GameInitializer(EventBus eventBus, GameVersionDao gameVersionDao, CrashReportDao crashReportDao,
-                           AutoSaveRepository autoSaveRepository, ScreenNavigationController screenNavigationController,
+    public GameInitializer(EventBus eventBus, GameVersionDao gameVersionDao, NagPreferencesDao nagPreferencesDao,
+                           CrashReportDao crashReportDao,
+                           AutoSaveRepository autoSaveRepository,
+                           ScreenNavigationController screenNavigationController, DataMigrator dataMigrator,
                            @VersionProperty String gameVersion) {
         this.eventBus = eventBus;
         this.gameVersionDao = gameVersionDao;
+        this.nagPreferencesDao = nagPreferencesDao;
         this.crashReportDao = crashReportDao;
         this.autoSaveRepository = autoSaveRepository;
         this.screenNavigationController = screenNavigationController;
+        this.dataMigrator = dataMigrator;
         this.gameVersion = gameVersion;
     }
 
@@ -94,23 +100,14 @@ public class GameInitializer {
             if (!Strings.isNullOrEmpty(previousVersion) && !previousVersion.equals(gameVersion)) {
                 // first start after update
                 logger.info("game was updated from version {} to {}", previousVersion, gameVersion);
-                gameVersionDao.saveChangelogState(true);
-                cleanUpAfterUpdate();
+                nagPreferencesDao.setShowChangelog(true);
+                dataMigrator.migrateData(previousVersion);
             }
 
             // save current game version
             gameVersionDao.saveGameVersion(gameVersion);
         } catch (Exception e) {
             logger.error("unexpected exception during application start", e);
-        }
-    }
-
-    private void cleanUpAfterUpdate() {
-        Preferences oldPrefs = Gdx.app.getPreferences("FeudalTactics_autoSavePreferences");
-        if (!oldPrefs.get().isEmpty()) {
-            // apparently preferences cannot be deleted easily but at least clear them
-            oldPrefs.clear();
-            oldPrefs.flush();
         }
     }
 
