@@ -45,13 +45,13 @@ jobs:
     steps:
 
       - name: Check out repository code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Build Android
         run: ./gradlew android:assembleRelease
 
       - name: Upload Android apk
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Android apk
           path: ./android/build/outputs/apk/release/android-release-unsigned.apk
