@@ -124,11 +124,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 
         Table seedTable = new Table();
         seedTable.defaults().uniformX();
-        seedTable.add(seedTextField).colspan(3).fill().expand();
-        seedTable.row();
-        seedTable.add(randomButton).fillX().height(INPUT_HEIGHT_PX);
-        seedTable.add(copyButton).fillX().height(INPUT_HEIGHT_PX);
-        seedTable.add(pasteButton).fillX().height(INPUT_HEIGHT_PX);
+        seedTable.add(seedTextField).colspan(2).fill().expand();
+        seedTable.add(randomButton).height(INPUT_HEIGHT_PX).width(INPUT_HEIGHT_PX);
 
         playButton = new TextButton("Play", skin);
 
@@ -150,9 +147,13 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.row();
         rootTable.add(sizeLabel);
         rootTable.add(sizeSelect).fillX();
+        rootTable.add(copyButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
+                .width(INPUT_HEIGHT_PX);
         rootTable.row();
         rootTable.add(densityLabel);
         rootTable.add(densitySelect).fillX();
+        rootTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
+                .width(INPUT_HEIGHT_PX);
         rootTable.row();
         rootTable.add(playButton).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
                 OUTER_PADDING_PX);
