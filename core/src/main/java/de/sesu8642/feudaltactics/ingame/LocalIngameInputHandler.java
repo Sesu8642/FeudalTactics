@@ -70,9 +70,7 @@ public class LocalIngameInputHandler {
         carryOutPlayerMoveIfLegal(PlayerMove.activateKingdom(hexCoords));
 
         Optional<PlayerMove> moveOptional = determineTapMove(player, tile, event.getCount());
-        if (moveOptional.isPresent()) {
-            carryOutPlayerMoveIfLegal(moveOptional.get());
-        }
+        moveOptional.ifPresent(this::carryOutPlayerMoveIfLegal);
     }
 
     /**
@@ -82,7 +80,7 @@ public class LocalIngameInputHandler {
      */
     @Subscribe
     public void handleRegenerateMap(RegenerateMapEvent event) {
-        gameController.generateGameState(event.getBotIntelligence(), event.getMapParams());
+        gameController.generateGameState(event.getGameParams());
     }
 
     /**

@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -15,7 +14,6 @@ import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.*;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.events.moves.*;
-import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
@@ -26,7 +24,6 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
-import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
@@ -62,6 +59,7 @@ public class IngameScreen extends GameScreen {
 
     private final DialogFactory dialogFactory;
     private final TutorialDialogFactory tutorialDialogFactory;
+
     /**
      * Interactions with the UI must happen in the same thread that does the
      * rendering because the UI libs aren't thread-safe. To do that, Runnables can
@@ -69,6 +67,7 @@ public class IngameScreen extends GameScreen {
      */
     private final ConcurrentLinkedQueue<Runnable> uiChangeActions = new ConcurrentLinkedQueue<>();
     private final NewGamePreferencesDao newGamePrefDao;
+    NewGamePreferences cachedNewGamePreferences;
     /**
      * Cached version of the game state from the game controller.
      */
@@ -96,7 +95,6 @@ public class IngameScreen extends GameScreen {
      * @param newGamePrefDao      dao for new game preferences
      * @param ingameCamera        camera for viewing the map
      * @param viewport            viewport for the menus
-     * @param menuCamera          camera for the menus
      * @param mapRenderer         renderer for the map
      * @param dialogFactory       factory for creating confirm dialogs
      * @param eventBus            event bus
@@ -110,14 +108,13 @@ public class IngameScreen extends GameScreen {
      * @param parameterInputStage stage for the new game parameter input UI
      */
     @Inject
-    public IngameScreen(TextureAtlas textureAtlas, MainPreferencesDao mainPrefsDao,
-                        NewGamePreferencesDao newGamePrefDao, @IngameCamera OrthographicCamera ingameCamera,
-                        @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera menuCamera,
+    public IngameScreen(MainPreferencesDao mainPrefsDao, NewGamePreferencesDao newGamePrefDao,
+                        @IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
                         @IngameRenderer MapRenderer mapRenderer, DialogFactory dialogFactory,
                         TutorialDialogFactory tutorialDialogFactory, EventBus eventBus,
-                        CombinedInputProcessor inputProcessor,
-                        FeudalTacticsGestureDetector gestureDetector, InputValidationHelper inputValidationHelper,
-                        InputMultiplexer inputMultiplexer, IngameHudStage ingameHudStage, IngameMenuStage menuStage,
+                        CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
+                        InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
+                        IngameHudStage ingameHudStage, IngameMenuStage menuStage,
                         ParameterInputStage parameterInputStage) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
@@ -134,10 +131,11 @@ public class IngameScreen extends GameScreen {
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
+        // load before adding the listeners because they will trigger persisting the preferences on each update
+        loadNewGameParameterValues();
         addIngameMenuListeners();
         addParameterInputListeners();
         addHudListeners();
-        loadNewGameParameterValues();
     }
 
     /**
@@ -179,10 +177,7 @@ public class IngameScreen extends GameScreen {
         GameState previousCachedGameState = cachedGameState;
         clearCache();
         if (previousCachedGameState.getScenarioMap() == ScenarioMap.NONE) {
-            eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-                    new MapParameters(parameterInputStage.getStartingPosition(), parameterInputStage.getSeedParam(),
-                            parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-                            parameterInputStage.getMapDensityParam().getDensityFloat())));
+            eventBus.post(new RegenerateMapEvent(cachedNewGamePreferences.toGameParameters()));
             activateStage(IngameStages.PARAMETERS);
         } else {
             eventBus.post(new InitializeScenarioEvent(previousCachedGameState.getBotIntelligence(),
@@ -436,15 +431,9 @@ public class IngameScreen extends GameScreen {
     }
 
     private void showGameDetails() {
-        NewGamePreferences prefs = newGamePrefDao.getNewGamePreferences();
-        String gameDetailsBuilder = String.format("Round: %s", cachedGameState.getRound()) +
-                String.format("\nSeed: %s", cachedGameState.getSeed()) +
-                String.format("\nStarting Position: %s", prefs.getStartingPosition() + 1) +
-                String.format("\nCPU Difficulty: %s",
-                        EnumDisplayNameProvider.getDisplayName(prefs.getBotIntelligence())) +
-                String.format("\nMap Size: %s", EnumDisplayNameProvider.getDisplayName(prefs.getMapSize())) +
-                String.format("\nMap Density: %s", EnumDisplayNameProvider.getDisplayName(prefs.getDensity()));
-        FeudalTacticsDialog dialog = dialogFactory.createInformationDialogWithCopyButton(gameDetailsBuilder, () -> {
+        String gameDetails = String.format("Round: %s\n", cachedGameState.getRound())
+                + cachedNewGamePreferences.toSharableString();
+        FeudalTacticsDialog dialog = dialogFactory.createInformationDialogWithCopyButton(gameDetails, () -> {
         });
         dialog.show(ingameHudStage);
     }
@@ -531,27 +520,33 @@ public class IngameScreen extends GameScreen {
 
     private void addParameterInputListeners() {
         parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
-                () -> parameterInputStage.seedTextField.setText(String.valueOf(System.currentTimeMillis()))));
+                () -> {
+                    long newSeed = System.currentTimeMillis();
+                    parameterInputStage.seedTextField.setText(String.valueOf(newSeed));
+                    cachedNewGamePreferences.setSeed(newSeed);
+                    newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
+                }));
 
         parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            parameterInputStage.seedTextField.setText(Gdx.app.getClipboard().getContents());
+            NewGamePreferences pastedPreferences =
+                    NewGamePreferences.fromSharableString(Gdx.app.getClipboard().getContents());
+            updateParameterInputsFromNewGamePrefs(pastedPreferences);
         }));
 
         parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
-                () -> Gdx.app.getClipboard().setContents(parameterInputStage.seedTextField.getText())));
+                () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString())));
 
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                         parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
                         parameterInputStage.pasteButton, parameterInputStage.difficultySelect)
                 .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
-                    eventBus.post(new RegenerateMapEvent(parameterInputStage.getBotIntelligence(),
-                            new MapParameters(parameterInputStage.getStartingPosition(),
-                                    parameterInputStage.getSeedParam(),
-                                    parameterInputStage.getMapSizeParam().getAmountOfTiles(),
-                                    parameterInputStage.getMapDensityParam().getDensityFloat())));
-                    newGamePrefDao.saveNewGamePreferences(new NewGamePreferences(
-                            parameterInputStage.getBotIntelligence(), parameterInputStage.getMapSizeParam(),
-                            parameterInputStage.getMapDensityParam(), parameterInputStage.getStartingPosition()));
+                    cachedNewGamePreferences.setSeed(parameterInputStage.getSeedParam());
+                    cachedNewGamePreferences.setMapSize(parameterInputStage.getMapSizeParam());
+                    cachedNewGamePreferences.setDensity(parameterInputStage.getMapDensityParam());
+                    cachedNewGamePreferences.setBotIntelligence(parameterInputStage.getBotIntelligence());
+                    cachedNewGamePreferences.setStartingPosition(parameterInputStage.getStartingPosition());
+                    newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
+                    eventBus.post(new RegenerateMapEvent(cachedNewGamePreferences.toGameParameters()));
                 })));
         // only the settings that visually change the map need to cause centering
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
@@ -609,11 +604,20 @@ public class IngameScreen extends GameScreen {
     }
 
     private void loadNewGameParameterValues() {
-        NewGamePreferences prefs = newGamePrefDao.getNewGamePreferences();
-        parameterInputStage.difficultySelect.setSelectedIndex(prefs.getBotIntelligence().ordinal());
-        parameterInputStage.sizeSelect.setSelectedIndex(prefs.getMapSize().ordinal());
-        parameterInputStage.densitySelect.setSelectedIndex(prefs.getDensity().ordinal());
-        parameterInputStage.startingPositionSelect.setSelectedIndex(prefs.getStartingPosition());
+        cachedNewGamePreferences = newGamePrefDao.getNewGamePreferences();
+        updateParameterInputsFromNewGamePrefs(cachedNewGamePreferences);
+    }
+
+    private void updateParameterInputsFromNewGamePrefs(NewGamePreferences newGamePreferences) {
+        // not ideal: when called after the event listeners are registered, the preferences will be persisted once
+        // per call
+        // TODO: starting position needs to be limited when there are less than 5 players
+        cachedNewGamePreferences.setNumberOfBotPlayers(newGamePreferences.getNumberOfBotPlayers());
+        parameterInputStage.seedTextField.setText(String.valueOf(newGamePreferences.getSeed()));
+        parameterInputStage.difficultySelect.setSelectedIndex(newGamePreferences.getBotIntelligence().ordinal());
+        parameterInputStage.sizeSelect.setSelectedIndex(newGamePreferences.getMapSize().ordinal());
+        parameterInputStage.densitySelect.setSelectedIndex(newGamePreferences.getDensity().ordinal());
+        parameterInputStage.startingPositionSelect.setSelectedIndex(newGamePreferences.getStartingPosition());
     }
 
     public OrthographicCamera getCamera() {

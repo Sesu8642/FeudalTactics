@@ -13,7 +13,6 @@ import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
-import de.sesu8642.feudaltactics.ingame.MapParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
@@ -105,9 +104,7 @@ public class MainMenuScreen extends GameScreen {
     private void initSandboxGame() {
         NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
         eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-        eventBus.post(new RegenerateMapEvent(savedPrefs.getBotIntelligence(),
-                new MapParameters(savedPrefs.getStartingPosition(), System.currentTimeMillis(),
-                        savedPrefs.getMapSize().getAmountOfTiles(), savedPrefs.getDensity().getDensityFloat())));
+        eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
     }
 
     @Override

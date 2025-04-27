@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
-import de.sesu8642.feudaltactics.ingame.MapParameters;
+import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
@@ -85,17 +85,14 @@ public class GameController {
 
     /**
      * Generates a map.
-     *
-     * @param botIntelligence intelligence of the bot players
-     * @param mapParams       map generation parameters
      */
-    public void generateGameState(Intelligence botIntelligence, MapParameters mapParams) {
-        logger.info("generating a new game state with bot intelligence {} and {}", botIntelligence, mapParams);
+    public void generateGameState(GameParameters gameParams) {
+        logger.info("generating a new game state with {}", gameParams);
         gameState = new GameState();
-        gameState.setBotIntelligence(botIntelligence);
+        gameState.setBotIntelligence(gameParams.getBotIntelligence());
 
-        GameStateHelper.initializeMap(gameState, mapParams.getPlayers(), mapParams.getLandMass(),
-                mapParams.getDensity(), null, mapParams.getSeed());
+        GameStateHelper.initializeMap(gameState, gameParams.getPlayers(), gameParams.getLandMass(),
+                gameParams.getDensity(), null, gameParams.getSeed());
         eventBus.post(new GameStateChangeEvent(gameState));
     }
 

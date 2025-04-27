@@ -130,7 +130,7 @@ public class TutorialDialogFactory {
         List<List<String>> tableData = new ArrayList<>();
         tableData.add(Arrays.asList("Unit", "Strength", "Salary"));
         for (UnitTypes unitType : UnitTypes.values()) {
-            tableData.add(Arrays.asList(EnumDisplayNameProvider.getDisplayName(unitType),
+            tableData.add(Arrays.asList(EnumDisplayNameConverter.getDisplayName(unitType),
                     String.valueOf(unitType.strength()),
                     String.valueOf(unitType.salary())));
         }

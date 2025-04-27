@@ -90,18 +90,18 @@ public class ParameterInputStage extends ResizableResettableStage {
 
         Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
-        difficultySelect.setItems(EnumDisplayNameProvider.DIFFICULTIES);
+        difficultySelect.setItems(EnumDisplayNameConverter.DIFFICULTIES.toArray(new String[0]));
 
         Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
-        sizeSelect.setItems(EnumDisplayNameProvider.MAP_SIZES);
+        sizeSelect.setItems(EnumDisplayNameConverter.MAP_SIZES.toArray(new String[0]));
 
         Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
-        densitySelect.setItems(EnumDisplayNameProvider.DENSITIES);
+        densitySelect.setItems(EnumDisplayNameConverter.DENSITIES.toArray(new String[0]));
 
         Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        seedTextField = new TextField(String.valueOf(System.currentTimeMillis()), skin);
+        seedTextField = new TextField("", skin);
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
         seedTextField.setMaxLength(18);
 
