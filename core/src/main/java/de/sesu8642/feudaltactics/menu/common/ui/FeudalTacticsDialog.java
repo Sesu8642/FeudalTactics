@@ -47,7 +47,7 @@ public class FeudalTacticsDialog extends Dialog {
 
     @Override
     public FeudalTacticsDialog button(String text, Object param) {
-        TextButton button = new TextButton(text, skin);
+        TextButton button = ButtonFactory.createTextButton(text, skin);
         return button(button, param);
     }
 

@@ -4,14 +4,15 @@ package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
-import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
+import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 // this is not just a slide created by a factory because it needs the additional accessors for text
-// it is not created by the CrashReportStageForMenu because that could only use static methods as the slide needs to be passed to the super constructor
+// it is not created by the CrashReportStageForMenu because that could only use static methods as the slide needs to
+// be passed to the super constructor
 
 /**
  * UI for crash reporting.
@@ -44,9 +45,9 @@ public class CrashReportSlide extends Slide {
         textArea = new TextArea("", skin);
         textArea.setDisabled(true);
 
-        copyButton = new CopyButton("Copy", skin, true);
-        sendMailButton = new TextButton("Send Email", skin);
-        openGithubButton = new TextButton("Open GitHub", skin);
+        copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
+        sendMailButton = ButtonFactory.createTextButton("Send Email", skin);
+        openGithubButton = ButtonFactory.createTextButton("Open GitHub", skin);
 
         buttonGroup = new HorizontalGroup();
         buttonGroup.addActor(copyButton);

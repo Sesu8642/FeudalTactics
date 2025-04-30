@@ -96,7 +96,7 @@ public class DialogFactory {
             }
 
         };
-        CopyButton copyButton = new CopyButton("Copy", skin, true);
+        CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
                 () -> Gdx.app.getClipboard().setContents(message)));
         dialog.text(message + "\n").button("OK", true);

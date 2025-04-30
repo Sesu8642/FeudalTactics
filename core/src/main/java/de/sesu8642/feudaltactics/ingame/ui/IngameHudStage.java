@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
@@ -67,22 +68,23 @@ public class IngameHudStage extends ResizableResettableStage {
 
     private void initUi() {
         halfSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_HALF, ImageButtonStyle.class);
+        ButtonFactory.createImageButton(SkinConstants.BUTTON_PAUSE, skin);
         regularSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_REGULAR, ImageButtonStyle.class);
         doubleSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_DOUBLE, ImageButtonStyle.class);
 
-        menuButton = new ImageButton(skin.get(SkinConstants.BUTTON_PAUSE, ImageButtonStyle.class));
+        menuButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_PAUSE, skin);
         menuButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
         menuButton.getImageCell().expand().fill();
 
-        infoButton = new ImageButton(skin.get(SkinConstants.BUTTON_INFO, ImageButtonStyle.class));
+        infoButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_INFO, skin);
         infoButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
         infoButton.getImageCell().expand().fill();
 
         // buttons visible during the local player turn
-        undoButton = new ImageButton(skin.get(SkinConstants.BUTTON_UNDO, ImageButtonStyle.class));
-        buyPeasantButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_PEASANT, ImageButtonStyle.class));
-        buyCastleButton = new ImageButton(skin.get(SkinConstants.BUTTON_BUY_CASTLE, ImageButtonStyle.class));
-        endTurnButton = new ImageButton(skin.get(SkinConstants.BUTTON_END_TURN, ImageButtonStyle.class));
+        undoButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_UNDO, skin);
+        buyPeasantButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_BUY_PEASANT, skin);
+        buyCastleButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_BUY_CASTLE, skin);
+        endTurnButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_END_TURN, skin);
         playerTurnButtons.add(undoButton);
         playerTurnButtons.add(buyPeasantButton);
         playerTurnButtons.add(buyCastleButton);
@@ -92,8 +94,8 @@ public class IngameHudStage extends ResizableResettableStage {
         }
 
         // buttons visible during enemies' turns
-        speedButton = new ImageButton(regularSpeedButtonStyle);
-        skipButton = new ImageButton(skin.get(SkinConstants.BUTTON_SKIP_TURN, ImageButtonStyle.class));
+        speedButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_SPEED_REGULAR, skin);
+        skipButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_SKIP_TURN, skin);
         enemyTurnButtons.add(speedButton);
         enemyTurnButtons.add(skipButton);
         for (ImageButton button : enemyTurnButtons) {

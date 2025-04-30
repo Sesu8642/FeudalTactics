@@ -68,11 +68,11 @@ public class SlideStage extends ResizableResettableStage {
     }
 
     private void initUi(List<Table> slides) {
-        backButton = new TextButton("", skin);
+        backButton = ButtonFactory.createTextButton("", skin);
         backButton.setDisabled(true);
         backButton.setTouchable(Touchable.disabled);
 
-        nextButton = new TextButton("", skin);
+        nextButton = ButtonFactory.createTextButton("", skin);
 
         currentSlide = slides.get(0);
 

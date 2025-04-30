@@ -5,7 +5,6 @@ package de.sesu8642.feudaltactics.ingame.ui;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,7 +12,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
+import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -105,13 +104,13 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
         seedTextField.setMaxLength(18);
 
-        randomButton = new ImageButton(skin.get(SkinConstants.BUTTON_DIE, ImageButtonStyle.class));
+        randomButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_DIE, skin);
         randomButton.getImageCell().expand().fill();
 
-        copyButton = new CopyButton("", skin, true);
+        copyButton = ButtonFactory.createCopyButton("", skin, true);
         copyButton.getImageCell().expand().fill();
 
-        pasteButton = new ImageButton(skin.get(SkinConstants.BUTTON_PASTE, ImageButtonStyle.class));
+        pasteButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_PASTE, skin);
         pasteButton.getImageCell().expand().fill();
 
         /*
@@ -127,7 +126,7 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTable.add(seedTextField).colspan(2).fill().expand();
         seedTable.add(randomButton).height(INPUT_HEIGHT_PX).width(INPUT_HEIGHT_PX);
 
-        playButton = new TextButton("Play", skin);
+        playButton = ButtonFactory.createTextButton("Play", skin);
 
         rootTable = new Table();
         rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);

@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
@@ -61,7 +61,7 @@ public class EditorHudStage extends ResizableResettableStage {
         SpriteDrawable unitSpriteDrawable = new SpriteDrawable(unitSprite);
         tileContentButton = new ImageButton(unitSpriteDrawable);
 
-        menuButton = new ImageButton(skin.get(SkinConstants.BUTTON_PAUSE, ImageButtonStyle.class));
+        menuButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_PAUSE, skin);
         menuButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
         menuButton.getImageCell().expand().fill();
 

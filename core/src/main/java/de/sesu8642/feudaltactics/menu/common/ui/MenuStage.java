@@ -51,7 +51,7 @@ public class MenuStage extends ResizableResettableStage {
         Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
         disposables.add(logoTexture);
         for (String buttonText : buttonTexts) {
-            TextButton button = new TextButton(buttonText, skin);
+            TextButton button = ButtonFactory.createTextButton(buttonText, skin);
             buttons.add(button);
         }
         bottomLeftTable = new Table();
