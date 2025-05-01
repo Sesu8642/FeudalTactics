@@ -27,14 +27,16 @@ import java.util.List;
 @Singleton
 public class InformationMenuPage1Stage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("About", "Community (Matrix)", "Report Crash", "Page 2", "Back");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("About", "Community (Matrix) ↗", "Report Crash",
+            "Page 2", "Back");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
      */
     @Inject
     public InformationMenuPage1Stage(EventBus eventBus, @MenuViewport Viewport viewport,
-                                     @MenuBackgroundCamera OrthographicCamera camera, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
+                                     @MenuBackgroundCamera OrthographicCamera camera,
+                                     @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
                                      @VersionProperty String gameVersion) {
         super(viewport, BUTTON_TEXTS, camera, mapRenderer, skin);
         Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),

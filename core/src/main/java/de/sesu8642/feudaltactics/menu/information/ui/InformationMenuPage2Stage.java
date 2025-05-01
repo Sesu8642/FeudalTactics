@@ -27,7 +27,7 @@ import java.util.List;
 public class InformationMenuPage2Stage extends MenuStage {
 
     private static final List<String> BUTTON_TEXTS = ImmutableList.of("Changelog", "Dependency Licenses",
-            "Privacy Policy", "Page 1", "Back");
+            "Privacy Policy ↗", "Page 1", "Back");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}

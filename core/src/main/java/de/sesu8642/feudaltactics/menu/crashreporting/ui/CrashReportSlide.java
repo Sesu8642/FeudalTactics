@@ -46,8 +46,8 @@ public class CrashReportSlide extends Slide {
         textArea.setDisabled(true);
 
         copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
-        sendMailButton = ButtonFactory.createTextButton("Send Email", skin);
-        openGithubButton = ButtonFactory.createTextButton("Open GitHub", skin);
+        sendMailButton = ButtonFactory.createTextButton("Send Email ↗", skin);
+        openGithubButton = ButtonFactory.createTextButton("Open GitHub ↗", skin);
 
         buttonGroup = new HorizontalGroup();
         buttonGroup.addActor(copyButton);
