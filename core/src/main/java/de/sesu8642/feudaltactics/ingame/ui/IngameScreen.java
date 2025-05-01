@@ -33,7 +33,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Stream;
 
 /**
@@ -60,12 +59,6 @@ public class IngameScreen extends GameScreen {
     private final DialogFactory dialogFactory;
     private final TutorialDialogFactory tutorialDialogFactory;
 
-    /**
-     * Interactions with the UI must happen in the same thread that does the
-     * rendering because the UI libs aren't thread-safe. To do that, Runnables can
-     * be placed here and will be executed when the next render happens.
-     */
-    private final ConcurrentLinkedQueue<Runnable> uiChangeActions = new ConcurrentLinkedQueue<>();
     private final NewGamePreferencesDao newGamePrefDao;
     NewGamePreferences cachedNewGamePreferences;
     /**
@@ -234,7 +227,7 @@ public class IngameScreen extends GameScreen {
         } else {
             hudStageInfoText = "Enemy turn";
             if (!ingameHudStage.isEnemyTurnButtonsShown()) {
-                uiChangeActions.add(ingameHudStage::showEnemyTurnButtons);
+                Gdx.app.postRunnable(ingameHudStage::showEnemyTurnButtons);
             }
         }
         ingameHudStage.infoTextLabel.setText(hudStageInfoText);
@@ -265,7 +258,7 @@ public class IngameScreen extends GameScreen {
         }
         // buttons
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
-            uiChangeActions.add(ingameHudStage::showPlayerTurnButtons);
+            Gdx.app.postRunnable(ingameHudStage::showPlayerTurnButtons);
         }
         Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
         if (playerOptional.isPresent()) {
@@ -280,17 +273,17 @@ public class IngameScreen extends GameScreen {
         if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
             if (localPlayer.isDefeated()) {
                 // Game is over; player lost
-                uiChangeActions.add(this::showEnemyWonMessage);
+                Gdx.app.postRunnable(this::showEnemyWonMessage);
             } else {
                 // Game is over; player won
-                uiChangeActions.add(this::showAllEnemiesDefeatedMessage);
+                Gdx.app.postRunnable(this::showAllEnemiesDefeatedMessage);
             }
         } else if (localPlayer.isDefeated() && !isSpectateMode) {
             // Local player lost but game isn't over; offer a spectate option
-            uiChangeActions.add(this::showPlayerDefeatedMessage);
+            Gdx.app.postRunnable(this::showPlayerDefeatedMessage);
         } else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
             // winner changed
-            uiChangeActions.add(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER));
+            Gdx.app.postRunnable(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER));
         }
         return infoText;
     }
@@ -479,10 +472,6 @@ public class IngameScreen extends GameScreen {
 
     @Override
     public void render(float delta) {
-        while (!uiChangeActions.isEmpty()) {
-            Runnable action = uiChangeActions.poll();
-            action.run();
-        }
         getViewport().apply();
         mapRenderer.render();
         ingameCamera.update();
