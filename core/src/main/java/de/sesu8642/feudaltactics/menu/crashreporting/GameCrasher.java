@@ -73,7 +73,7 @@ public class GameCrasher {
         // The game state may lead to the same crash over and over again. Better delete
         // it.
         autoSaveRepository.deleteAllAutoSaves();
-        FeudalTactics.game.setScreen(new CrashingScreen(throwable));
+        FeudalTactics.getDaggerComponent().getGameInstance().setScreen(new CrashingScreen(throwable));
     }
 
 }

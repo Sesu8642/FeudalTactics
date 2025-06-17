@@ -183,7 +183,7 @@ public class ScreenNavigationController {
         unregisterAllEventHandlers();
         // changing the screen needs to happen in the UI thread, otherwise there can be
         // some exception in native code
-        Gdx.app.postRunnable(() -> FeudalTactics.game.setScreen(screen));
+        Gdx.app.postRunnable(() -> FeudalTactics.getDaggerComponent().getGameInstance().setScreen(screen));
     }
 
     private void transitionToPreferencesScreen() {

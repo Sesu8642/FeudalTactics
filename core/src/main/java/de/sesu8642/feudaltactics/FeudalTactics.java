@@ -3,39 +3,38 @@ package de.sesu8642.feudaltactics;
 import com.badlogic.gdx.Game;
 import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
+import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 
 /**
  * The game's entry point.
  */
 public class FeudalTactics extends Game {
 
-    // this needs to be accessed somehow by the other classes and cannot be provided
-    // by DI because it is created by the launcher
-    public static FeudalTactics game;
+    private static FeudalTacticsComponent component;
 
-    private FeudalTacticsComponent component;
+    private final PlatformSharing platformSharing;
 
-    @Override
-    public void create() {
-        game = this;
-
-        component = DaggerFeudalTacticsComponent.create();
-
-        GameInitializer gameInitializer = component.getGameInitializer();
-        gameInitializer.initializeGame();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
+    public FeudalTactics(PlatformSharing platformSharing) {
+        this.platformSharing = platformSharing;
     }
 
     /**
      * For accessing dependencies from non-DI-capable classes like the custom JUL
      * handler.
      */
-    public FeudalTacticsComponent getComponent() {
+    public static FeudalTacticsComponent getDaggerComponent() {
         return component;
+    }
+
+    @Override
+    public void create() {
+        component = DaggerFeudalTacticsComponent.builder()
+                .gameInstance(this)
+                .platformSharing(platformSharing)
+                .build();
+
+        GameInitializer gameInitializer = component.getGameInitializer();
+        gameInitializer.initializeGame();
     }
 
 }

@@ -2,7 +2,9 @@
 
 package de.sesu8642.feudaltactics.dagger;
 
+import dagger.BindsInstance;
 import dagger.Component;
+import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.GameInitializer;
 import de.sesu8642.feudaltactics.editor.dagger.EditorDaggerModule;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameDaggerModule;
@@ -13,6 +15,7 @@ import de.sesu8642.feudaltactics.menu.crashreporting.GameCrasher;
 import de.sesu8642.feudaltactics.menu.crashreporting.dagger.CrashReportingDaggerModule;
 import de.sesu8642.feudaltactics.menu.information.dagger.InformationMenuDaggerModule;
 import de.sesu8642.feudaltactics.menu.preferences.dagger.PrefsDaggerModule;
+import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 import de.sesu8642.feudaltactics.renderer.dagger.RendererDaggerModule;
 
 import javax.inject.Singleton;
@@ -30,5 +33,19 @@ public interface FeudalTacticsComponent {
     GameInitializer getGameInitializer();
 
     GameCrasher getGameCrasher();
+
+    FeudalTactics getGameInstance();
+
+    @Component.Builder
+    interface Builder {
+
+        @BindsInstance
+        Builder platformSharing(PlatformSharing platformSharing);
+
+        @BindsInstance
+        Builder gameInstance(FeudalTactics gameInstance);
+
+        FeudalTacticsComponent build();
+    }
 
 }

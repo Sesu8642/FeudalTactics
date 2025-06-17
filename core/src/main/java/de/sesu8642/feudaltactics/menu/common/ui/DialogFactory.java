@@ -3,10 +3,13 @@
 package de.sesu8642.feudaltactics.menu.common.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import javax.inject.Inject;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Factory for creating dialogs.
@@ -77,14 +80,13 @@ public class DialogFactory {
     }
 
     /**
-     * Creates a new dialog with a given message, a copy button and action that is
-     * executed on confirmation.
+     * Creates a new dialog with a given message and action that is executed on confirmation.
      *
      * @param message message to display in the dialog
      * @param action  action to execute on confirmation
      * @return new dialog
      */
-    public FeudalTacticsDialog createInformationDialogWithCopyButton(String message, Runnable action) {
+    public FeudalTacticsDialog createInformationDialog(String message, Runnable action) {
         FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
 
             @Override
@@ -96,13 +98,47 @@ public class DialogFactory {
             }
 
         };
+        dialog.text(message + "\n").button("OK", true);
+        return dialog;
+    }
+
+    /**
+     * See {@link #addCopyButtonToDialog(Supplier, Dialog, String)} with a default copyButtonText.
+     */
+    public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog) {
         CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
-                () -> Gdx.app.getClipboard().setContents(message)));
-        dialog.text(message + "\n").button("OK", true);
+                () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in in a way that doesn't cause the dialog to hide automatically
         dialog.getButtonTable().add(copyButton);
-        return dialog;
+    }
+
+    /**
+     * Adds a copy button to an existing dialog.
+     *
+     * @param textSupplier   supplier for the text that will be copied.
+     * @param dialog         dialog to add the button to
+     * @param copyButtonText label text for the button
+     */
+    public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog, String copyButtonText) {
+        CopyButton copyButton = ButtonFactory.createCopyButton(copyButtonText, skin, true);
+        copyButton.addListener(new ExceptionLoggingChangeListener(
+                () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
+        // add in in a way that doesn't cause the dialog to hide automatically
+        dialog.getButtonTable().add(copyButton);
+    }
+
+    /**
+     * Adds a text button to an existing dialog. When clicking the button, the dialog will not close.
+     *
+     * @param dialog     dialog to add the button to
+     * @param buttonText label text for the button
+     */
+    public void addNonClosingTextButtonToDialog(Dialog dialog, String buttonText, Runnable listener) {
+        TextButton button = ButtonFactory.createTextButton(buttonText, skin);
+        button.addListener(new ExceptionLoggingChangeListener(listener));
+        // add in in a way that doesn't cause the dialog to hide automatically
+        dialog.getButtonTable().add(button);
     }
 
 }

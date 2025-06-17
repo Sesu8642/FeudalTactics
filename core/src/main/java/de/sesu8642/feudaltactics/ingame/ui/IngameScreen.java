@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -27,6 +28,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -60,7 +62,8 @@ public class IngameScreen extends GameScreen {
     private final TutorialDialogFactory tutorialDialogFactory;
 
     private final NewGamePreferencesDao newGamePrefDao;
-    NewGamePreferences cachedNewGamePreferences;
+    private final PlatformSharing platformSharing;
+    private NewGamePreferences cachedNewGamePreferences;
     /**
      * Cached version of the game state from the game controller.
      */
@@ -108,7 +111,7 @@ public class IngameScreen extends GameScreen {
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
                         IngameHudStage ingameHudStage, IngameMenuStage menuStage,
-                        ParameterInputStage parameterInputStage) {
+                        ParameterInputStage parameterInputStage, PlatformSharing platformSharing) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
         this.newGamePrefDao = newGamePrefDao;
@@ -124,6 +127,7 @@ public class IngameScreen extends GameScreen {
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
+        this.platformSharing = platformSharing;
         // load before adding the listeners because they will trigger persisting the preferences on each update
         loadNewGameParameterValues();
         addIngameMenuListeners();
@@ -365,15 +369,44 @@ public class IngameScreen extends GameScreen {
             endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?\n");
             endDialog.button("Retry", (byte) 2);
         }
+        addShareOrCopyButtonToDialog(endDialog);
         endDialog.button("Continue", (byte) 0);
         endDialog.show(ingameHudStage);
     }
 
     private void showAllEnemiesDefeatedMessage() {
-        Dialog endDialog = dialogFactory.createDialog(result -> exitToMenu());
-        endDialog.button("Exit");
+        Dialog endDialog = dialogFactory.createDialog(result -> {
+            switch ((byte) result) {
+                case 1:
+                    // exit button
+                    exitToMenu();
+                    break;
+                case 2:
+                    // retry button
+                    resetGame();
+                    break;
+                case 0:
+                    // do nothing on continue button
+                default:
+                    break;
+            }
+        });
+        endDialog.button("Exit", (byte) 1);
+        endDialog.button("Replay", (byte) 2);
+        addShareOrCopyButtonToDialog(endDialog);
         endDialog.text("VICTORY! You defeated all your enemies.\n");
         endDialog.show(ingameHudStage);
+    }
+
+    private void addShareOrCopyButtonToDialog(Dialog endDialog) {
+        // TODO: add the round in which the enemies gave up or won
+        String gameDetails = cachedNewGamePreferences.toSharableString();
+        if (Gdx.app.getType() == Application.ApplicationType.Android) {
+            dialogFactory.addNonClosingTextButtonToDialog(endDialog, "Share",
+                    () -> platformSharing.shareText(gameDetails));
+        } else {
+            dialogFactory.addCopyButtonToDialog(() -> gameDetails, endDialog, "Copy Details");
+        }
     }
 
     private void showPlayerDefeatedMessage() {
@@ -396,8 +429,9 @@ public class IngameScreen extends GameScreen {
             }
         });
         endDialog.button("Exit", (byte) 1);
-        endDialog.button("Spectate", (byte) 0);
         endDialog.button("Retry", (byte) 2);
+        addShareOrCopyButtonToDialog(endDialog);
+        endDialog.button("Spectate", (byte) 0);
         endDialog.text("DEFEAT! All your kingdoms were conquered by the enemy.\n");
         endDialog.show(ingameHudStage);
     }
@@ -426,8 +460,9 @@ public class IngameScreen extends GameScreen {
     private void showGameDetails() {
         String gameDetails = String.format("Round: %s\n", cachedGameState.getRound())
                 + cachedNewGamePreferences.toSharableString();
-        FeudalTacticsDialog dialog = dialogFactory.createInformationDialogWithCopyButton(gameDetails, () -> {
+        FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
+        dialogFactory.addCopyButtonToDialog(() -> gameDetails, dialog);
         dialog.show(ingameHudStage);
     }
 
