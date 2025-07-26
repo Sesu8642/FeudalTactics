@@ -61,7 +61,7 @@ public class GameStateSerializer implements Serializer<GameState> {
     }
 
     @Override
-    public void write(Json json, GameState object, @SuppressWarnings("rawtypes") Class knownType) {
+    public void write(Json json, GameState object, Class knownType) {
         lastId = 0;
         Map<Object, Integer> idMap = new HashMap<>();
         json.writeObjectStart();
@@ -126,7 +126,7 @@ public class GameStateSerializer implements Serializer<GameState> {
     }
 
     @Override
-    public GameState read(Json json, JsonValue jsonData, @SuppressWarnings("rawtypes") Class type) {
+    public GameState read(Json json, JsonValue jsonData, Class type) {
         Map<Integer, Object> reverseIdMap = new HashMap<>();
 
         GameState result = new GameState();
@@ -203,9 +203,19 @@ public class GameStateSerializer implements Serializer<GameState> {
         JsonValue roundJson = jsonData.get(ROUND_NAME);
         result.setRound(roundJson.asInt());
         JsonValue objectiveProgessJson = jsonData.get(OBJECTIVE_PROGRESS_NAME);
-        result.setObjectiveProgress(objectiveProgessJson.asInt());
+        if (objectiveProgessJson != null) {
+            result.setObjectiveProgress(objectiveProgessJson.asInt());
+        } else {
+            // for backwards compatibility
+            result.setObjectiveProgress(0);
+        }
         JsonValue scenarioMapJson = jsonData.get(SCENARIO_MAP_NAME);
-        result.setScenarioMap(ScenarioMap.valueOf(scenarioMapJson.asString()));
+        if(scenarioMapJson != null) {
+            result.setScenarioMap(ScenarioMap.valueOf(scenarioMapJson.asString()));
+        } else {
+            // for backwards compatibility
+            result.setScenarioMap(ScenarioMap.NONE);
+        }
         if (jsonData.has(WINNER_ID_NAME)) {
             Integer winnerId = jsonData.getInt(WINNER_ID_NAME);
             Player winner = (Player) reverseIdMap.get(winnerId);
