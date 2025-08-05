@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 /**
  * Helper class that is used to modify a {@link GameState} in a way that
@@ -48,7 +47,9 @@ public class GameStateHelper {
         if (original.getWinner() != null) {
             result.setWinner(copiedPlayers.get(original.getPlayers().indexOf(original.getWinner())));
         }
-
+        if (original.getWinningRound() != null) {
+            result.setWinningRound(original.getWinningRound());
+        }
         List<Kingdom> copiedKingdoms = new ArrayList<>();
         for (Kingdom originalKingdom : original.getKingdoms()) {
             Kingdom newKingdom = new Kingdom(
@@ -677,12 +678,16 @@ public class GameStateHelper {
         // check win condition; the winner can change if a player recovers from
         // a really bad situation
         // tiles that belong to no kingdom are irrelevant as they help no player
-        int noOfKingdomTiles = gameState.getKingdoms().stream()
-                .collect(Collectors.summingInt(kingdom -> kingdom.getTiles().size()));
+        int noOfKingdomTiles = gameState.getKingdoms().stream().mapToInt(kingdom -> kingdom.getTiles().size()).sum();
+
+        // update winner
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer() == gameState.getActivePlayer()
-                    && kingdom.getTiles().size() >= noOfKingdomTiles * WIN_LANDMASS_PERCENTAGE) {
+                    && kingdom.getTiles().size() >= noOfKingdomTiles * WIN_LANDMASS_PERCENTAGE
+                    && gameState.getWinner() != kingdom.getPlayer()) {
                 gameState.setWinner(kingdom.getPlayer());
+                gameState.setWinningRound(gameState.getRound());
+                break;
             }
         }
         // update active player
@@ -706,7 +711,7 @@ public class GameStateHelper {
                 }
             }
             // player has no kingdoms --> is defeated
-            player.setDefeated(true);
+            player.setRoundOfDefeat(gameState.getRound());
         }
         // reset active kingdom
         gameState.setActiveKingdom(null);

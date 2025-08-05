@@ -11,11 +11,17 @@ public class Player {
 
     private int playerIndex;
     private Type type;
-    private boolean defeated = false;
+    private Integer roundOfDefeat;
 
     public Player() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param playerIndex index to differentiate players, e.g. to assign colors
+     * @param type        player type
+     */
     public Player(int playerIndex, Type type) {
         this.playerIndex = playerIndex;
         this.type = type;
@@ -25,13 +31,12 @@ public class Player {
      * Constructor.
      *
      * @param playerIndex index to differentiate players, e.g. to assign colors
-     * @param defeated    whether this player is defeated
      * @param type        player type
      */
-    public Player(int playerIndex, Type type, boolean defeated) {
+    public Player(int playerIndex, Type type, Integer roundOfDefeat) {
         this.playerIndex = playerIndex;
         this.type = type;
-        this.defeated = defeated;
+        this.roundOfDefeat = roundOfDefeat;
     }
 
     /**
@@ -40,7 +45,11 @@ public class Player {
      * @return copy
      */
     public static Player copyOf(Player original) {
-        return new Player(original.getPlayerIndex(), original.getType(), original.isDefeated());
+        return new Player(original.getPlayerIndex(), original.getType(), original.getRoundOfDefeat());
+    }
+
+    public boolean isDefeated() {
+        return roundOfDefeat != null;
     }
 
     public int getPlayerIndex() {
@@ -51,43 +60,40 @@ public class Player {
         this.playerIndex = playerIndex;
     }
 
-    public boolean isDefeated() {
-        return defeated;
-    }
-
-    public void setDefeated(boolean defeated) {
-        this.defeated = defeated;
-    }
-
     public Type getType() {
         return type;
     }
 
-    @Override
-    public int hashCode() {
-        // calculating with enum strings because the hashcode must be consistent across
-        // runs
-        return Objects.hash(defeated, playerIndex, type.toString());
+    public Integer getRoundOfDefeat() {
+        return roundOfDefeat;
+    }
+
+    public void setRoundOfDefeat(Integer roundOfDefeat) {
+        this.roundOfDefeat = roundOfDefeat;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Player other = (Player) obj;
-        return defeated == other.defeated && playerIndex == other.playerIndex && type == other.type;
+        Player player = (Player) o;
+        return playerIndex == player.playerIndex && type == player.type && Objects.equals(roundOfDefeat,
+                player.roundOfDefeat);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(playerIndex, type, roundOfDefeat);
     }
 
     @Override
     public String toString() {
-        return "Player [playerIndex=" + playerIndex + ", type=" + type + ", defeated=" + defeated + "]";
+        return "Player{" +
+                "playerIndex=" + playerIndex +
+                ", type=" + type +
+                ", roundOfDefeat=" + roundOfDefeat +
+                '}';
     }
 
     /**

@@ -22,6 +22,7 @@ public class GameStateSerializer implements Serializer<GameState> {
     private static final String MAPOBJECTS_CLASS_BASE_NAME = "de.sesu8642.feudaltactics.lib.gamestate.";
     private static final String ACTIVE_KINGDOM_ID_NAME = "active_kingdom_id";
     private static final String WINNER_ID_NAME = "winner_id";
+    private static final String WINNING_ROUND_NAME = "winning_round";
     private static final String BOT_INTELLIGENCE_NAME = "bot_intelligence";
     private static final String BOT_INTELLIGENCE_FIELD_NAME = "botIntelligence";
     private static final String PLAYER_TURN_FIELD_NAME = "playerTurn";
@@ -115,6 +116,9 @@ public class GameStateSerializer implements Serializer<GameState> {
         json.writeField(object, SEED_FIELD_NAME, SEED_NAME);
         if (object.getWinner() != null) {
             json.writeValue(WINNER_ID_NAME, getId(idMap, object.getWinner()));
+        }
+        if (object.getWinningRound() != null) {
+            json.writeValue(WINNING_ROUND_NAME, object.getWinningRound());
         }
         if (object.getActiveKingdom() != null) {
             json.writeValue(ACTIVE_KINGDOM_ID_NAME, getId(idMap, object.getActiveKingdom()));
@@ -220,6 +224,10 @@ public class GameStateSerializer implements Serializer<GameState> {
             Integer winnerId = jsonData.getInt(WINNER_ID_NAME);
             Player winner = (Player) reverseIdMap.get(winnerId);
             result.setWinner(winner);
+        }
+        if (jsonData.has(WINNING_ROUND_NAME)) {
+            Integer winningRound = jsonData.getInt(WINNING_ROUND_NAME);
+            result.setWinningRound(winningRound);
         }
         if (jsonData.has(ACTIVE_KINGDOM_ID_NAME)) {
             Integer activeKingdomId = jsonData.getInt(ACTIVE_KINGDOM_ID_NAME);

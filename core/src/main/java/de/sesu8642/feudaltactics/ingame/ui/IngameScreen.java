@@ -2,7 +2,6 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
@@ -28,7 +27,6 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -53,16 +51,15 @@ public class IngameScreen extends GameScreen {
     private final CombinedInputProcessor inputProcessor;
     private final FeudalTacticsGestureDetector gestureDetector;
     private final InputValidationHelper inputValidationHelper;
+    private final IngameScreenDialogHelper ingameScreenDialogHelper;
 
     private final ParameterInputStage parameterInputStage;
     private final IngameHudStage ingameHudStage;
     private final IngameMenuStage menuStage;
 
     private final DialogFactory dialogFactory;
-    private final TutorialDialogFactory tutorialDialogFactory;
 
     private final NewGamePreferencesDao newGamePrefDao;
-    private final PlatformSharing platformSharing;
     private NewGamePreferences cachedNewGamePreferences;
     /**
      * Cached version of the game state from the game controller.
@@ -106,28 +103,26 @@ public class IngameScreen extends GameScreen {
     @Inject
     public IngameScreen(MainPreferencesDao mainPrefsDao, NewGamePreferencesDao newGamePrefDao,
                         @IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
-                        @IngameRenderer MapRenderer mapRenderer, DialogFactory dialogFactory,
-                        TutorialDialogFactory tutorialDialogFactory, EventBus eventBus,
+                        @IngameRenderer MapRenderer mapRenderer, DialogFactory dialogFactory, EventBus eventBus,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
-                        IngameHudStage ingameHudStage, IngameMenuStage menuStage,
-                        ParameterInputStage parameterInputStage, PlatformSharing platformSharing) {
+                        IngameScreenDialogHelper ingameScreenDialogHelper, IngameHudStage ingameHudStage,
+                        IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
         this.newGamePrefDao = newGamePrefDao;
         this.ingameCamera = ingameCamera;
         this.mapRenderer = mapRenderer;
         this.dialogFactory = dialogFactory;
-        this.tutorialDialogFactory = tutorialDialogFactory;
         this.inputMultiplexer = inputMultiplexer;
         this.gestureDetector = gestureDetector;
         this.inputValidationHelper = inputValidationHelper;
         this.eventBus = eventBus;
         this.inputProcessor = inputProcessor;
+        this.ingameScreenDialogHelper = ingameScreenDialogHelper;
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
-        this.platformSharing = platformSharing;
         // load before adding the listeners because they will trigger persisting the preferences on each update
         loadNewGameParameterValues();
         addIngameMenuListeners();
@@ -240,7 +235,8 @@ public class IngameScreen extends GameScreen {
         parameterInputStage.updateSeed(newGameState.getSeed());
 
         if (objectiveProgressed) {
-            showGameOrObjectiveInfo();
+            ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage, cachedGameState.getRound(),
+                    cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(), cachedNewGamePreferences);
         }
     }
 
@@ -277,27 +273,42 @@ public class IngameScreen extends GameScreen {
         if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
             if (localPlayer.isDefeated()) {
                 // Game is over; player lost
-                Gdx.app.postRunnable(this::showEnemyWonMessage);
+                Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showEnemyWonMessage(ingameHudStage,
+                        cachedGameState.getActivePlayer().getRoundOfDefeat(), cachedGameState.getScenarioMap(),
+                        cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             } else {
                 // Game is over; player won
-                Gdx.app.postRunnable(this::showAllEnemiesDefeatedMessage);
+                boolean botsGaveUpPreviously = cachedGameState.getWinner().getType() == Player.Type.LOCAL_PLAYER;
+                Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
+                        botsGaveUpPreviously, getEarliestRoundOfGameEnd(cachedGameState),
+                        cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             }
         } else if (localPlayer.isDefeated() && !isSpectateMode) {
             // Local player lost but game isn't over; offer a spectate option
-            Gdx.app.postRunnable(this::showPlayerDefeatedMessage);
+            Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showPlayerDefeatedMessage(ingameHudStage,
+                    cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
+                    this::exitToMenu, this::resetGame, () -> isSpectateMode = true));
         } else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
             // winner changed
-            Gdx.app.postRunnable(() -> showGiveUpGameMessage(newGameState.getWinner().getType() == Type.LOCAL_PLAYER));
+            boolean humanWins = newGameState.getWinner().getType() == Type.LOCAL_PLAYER;
+            Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGiveUpGameMessage(ingameHudStage, humanWins,
+                    cachedGameState.getWinningRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
+                    this::exitToMenu, this::resetGame));
         }
         return infoText;
     }
 
-    private void showGameOrObjectiveInfo() {
-        if (cachedGameState.getScenarioMap() == ScenarioMap.NONE) {
-            // regular sandbox game
-            showGameDetails();
-        } else if (cachedGameState.getScenarioMap() == ScenarioMap.TUTORIAL) {
-            showTutorialObjectiveMessage(cachedGameState.getObjectiveProgress());
+    /**
+     * This method assumes that the game ends in this turn.
+     *
+     * @return the round in which the player won/lost, meaning either the current round or the round in which someone
+     * conquered most of the map. In case of both, returns the latter.
+     */
+    Integer getEarliestRoundOfGameEnd(GameState gameState) {
+        if (gameState.getWinningRound() != null) {
+            return gameState.getWinningRound();
+        } else {
+            return gameState.getRound();
         }
     }
 
@@ -342,133 +353,6 @@ public class IngameScreen extends GameScreen {
             return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
                     ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
         }
-    }
-
-    private void showGiveUpGameMessage(boolean win) {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
-            switch ((byte) result) {
-                case 1:
-                    // exit button
-                    exitToMenu();
-                    break;
-                case 2:
-                    // retry button
-                    resetGame();
-                    break;
-                case 0:
-                    // do nothing on continue button
-                default:
-                    break;
-            }
-        });
-        endDialog.button("Exit", (byte) 1);
-        if (win) {
-            endDialog.text("VICTORY! Your Enemies surrender.\n\nDo you wish to continue?\n");
-            endDialog.button("Replay", (byte) 2);
-        } else {
-            endDialog.text("Your Enemy conquered a majority of the territory.\n\nDo you wish to continue?\n");
-            endDialog.button("Retry", (byte) 2);
-        }
-        addShareOrCopyButtonToDialog(endDialog);
-        endDialog.button("Continue", (byte) 0);
-        endDialog.show(ingameHudStage);
-    }
-
-    private void showAllEnemiesDefeatedMessage() {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
-            switch ((byte) result) {
-                case 1:
-                    // exit button
-                    exitToMenu();
-                    break;
-                case 2:
-                    // retry button
-                    resetGame();
-                    break;
-                case 0:
-                    // do nothing on continue button
-                default:
-                    break;
-            }
-        });
-        endDialog.button("Exit", (byte) 1);
-        endDialog.button("Replay", (byte) 2);
-        addShareOrCopyButtonToDialog(endDialog);
-        endDialog.text("VICTORY! You defeated all your enemies.\n");
-        endDialog.show(ingameHudStage);
-    }
-
-    private void addShareOrCopyButtonToDialog(Dialog endDialog) {
-        // TODO: add the round in which the enemies gave up or won
-        String gameDetails = cachedNewGamePreferences.toSharableString();
-        if (Gdx.app.getType() == Application.ApplicationType.Android) {
-            dialogFactory.addNonClosingTextButtonToDialog(endDialog, "Share",
-                    () -> platformSharing.shareText(gameDetails));
-        } else {
-            dialogFactory.addCopyButtonToDialog(() -> gameDetails, endDialog, "Copy Details");
-        }
-    }
-
-    private void showPlayerDefeatedMessage() {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
-            switch ((byte) result) {
-                case 1:
-                    // exit button
-                    exitToMenu();
-                    break;
-                case 2:
-                    // retry button
-                    resetGame();
-                    break;
-                case 0:
-                    // spectate button
-                    isSpectateMode = true;
-                    break;
-                default:
-                    break;
-            }
-        });
-        endDialog.button("Exit", (byte) 1);
-        endDialog.button("Retry", (byte) 2);
-        addShareOrCopyButtonToDialog(endDialog);
-        endDialog.button("Spectate", (byte) 0);
-        endDialog.text("DEFEAT! All your kingdoms were conquered by the enemy.\n");
-        endDialog.show(ingameHudStage);
-    }
-
-    private void showEnemyWonMessage() {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
-            switch ((byte) result) {
-                case 1:
-                    // exit button
-                    exitToMenu();
-                    break;
-                case 2:
-                    // retry button
-                    resetGame();
-                    break;
-                default:
-                    break;
-            }
-        });
-        endDialog.button("Exit", (byte) 1);
-        endDialog.button("Retry", (byte) 2);
-        endDialog.text("DEFEAT! Your enemy won the game.\n");
-        endDialog.show(ingameHudStage);
-    }
-
-    private void showGameDetails() {
-        String gameDetails = String.format("Round: %s\n", cachedGameState.getRound())
-                + cachedNewGamePreferences.toSharableString();
-        FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
-        });
-        dialogFactory.addCopyButtonToDialog(() -> gameDetails, dialog);
-        dialog.show(ingameHudStage);
-    }
-
-    private void showTutorialObjectiveMessage(int newProgress) {
-        Dialog dialog = tutorialDialogFactory.createDialog(newProgress);
-        dialog.show(ingameHudStage);
     }
 
     void activateStage(IngameStages ingameStage) {
@@ -581,7 +465,8 @@ public class IngameScreen extends GameScreen {
     }
 
     private void addHudListeners() {
-        ingameHudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new UndoMoveEvent())));
+        ingameHudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() ->
+                eventBus.post(new UndoMoveEvent())));
 
         ingameHudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(this::handleEndTurnAttempt));
 
@@ -591,9 +476,13 @@ public class IngameScreen extends GameScreen {
         ingameHudStage.buyCastleButton
                 .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyCastleEvent())));
 
-        ingameHudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() -> activateStage(IngameStages.MENU)));
+        ingameHudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() ->
+                activateStage(IngameStages.MENU)));
 
-        ingameHudStage.infoButton.addListener(new ExceptionLoggingChangeListener(this::showGameOrObjectiveInfo));
+        ingameHudStage.infoButton.addListener(new ExceptionLoggingChangeListener(() ->
+                ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage, cachedGameState.getRound(),
+                        cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(),
+                        cachedNewGamePreferences)));
 
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow, skipping Speed.INSTANT which is

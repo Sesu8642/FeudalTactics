@@ -17,6 +17,7 @@ public class GameState {
 
     private List<Player> players = new ArrayList<>();
     private Player winner = null;
+    private Integer winningRound = null;
     private int playerTurn = 0;
     // need a map with fix iteration order to avoid randomness
     private LinkedHashMap<Vector2, HexTile> map = new LinkedHashMap<>();
@@ -29,9 +30,9 @@ public class GameState {
     private ScenarioMap scenarioMap = ScenarioMap.NONE;
 
     /**
-     * A round consists of one turn per player.
+     * A round consists of one turn per player. Not 0-based as it might be displayed to the player.
      */
-    private int round = 0;
+    private int round = 1;
 
     public GameState() {
         // no fields must be set on construction
@@ -51,6 +52,14 @@ public class GameState {
 
     public void setWinner(Player winner) {
         this.winner = winner;
+    }
+
+    public Integer getWinningRound() {
+        return winningRound;
+    }
+
+    public void setWinningRound(Integer winningRound) {
+        this.winningRound = winningRound;
     }
 
     public int getPlayerTurn() {
@@ -138,31 +147,18 @@ public class GameState {
     }
 
     @Override
-    public int hashCode() {
-        // calculating with enum strings because the hashcode must be consistent across
-        // runs
-        return Objects.hash(activeKingdom, botIntelligence.toString(), heldObject, kingdoms, map, objectiveProgress,
-                playerTurn, players, round, scenarioMap.toString(), seed, winner);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GameState gameState = (GameState) o;
+        return playerTurn == gameState.playerTurn && objectiveProgress == gameState.objectiveProgress && round == gameState.round && Objects.equals(players, gameState.players) && Objects.equals(winner, gameState.winner) && Objects.equals(winningRound, gameState.winningRound) && Objects.equals(map, gameState.map) && Objects.equals(kingdoms, gameState.kingdoms) && Objects.equals(activeKingdom, gameState.activeKingdom) && Objects.equals(heldObject, gameState.heldObject) && botIntelligence == gameState.botIntelligence && Objects.equals(seed, gameState.seed) && scenarioMap == gameState.scenarioMap;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        GameState other = (GameState) obj;
-        return Objects.equals(activeKingdom, other.activeKingdom) && botIntelligence == other.botIntelligence
-                && Objects.equals(heldObject, other.heldObject) && Objects.equals(kingdoms, other.kingdoms)
-                && Objects.equals(map, other.map) && objectiveProgress == other.objectiveProgress
-                && playerTurn == other.playerTurn && Objects.equals(players, other.players) && round == other.round
-                && scenarioMap == other.scenarioMap && Objects.equals(seed, other.seed)
-                && Objects.equals(winner, other.winner);
+    public int hashCode() {
+        return Objects.hash(players, winner, winningRound, playerTurn, map, kingdoms, activeKingdom, heldObject,
+                botIntelligence, seed, objectiveProgress, scenarioMap, round);
     }
 
 }
