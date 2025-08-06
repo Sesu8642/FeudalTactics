@@ -524,12 +524,12 @@ public class IngameScreen extends GameScreen {
     private void updateParameterInputsFromNewGamePrefs(NewGamePreferences newGamePreferences) {
         // not ideal: when called after the event listeners are registered, the preferences will be persisted once
         // per call
-        // TODO: starting position needs to be limited when there are less than 5 players
         cachedNewGamePreferences.setNumberOfBotPlayers(newGamePreferences.getNumberOfBotPlayers());
         parameterInputStage.seedTextField.setText(String.valueOf(newGamePreferences.getSeed()));
         parameterInputStage.difficultySelect.setSelectedIndex(newGamePreferences.getBotIntelligence().ordinal());
         parameterInputStage.sizeSelect.setSelectedIndex(newGamePreferences.getMapSize().ordinal());
         parameterInputStage.densitySelect.setSelectedIndex(newGamePreferences.getDensity().ordinal());
+        parameterInputStage.updateNumberOfStartingPositions(newGamePreferences.getNumberOfBotPlayers() + 1);
         parameterInputStage.startingPositionSelect.setSelectedIndex(newGamePreferences.getStartingPosition());
     }
 

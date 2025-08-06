@@ -81,11 +81,7 @@ public class ParameterInputStage extends ResizableResettableStage {
                 skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
-        // markup must be enabled in the font for this coloring to work
-        // h is a hexagon chraracter in the font
-        List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
-                .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
-        startingPositionSelect.setItems(startingPositions.toArray(new String[0]));
+        updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
         Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
@@ -157,6 +153,19 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.add(playButton).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
                 OUTER_PADDING_PX);
         this.addActor(rootTable);
+    }
+
+    /**
+     * @param numberOfStartingPositions number of starting positions to offer. Cutting the ones that are the last
+     *                                  ones in the list.
+     */
+    public void updateNumberOfStartingPositions(int numberOfStartingPositions) {
+        // markup must be enabled in the font for this coloring to work
+        // h is a hexagon chraracter in the font
+        List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
+                .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
+        List<String> limitedStartingPositions = startingPositions.subList(0, numberOfStartingPositions);
+        startingPositionSelect.setItems(limitedStartingPositions.toArray(new String[0]));
     }
 
     /**

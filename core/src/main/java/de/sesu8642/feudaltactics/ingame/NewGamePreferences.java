@@ -119,6 +119,7 @@ public class NewGamePreferences {
                     case NUMBER_OF_BOT_PLAYERS_DISPLAY_NAME:
                         int numberOfBotPlayers = Integer.parseInt(secondStringPart);
                         numberOfBotPlayers = Math.min(5, Math.abs(numberOfBotPlayers));
+                        numberOfBotPlayers = Math.max(1, numberOfBotPlayers);
                         preferences.setNumberOfBotPlayers(numberOfBotPlayers);
                         break;
                     default:
