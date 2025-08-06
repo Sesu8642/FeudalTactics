@@ -157,13 +157,12 @@ public class GameStateHelper {
 
     private static void sortPlayersByIncome(GameState gameState) {
         gameState.getPlayers().sort((a, b) -> {
-            // if they are the same, it doesn't matter
-            // TODO: eliminate this randomness
+            // if they are the same, keep the order
             int incomeA = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == a)
                     .mapToInt(GameStateHelper::getKingdomIncome).sum();
             int incomeB = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == b)
                     .mapToInt(GameStateHelper::getKingdomIncome).sum();
-            return incomeA > incomeB ? 1 : -1;
+            return Integer.compare(incomeB, incomeA);
         });
     }
 
