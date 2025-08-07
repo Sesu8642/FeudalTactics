@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
@@ -44,27 +45,23 @@ public class MainMenuScreen extends GameScreen {
     private final NagPreferencesDao nagPreferencesDao;
     private final DialogFactory dialogFactory;
     private final EventBus eventBus;
+    private final boolean levelEditorEnabled;
 
     /**
      * Constructor.
-     *
-     * @param gameVersionDao dao for interacting with version persistence
-     * @param camera         camera for the menus
-     * @param viewport       viewport for the menus
-     * @param mainMenuStage  stage for the main menu
-     * @param dialogFactory  factory for creating dialogs
-     * @param eventBus       event bus
      */
     @Inject
     public MainMenuScreen(GameVersionDao gameVersionDao, NewGamePreferencesDao newGamePreferencesDao,
                           @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
                           MainMenuStage mainMenuStage, NagPreferencesDao nagPreferencesDao,
-                          DialogFactory dialogFactory, EventBus eventBus) {
+                          DialogFactory dialogFactory, EventBus eventBus,
+                          @EnableLevelEditorProperty boolean levelEditorEnabled) {
         super(camera, viewport, mainMenuStage);
         this.newGamePreferencesDao = newGamePreferencesDao;
         this.nagPreferencesDao = nagPreferencesDao;
         this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
+        this.levelEditorEnabled = levelEditorEnabled;
         initUi(mainMenuStage);
     }
 
@@ -80,6 +77,13 @@ public class MainMenuScreen extends GameScreen {
                 initSandboxGame();
             }
         }));
+        if (levelEditorEnabled) {
+            // level editor
+            buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
+                eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN));
+                eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
+            }));
+        }
         // tutorial button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
             initTutorial();

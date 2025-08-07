@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
@@ -26,7 +27,10 @@ import java.util.List;
 @Singleton
 public class MainMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Tutorial", "Preferences", "Information");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Level Editor",
+            "Tutorial", "Preferences", "Information");
+    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("Play", "Tutorial",
+            "Preferences", "Information");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -35,8 +39,9 @@ public class MainMenuStage extends MenuStage {
     public MainMenuStage(@MenuViewport Viewport viewport,
                          @MenuBackgroundCamera OrthographicCamera camera,
                          @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
-                         @VersionProperty String gameVersion) {
-        super(viewport, BUTTON_TEXTS, camera, mapRenderer, skin);
+                         @VersionProperty String gameVersion, @EnableLevelEditorProperty boolean levelEditorEnabled) {
+        super(viewport, levelEditorEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR, camera, mapRenderer,
+                skin);
         Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
                 skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);

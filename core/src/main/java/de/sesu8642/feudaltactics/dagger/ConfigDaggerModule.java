@@ -60,4 +60,11 @@ public class ConfigDaggerModule {
         return Boolean.parseBoolean(config.getProperty("enable_deep_water_rendering"));
     }
 
+    @Provides
+    @Singleton
+    @EnableLevelEditorProperty
+    static Boolean provideEnableLevelEditorProperty(Properties config) {
+        return Boolean.parseBoolean(config.getProperty("enable_leveleditor"));
+    }
+
 }
