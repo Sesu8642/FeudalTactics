@@ -30,6 +30,7 @@
 # Needed by the Box2D official extension.
 -keepclassmembers class com.badlogic.gdx.physics.box2d.World {
    boolean contactFilter(long, long);
+   boolean getUseDefaultContactFilter();
    void    beginContact(long);
    void    endContact(long);
    void    preSolve(long, long);
@@ -49,16 +50,3 @@
 # These two lines are used with mapping files; see https://developer.android.com/build/shrink-code#retracing
 -keepattributes LineNumberTable,SourceFile
 -renamesourcefileattribute SourceFile
-
-# custom addition: ignore those to make the build work
--dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
--dontwarn com.google.errorprone.annotations.DoNotCall
--dontwarn com.google.errorprone.annotations.DoNotMock
--dontwarn com.google.errorprone.annotations.ForOverride
--dontwarn com.google.errorprone.annotations.InlineMe
--dontwarn com.google.errorprone.annotations.concurrent.GuardedBy
--dontwarn com.google.errorprone.annotations.concurrent.LazyInit
--dontwarn com.google.j2objc.annotations.ReflectionSupport
--dontwarn com.google.j2objc.annotations.RetainedWith
--dontwarn com.google.j2objc.annotations.Weak
--dontwarn javax.annotation.CheckForNull

@@ -1,9 +1,15 @@
+buildscript {
+  repositories {
+    mavenCentral()
+    google()
+  }
+}
 apply plugin: 'com.android.application'
 
 
 android {
   namespace "de.sesu8642.feudaltactics"
-  compileSdk 34
+  compileSdk 35
   sourceSets {
     main {
       manifest.srcFile 'AndroidManifest.xml'
@@ -16,20 +22,19 @@ android {
     }
   }
   packagingOptions {
-		resources {
-			excludes += ['META-INF/robovm/ios/robovm.xml', 'META-INF/DEPENDENCIES.txt', 'META-INF/DEPENDENCIES',
+    resources {
+      excludes += ['META-INF/robovm/ios/robovm.xml', 'META-INF/DEPENDENCIES.txt', 'META-INF/DEPENDENCIES',
                    'META-INF/dependencies.txt', '**/*.gwt.xml']
-			pickFirsts += ['META-INF/LICENSE.txt', 'META-INF/LICENSE', 'META-INF/license.txt', 'META-INF/LGPL2.1',
+      pickFirsts += ['META-INF/LICENSE.txt', 'META-INF/LICENSE', 'META-INF/license.txt', 'META-INF/LGPL2.1',
                      'META-INF/NOTICE.txt', 'META-INF/NOTICE', 'META-INF/notice.txt']
-		}
+    }
   }
   defaultConfig {
     applicationId 'de.sesu8642.feudaltactics'
     minSdkVersion 24
-    targetSdkVersion 34
     versionCode 11
     versionName "1.3.1"
-    multiDexEnabled true
+    targetSdkVersion 35
   }
   compileOptions {
     sourceCompatibility "8"
@@ -53,7 +58,7 @@ repositories {
 configurations { natives }
 
 dependencies {
-  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
   implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
   implementation project(':core')
 
@@ -80,11 +85,11 @@ tasks.register('copyAndroidNatives') {
 
     configurations.natives.copy().files.each { jar ->
       def outputDir = null
-      if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-      if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
-      if(jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
-      if(jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
-      if(outputDir != null) {
+      if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+      if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+      if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+      if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+      if (outputDir != null) {
         copy {
           from zipTree(jar)
           into outputDir

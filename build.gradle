@@ -9,7 +9,8 @@ buildscript {
     maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
   }
   dependencies {
-    classpath "com.android.tools.build:gradle:8.1.4"
+    classpath "com.android.tools.build:gradle:8.7.3"
+    classpath "io.freefair.gradle:lombok-plugin:8.3"
 
   }
 }
@@ -34,6 +35,7 @@ configure(subprojects - project(':android')) {
   * I would only upgrade if there was an automatic check to prevent compatibility issues.
   * There is the Android lint tool that can be called via a Gradle task but I couldn't get it to scan the core classes.
   */
+  apply plugin: 'io.freefair.lombok'
   sourceCompatibility = 8
 
   // From https://lyze.dev/2021/04/29/libGDX-Internal-Assets-List/
@@ -67,7 +69,7 @@ configure(subprojects - project(':android')) {
 }
 
 subprojects {
-  version = '$projectVersion'
+  version = "$projectVersion"
   ext.appName = 'FeudalTactics'
   repositories {
     mavenCentral()

@@ -1,7 +1,6 @@
 ## Gradle:
 .gradle/
 gradle-app.setting
-/gradle/gradle-daemon-jvm.properties
 /build/
 /android/build/
 /core/build/
@@ -153,6 +152,7 @@ Thumbs.db
 *~
 *.*#
 *#*#
+/.kotlin/
 /assets/assets.txt
 
 ## Special cases:

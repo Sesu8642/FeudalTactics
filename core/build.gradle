@@ -6,21 +6,23 @@ eclipse.project.name = appName + '-core'
 dependencies {
   api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
-  
-  if(enableGraalNative == 'true') {
+
+  annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+  compileOnly "org.projectlombok:lombok:$lombokVersion"
+
+  if (enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
-  
+
   implementation("com.google.guava:guava:$guavaVersion") {
-	  // exclude transitive dependencies mainly to avoid dealing with their licenses
-	  // these dependencies are optional https://github.com/google/guava/issues/2824#issuecomment-544171665
-	  // failureaccess is apparently needed
-	  exclude group:"com.google.guava", module: "listenablefuture"
-	  // these dependencies are seemingly only needed at compile time of Guava
-	  exclude group:"com.google.code.findbugs", module: "jsr305"
-	  exclude group:"org.checkerframework", module: "checker-qual"
-	  exclude group:"com.google.errorprone", module: "error_prone_annotations"
-	  exclude group:"com.google.j2objc", module: "j2objc-annotations"
+    // exclude transitive dependencies mainly to avoid dealing with their licenses
+    // these dependencies are optional https://github.com/google/guava/issues/2824#issuecomment-544171665
+    // failureaccess and listenablefuture are apparently needed
+    // these dependencies are seemingly only needed at compile time of Guava
+    exclude group: "com.google.code.findbugs", module: "jsr305"
+    exclude group: "org.checkerframework", module: "checker-qual"
+    exclude group: "com.google.errorprone", module: "error_prone_annotations"
+    exclude group: "com.google.j2objc", module: "j2objc-annotations"
   }
   implementation "com.google.dagger:dagger:$daggerVersion"
   annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
@@ -28,10 +30,10 @@ dependencies {
   implementation 'org.slf4j:slf4j-jdk14:2.0.6'
 
   implementation('com.github.raeleus.stripe:freetype:2.0.0') {
-      // looks like this is not needed for what we do 
-	  exclude group:"com.github.tommyettinger", module: "regexodus"
+    // looks like this is not needed for what we do
+    exclude group: "com.github.tommyettinger", module: "regexodus"
   }
-  
+
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junitVersion"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
@@ -54,20 +56,19 @@ sourceSets.main.resources.srcDirs += resources_dest_path
 
 // put current version in config
 processResources {
-	from sourceSets.main.resources.srcDirs
-	filter(ReplaceTokens, tokens: [version: "$projectVersion".toString()])
-	duplicatesStrategy = "exclude"
+  from sourceSets.main.resources.srcDirs
+  filter(ReplaceTokens, tokens: [version: "$projectVersion".toString()])
+  duplicatesStrategy = "exclude"
 }
 
 // build full changelog
-	def changelog_dir = "../metadata/en-US/changelogs/"
-	def changelog = ''
-	def fileNames = fileTree(changelog_dir).filter { it.isFile() }.files.name
-	def availableVersions = fileNames.collect({it - ".txt"}).collect({it.toInteger()}).sort().reverse()
-	availableVersions.each({
-		String versionChangelog = file(changelog_dir + it + ".txt").text
-		changelog += "\n\n\n" + versionChangelog
-	})
-	// write the result
-	new File("$resources_dest_path/changelog.txt").text = changelog
-  	
+def changelog_dir = "../metadata/en-US/changelogs/"
+def changelog = ''
+def fileNames = fileTree(changelog_dir).filter { it.isFile() }.files.name
+def availableVersions = fileNames.collect({ it - ".txt" }).collect({ it.toInteger() }).sort().reverse()
+availableVersions.each({
+  String versionChangelog = file(changelog_dir + it + ".txt").text
+  changelog += "\n\n\n" + versionChangelog
+})
+// write the result
+new File("$resources_dest_path/changelog.txt").text = changelog
