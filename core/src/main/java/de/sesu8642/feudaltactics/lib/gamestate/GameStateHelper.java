@@ -53,7 +53,7 @@ public class GameStateHelper {
         List<Kingdom> copiedKingdoms = new ArrayList<>();
         for (Kingdom originalKingdom : original.getKingdoms()) {
             Kingdom newKingdom = new Kingdom(
-                    copiedPlayers.get(original.getPlayers().indexOf(originalKingdom.getPlayer())));
+                copiedPlayers.get(original.getPlayers().indexOf(originalKingdom.getPlayer())));
             newKingdom.setSavings(originalKingdom.getSavings());
             newKingdom.setDoneMoving(originalKingdom.isDoneMoving());
             newKingdom.setWasActiveInCurrentTurn(originalKingdom.isWasActiveInCurrentTurn());
@@ -67,7 +67,7 @@ public class GameStateHelper {
         for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().entrySet()) {
             HexTile originalTile = originalTileEntry.getValue();
             HexTile newTile = new HexTile(copiedPlayers.get(original.getPlayers().indexOf(originalTile.getPlayer())),
-                    new Vector2(originalTileEntry.getKey()));
+                new Vector2(originalTileEntry.getKey()));
             if (originalTile.getKingdom() != null) {
                 newTile.setKingdom(copiedKingdoms.get(original.getKingdoms().indexOf(originalTile.getKingdom())));
                 newTile.getKingdom().getTiles().add(newTile);
@@ -159,10 +159,10 @@ public class GameStateHelper {
         gameState.getPlayers().sort((a, b) -> {
             // if they are the same, keep the order
             int incomeA = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == a)
-                    .mapToInt(GameStateHelper::getKingdomIncome).sum();
+                .mapToInt(GameStateHelper::getKingdomIncome).sum();
             int incomeB = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer() == b)
-                    .mapToInt(GameStateHelper::getKingdomIncome).sum();
-            return Integer.compare(incomeB, incomeA);
+                .mapToInt(GameStateHelper::getKingdomIncome).sum();
+            return Integer.compare(incomeA, incomeB);
         });
     }
 
@@ -209,7 +209,7 @@ public class GameStateHelper {
                 positionHistory.remove(positionHistory.size() - 1);
                 currentTilePos = positionHistory.get(positionHistory.size() - 1);
                 usableCoords = new ArrayList<>(
-                        HexMapHelper.getUnusedNeighborCoords(gameState.getMap(), currentTilePos));
+                    HexMapHelper.getUnusedNeighborCoords(gameState.getMap(), currentTilePos));
             }
             // calculate a score for each neighboring tile for choosing the next one
             ArrayList<Float> scores = new ArrayList<>();
@@ -217,7 +217,7 @@ public class GameStateHelper {
             for (Vector2 candidate : usableCoords) {
                 // factor in density
                 int usableCoordsCountFromCandidate = HexMapHelper.getUnusedNeighborCoords(gameState.getMap(), candidate)
-                        .size();
+                    .size();
                 float score = (float) Math.pow(usableCoordsCountFromCandidate, density);
                 scores.add(score);
                 scoreSum += score;
@@ -263,7 +263,7 @@ public class GameStateHelper {
                     neighborTile.getKingdom().getTiles().add(tile);
                     tile.setKingdom(neighborTile.getKingdom());
                 } else if (tile.getKingdom() != null && neighborTile.getKingdom() != null
-                        && tile.getKingdom() != neighborTile.getKingdom()) {
+                    && tile.getKingdom() != neighborTile.getKingdom()) {
                     // tile and neighbor belong to different kingdoms --> merge kingdoms
                     gameState.getKingdoms().remove(neighborTile.getKingdom());
                     for (HexTile neighborKingdomTile : neighborTile.getKingdom().getTiles()) {
@@ -311,10 +311,10 @@ public class GameStateHelper {
         // try to find empty neighbor tile
         List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), oldCapitalTile);
         Optional<HexTile> emptyTileOptional = neighborTiles.stream()
-                .filter((HexTile neighborTile) -> neighborTile != null
-                        && neighborTile.getKingdom() == oldKingdom && neighborTile.getContent() == null
-                        && !isCapitalCandidateDisconnected(gameState, oldCapitalTile, oldKingdom, neighborTile))
-                .findFirst();
+            .filter((HexTile neighborTile) -> neighborTile != null
+                && neighborTile.getKingdom() == oldKingdom && neighborTile.getContent() == null
+                && !isCapitalCandidateDisconnected(gameState, oldCapitalTile, oldKingdom, neighborTile))
+            .findFirst();
         for (HexTile neighborTile : neighborTiles) {
             if (neighborTile == null) {
                 continue;
@@ -335,19 +335,19 @@ public class GameStateHelper {
         } else {
             // no empty neighbor tile -> select any empty tile in the kingdom
             emptyTileOptional = oldKingdom.getTiles().stream()
-                    .filter((HexTile kingdomTile) -> kingdomTile.getContent() == null
-                            && !isCapitalCandidateDisconnected(gameState, oldCapitalTile, oldKingdom, kingdomTile))
-                    .findFirst();
+                .filter((HexTile kingdomTile) -> kingdomTile.getContent() == null
+                    && !isCapitalCandidateDisconnected(gameState, oldCapitalTile, oldKingdom, kingdomTile))
+                .findFirst();
             if (emptyTileOptional.isPresent()) {
                 newCapitalTile = emptyTileOptional.get();
             } else {
                 // no empty tile -> select any neighbor tile
                 emptyTileOptional = neighborTiles.stream()
-                        .filter((HexTile neighborTile) -> (neighborTile != null
-                                && neighborTile.getKingdom() == oldKingdom
-                                && !isCapitalCandidateDisconnected(gameState, oldCapitalTile, oldKingdom,
-                                neighborTile)))
-                        .findFirst();
+                    .filter((HexTile neighborTile) -> (neighborTile != null
+                        && neighborTile.getKingdom() == oldKingdom
+                        && !isCapitalCandidateDisconnected(gameState, oldCapitalTile, oldKingdom,
+                        neighborTile)))
+                    .findFirst();
                 if (emptyTileOptional.isPresent()) {
                     newCapitalTile = emptyTileOptional.get();
                 } else {
@@ -370,7 +370,7 @@ public class GameStateHelper {
         // try to find any empty kingdom tile
         // TODO: is there some random involved here?!
         Optional<HexTile> emptyTileOptional = kingdom.getTiles().stream()
-                .filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
+            .filter((HexTile kingdomTile) -> kingdomTile.getContent() == null).findFirst();
         if (emptyTileOptional.isPresent()) {
             newCapitalTile = emptyTileOptional.get();
         } else {
@@ -380,7 +380,7 @@ public class GameStateHelper {
                 newCapitalTile = newCapitalTileOptional.get();
             } else {
                 throw new AssertionError(
-                        String.format("The kingdom %s has no tiles which a capital could be placed on.", kingdom));
+                    String.format("The kingdom %s has no tiles which a capital could be placed on.", kingdom));
             }
         }
         newCapitalTile.setContent(new Capital());
@@ -393,8 +393,8 @@ public class GameStateHelper {
     private static boolean isCapitalCandidateDisconnected(GameState gameState, HexTile oldCapitalTile,
                                                           Kingdom oldKingdom, HexTile candidate) {
         return HexMapHelper.getNeighborTiles(gameState.getMap(), candidate).stream().noneMatch(
-                (HexTile neighborsNeighbor) -> neighborsNeighbor != null && neighborsNeighbor != oldCapitalTile
-                        && neighborsNeighbor.getKingdom() == oldKingdom);
+            (HexTile neighborsNeighbor) -> neighborsNeighbor != null && neighborsNeighbor != oldCapitalTile
+                && neighborsNeighbor.getKingdom() == oldKingdom);
     }
 
     /**
@@ -428,7 +428,7 @@ public class GameStateHelper {
     public static void placeOwn(GameState gameState, HexTile tile) {
         // units can't act after removing blocking stuff
         if (tile.getContent() != null
-                && ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
+            && ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())) {
             ((Unit) gameState.getHeldObject()).setCanAct(false);
         }
         placeObject(gameState, tile);
@@ -487,8 +487,8 @@ public class GameStateHelper {
 
         // place new capital if old one is going to be destroyed
         if (tile.getContent() != null
-                && ClassReflection.isAssignableFrom(Capital.class, tile.getContent().getClass())
-                && kingdom.getTiles().size() >= 2) {
+            && ClassReflection.isAssignableFrom(Capital.class, tile.getContent().getClass())
+            && kingdom.getTiles().size() >= 2) {
             kingdom.setSavings(0);
             createCapital(gameState, tile, kingdom);
         }
@@ -533,7 +533,7 @@ public class GameStateHelper {
             case 2:
                 // both tiles next to to each other --> no split possible
                 if (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
-                        .contains(oldKingdomNeighborTiles.get(1))) {
+                    .contains(oldKingdomNeighborTiles.get(1))) {
                     potentiallySplit = false;
                 }
                 break;
@@ -541,13 +541,13 @@ public class GameStateHelper {
                 // if the first or the second tile is next to both of the other ones, they are
                 // all next to each other --> no split possible
                 if (((HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
-                        .contains(oldKingdomNeighborTiles.get(1)))
-                        && (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
-                        .contains(oldKingdomNeighborTiles.get(2))))
-                        || ((HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(1))
-                        .contains(oldKingdomNeighborTiles.get(0)))
-                        && (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(1))
-                        .contains(oldKingdomNeighborTiles.get(2))))) {
+                    .contains(oldKingdomNeighborTiles.get(1)))
+                    && (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(0))
+                    .contains(oldKingdomNeighborTiles.get(2))))
+                    || ((HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(1))
+                    .contains(oldKingdomNeighborTiles.get(0)))
+                    && (HexMapHelper.getNeighborTiles(gameState.getMap(), oldKingdomNeighborTiles.get(1))
+                    .contains(oldKingdomNeighborTiles.get(2))))) {
                     potentiallySplit = false;
                 }
                 break;
@@ -555,11 +555,11 @@ public class GameStateHelper {
                 // if the other tiles are next to each other, the 4 oldKingdomNeighborTiles must
                 // also be next to each other --> no split possible
                 ArrayList<HexTile> notOldKingdomNeighborTiles = new ArrayList<>(
-                        HexMapHelper.getNeighborTiles(gameState.getMap(), tile));
+                    HexMapHelper.getNeighborTiles(gameState.getMap(), tile));
                 notOldKingdomNeighborTiles.removeAll(oldKingdomNeighborTiles);
                 if (notOldKingdomNeighborTiles.get(0) != null && notOldKingdomNeighborTiles.get(1) != null
-                        && HexMapHelper.getNeighborTiles(gameState.getMap(), notOldKingdomNeighborTiles.get(0))
-                        .contains(notOldKingdomNeighborTiles.get(1))) {
+                    && HexMapHelper.getNeighborTiles(gameState.getMap(), notOldKingdomNeighborTiles.get(0))
+                    .contains(notOldKingdomNeighborTiles.get(1))) {
                     potentiallySplit = false;
                 }
                 break;
@@ -606,7 +606,7 @@ public class GameStateHelper {
         HexTile capitalTile = null;
         for (HexTile kingdomTile : tiles) {
             if (kingdomTile.getContent() != null
-                    && ClassReflection.isAssignableFrom(Capital.class, kingdomTile.getContent().getClass())) {
+                && ClassReflection.isAssignableFrom(Capital.class, kingdomTile.getContent().getClass())) {
                 capitalTile = kingdomTile;
                 break;
             }
@@ -636,7 +636,7 @@ public class GameStateHelper {
             doneTiles.add(currentTile);
             for (HexTile expandTile : HexMapHelper.getNeighborTiles(gameState.getMap(), currentTile)) {
                 if (expandTile != null && !doneTiles.contains(expandTile) && !todoTiles.contains(expandTile)
-                        && expandTile.getKingdom() == oldKingdom) {
+                    && expandTile.getKingdom() == oldKingdom) {
                     todoTiles.add(expandTile);
                 }
             }
@@ -682,8 +682,8 @@ public class GameStateHelper {
         // update winner
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer() == gameState.getActivePlayer()
-                    && kingdom.getTiles().size() >= noOfKingdomTiles * WIN_LANDMASS_PERCENTAGE
-                    && gameState.getWinner() != kingdom.getPlayer()) {
+                && kingdom.getTiles().size() >= noOfKingdomTiles * WIN_LANDMASS_PERCENTAGE
+                && gameState.getWinner() != kingdom.getPlayer()) {
                 gameState.setWinner(kingdom.getPlayer());
                 gameState.setWinningRound(gameState.getRound());
                 break;
@@ -722,7 +722,7 @@ public class GameStateHelper {
                     // kill all units if they cannot get paid
                     for (HexTile tile : kingdom.getTiles()) {
                         if (tile.getContent() != null
-                                && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
+                            && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
                             // spawn a gravestone
                             tile.setContent(new Gravestone());
                         }
@@ -732,7 +732,7 @@ public class GameStateHelper {
                     // reset canAct and hasActed state
                     for (HexTile tile : kingdom.getTiles()) {
                         if (tile.getContent() != null
-                                && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
+                            && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
                             ((Unit) tile.getContent()).setCanAct(true);
                         }
                     }
@@ -755,7 +755,7 @@ public class GameStateHelper {
                 continue;
             }
             if (tile.getContent() != null
-                    && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
+                && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
                 // regular trees spread if they have another regular tree next to them
                 ArrayList<HexTile> candidates = new ArrayList<>();
                 HexTile neighborTreeTile = null;
@@ -766,8 +766,8 @@ public class GameStateHelper {
                     if (neighbor.getContent() == null && !isCoastTile(gameState, neighbor)) {
                         candidates.add(neighbor);
                     } else if (neighbor.getContent() != null
-                            && ClassReflection.isAssignableFrom(Tree.class, neighbor.getContent().getClass())
-                            && !tileBlackList.contains(neighbor)) {
+                        && ClassReflection.isAssignableFrom(Tree.class, neighbor.getContent().getClass())
+                        && !tileBlackList.contains(neighbor)) {
                         neighborTreeTile = neighbor;
                     }
                 }
@@ -780,15 +780,15 @@ public class GameStateHelper {
                     candidates.clear();
                 }
             } else if (tile.getContent() != null
-                    && ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {
+                && ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {
                 // palm trees always spread to a neighboring coast tile, if any
                 HexMapHelper
-                        .getNeighborTiles(gameState.getMap(), tile).stream().filter(neighbor -> neighbor != null
-                                && neighbor.getContent() == null && isCoastTile(gameState, neighbor))
-                        .limit(1).forEach(newTreeTile -> {
-                            spawnTree(gameState, newTreeTile);
-                            tileBlackList.add(newTreeTile);
-                        });
+                    .getNeighborTiles(gameState.getMap(), tile).stream().filter(neighbor -> neighbor != null
+                        && neighbor.getContent() == null && isCoastTile(gameState, neighbor))
+                    .limit(1).forEach(newTreeTile -> {
+                        spawnTree(gameState, newTreeTile);
+                        tileBlackList.add(newTreeTile);
+                    });
             }
         }
     }
@@ -800,7 +800,7 @@ public class GameStateHelper {
                 if (ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass())) {
                     spawnTree(gameState, tile);
                 } else if (tile.getKingdom() == null
-                        && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
+                    && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
                     // cut off units become gravestones at the start of the player turn
                     tile.setContent(new Gravestone());
                 }
@@ -838,7 +838,7 @@ public class GameStateHelper {
         } else {
             // held object is guaranteed to be a non-baron unit by the validation
             gameState.setHeldObject(
-                    new Unit(UnitTypes.ofStrength(gameState.getHeldObject().getStrength() + 1)));
+                new Unit(UnitTypes.ofStrength(gameState.getHeldObject().getStrength() + 1)));
         }
 
     }
@@ -923,7 +923,7 @@ public class GameStateHelper {
         }
         for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
             if (neighbor != null && neighbor.getKingdom() != null && tile.getKingdom() == neighbor.getKingdom()
-                    && neighbor.getContent() != null && neighbor.getContent().getStrength() > protectionLevel) {
+                && neighbor.getContent() != null && neighbor.getContent().getStrength() > protectionLevel) {
                 protectionLevel = neighbor.getContent().getStrength();
             }
         }
@@ -939,10 +939,10 @@ public class GameStateHelper {
     public static int getKingdomIncome(Kingdom kingdom) {
         // number of tiles - trees & palms
         return kingdom.getTiles().size() - (int) kingdom.getTiles().stream()
-                .filter(tile -> tile.getContent() != null
-                        && (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
-                        || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())))
-                .count();
+            .filter(tile -> tile.getContent() != null
+                && (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+                || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())))
+            .count();
     }
 
     /**
@@ -954,12 +954,12 @@ public class GameStateHelper {
     public static int getKingdomSalaries(GameState gameState, Kingdom kingdom) {
         // sum of the salaries of all the units
         int result = kingdom.getTiles().stream()
-                .filter(tile -> tile.getContent() != null
-                        && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
-                .mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
+            .filter(tile -> tile.getContent() != null
+                && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
+            .mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
         // if there is a held unit, subtract their salary
         if (gameState.getHeldObject() != null
-                && ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
+            && ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
             result += ((Unit) gameState.getHeldObject()).getUnitType().salary();
         }
         return result;
@@ -983,15 +983,15 @@ public class GameStateHelper {
                 boolean hasTree = false;
                 for (HexTile tile : kingdom.getTiles()) {
                     if (tile.getContent() != null
-                            && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
+                        && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
                         if (tile.getContent().getStrength() > 1) {
                             return Optional.of(kingdom);
                         } else if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
                             hasPeasant = true;
                         }
                     } else if (tile.getContent() != null
-                            && (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
-                            || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass()))) {
+                        && (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
+                        || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass()))) {
                         hasTree = true;
                     }
                 }
@@ -1005,7 +1005,7 @@ public class GameStateHelper {
                     for (HexTile tile : kingdom.getTiles()) {
                         for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
                             if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()
-                                    && getProtectionLevel(gameState, neighborTile) == 0) {
+                                && getProtectionLevel(gameState, neighborTile) == 0) {
                                 return Optional.of(kingdom);
                             }
                         }
@@ -1028,7 +1028,7 @@ public class GameStateHelper {
         }
         // if it is a bot's turn, assume the first human player attemted the action
         return gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER)
-                .findFirst();
+            .findFirst();
     }
 
     /**
@@ -1041,7 +1041,7 @@ public class GameStateHelper {
     public static void placeTileContent(GameState gameState, HexTile tile, TileContent contentToPlace) {
         TileContent oldTileContent = tile.getContent();
         boolean needsNewCapital = oldTileContent != null && ClassReflection.isAssignableFrom(Capital.class,
-                oldTileContent.getClass());
+            oldTileContent.getClass());
         if (ClassReflection.isAssignableFrom(Tree.class, contentToPlace.getClass()) && isCoastTile(gameState, tile)) {
             tile.setContent(new PalmTree());
         } else {
