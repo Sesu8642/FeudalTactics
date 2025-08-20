@@ -14,6 +14,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.mainmenu.ui.MainMenuScreen;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -30,9 +31,10 @@ public class SplashScreenStage extends MenuStage {
      */
     @Inject
     public SplashScreenStage(@MenuViewport Viewport viewport, @MenuBackgroundCamera OrthographicCamera camera,
-                             MainMenuScreen mainMenuScreen, @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
+                             Insets insets, MainMenuScreen mainMenuScreen,
+                             @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
         // using a menu stage without buttons here
-        super(viewport, ImmutableList.of(), camera, mapRenderer, skin);
+        super(viewport, ImmutableList.of(), camera, insets, mapRenderer, skin);
         Label bottomRightLabel = new Label("By Sesu8642", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }

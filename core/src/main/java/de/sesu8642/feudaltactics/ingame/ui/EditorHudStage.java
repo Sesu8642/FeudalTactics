@@ -17,6 +17,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import javax.inject.Inject;
 
@@ -44,14 +45,14 @@ public class EditorHudStage extends ResizableResettableStage {
      * @param skin         game skin
      */
     @Inject
-    public EditorHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+    public EditorHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Insets insets, Skin skin) {
         super(viewport);
         this.textureAtlas = textureAtlas;
         this.skin = skin;
-        initUi();
+        initUi(insets);
     }
 
-    private void initUi() {
+    private void initUi(Insets insets) {
         Table bottomTable;
         Sprite tileSprite = textureAtlas.createSprite("tile_bw");
         SpriteDrawable tileSpriteDrawable = new SpriteDrawable(tileSprite);
@@ -81,6 +82,8 @@ public class EditorHudStage extends ResizableResettableStage {
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
 
         rootTable = new Table();
+        rootTable.padTop(insets.getTopInset());
+        rootTable.padBottom(insets.getBottomInset());
         rootTable.setFillParent(true);
         rootTable.add(infoTextLabel).left().top().pad(10).expandX();
         rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
@@ -96,7 +99,7 @@ public class EditorHudStage extends ResizableResettableStage {
         bottomTable.add(tileContentButton);
 
         rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
-                .height(ValueWithSize.percentSize(0.1F, rootTable));
+            .height(ValueWithSize.percentSize(0.1F, rootTable));
 
         handStack.add(handImage);
         handStack.add(handContentTable);
@@ -104,7 +107,7 @@ public class EditorHudStage extends ResizableResettableStage {
         handStack.setVisible(false);
         handContentTable.setFillParent(true);
         handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
-                .width(Value.percentHeight(1.16F));
+            .width(Value.percentHeight(1.16F));
         this.addActor(rootTable);
     }
 

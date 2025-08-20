@@ -15,6 +15,7 @@ import de.sesu8642.feudaltactics.menu.crashreporting.GameCrasher;
 import de.sesu8642.feudaltactics.menu.crashreporting.dagger.CrashReportingDaggerModule;
 import de.sesu8642.feudaltactics.menu.information.dagger.InformationMenuDaggerModule;
 import de.sesu8642.feudaltactics.menu.preferences.dagger.PrefsDaggerModule;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 import de.sesu8642.feudaltactics.renderer.dagger.RendererDaggerModule;
 
@@ -24,9 +25,9 @@ import javax.inject.Singleton;
  * Dagger component.
  **/
 @Component(modules = {MainDaggerModule.class, ConfigDaggerModule.class, CrashReportingDaggerModule.class,
-        EditorDaggerModule.class, IngameDaggerModule.class, MenuDaggerModule.class, AboutDaggerModule.class,
-        ChangelogDaggerModule.class, InformationMenuDaggerModule.class, PrefsDaggerModule.class,
-        RendererDaggerModule.class})
+    EditorDaggerModule.class, IngameDaggerModule.class, MenuDaggerModule.class, AboutDaggerModule.class,
+    ChangelogDaggerModule.class, InformationMenuDaggerModule.class, PrefsDaggerModule.class,
+    RendererDaggerModule.class})
 @Singleton
 public interface FeudalTacticsComponent {
 
@@ -41,6 +42,9 @@ public interface FeudalTacticsComponent {
 
         @BindsInstance
         Builder platformSharing(PlatformSharing platformSharing);
+
+        @BindsInstance
+        Builder screenInsets(Insets insets);
 
         @BindsInstance
         Builder gameInstance(FeudalTactics gameInstance);

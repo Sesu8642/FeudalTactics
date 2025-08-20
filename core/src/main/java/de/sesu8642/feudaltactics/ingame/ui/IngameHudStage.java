@@ -17,6 +17,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -59,14 +60,14 @@ public class IngameHudStage extends ResizableResettableStage {
      * @param skin         game skin
      */
     @Inject
-    public IngameHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Skin skin) {
+    public IngameHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Insets insets, Skin skin) {
         super(viewport);
         this.textureAtlas = textureAtlas;
         this.skin = skin;
-        initUi();
+        initUi(insets);
     }
 
-    private void initUi() {
+    private void initUi(Insets insets) {
         halfSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_HALF, ImageButtonStyle.class);
         ButtonFactory.createImageButton(SkinConstants.BUTTON_PAUSE, skin);
         regularSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_REGULAR, ImageButtonStyle.class);
@@ -121,6 +122,7 @@ public class IngameHudStage extends ResizableResettableStage {
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
 
         rootTable = new Table();
+        rootTable.padTop(insets.getTopInset());
         rootTable.setFillParent(true);
         rootTable.add(infoHexagonLabel).left().top().pad(10);
         rootTable.add(infoTextLabel).left().top().pad(10).expandX();
@@ -147,7 +149,13 @@ public class IngameHudStage extends ResizableResettableStage {
         bottomTable.add(buyCastleButton);
         bottomTable.add(endTurnButton);
         rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
-                .height(ValueWithSize.percentSizeDensityMin(0.1F, rootTable, 100));
+            .height(ValueWithSize.percentSizeDensityMin(0.1F, rootTable, 100));
+        rootTable.row();
+
+        Table bottomInsetTable = new Table(skin);
+        bottomInsetTable.background(SkinConstants.SEMI_TRANSPARENT_BACKGROUND_DRAWABLE);
+        rootTable.add(bottomInsetTable).height(insets.getBottomInset()).colspan(3).fill();
+
 
         handStack.add(handImage);
         handStack.add(handContentTable);
@@ -155,7 +163,7 @@ public class IngameHudStage extends ResizableResettableStage {
         handStack.setVisible(false);
         handContentTable.setFillParent(true);
         handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
-                .width(Value.percentHeight(1.16F));
+            .width(Value.percentHeight(1.16F));
         this.addActor(rootTable);
     }
 

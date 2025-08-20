@@ -10,6 +10,7 @@ import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,8 +29,9 @@ public class DependencyDetailsStage extends SlideStage {
      */
     @Inject
     public DependencyDetailsStage(EventBus eventBus, DependencyDetailsSlide dependencyDetailsSlide,
-                                  @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
-        super(viewport, Collections.singletonList(dependencyDetailsSlide), camera, skin);
+                                  @MenuViewport Viewport viewport, Insets insets,
+                                  @MenuCamera OrthographicCamera camera, Skin skin) {
+        super(viewport, Collections.singletonList(dependencyDetailsSlide), insets, camera, skin);
         this.dependencyDetailsSlide = dependencyDetailsSlide;
     }
 

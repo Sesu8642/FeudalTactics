@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class MenuStage extends ResizableResettableStage {
 
     private final List<TextButton> buttons = new ArrayList<>();
     private final MapRenderer mapRenderer;
+    private final Insets insets;
     private final Skin skin;
     private final OrthographicCamera camera;
     Set<Disposable> disposables = new HashSet<>();
@@ -38,10 +40,11 @@ public class MenuStage extends ResizableResettableStage {
      * @param mapRenderer renderer for the sea background
      * @param skin        game skin
      */
-    public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera, MapRenderer mapRenderer,
-                     Skin skin) {
+    public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera, Insets insets,
+                     MapRenderer mapRenderer, Skin skin) {
         super(viewport);
         this.camera = camera;
+        this.insets = insets;
         this.mapRenderer = mapRenderer;
         this.skin = skin;
         initUi(buttonTexts);
@@ -58,6 +61,8 @@ public class MenuStage extends ResizableResettableStage {
         bottomRightTable = new Table();
 
         rootTable = new Table();
+        rootTable.padBottom(insets.getBottomInset());
+        rootTable.padTop(insets.getTopInset());
         rootTable.setFillParent(true);
         rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
         Image logo = new Image(logoTexture);

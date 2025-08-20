@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class SlideStage extends ResizableResettableStage {
 
     private final List<Table> slides;
+    private final Insets insets;
     private final Skin skin;
     private final OrthographicCamera camera;
     private final Container<Table> slideContainer = new Container<>();
@@ -34,32 +36,23 @@ public class SlideStage extends ResizableResettableStage {
 
     /**
      * Constructor.
-     *
-     * @param viewport viewport for the stage
-     * @param slides   slides that are displayed
-     * @param camera   camera to use
-     * @param skin     game skin
      */
-    public SlideStage(Viewport viewport, List<Slide> slides, OrthographicCamera camera, Skin skin) {
-        this(viewport, slides, () -> {
+    public SlideStage(Viewport viewport, List<Slide> slides, Insets insets, OrthographicCamera camera, Skin skin) {
+        this(viewport, slides, insets, () -> {
         }, camera, skin);
     }
 
     /**
      * Constructor.
-     *
-     * @param viewport         viewport for the stage
-     * @param slides           slides that are displayed
-     * @param finishedCallback callback to be executed when the user is done
-     * @param camera           camera to use
-     * @param skin             game skin
      */
-    public SlideStage(Viewport viewport, List<Slide> slides, Runnable finishedCallback, OrthographicCamera camera,
+    public SlideStage(Viewport viewport, List<Slide> slides, Insets insets, Runnable finishedCallback,
+                      OrthographicCamera camera,
                       Skin skin) {
         super(viewport);
         if (slides.isEmpty()) {
             throw new IllegalArgumentException("at least one slide is required");
         }
+        this.insets = insets;
         this.camera = camera;
         this.skin = skin;
         this.slides = slides.stream().map(Slide::getTable).collect(Collectors.toList());
@@ -90,6 +83,8 @@ public class SlideStage extends ResizableResettableStage {
         scrollPane.setOverscroll(false, false);
 
         rootTable = new Table();
+        rootTable.padTop(insets.getTopInset());
+        rootTable.padBottom(insets.getBottomInset());
         rootTable.setFillParent(true);
         rootTable.defaults().minSize(0);
         rootTable.add(scrollPane).expand().fill().colspan(2);

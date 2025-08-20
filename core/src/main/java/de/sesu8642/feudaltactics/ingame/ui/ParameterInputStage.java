@@ -15,6 +15,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -50,7 +51,8 @@ public class ParameterInputStage extends ResizableResettableStage {
      * Height of all parameter inputs combined.
      */
     public static final long TOTAL_INPUT_HEIGHT = OUTER_PADDING_PX + 5 * INPUT_PADDING_PX + BUTTON_HEIGHT_PX
-            + 6 * INPUT_HEIGHT_PX;
+        + 5 * INPUT_HEIGHT_PX;
+    private final Insets insets;
     private final Skin skin;
     SelectBox<String> startingPositionSelect;
     SelectBox<String> sizeSelect;
@@ -70,15 +72,16 @@ public class ParameterInputStage extends ResizableResettableStage {
      * @param skin     game skin
      */
     @Inject
-    public ParameterInputStage(@MenuViewport Viewport viewport, Skin skin) {
+    public ParameterInputStage(@MenuViewport Viewport viewport, Insets insets, Skin skin) {
         super(viewport);
+        this.insets = insets;
         this.skin = skin;
         initUi();
     }
 
     private void initUi() {
         Label startingPositionLabel = new Label("Starting\nPosition",
-                skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
@@ -125,6 +128,8 @@ public class ParameterInputStage extends ResizableResettableStage {
         playButton = ButtonFactory.createTextButton("Play", skin);
 
         rootTable = new Table();
+        rootTable.padTop(insets.getTopInset());
+        rootTable.padBottom(insets.getBottomInset());
         rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);
         rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
         rootTable.setFillParent(true);
@@ -143,15 +148,15 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.add(sizeLabel);
         rootTable.add(sizeSelect).fillX();
         rootTable.add(copyButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
-                .width(INPUT_HEIGHT_PX);
+            .width(INPUT_HEIGHT_PX);
         rootTable.row();
         rootTable.add(densityLabel);
         rootTable.add(densitySelect).fillX();
         rootTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
-                .width(INPUT_HEIGHT_PX);
+            .width(INPUT_HEIGHT_PX);
         rootTable.row();
         rootTable.add(playButton).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
-                OUTER_PADDING_PX);
+            OUTER_PADDING_PX);
         this.addActor(rootTable);
     }
 
@@ -163,7 +168,7 @@ public class ParameterInputStage extends ResizableResettableStage {
         // markup must be enabled in the font for this coloring to work
         // h is a hexagon chraracter in the font
         List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
-                .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
+            .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
         List<String> limitedStartingPositions = startingPositions.subList(0, numberOfStartingPositions);
         startingPositionSelect.setItems(limitedStartingPositions.toArray(new String[0]));
     }

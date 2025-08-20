@@ -16,6 +16,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,10 +44,11 @@ public class PreferencesStage extends SlideStage {
      */
     @Inject
     public PreferencesStage(EventBus eventBus, PreferencesSlide preferencesSlide, MainPreferencesDao mainPrefsDao,
-                            @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
-        super(viewport, Collections.singletonList(preferencesSlide),
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
-                skin);
+                            @MenuViewport Viewport viewport, Insets insets, @MenuCamera OrthographicCamera camera,
+                            Skin skin) {
+        super(viewport, Collections.singletonList(preferencesSlide), insets,
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
+            skin);
         this.eventBus = eventBus;
         this.preferencesSlide = preferencesSlide;
         this.mainPrefsDao = mainPrefsDao;
@@ -55,14 +57,14 @@ public class PreferencesStage extends SlideStage {
 
     private void initUi() {
         Stream.of(preferencesSlide.getForgottenKingdomSelectBox(), preferencesSlide.getShowEnemyTurnsSelectBox())
-                .forEach((actor) -> actor
-                        .addListener(new ExceptionLoggingChangeListener(() -> sendPreferencesChangedEvent())));
+            .forEach((actor) -> actor
+                .addListener(new ExceptionLoggingChangeListener(() -> sendPreferencesChangedEvent())));
     }
 
     private void sendPreferencesChangedEvent() {
         eventBus.post(new MainPreferencesChangeEvent(
-                new MainGamePreferences(preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
-                        preferencesSlide.getShowEnemyTurnsSelectBox().getSelected())));
+            new MainGamePreferences(preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
+                preferencesSlide.getShowEnemyTurnsSelectBox().getSelected())));
     }
 
     @Override

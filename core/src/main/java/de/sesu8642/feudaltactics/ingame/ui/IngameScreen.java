@@ -27,6 +27,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -54,12 +55,14 @@ public class IngameScreen extends GameScreen {
     private final IngameScreenDialogHelper ingameScreenDialogHelper;
 
     private final ParameterInputStage parameterInputStage;
+    private final Insets insets;
     private final IngameHudStage ingameHudStage;
     private final IngameMenuStage menuStage;
 
     private final DialogFactory dialogFactory;
 
     private final NewGamePreferencesDao newGamePrefDao;
+
     private NewGamePreferences cachedNewGamePreferences;
     /**
      * Cached version of the game state from the game controller.
@@ -83,22 +86,6 @@ public class IngameScreen extends GameScreen {
 
     /**
      * Constructor.
-     *
-     * @param mainPrefsDao        dao for main preferences
-     * @param newGamePrefDao      dao for new game preferences
-     * @param ingameCamera        camera for viewing the map
-     * @param viewport            viewport for the menus
-     * @param mapRenderer         renderer for the map
-     * @param dialogFactory       factory for creating confirm dialogs
-     * @param eventBus            event bus
-     * @param inputProcessor      input processor for user inputs that is added to
-     *                            the input multiplexer
-     * @param gestureDetector     gesture detector
-     * @param inputMultiplexer    input multiplexer that stages are added to as
-     *                            processors
-     * @param ingameHudStage      stage for heads up display UI
-     * @param menuStage           stage for the pause menu UI
-     * @param parameterInputStage stage for the new game parameter input UI
      */
     @Inject
     public IngameScreen(MainPreferencesDao mainPrefsDao, NewGamePreferencesDao newGamePrefDao,
@@ -107,7 +94,7 @@ public class IngameScreen extends GameScreen {
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
                         IngameScreenDialogHelper ingameScreenDialogHelper, IngameHudStage ingameHudStage,
-                        IngameMenuStage menuStage, ParameterInputStage parameterInputStage) {
+                        IngameMenuStage menuStage, ParameterInputStage parameterInputStage, Insets insets) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
         this.newGamePrefDao = newGamePrefDao;
@@ -123,6 +110,7 @@ public class IngameScreen extends GameScreen {
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
+        this.insets = insets;
         // load before adding the listeners because they will trigger persisting the preferences on each update
         loadNewGameParameterValues();
         addIngameMenuListeners();
@@ -139,14 +127,14 @@ public class IngameScreen extends GameScreen {
             Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
             if (forgottenKingdom.isPresent()) {
                 Dialog confirmDialog = dialogFactory.createConfirmDialog(
-                        "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to" +
-                                " end your turn?\n",
-                        this::endHumanPlayerTurn, () -> {
-                            Kingdom kingdom = forgottenKingdom.get();
-                            eventBus.post(new FocusKingdomEvent(cachedGameState,
-                                    kingdom));
-                            eventBus.post(new ActivateKingdomEvent(kingdom));
-                        });
+                    "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to" +
+                        " end your turn?\n",
+                    this::endHumanPlayerTurn, () -> {
+                        Kingdom kingdom = forgottenKingdom.get();
+                        eventBus.post(new FocusKingdomEvent(cachedGameState,
+                            kingdom));
+                        eventBus.post(new ActivateKingdomEvent(kingdom));
+                    });
                 confirmDialog.show(ingameHudStage);
                 return;
             }
@@ -173,7 +161,7 @@ public class IngameScreen extends GameScreen {
             activateStage(IngameStages.PARAMETERS);
         } else {
             eventBus.post(new InitializeScenarioEvent(previousCachedGameState.getBotIntelligence(),
-                    previousCachedGameState.getScenarioMap()));
+                previousCachedGameState.getScenarioMap()));
             eventBus.post(new GameStartEvent());
             activateStage(IngameStages.HUD);
         }
@@ -203,11 +191,11 @@ public class IngameScreen extends GameScreen {
         boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
         isLocalPlayerTurn = isLocalPlayerTurnNew;
         boolean winnerChanged =
-                gameState.getWinner() != null
-                        && winnerBeforeBotTurnPlayerIndex != gameState.getWinner().getPlayerIndex();
+            gameState.getWinner() != null
+                && winnerBeforeBotTurnPlayerIndex != gameState.getWinner().getPlayerIndex();
 
         boolean objectiveProgressed = cachedGameState != null
-                && gameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
+            && gameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
 
         cachedGameState = GameStateHelper.getCopy(gameState);
         // update the UI
@@ -222,7 +210,7 @@ public class IngameScreen extends GameScreen {
         String hudStageInfoText = "";
         if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
             hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
-                    newGameState);
+                newGameState);
         } else {
             hudStageInfoText = "Enemy turn";
             if (!ingameHudStage.isEnemyTurnButtonsShown()) {
@@ -231,12 +219,12 @@ public class IngameScreen extends GameScreen {
         }
         ingameHudStage.infoTextLabel.setText(hudStageInfoText);
         ingameHudStage.infoHexagonLabel.setText(String.format("[#%s]h",
-                MapRenderer.PLAYER_COLOR_PALETTE.get(gameState.getActivePlayer().getPlayerIndex())));
+            MapRenderer.PLAYER_COLOR_PALETTE.get(gameState.getActivePlayer().getPlayerIndex())));
         parameterInputStage.updateSeed(newGameState.getSeed());
 
         if (objectiveProgressed) {
             ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage, cachedGameState.getRound(),
-                    cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(), cachedNewGamePreferences);
+                cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(), cachedNewGamePreferences);
         }
     }
 
@@ -274,26 +262,26 @@ public class IngameScreen extends GameScreen {
             if (localPlayer.isDefeated()) {
                 // Game is over; player lost
                 Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showEnemyWonMessage(ingameHudStage,
-                        cachedGameState.getActivePlayer().getRoundOfDefeat(), cachedGameState.getScenarioMap(),
-                        cachedNewGamePreferences, this::exitToMenu, this::resetGame));
+                    cachedGameState.getActivePlayer().getRoundOfDefeat(), cachedGameState.getScenarioMap(),
+                    cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             } else {
                 // Game is over; player won
                 boolean botsGaveUpPreviously = cachedGameState.getWinner().getType() == Player.Type.LOCAL_PLAYER;
                 Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
-                        botsGaveUpPreviously, getEarliestRoundOfGameEnd(cachedGameState),
-                        cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame));
+                    botsGaveUpPreviously, getEarliestRoundOfGameEnd(cachedGameState),
+                    cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             }
         } else if (localPlayer.isDefeated() && !isSpectateMode) {
             // Local player lost but game isn't over; offer a spectate option
             Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showPlayerDefeatedMessage(ingameHudStage,
-                    cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
-                    this::exitToMenu, this::resetGame, () -> isSpectateMode = true));
+                cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
+                this::exitToMenu, this::resetGame, () -> isSpectateMode = true));
         } else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
             // winner changed
             boolean humanWins = newGameState.getWinner().getType() == Type.LOCAL_PLAYER;
             Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGiveUpGameMessage(ingameHudStage, humanWins,
-                    cachedGameState.getWinningRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
-                    this::exitToMenu, this::resetGame));
+                cachedGameState.getWinningRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
+                this::exitToMenu, this::resetGame));
         }
         return infoText;
     }
@@ -329,7 +317,7 @@ public class IngameScreen extends GameScreen {
     void centerMap() {
         Margin centeringMargin = calculateMapScreenArea();
         eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
-                centeringMargin.marginTop, centeringMargin.marginRight));
+            centeringMargin.marginTop, centeringMargin.marginRight));
     }
 
     /**
@@ -343,15 +331,15 @@ public class IngameScreen extends GameScreen {
         // calculate what is the bigger rectangular area for the map to fit: above the
         // inputs or to their right
         float aboveArea = ingameCamera.viewportWidth
-                * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
+            * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT - insets.getBottomInset());
         float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
-                * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX
-                - ParameterInputStage.OUTER_PADDING_PX);
+            * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX
+            - ParameterInputStage.OUTER_PADDING_PX);
         if (aboveArea > rightArea) {
-            return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT, 0, 0);
+            return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT + insets.getBottomInset(), 0, 0);
         } else {
             return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
-                    ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
+                ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
         }
     }
 
@@ -413,13 +401,13 @@ public class IngameScreen extends GameScreen {
         List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
             Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-                    this::exitToMenu);
+                this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
             Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
-                    this::resetGame);
+                this::resetGame);
             confirmDialog.show(menuStage);
         }));
         // continue button
@@ -428,61 +416,61 @@ public class IngameScreen extends GameScreen {
 
     private void addParameterInputListeners() {
         parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
-                () -> {
-                    long newSeed = System.currentTimeMillis();
-                    parameterInputStage.seedTextField.setText(String.valueOf(newSeed));
-                    cachedNewGamePreferences.setSeed(newSeed);
-                    newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
-                }));
+            () -> {
+                long newSeed = System.currentTimeMillis();
+                parameterInputStage.seedTextField.setText(String.valueOf(newSeed));
+                cachedNewGamePreferences.setSeed(newSeed);
+                newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
+            }));
 
         parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
             NewGamePreferences pastedPreferences =
-                    NewGamePreferences.fromSharableString(Gdx.app.getClipboard().getContents());
+                NewGamePreferences.fromSharableString(Gdx.app.getClipboard().getContents());
             updateParameterInputsFromNewGamePrefs(pastedPreferences);
         }));
 
         parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
-                () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString())));
+            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString())));
 
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
-                        parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
-                        parameterInputStage.pasteButton, parameterInputStage.difficultySelect)
-                .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
-                    cachedNewGamePreferences.setSeed(parameterInputStage.getSeedParam());
-                    cachedNewGamePreferences.setMapSize(parameterInputStage.getMapSizeParam());
-                    cachedNewGamePreferences.setDensity(parameterInputStage.getMapDensityParam());
-                    cachedNewGamePreferences.setBotIntelligence(parameterInputStage.getBotIntelligence());
-                    cachedNewGamePreferences.setStartingPosition(parameterInputStage.getStartingPosition());
-                    newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
-                    eventBus.post(new RegenerateMapEvent(cachedNewGamePreferences.toGameParameters()));
-                })));
+                parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
+                parameterInputStage.pasteButton, parameterInputStage.difficultySelect)
+            .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
+                cachedNewGamePreferences.setSeed(parameterInputStage.getSeedParam());
+                cachedNewGamePreferences.setMapSize(parameterInputStage.getMapSizeParam());
+                cachedNewGamePreferences.setDensity(parameterInputStage.getMapDensityParam());
+                cachedNewGamePreferences.setBotIntelligence(parameterInputStage.getBotIntelligence());
+                cachedNewGamePreferences.setStartingPosition(parameterInputStage.getStartingPosition());
+                newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
+                eventBus.post(new RegenerateMapEvent(cachedNewGamePreferences.toGameParameters()));
+            })));
         // only the settings that visually change the map need to cause centering
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
-                        parameterInputStage.densitySelect, parameterInputStage.pasteButton)
-                .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(this::centerMap)));
+                parameterInputStage.densitySelect, parameterInputStage.pasteButton)
+            .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(this::centerMap)));
         parameterInputStage.playButton
-                .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
+            .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
     }
 
     private void addHudListeners() {
         ingameHudStage.undoButton.addListener(new ExceptionLoggingChangeListener(() ->
-                eventBus.post(new UndoMoveEvent())));
+            eventBus.post(new UndoMoveEvent())));
 
         ingameHudStage.endTurnButton.addListener(new ExceptionLoggingChangeListener(this::handleEndTurnAttempt));
 
         ingameHudStage.buyPeasantButton
-                .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyPeasantEvent())));
+            .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyPeasantEvent())));
 
         ingameHudStage.buyCastleButton
-                .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyCastleEvent())));
+            .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BuyCastleEvent())));
 
         ingameHudStage.menuButton.addListener(new ExceptionLoggingChangeListener(() ->
-                activateStage(IngameStages.MENU)));
+            activateStage(IngameStages.MENU)));
 
         ingameHudStage.infoButton.addListener(new ExceptionLoggingChangeListener(() ->
-                ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage, cachedGameState.getRound(),
-                        cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(),
-                        cachedNewGamePreferences)));
+            ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage, cachedGameState.getRound(),
+                cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(),
+                cachedNewGamePreferences)));
 
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow, skipping Speed.INSTANT which is
@@ -512,7 +500,7 @@ public class IngameScreen extends GameScreen {
         }));
 
         ingameHudStage.skipButton
-                .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BotTurnSkippedEvent())));
+            .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BotTurnSkippedEvent())));
 
     }
 

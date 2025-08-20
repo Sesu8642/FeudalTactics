@@ -16,6 +16,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import javax.inject.Singleton;
 import java.util.Collections;
@@ -35,10 +36,11 @@ public class AboutDaggerModule {
     @Singleton
     @AboutSlideStage
     static SlideStage provideAboutSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
-                                             AboutSlideFactory slideFactory, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-        return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()),
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
-                camera, skin);
+                                             AboutSlideFactory slideFactory, Insets insets,
+                                             @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
+        return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()), insets,
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+            camera, skin);
     }
 
     @Provides

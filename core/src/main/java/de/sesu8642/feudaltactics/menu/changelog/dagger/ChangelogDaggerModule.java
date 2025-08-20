@@ -22,6 +22,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -70,12 +71,13 @@ public class ChangelogDaggerModule {
     @Provides
     @Singleton
     @ChangelogSlideStage
-    static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
-                                                 @ChangelogText String changelogText, @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
+    static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport, Insets insets,
+                                                 @ChangelogText String changelogText,
+                                                 @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
         Slide changelogSlide = new Slide(skin, "Changelog").addLabel(changelogText);
-        return new SlideStage(viewport, Collections.singletonList(changelogSlide),
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
-                camera, skin);
+        return new SlideStage(viewport, Collections.singletonList(changelogSlide), insets,
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
+            camera, skin);
     }
 
 }

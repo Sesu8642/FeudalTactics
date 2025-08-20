@@ -23,9 +23,9 @@ public class IngameScreenDialogHelper {
 
     public static final String SHARING_PREEMBLE_SURRENDER = "I lost this FeudalTactics game. Can you beat it?";
     public static final String SHARING_PREEMBLE_DEFEAT = "I lost this FeudalTactics game in round %s. Can you do " +
-            "better?";
+        "better?";
     public static final String SHARING_PREEMBLE_VICTORY = "I won this FeudalTactics game in round %s. Can you do " +
-            "better?";
+        "better?";
 
     private final DialogFactory dialogFactory;
     private final TutorialDialogFactory tutorialDialogFactory;
@@ -62,12 +62,12 @@ public class IngameScreenDialogHelper {
         if (win) {
             sharingPreemble = String.format(SHARING_PREEMBLE_VICTORY, winningRound);
             endDialog.text(String.format("VICTORY! Your Enemies surrendered in round %s.\n\nDo you wish to " +
-                    "continue?\n", winningRound));
+                "continue?\n", winningRound));
             endDialog.button("Replay", (byte) 2);
         } else {
             sharingPreemble = SHARING_PREEMBLE_SURRENDER;
             endDialog.text(String.format("Your Enemy conquered a majority of the territory.\n\nDo you " +
-                    "wish to continue?\n", winningRound));
+                "wish to continue?\n", winningRound));
             endDialog.button("Retry", (byte) 2);
         }
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
@@ -102,11 +102,11 @@ public class IngameScreenDialogHelper {
         String dialogText;
         if (botsGaveUpPreviously) {
             dialogText = String.format("You defeated all your enemies. They surrendered in round %s.",
-                    winningRound);
+                winningRound);
         } else {
             // probably its somehow possible to defeat all enemies without triggering the win condition somehow...
             dialogText = String.format("VICTORY! You defeated all your enemies in round %s.",
-                    winningRound);
+                winningRound);
         }
         dialogText += "\n";
         endDialog.text(dialogText);
@@ -140,7 +140,7 @@ public class IngameScreenDialogHelper {
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
         endDialog.button("Spectate", (byte) 0);
         String dialogText = String.format("DEFEAT! All your kingdoms were conquered by the enemy in round %s.",
-                currentRound);
+            currentRound);
         dialogText += "\n";
         endDialog.text(dialogText);
         endDialog.show(stage);
@@ -169,7 +169,7 @@ public class IngameScreenDialogHelper {
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
 
         String dialogText = String.format("Your enemy defeated all other players. You lost in round %s.",
-                roundOfDefeat);
+            roundOfDefeat);
         dialogText += "\n";
         endDialog.text(dialogText);
         endDialog.show(stage);
@@ -193,7 +193,7 @@ public class IngameScreenDialogHelper {
 
     private void showGameDetails(Stage stage, int currentRound, NewGamePreferences newGamePreferences) {
         String gameDetails = String.format("Round: %s\n", currentRound)
-                + newGamePreferences.toSharableString();
+            + newGamePreferences.toSharableString();
         FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
         dialogFactory.addCopyButtonToDialog(() -> gameDetails, dialog);
@@ -210,7 +210,7 @@ public class IngameScreenDialogHelper {
         String buttonText = "Share";
         if (Gdx.app.getType() == Application.ApplicationType.Android) {
             dialogFactory.addNonClosingTextButtonToDialog(endDialog, buttonText,
-                    () -> platformSharing.shareText(fullSharedMessage));
+                () -> platformSharing.shareText(fullSharedMessage));
         } else {
             dialogFactory.addCopyButtonToDialog(() -> fullSharedMessage, endDialog, buttonText);
         }

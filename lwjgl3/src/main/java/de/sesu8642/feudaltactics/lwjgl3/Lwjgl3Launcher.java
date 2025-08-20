@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import de.sesu8642.feudaltactics.FeudalTactics;
+import de.sesu8642.feudaltactics.platformspecific.Insets;
 
 /**
  * Launches the desktop (LWJGL3) application.
@@ -27,7 +28,7 @@ public class Lwjgl3Launcher {
     private static Lwjgl3Application createApplication() {
         return new Lwjgl3Application(new FeudalTactics(text -> {
             throw new UnsupportedOperationException("Sharing is not implemented for LWJGL3!");
-        }), getDefaultConfiguration());
+        }, app -> Insets.NONE), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

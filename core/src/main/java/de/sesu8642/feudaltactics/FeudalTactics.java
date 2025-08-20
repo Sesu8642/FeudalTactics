@@ -1,8 +1,10 @@
 package de.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 
 /**
@@ -14,8 +16,11 @@ public class FeudalTactics extends Game {
 
     private final PlatformSharing platformSharing;
 
-    public FeudalTactics(PlatformSharing platformSharing) {
+    private final PlatformInsetsProvider platformInsetsProvider;
+
+    public FeudalTactics(PlatformSharing platformSharing, PlatformInsetsProvider platformInsetsProvider) {
         this.platformSharing = platformSharing;
+        this.platformInsetsProvider = platformInsetsProvider;
     }
 
     /**
@@ -29,9 +34,10 @@ public class FeudalTactics extends Game {
     @Override
     public void create() {
         component = DaggerFeudalTacticsComponent.builder()
-                .gameInstance(this)
-                .platformSharing(platformSharing)
-                .build();
+            .gameInstance(this)
+            .platformSharing(platformSharing)
+            .screenInsets(platformInsetsProvider.getInsets(Gdx.app))
+            .build();
 
         GameInitializer gameInitializer = component.getGameInitializer();
         gameInitializer.initializeGame();
