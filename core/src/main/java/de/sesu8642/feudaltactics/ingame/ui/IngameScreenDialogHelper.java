@@ -202,8 +202,8 @@ public class IngameScreenDialogHelper {
 
     void addShareOrCopyButtonToDialog(String preemble, Dialog endDialog, NewGamePreferences newGamePreferences,
                                       ScenarioMap scenarioMap) {
-        if (scenarioMap != null) {
-            // dont offer the option in in the tutorial
+        if (scenarioMap != ScenarioMap.NONE) {
+            // dont offer the option in the tutorial
             return;
         }
         String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString();
