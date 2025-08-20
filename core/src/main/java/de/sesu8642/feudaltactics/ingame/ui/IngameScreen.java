@@ -424,9 +424,12 @@ public class IngameScreen extends GameScreen {
             }));
 
         parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            NewGamePreferences pastedPreferences =
-                NewGamePreferences.fromSharableString(Gdx.app.getClipboard().getContents());
-            updateParameterInputsFromNewGamePrefs(pastedPreferences);
+            String clipboardContents = Gdx.app.getClipboard().getContents();
+            if (clipboardContents != null) {
+                NewGamePreferences pastedPreferences =
+                    NewGamePreferences.fromSharableString(clipboardContents);
+                updateParameterInputsFromNewGamePrefs(pastedPreferences);
+            }
         }));
 
         parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
