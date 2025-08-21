@@ -12,7 +12,7 @@ A medieval strategy game with countless unique and challenging levels. You play 
 
 ## Roadmap
 I would like to implement the following features. It might happen soon, in a few years or never.
-- playable tutorial
+- ~~playable tutorial~~
 - sound
 - scenario maps
 - map editor
