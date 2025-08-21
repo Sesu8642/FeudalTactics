@@ -1,0 +1,8 @@
+Feudal Tactics 1.4.0
+
+This update brings several new features and improvements. Highlights include:
+- playable tutorial
+- new info button
+- copying/sharing of game details
+- improved heads-up display contrast and scaling
+- edge-to-edge mode on newer Android versions
