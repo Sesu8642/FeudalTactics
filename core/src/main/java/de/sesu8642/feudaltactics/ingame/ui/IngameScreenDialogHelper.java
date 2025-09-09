@@ -21,6 +21,7 @@ import javax.inject.Singleton;
 @Singleton
 public class IngameScreenDialogHelper {
 
+    public static final String SHARING_PREEMBLE_ONGOING = "I'm playing this FeudalTactics game. Can you beat it?";
     public static final String SHARING_PREEMBLE_SURRENDER = "I lost this FeudalTactics game. Can you beat it?";
     public static final String SHARING_PREEMBLE_DEFEAT = "I lost this FeudalTactics game in round %s. Can you do " +
         "better?";
@@ -196,7 +197,8 @@ public class IngameScreenDialogHelper {
             + newGamePreferences.toSharableString();
         FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
-        dialogFactory.addCopyButtonToDialog(() -> gameDetails, dialog);
+        addShareOrCopyButtonToDialog(SHARING_PREEMBLE_ONGOING, dialog, newGamePreferences
+            , ScenarioMap.NONE);
         dialog.show(stage);
     }
 
