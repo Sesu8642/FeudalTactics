@@ -21,11 +21,11 @@ import javax.inject.Singleton;
 @Singleton
 public class IngameScreenDialogHelper {
 
-    public static final String SHARING_PREEMBLE_ONGOING = "I'm playing this FeudalTactics game. Can you beat it?";
-    public static final String SHARING_PREEMBLE_SURRENDER = "I lost this FeudalTactics game. Can you beat it?";
-    public static final String SHARING_PREEMBLE_DEFEAT = "I lost this FeudalTactics game in round %s. Can you do " +
+    public static final String SHARING_PREEMBLE_ONGOING = "I'm playing this Feudal Tactics game. Can you beat it?";
+    public static final String SHARING_PREEMBLE_SURRENDER = "I lost this Feudal Tactics game. Can you beat it?";
+    public static final String SHARING_PREEMBLE_DEFEAT = "I lost this Feudal Tactics game in round %s. Can you do " +
         "better?";
-    public static final String SHARING_PREEMBLE_VICTORY = "I won this FeudalTactics game in round %s. Can you do " +
+    public static final String SHARING_PREEMBLE_VICTORY = "I won this Feudal Tactics game in round %s. Can you do " +
         "better?";
 
     private final DialogFactory dialogFactory;
