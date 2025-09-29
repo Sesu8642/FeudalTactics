@@ -71,6 +71,8 @@ public class AutoSaveRepository {
         this.incrementalAutoSavePrefStore = incrementalAutoSavePrefStore;
 
         fullSaveJson.setSerializer(GameState.class, new GameStateSerializer());
+        fullSaveJson.setIgnoreUnknownFields(true);
+        incrementalSaveJson.setIgnoreUnknownFields(true);
         currentUndoDepth = incrementalAutoSavePrefStore.getInteger(CURRENT_UNDO_DEPTH_NAME, 0);
         idCounter = getLatestIncrementalSaveKey().map(Long::parseLong).orElse(0L);
     }
