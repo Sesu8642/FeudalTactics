@@ -182,13 +182,13 @@ public class AutoSaveRepository {
     /**
      * Returns the last autosave as JSON string.
      *
-     * @return full save as JSON string
+     * @return full save as JSON string or "none"
      */
     public String getFullSaveAsString() {
         lock.lock();
         try {
             if (fullAutoSavePrefStore.get().isEmpty()) {
-                throw new SaveLoadingException("No full save available");
+                return "none";
             }
             // cannot be empty if there is a save
             return fullAutoSavePrefStore.getString(FULL_GAME_SAVE_KEY_NAME);
