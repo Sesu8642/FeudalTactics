@@ -1,0 +1,5 @@
+Feudal Tactics 1.4.1
+
+Bugfix release:
+- fix sporadic crash after updating to 1.4 with an ongoing game
+- fix rare crash when winning the game
