@@ -266,7 +266,9 @@ public class IngameScreen extends GameScreen {
                     cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             } else {
                 // Game is over; player won
-                boolean botsGaveUpPreviously = cachedGameState.getWinner().getType() == Player.Type.LOCAL_PLAYER;
+                boolean botsGaveUpPreviously =
+                    cachedGameState.getWinner() != null
+                        && cachedGameState.getWinner().getType() == Player.Type.LOCAL_PLAYER;
                 Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
                     botsGaveUpPreviously, getEarliestRoundOfGameEnd(cachedGameState),
                     cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame));
