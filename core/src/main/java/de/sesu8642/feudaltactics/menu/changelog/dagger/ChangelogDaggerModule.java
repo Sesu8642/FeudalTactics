@@ -74,7 +74,8 @@ public class ChangelogDaggerModule {
     static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport, Insets insets,
                                                  @ChangelogText String changelogText,
                                                  @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-        Slide changelogSlide = new Slide(skin, "Changelog").addLabel(changelogText);
+        Slide changelogSlide = new Slide(skin, "Changelog").addLabel("Join the Feudal Tactics Community on Matrix! " +
+            "See Information menu.").addLabel(changelogText);
         return new SlideStage(viewport, Collections.singletonList(changelogSlide), insets,
             () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
             camera, skin);
