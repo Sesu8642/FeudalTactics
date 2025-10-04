@@ -51,7 +51,7 @@ public class MainMenuScreen extends GameScreen {
      * Constructor.
      */
     @Inject
-    public MainMenuScreen(GameVersionDao gameVersionDao, NewGamePreferencesDao newGamePreferencesDao,
+    public MainMenuScreen(NewGamePreferencesDao newGamePreferencesDao,
                           @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
                           MainMenuStage mainMenuStage, NagPreferencesDao nagPreferencesDao,
                           DialogFactory dialogFactory, EventBus eventBus,
@@ -107,6 +107,8 @@ public class MainMenuScreen extends GameScreen {
 
     private void initSandboxGame() {
         NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
+        long newSeed = System.currentTimeMillis();
+        savedPrefs.setSeed(newSeed);
         eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
         eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
     }
