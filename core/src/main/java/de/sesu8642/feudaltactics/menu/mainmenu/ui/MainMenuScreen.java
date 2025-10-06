@@ -18,7 +18,6 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -109,6 +108,7 @@ public class MainMenuScreen extends GameScreen {
         NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
         long newSeed = System.currentTimeMillis();
         savedPrefs.setSeed(newSeed);
+        newGamePreferencesDao.saveNewGamePreferences(savedPrefs);
         eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
         eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
     }
