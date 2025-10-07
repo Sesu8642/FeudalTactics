@@ -82,4 +82,14 @@ public class GameControllerEventHandler {
         botAi.setSkipDisplayingTurn(true);
     }
 
+    /**
+     * Event handler for scenario initialization events.
+     *
+     * @param event event to handle
+     */
+    @Subscribe
+    public void handleInitializeScenario(InitializeScenarioEvent event) {
+        gameController.initializeScenario(event.getBotIntelligence(), event.getScenarioMap());
+    }
+
 }
