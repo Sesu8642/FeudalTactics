@@ -7,6 +7,7 @@ import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
+import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
 import de.sesu8642.feudaltactics.events.input.EscInputEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreen.IngameStages;
@@ -82,6 +83,16 @@ public class IngameScreenEventHandler {
     @Subscribe
     public void handleMapCenteringUiEvent(CenterMapUIEvent event) {
         ingameScreen.centerMap();
+    }
+
+    /**
+     * Event handler for centering the map.
+     *
+     * @param event event to handle
+     */
+    @Subscribe
+    public void handleNewGamePreferencesChange(NewGamePreferencesChangedEvent event) {
+        ingameScreen.setCachedNewGamePreferences(event.getNewGamePreferences());
     }
 
 }

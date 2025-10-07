@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
+import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
@@ -110,6 +111,7 @@ public class MainMenuScreen extends GameScreen {
         savedPrefs.setSeed(newSeed);
         newGamePreferencesDao.saveNewGamePreferences(savedPrefs);
         eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+        eventBus.post(new NewGamePreferencesChangedEvent(savedPrefs));
         eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
     }
 

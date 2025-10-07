@@ -111,6 +111,8 @@ public class IngameScreen extends GameScreen {
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
         this.insets = insets;
+        // load before adding the listeners because they will trigger persisting the preferences on each update
+        loadNewGameParameterValues();
         addIngameMenuListeners();
         addParameterInputListeners();
         addHudListeners();
@@ -373,8 +375,6 @@ public class IngameScreen extends GameScreen {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(inputMultiplexer);
-        // load only on show as the seed is randomized when clicking the play button
-        loadNewGameParameterValues();
         activateStage(IngameStages.PARAMETERS);
         centerMap();
     }
@@ -536,6 +536,10 @@ public class IngameScreen extends GameScreen {
 
     public MenuStage getMenuStage() {
         return menuStage;
+    }
+
+    public void setCachedNewGamePreferences(NewGamePreferences cachedNewGamePreferences) {
+        this.cachedNewGamePreferences = cachedNewGamePreferences;
     }
 
     /**
