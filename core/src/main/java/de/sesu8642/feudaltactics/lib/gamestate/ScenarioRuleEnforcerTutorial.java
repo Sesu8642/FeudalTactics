@@ -71,7 +71,8 @@ public class ScenarioRuleEnforcerTutorial {
     }
 
     private static void updateObjectiveProgressFrom2(GameState gameState) {
-        if (gameState.getHeldObject() != null) {
+        if (gameState.getHeldObject() != null && ClassReflection.isAssignableFrom(Unit.class,
+            gameState.getHeldObject().getClass())) {
             incrementObjectiveProgress(gameState);
         }
     }
