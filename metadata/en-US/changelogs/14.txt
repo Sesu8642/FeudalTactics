@@ -1,0 +1,7 @@
+Feudal Tactics 1.4.2
+
+Bugfix release:
+- generate new map when using play button
+- improve tutorial progress detection
+- fix rare crash in tutorial
+- fix displayed seed not matching actual
