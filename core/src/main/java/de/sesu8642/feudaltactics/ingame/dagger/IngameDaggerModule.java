@@ -61,7 +61,7 @@ public class IngameDaggerModule {
     @Singleton
     @IngameCamera
     static OrthographicCamera provideIngameCamera() {
-        OrthographicCamera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        final OrthographicCamera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         // rotate if making art like the logo
 //		camera.rotate(30);
         return camera;

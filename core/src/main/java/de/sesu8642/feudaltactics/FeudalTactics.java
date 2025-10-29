@@ -39,7 +39,7 @@ public class FeudalTactics extends Game {
             .screenInsets(platformInsetsProvider.getInsets(Gdx.app))
             .build();
 
-        GameInitializer gameInitializer = component.getGameInitializer();
+        final GameInitializer gameInitializer = component.getGameInitializer();
         gameInitializer.initializeGame();
     }
 

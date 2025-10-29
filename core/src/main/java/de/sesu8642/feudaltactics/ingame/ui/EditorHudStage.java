@@ -53,13 +53,13 @@ public class EditorHudStage extends ResizableResettableStage {
     }
 
     private void initUi(Insets insets) {
-        Table bottomTable;
-        Sprite tileSprite = textureAtlas.createSprite("tile_bw");
-        SpriteDrawable tileSpriteDrawable = new SpriteDrawable(tileSprite);
+        final Table bottomTable;
+        final Sprite tileSprite = textureAtlas.createSprite("tile_bw");
+        final SpriteDrawable tileSpriteDrawable = new SpriteDrawable(tileSprite);
         tileButton = new ImageButton(tileSpriteDrawable);
 
-        Sprite unitSprite = textureAtlas.createSprite(Unit.UnitTypes.SPEARMAN.spriteName());
-        SpriteDrawable unitSpriteDrawable = new SpriteDrawable(unitSprite);
+        final Sprite unitSprite = textureAtlas.createSprite(Unit.UnitTypes.SPEARMAN.spriteName());
+        final SpriteDrawable unitSpriteDrawable = new SpriteDrawable(unitSprite);
         tileContentButton = new ImageButton(unitSpriteDrawable);
 
         menuButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_PAUSE, skin);
@@ -70,13 +70,13 @@ public class EditorHudStage extends ResizableResettableStage {
         handContentTable = new Table();
         handContent = new Image();
 
-        Sprite handSprite = skin.getSprite(SkinConstants.SPRITE_HAND);
+        final Sprite handSprite = skin.getSprite(SkinConstants.SPRITE_HAND);
         handSprite.setFlip(true, false);
-        Image handImage = new Image(handSprite);
+        final Image handImage = new Image(handSprite);
         handImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
-        Sprite thumbSprite = skin.getSprite(SkinConstants.SPRITE_HAND_THUMB);
+        final Sprite thumbSprite = skin.getSprite(SkinConstants.SPRITE_HAND_THUMB);
         thumbSprite.setFlip(true, false);
-        Image thumbImage = new Image(thumbSprite);
+        final Image thumbImage = new Image(thumbSprite);
         thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
@@ -108,7 +108,7 @@ public class EditorHudStage extends ResizableResettableStage {
         handContentTable.setFillParent(true);
         handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
             .width(Value.percentHeight(1.16F));
-        this.addActor(rootTable);
+        addActor(rootTable);
     }
 
     @Override
@@ -124,8 +124,8 @@ public class EditorHudStage extends ResizableResettableStage {
         if (spriteName != null) {
             handStack.setVisible(true);
 
-            Sprite sprite = textureAtlas.createSprite(spriteName);
-            TextureRegionDrawable drawable = new TextureRegionDrawable(sprite);
+            final Sprite sprite = textureAtlas.createSprite(spriteName);
+            final TextureRegionDrawable drawable = new TextureRegionDrawable(sprite);
             handContent.setDrawable(drawable);
             handContent.setColor(color);
         } else {

@@ -27,29 +27,29 @@ public class InformationMenuDaggerModule {
     @Singleton
     @DependencyLicenses
     static Map<String, Map<String, String>> provideDependencyLicenses() {
-        FileHandle assetsFileHandle = Gdx.files.internal("assets.txt");
-        String assetListText = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
-        String[] assets = assetListText.split("\n");
+        final FileHandle assetsFileHandle = Gdx.files.internal("assets.txt");
+        final String assetListText = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
+        final String[] assets = assetListText.split("\n");
         // outer map key: dependency name, inner map key: file name, outer map value:
         // file contents
-        Map<String, Map<String, String>> result = new HashMap<>();
+        final Map<String, Map<String, String>> result = new HashMap<>();
         for (int i = 0; i < assets.length; i++) {
-            String assetPath = assets[i];
+            final String assetPath = assets[i];
             if (!assetPath.startsWith("dependency_licenses/")) {
                 continue;
             }
-            String[] pathParts = assetPath.split("/");
-            String fileName = pathParts[pathParts.length - 1];
-            StringBuilder dependencyNameBuilder = new StringBuilder();
+            final String[] pathParts = assetPath.split("/");
+            final String fileName = pathParts[pathParts.length - 1];
+            final StringBuilder dependencyNameBuilder = new StringBuilder();
             for (int j = 1; j < pathParts.length - 1; j++) {
                 if (dependencyNameBuilder.length() > 0) {
                     dependencyNameBuilder.append(" - ");
                 }
                 dependencyNameBuilder.append(pathParts[j]);
             }
-            String dependencyName = dependencyNameBuilder.toString();
-            FileHandle fileHandle = Gdx.files.internal(assetPath);
-            String fileContents = fileHandle.readString(StandardCharsets.UTF_8.name());
+            final String dependencyName = dependencyNameBuilder.toString();
+            final FileHandle fileHandle = Gdx.files.internal(assetPath);
+            final String fileContents = fileHandle.readString(StandardCharsets.UTF_8.name());
             result.putIfAbsent(dependencyName, new HashMap<>());
             result.get(dependencyName).put(fileName, fileContents);
         }

@@ -25,7 +25,7 @@ public class ConfigDaggerModule {
     @Provides
     @Singleton
     static Properties provideGameConfig() {
-        Properties config = new Properties();
+        final Properties config = new Properties();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             classLoader = ClassLoader.getSystemClassLoader();

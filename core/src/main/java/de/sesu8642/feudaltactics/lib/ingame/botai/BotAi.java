@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  */
 public class BotAi {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final EventBus eventBus;
     private final MainPreferencesDao mainPrefsDao;
@@ -58,10 +58,10 @@ public class BotAi {
     public void doTurn(GameState gameState, Intelligence intelligence) throws InterruptedException {
         logger.debug("doing the turn for bot player '{}' with intelligence level '{}'", gameState.getActivePlayer(),
             intelligence);
-        Random random = new Random(gameState.hashCode());
+        final Random random = new Random(gameState.hashCode());
         Optional<Kingdom> nextKingdomOptional = getNextKingdom(gameState);
         while (nextKingdomOptional.isPresent()) {
-            Kingdom nextKingdom = nextKingdomOptional.get();
+            final Kingdom nextKingdom = nextKingdomOptional.get();
             nextKingdom.setDoneMoving(true);
             doKingdomMove(gameState, nextKingdom, intelligence, random);
             nextKingdomOptional = getNextKingdom(gameState);
@@ -90,11 +90,11 @@ public class BotAi {
         gameState.setActiveKingdom(kingdom);
         delayForPreview(gameState);
         // pick up all units
-        PickedUpUnits pickedUpUnits = new PickedUpUnits();
+        final PickedUpUnits pickedUpUnits = new PickedUpUnits();
         pickUpAllAvailableUnits(kingdom, pickedUpUnits);
         // remember the tiles where a castle was placed to possibly reverse the decision
         // later after conquering
-        Set<HexTile> placedCastleTiles = new HashSet<>();
+        final Set<HexTile> placedCastleTiles = new HashSet<>();
 
         removeBlockingObjects(gameState, pickedUpUnits, intelligence.blockingObjectRemovalScoreTreshold);
         defendMostImportantTiles(gameState, intelligence, pickedUpUnits, placedCastleTiles);
@@ -134,7 +134,7 @@ public class BotAi {
         for (HexTile tile : kingdom.getTiles()) {
             if (tile.getContent() != null && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
                 && ((Unit) tile.getContent()).isCanAct()) {
-                int strength = tile.getContent().getStrength();
+                final int strength = tile.getContent().getStrength();
                 pickedUpUnits.addUnitOfStrength(strength);
                 tile.setContent(null);
             }
@@ -154,7 +154,7 @@ public class BotAi {
         logger.debug("removing blocking objects");
         // not using a hashset because the tiles are changed in this function which
         // changes their hashcode as well
-        Map<Vector2, HexTile> tilesWithBlockingObjects = gameState.getActiveKingdom().getTiles().stream().filter(
+        final Map<Vector2, HexTile> tilesWithBlockingObjects = gameState.getActiveKingdom().getTiles().stream().filter(
                 tile -> tile.getContent() != null && Blocking.class.isAssignableFrom(tile.getContent().getClass()))
             .collect(Collectors.toMap(HexTile::getPosition, tile -> tile));
         TileScoreInfo bestRemovalCandidate = getBestBlockingObjectRemovalScore(gameState,
@@ -178,7 +178,7 @@ public class BotAi {
     private void defendMostImportantTiles(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits,
                                           Set<HexTile> placedCastleTiles) {
         logger.debug("defending most important tiles");
-        Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
+        final Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
         TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
             interestingProtectionTiles);
         while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
@@ -221,18 +221,18 @@ public class BotAi {
         whileloop:
         while (!unableToConquerAnyMore) {
             // need a list here to be deterministic
-            List<HexTile> possibleConquerTiles = determineNeighboringEnemyTiles(gameState);
+            final List<HexTile> possibleConquerTiles = determineNeighboringEnemyTiles(gameState);
             if (possibleConquerTiles.isEmpty()) {
                 // the bot actually won the game
                 break;
             }
 
             // determine how "valuable" the tiles are for conquering
-            Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
+            final Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
                 .newSetFromMap(new ConcurrentHashMap<OffenseTileScoreInfo, Boolean>());
             possibleConquerTiles.parallelStream().forEach(conquerTile -> offenseTileScoreInfoSet
                 .add(getOffenseTileScoreInfo(gameState, intelligence, conquerTile)));
-            List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
+            final List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
             offenseTileScoreInfos.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
                 int result = Integer.compare(o2.score, o1.score);
                 // if the score is the same, use the coordinates to eliminate randomness
@@ -256,7 +256,7 @@ public class BotAi {
             }
             // at this point no more tiles can be conquered with the existing units --> buy
             // some more or combine
-            int minimumRequiredStrengthForConquering = offenseTileScoreInfos
+            final int minimumRequiredStrengthForConquering = offenseTileScoreInfos
                 .stream().min((OffenseTileScoreInfo t1, OffenseTileScoreInfo t2) -> Integer
                     .compare(t1.requiredStrength, t2.requiredStrength))
                 .orElse(new OffenseTileScoreInfo(null, -1, -1)).requiredStrength;
@@ -268,9 +268,9 @@ public class BotAi {
     }
 
     private List<HexTile> determineNeighboringEnemyTiles(GameState gameState) {
-        List<HexTile> result = new ArrayList<>();
+        final List<HexTile> result = new ArrayList<>();
         for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
-            List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
+            final List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
             for (HexTile neighborTile : neighborTiles) {
                 if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()) {
                     result.add(neighborTile);
@@ -414,7 +414,7 @@ public class BotAi {
 
     private void protectWithLeftoverUnits(GameState gameState, Intelligence intelligence, PickedUpUnits pickedUpUnits) {
         logger.debug("protecting the kingdom with leftover units");
-        Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
+        final Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
         TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
             interestingProtectionTiles);
         while (bestDefenseTileScore.score >= 0) {
@@ -423,7 +423,7 @@ public class BotAi {
             }
             // use the strongest units to protect the most important tiles --> use negative
             // strength to get strongest units first
-            List<UnitTypes> orderedUnitTypes = Arrays.stream(UnitTypes.values())
+            final List<UnitTypes> orderedUnitTypes = Arrays.stream(UnitTypes.values())
                 .sorted(Comparator.comparingInt(type -> type.strength() * -1)).collect(Collectors.toList());
             for (UnitTypes type : orderedUnitTypes) {
                 if (pickedUpUnits.ofType(type) > 0) {
@@ -441,7 +441,7 @@ public class BotAi {
     private void placeLeftOverUnitsSomeWhere(GameState gameState, PickedUpUnits pickedUpUnits) {
         for (UnitTypes type : UnitTypes.values()) {
             for (int i = 0; i < pickedUpUnits.ofType(type); i++) {
-                Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
+                final Optional<HexTile> emptyOrTreeTileOptional = findEmptyOrTreeTileInActiveKingdom(gameState);
                 if (emptyOrTreeTileOptional.isPresent()) {
                     gameState.setHeldObject(new Unit(type));
                     GameStateHelper.placeOwn(gameState, emptyOrTreeTileOptional.get());
@@ -475,10 +475,10 @@ public class BotAi {
     }
 
     private Set<HexTile> getInterestingProtectionTiles(GameState gameState) {
-        HashSet<HexTile> interestingPlacementTiles = new HashSet<>();
+        final HashSet<HexTile> interestingPlacementTiles = new HashSet<>();
         for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
             // tile is interesting for placement if it is close to another kingdom
-            List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborsNeighborTiles(gameState.getMap(), tile);
+            final List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborsNeighborTiles(gameState.getMap(), tile);
             for (HexTile neighborsNeighbor : neighborsNeighbors) {
                 if (neighborsNeighbor != null && neighborsNeighbor.getKingdom() != gameState.getActiveKingdom()) {
                     interestingPlacementTiles.add(tile);
@@ -491,7 +491,7 @@ public class BotAi {
 
     private TileScoreInfo getBestBlockingObjectRemovalScore(GameState gameState,
                                                             Collection<HexTile> tilesWithBlockingObjects) {
-        Set<TileScoreInfo> scores = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
+        final Set<TileScoreInfo> scores = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
         tilesWithBlockingObjects.parallelStream()
             .forEach(tile -> scores.add(new TileScoreInfo(tile, getBlockingObjectRemovalScore(gameState, tile))));
         return scores.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
@@ -550,7 +550,7 @@ public class BotAi {
     }
 
     private int getGraveStoneRemovalScore(GameState gameState, HexTile tile) {
-        boolean graveStoneWillBecomePalmTree = isBeachTile(gameState, tile);
+        final boolean graveStoneWillBecomePalmTree = isBeachTile(gameState, tile);
         int score = -2;
         if (graveStoneWillBecomePalmTree) {
             score += getPalmTreeRemovalScore(gameState, tile);
@@ -574,7 +574,7 @@ public class BotAi {
 
     private TileScoreInfo getBestDefenseTileScore(GameState gameState, Intelligence intelligence,
                                                   Set<HexTile> interestingProtectionTiles) {
-        Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
+        final Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
         interestingProtectionTiles.parallelStream().forEach(
             tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
         return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
@@ -607,7 +607,7 @@ public class BotAi {
         boolean tileIsBorder = false;
         boolean tileIsProtected = false;
         int score = 0;
-        List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
+        final List<HexTile> neighborTiles = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
         for (HexTile neighborTile : neighborTiles) {
             boolean neighborIsBorder = false;
             boolean neighborIsProtected = false;
@@ -621,7 +621,8 @@ public class BotAi {
                         tileIsProtected = true;
                         neighborIsProtected = true;
                     }
-                    List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), neighborTile);
+                    final List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborTiles(gameState.getMap(),
+                        neighborTile);
                     for (HexTile neighborsNeighbor : neighborsNeighbors) {
                         if (neighborsNeighbor != null) {
                             if (neighborsNeighbor.getKingdom() != null
@@ -678,7 +679,8 @@ public class BotAi {
             }
             // find out required strength and add some bonus for tiles next to multiple
             // tiles of the own kingdom
-            ArrayList<HexTile> neighborTiles = new ArrayList<>(HexMapHelper.getNeighborTiles(gameState.getMap(), tile));
+            final ArrayList<HexTile> neighborTiles = new ArrayList<>(HexMapHelper.getNeighborTiles(gameState.getMap()
+                , tile));
             neighborTiles.add(tile);
             for (HexTile neighborTile : neighborTiles) {
                 if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()

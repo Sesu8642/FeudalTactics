@@ -44,7 +44,7 @@ public class MenuDaggerModule {
     @Singleton
     @MenuBackgroundCamera
     static OrthographicCamera provideMenuBgCamera() {
-        OrthographicCamera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        final OrthographicCamera camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.zoom = 0.2F;
         return camera;
     }

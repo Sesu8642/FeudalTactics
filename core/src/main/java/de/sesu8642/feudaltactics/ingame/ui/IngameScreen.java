@@ -126,13 +126,13 @@ public class IngameScreen extends GameScreen {
      */
     public void handleEndTurnAttempt() {
         if (mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
-            Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
+            final Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
             if (forgottenKingdom.isPresent()) {
-                Dialog confirmDialog = dialogFactory.createConfirmDialog(
+                final Dialog confirmDialog = dialogFactory.createConfirmDialog(
                     "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to" +
                         " end your turn?\n",
                     this::endHumanPlayerTurn, () -> {
-                        Kingdom kingdom = forgottenKingdom.get();
+                        final Kingdom kingdom = forgottenKingdom.get();
                         eventBus.post(new FocusKingdomEvent(cachedGameState,
                             kingdom));
                         eventBus.post(new ActivateKingdomEvent(kingdom));
@@ -156,7 +156,7 @@ public class IngameScreen extends GameScreen {
 
     private void resetGame() {
         eventBus.post(new GameExitedEvent());
-        GameState previousCachedGameState = cachedGameState;
+        final GameState previousCachedGameState = cachedGameState;
         clearCache();
         if (previousCachedGameState.getScenarioMap() == ScenarioMap.NONE) {
             eventBus.post(new RegenerateMapEvent(cachedNewGamePreferences.toGameParameters()));
@@ -189,19 +189,19 @@ public class IngameScreen extends GameScreen {
      * @param gameState new game state
      */
     public void handleGameStateChange(GameState gameState) {
-        boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
-        boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
+        final boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
+        final boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
         isLocalPlayerTurn = isLocalPlayerTurnNew;
-        boolean winnerChanged =
+        final boolean winnerChanged =
             gameState.getWinner() != null
                 && winnerBeforeBotTurnPlayerIndex != gameState.getWinner().getPlayerIndex();
 
-        boolean objectiveProgressed = cachedGameState != null
+        final boolean objectiveProgressed = cachedGameState != null
             && gameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
 
         cachedGameState = GameStateHelper.getCopy(gameState);
         // update the UI
-        GameState newGameState = gameState;
+        final GameState newGameState = gameState;
         // hand content
         if (newGameState.getHeldObject() != null) {
             ingameHudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
@@ -232,16 +232,16 @@ public class IngameScreen extends GameScreen {
 
     private String handleGameStateChangeHumanPlayerTurn(boolean humanPlayerTurnJustStarted, boolean winnerChanged,
                                                         GameState newGameState) {
-        String infoText;
-        Player localPlayer = newGameState.getActivePlayer();
+        final String infoText;
+        final Player localPlayer = newGameState.getActivePlayer();
         // info text
-        Kingdom kingdom = newGameState.getActiveKingdom();
+        final Kingdom kingdom = newGameState.getActiveKingdom();
         if (kingdom != null) {
-            int income = GameStateHelper.getKingdomIncome(kingdom);
-            int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
-            int result = income - salaries;
-            int savings = kingdom.getSavings();
-            String resultText = result < 0 ? String.valueOf(result) : "+" + result;
+            final int income = GameStateHelper.getKingdomIncome(kingdom);
+            final int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
+            final int result = income - salaries;
+            final int savings = kingdom.getSavings();
+            final String resultText = result < 0 ? String.valueOf(result) : "+" + result;
             infoText = "Savings: " + savings + " (" + resultText + ")";
         } else {
             infoText = "Your turn.";
@@ -250,13 +250,14 @@ public class IngameScreen extends GameScreen {
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
             Gdx.app.postRunnable(ingameHudStage::showPlayerTurnButtons);
         }
-        Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
+        final Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
         if (playerOptional.isPresent()) {
-            Player player = playerOptional.get();
-            boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player, PlayerMove.undoLastMove());
-            boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
-            boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
-            boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
+            final Player player = playerOptional.get();
+            final boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player,
+                PlayerMove.undoLastMove());
+            final boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
+            final boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
+            final boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
             ingameHudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
         }
         // display messages
@@ -268,7 +269,7 @@ public class IngameScreen extends GameScreen {
                     cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             } else {
                 // Game is over; player won
-                boolean botsGaveUpPreviously =
+                final boolean botsGaveUpPreviously =
                     cachedGameState.getWinner() != null
                         && cachedGameState.getWinner().getType() == Player.Type.LOCAL_PLAYER;
                 Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
@@ -282,7 +283,7 @@ public class IngameScreen extends GameScreen {
                 this::exitToMenu, this::resetGame, () -> isSpectateMode = true));
         } else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
             // winner changed
-            boolean humanWins = newGameState.getWinner().getType() == Type.LOCAL_PLAYER;
+            final boolean humanWins = newGameState.getWinner().getType() == Type.LOCAL_PLAYER;
             Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGiveUpGameMessage(ingameHudStage, humanWins,
                 cachedGameState.getWinningRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
                 this::exitToMenu, this::resetGame));
@@ -319,7 +320,7 @@ public class IngameScreen extends GameScreen {
      * Centers the map in the available screen space.
      */
     void centerMap() {
-        Margin centeringMargin = calculateMapScreenArea();
+        final Margin centeringMargin = calculateMapScreenArea();
         eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
             centeringMargin.marginTop, centeringMargin.marginRight));
     }
@@ -334,9 +335,9 @@ public class IngameScreen extends GameScreen {
     private Margin calculateMapScreenArea() {
         // calculate what is the bigger rectangular area for the map to fit: above the
         // inputs or to their right
-        float aboveArea = ingameCamera.viewportWidth
+        final float aboveArea = ingameCamera.viewportWidth
             * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT - insets.getBottomInset());
-        float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
+        final float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
             * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX
             - ParameterInputStage.OUTER_PADDING_PX);
         if (aboveArea > rightArea) {
@@ -402,15 +403,17 @@ public class IngameScreen extends GameScreen {
 
     private void addIngameMenuListeners() {
         // exit button
-        List<TextButton> buttons = menuStage.getButtons();
+        final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
-            Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+            final Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you " +
+                    "sure?\n",
                 this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you sure?\n",
+            final Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you " +
+                    "sure?\n",
                 this::resetGame);
             confirmDialog.show(menuStage);
         }));
@@ -421,16 +424,16 @@ public class IngameScreen extends GameScreen {
     private void addParameterInputListeners() {
         parameterInputStage.randomButton.addListener(new ExceptionLoggingChangeListener(
             () -> {
-                long newSeed = System.currentTimeMillis();
+                final long newSeed = System.currentTimeMillis();
                 parameterInputStage.seedTextField.setText(String.valueOf(newSeed));
                 cachedNewGamePreferences.setSeed(newSeed);
                 newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
             }));
 
         parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            String clipboardContents = Gdx.app.getClipboard().getContents();
+            final String clipboardContents = Gdx.app.getClipboard().getContents();
             if (clipboardContents != null) {
-                NewGamePreferences pastedPreferences =
+                final NewGamePreferences pastedPreferences =
                     NewGamePreferences.fromSharableString(clipboardContents);
                 updateParameterInputsFromNewGamePrefs(pastedPreferences);
             }
@@ -482,7 +485,7 @@ public class IngameScreen extends GameScreen {
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow, skipping Speed.INSTANT which is
             // used for the other button
-            int currentSpeedIndex = currentBotSpeed.ordinal();
+            final int currentSpeedIndex = currentBotSpeed.ordinal();
             int nextSpeedIndex = currentSpeedIndex + 1;
             if (nextSpeedIndex >= Speed.values().length) {
                 nextSpeedIndex = 0;

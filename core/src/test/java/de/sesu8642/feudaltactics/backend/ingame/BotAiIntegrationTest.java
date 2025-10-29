@@ -87,7 +87,7 @@ class BotAiIntegrationTest {
 
     static void assertEveryKingdomHasExactlyOneCapital(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
-            long amountCapitals = kingdom.getTiles().stream().filter(
+            final long amountCapitals = kingdom.getTiles().stream().filter(
                     tile -> tile.getContent() != null && Capital.class.isAssignableFrom(tile.getContent().getClass()))
                 .count();
             assertEquals(1, amountCapitals);
@@ -100,7 +100,7 @@ class BotAiIntegrationTest {
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) {
-                BotTurnFinishedEvent event = invocation.getArgument(0);
+                final BotTurnFinishedEvent event = invocation.getArgument(0);
                 resultingGameState = event.getGameState();
                 return null;
             }
@@ -117,12 +117,12 @@ class BotAiIntegrationTest {
             if (gameState.getKingdoms().size() == 1) {
                 return;
             }
-            int activePlayerCapitalBeforeTurn = calculateActivePlayerCapital(gameState);
-            String beforeJson = gameStateToJson(gameState);
+            final int activePlayerCapitalBeforeTurn = calculateActivePlayerCapital(gameState);
+            final String beforeJson = gameStateToJson(gameState);
             systemUnderTest.doTurn(gameState, botIntelligence);
             gameState = resultingGameState;
-            String afterJson = gameStateToJson(gameState);
-            int activePlayerCapitalAfterTurn = calculateActivePlayerCapital(gameState);
+            final String afterJson = gameStateToJson(gameState);
+            final int activePlayerCapitalAfterTurn = calculateActivePlayerCapital(gameState);
             if (gameState.getKingdoms().size() > 1) {
                 if (activePlayerCapitalAfterTurn != activePlayerCapitalBeforeTurn) {
                     System.out.println("-------------------");
@@ -168,7 +168,7 @@ class BotAiIntegrationTest {
     @MethodSource("provideMapParameters")
     void gameStateStaysConsistent(Intelligence botIntelligence, Float landMass, Float density, Long seed)
         throws Exception {
-        GameState gameState = createGameState(landMass, density, seed);
+        final GameState gameState = createGameState(landMass, density, seed);
 
         for (int i = 1; i <= 1000; i++) {
             if (gameState.getKingdoms().size() == 1) {
@@ -184,7 +184,7 @@ class BotAiIntegrationTest {
     }
 
     private String gameStateToJson(GameState gameState) {
-        Json json = new Json(OutputType.json);
+        final Json json = new Json(OutputType.json);
         json.setSerializer(GameState.class, new GameStateSerializer());
         return json.toJson(gameState, GameState.class);
     }
@@ -218,14 +218,14 @@ class BotAiIntegrationTest {
     }
 
     private GameState createGameState(Float landMass, Float density, Long seed) {
-        List<Player> players = new ArrayList<>();
+        final List<Player> players = new ArrayList<>();
         players.add(new Player(0, Type.LOCAL_BOT));
         players.add(new Player(1, Type.LOCAL_BOT));
         players.add(new Player(2, Type.LOCAL_BOT));
         players.add(new Player(3, Type.LOCAL_BOT));
         players.add(new Player(4, Type.LOCAL_BOT));
         players.add(new Player(5, Type.LOCAL_BOT));
-        GameState result = new GameState();
+        final GameState result = new GameState();
         GameStateHelper.initializeMap(result, players, landMass, density, 0.2F, seed);
         return result;
     }

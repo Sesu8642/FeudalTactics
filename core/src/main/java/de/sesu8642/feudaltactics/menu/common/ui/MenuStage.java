@@ -56,10 +56,10 @@ public class MenuStage extends ResizableResettableStage {
     }
 
     private void initUi(List<String> buttonTexts) {
-        Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
+        final Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
         disposables.add(logoTexture);
         for (String buttonText : buttonTexts) {
-            TextButton button = ButtonFactory.createTextButton(buttonText, skin);
+            final TextButton button = ButtonFactory.createTextButton(buttonText, skin);
             buttons.add(button);
         }
         bottomLeftTable = new Table();
@@ -70,7 +70,7 @@ public class MenuStage extends ResizableResettableStage {
         rootTable.padTop(insets.getTopInset());
         rootTable.setFillParent(true);
         rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
-        Image logo = new Image(logoTexture);
+        final Image logo = new Image(logoTexture);
         rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).minHeight(150).width(Value.percentHeight(1.91F));
         rootTable.row();
         rootTable.defaults().minHeight(100).pad(5);
@@ -82,7 +82,7 @@ public class MenuStage extends ResizableResettableStage {
         rootTable.add(bottomLeftTable).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
         rootTable.add(bottomRightTable).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 
-        this.addActor(rootTable);
+        addActor(rootTable);
     }
 
     @Override

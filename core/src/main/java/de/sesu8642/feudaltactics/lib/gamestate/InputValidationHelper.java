@@ -172,7 +172,7 @@ public class InputValidationHelper {
             return false;
         }
         // first check whether buying is possible
-        Kingdom activeKingdom = gameState.getActiveKingdom();
+        final Kingdom activeKingdom = gameState.getActiveKingdom();
         if (activeKingdom == null) {
             return false;
         }
@@ -232,8 +232,8 @@ public class InputValidationHelper {
         if (!ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
             return false;
         }
-        int heldUnitStrength = gameState.getHeldObject().getStrength();
-        int tileUnitStrength = tile.getContent().getStrength();
+        final int heldUnitStrength = gameState.getHeldObject().getStrength();
+        final int tileUnitStrength = tile.getContent().getStrength();
         // cannot create unit stronger than the strongest unit
         return heldUnitStrength + tileUnitStrength <= UnitTypes.strongest().strength();
     }
@@ -277,7 +277,7 @@ public class InputValidationHelper {
             if (neighborTile.getKingdom() == gameState.getActiveKingdom()) {
                 isNextoToOwnKingdom = true;
             }
-            TileContent neighborContent = neighborTile.getContent();
+            final TileContent neighborContent = neighborTile.getContent();
             // check if there is no stronger object next to it protecting it
             if (tile.getKingdom() != null && neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
                 && neighborContent.getStrength() >= gameState.getHeldObject().getStrength()) {
@@ -314,11 +314,11 @@ public class InputValidationHelper {
         if (!isCorrectPlayersTurn(gameState, player)) {
             return false;
         }
-        Kingdom activeKingdom = gameState.getActiveKingdom();
+        final Kingdom activeKingdom = gameState.getActiveKingdom();
         if (activeKingdom == null) {
             return false;
         }
-        int cost;
+        final int cost;
         if (Unit.class.isAssignableFrom(targetClass)) {
             cost = Unit.COST;
         } else if (Castle.class.isAssignableFrom(targetClass)) {

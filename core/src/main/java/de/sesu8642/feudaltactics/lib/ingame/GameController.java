@@ -27,7 +27,7 @@ import java.util.concurrent.Future;
  */
 public class GameController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final EventBus eventBus;
     private final ExecutorService botTurnExecutor;
@@ -212,7 +212,7 @@ public class GameController {
     private void undoLastMove() {
         logger.debug("undoing last move");
         autoSaveRepo.deleteLatestIncrementalSave();
-        GameState loaded = autoSaveRepo.getCombinedAutoSave();
+        final GameState loaded = autoSaveRepo.getCombinedAutoSave();
         gameState = loaded;
         eventBus.post(new GameStateChangeEvent(gameState));
     }

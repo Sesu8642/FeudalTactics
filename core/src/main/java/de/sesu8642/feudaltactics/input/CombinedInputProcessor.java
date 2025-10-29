@@ -32,7 +32,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     public static final float MAX_ZOOM = 1;
     private final EventBus eventBus;
     private final OrthographicCamera camera;
-    Float cameraZoomBeforePinch = null;
+    Float cameraZoomBeforePinch;
 
     @Inject
     public CombinedInputProcessor(EventBus eventBus, @IngameCamera OrthographicCamera camera) {
@@ -42,13 +42,13 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        float adjAmount = (amountY * camera.zoom) / 3;
+        final float adjAmount = (amountY * camera.zoom) / 3;
         if ((adjAmount < 0 && camera.zoom + adjAmount > MIN_ZOOM)
             || (adjAmount > 0 && camera.zoom + adjAmount < MAX_ZOOM)) {
-            Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            final Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             camera.zoom += adjAmount;
             camera.update();
-            Vector3 newMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            final Vector3 newMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             camera.translate(oldMousePosition.sub(newMousePosition));
             camera.update();
         }
@@ -58,7 +58,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
         if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
-            Vector3 worldDistance = camera.unproject(new Vector3(x, y, 0))
+            final Vector3 worldDistance = camera.unproject(new Vector3(x, y, 0))
                 .sub(camera.unproject(new Vector3(x + deltaX, y + deltaY, 0)));
             camera.translate(worldDistance);
             camera.update();
@@ -82,7 +82,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     public boolean tap(float x, float y, int count, int button) {
         switch (button) {
             case Buttons.LEFT:
-                Vector2 worldCoords = eventCoordsToXYWorldCoords(x, y);
+                final Vector2 worldCoords = eventCoordsToXYWorldCoords(x, y);
                 eventBus.post(new TapInputEvent(worldCoords, count));
                 break;
             case Buttons.RIGHT:
@@ -100,7 +100,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     @Override
     public boolean longPress(float x, float y) {
         if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
-            Vector2 worldCoords = eventCoordsToXYWorldCoords(x, y);
+            final Vector2 worldCoords = eventCoordsToXYWorldCoords(x, y);
             eventBus.post(new BuyAndPlaceCastleEvent(worldCoords));
         }
         return true;
@@ -117,16 +117,16 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
         if (cameraZoomBeforePinch == null) {
             cameraZoomBeforePinch = camera.zoom;
         }
-        float initialDistance = initialPointer1.dst(initialPointer2);
-        float currentDistance = pointer1.dst(pointer2);
-        float zoomAmount = initialDistance / currentDistance;
-        float newZoom = cameraZoomBeforePinch * zoomAmount;
+        final float initialDistance = initialPointer1.dst(initialPointer2);
+        final float currentDistance = pointer1.dst(pointer2);
+        final float zoomAmount = initialDistance / currentDistance;
+        final float newZoom = cameraZoomBeforePinch * zoomAmount;
         if ((zoomAmount < 1 && newZoom > MIN_ZOOM) || (zoomAmount > 1 && newZoom < MAX_ZOOM)) {
-            Vector2 oldPointerCenter = new Vector2((pointer1.x + pointer2.x) / 2, (pointer1.y + pointer2.y) / 2);
-            Vector3 oldPointerCenterInWorld = camera.unproject(new Vector3(oldPointerCenter, 0));
+            final Vector2 oldPointerCenter = new Vector2((pointer1.x + pointer2.x) / 2, (pointer1.y + pointer2.y) / 2);
+            final Vector3 oldPointerCenterInWorld = camera.unproject(new Vector3(oldPointerCenter, 0));
             camera.zoom = newZoom;
             camera.update();
-            Vector3 newPointerCenterInWorld = camera.unproject(new Vector3(oldPointerCenter, 0));
+            final Vector3 newPointerCenterInWorld = camera.unproject(new Vector3(oldPointerCenter, 0));
             camera.translate(oldPointerCenterInWorld.sub(newPointerCenterInWorld));
             camera.update();
         }
@@ -192,8 +192,8 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     }
 
     private Vector2 eventCoordsToXYWorldCoords(float eventX, float eventY) {
-        Vector3 fullWorldCoords = camera.unproject(new Vector3(eventX, eventY, 0));
-        Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
+        final Vector3 fullWorldCoords = camera.unproject(new Vector3(eventX, eventY, 0));
+        final Vector2 worldCoords = new Vector2(fullWorldCoords.x, fullWorldCoords.y);
         return worldCoords;
     }
 

@@ -56,7 +56,7 @@ public class Kingdom {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Kingdom other = (Kingdom) obj;
+        final Kingdom other = (Kingdom) obj;
         // ignore order of the tiles; not a perfect method but good enough since there
         // shouldnt be duplicates
         return doneMoving == other.doneMoving && Objects.equals(player, other.player) && savings == other.savings

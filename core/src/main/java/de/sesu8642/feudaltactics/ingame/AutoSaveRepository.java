@@ -46,7 +46,7 @@ public class AutoSaveRepository {
      */
     private static final int MAX_INCREMENTAL_SAVES = 100;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final Preferences fullAutoSavePrefStore;
 
@@ -85,7 +85,7 @@ public class AutoSaveRepository {
         try {
             logger.debug("autosaving full gamestate");
 
-            String saveString = fullSaveJson.toJson(gameState, GameState.class);
+            final String saveString = fullSaveJson.toJson(gameState, GameState.class);
             fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveString);
             fullAutoSavePrefStore.flush();
             incrementalAutoSavePrefStore.clear();
@@ -113,14 +113,14 @@ public class AutoSaveRepository {
             // if there are too many incremental saves, merge them into the last full one
             if (incrementalAutoSavePrefStore.get().size() >= MAX_INCREMENTAL_SAVES) {
                 logger.info("merging incremental saves into full save");
-                GameState fullSave = getFullSave();
-                SortedMap<Long, PlayerMove> incrementalSaves = getIncrementalSavesInOrder();
+                final GameState fullSave = getFullSave();
+                final SortedMap<Long, PlayerMove> incrementalSaves = getIncrementalSavesInOrder();
                 // keep enough incremental saves to enable undoing moves
-                SortedMap<Long, PlayerMove> incrementalSavesToMerge =
+                final SortedMap<Long, PlayerMove> incrementalSavesToMerge =
                     incrementalSaves.subMap(incrementalSaves.firstKey(),
                         new ArrayList<Long>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
                 mergeIncrementalSavesIntoFull(fullSave, incrementalSavesToMerge.values());
-                String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
+                final String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
                 fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveStringFullSave);
                 fullAutoSavePrefStore.flush();
                 for (Long mergedIncrementKey : incrementalSavesToMerge.keySet()) {
@@ -130,7 +130,7 @@ public class AutoSaveRepository {
             }
 
             // using current time as key
-            String saveStringIncrement = incrementalSaveJson.toJson(playerMove);
+            final String saveStringIncrement = incrementalSaveJson.toJson(playerMove);
             incrementalAutoSavePrefStore.putString(String.valueOf(++idCounter), saveStringIncrement);
             incrementalAutoSavePrefStore.flush();
         } finally {
@@ -153,9 +153,9 @@ public class AutoSaveRepository {
     public GameState getCombinedAutoSave() {
         lock.lock();
         try {
-            GameState lastFullSave = getFullSave();
+            final GameState lastFullSave = getFullSave();
             // now apply all the incremental saves on top (oldest first)
-            Collection<PlayerMove> incrementalSaves = getIncrementalSavesInOrder().values();
+            final Collection<PlayerMove> incrementalSaves = getIncrementalSavesInOrder().values();
             mergeIncrementalSavesIntoFull(lastFullSave, incrementalSaves);
             return lastFullSave;
         } finally {
@@ -168,8 +168,8 @@ public class AutoSaveRepository {
             throw new SaveLoadingException("No full save available");
         }
         // cannot be empty if there is a save
-        String loadedString = fullAutoSavePrefStore.getString(FULL_GAME_SAVE_KEY_NAME);
-        JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
+        final String loadedString = fullAutoSavePrefStore.getString(FULL_GAME_SAVE_KEY_NAME);
+        final JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
         return fullSaveJson.readValue(GameState.class, loadedStateJsonValue);
     }
 
@@ -219,7 +219,7 @@ public class AutoSaveRepository {
     public void deleteLatestIncrementalSave() {
         lock.lock();
         try {
-            Optional<String> latestSaveKeyOptional = getLatestIncrementalSaveKey();
+            final Optional<String> latestSaveKeyOptional = getLatestIncrementalSaveKey();
             latestSaveKeyOptional.ifPresent(latestSaveKey -> {
                 incrementalAutoSavePrefStore.remove(latestSaveKey);
                 incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, ++currentUndoDepth);
@@ -235,7 +235,7 @@ public class AutoSaveRepository {
      * Determines the name (key) of the newest incremental autosave.
      */
     private Optional<String> getLatestIncrementalSaveKey() {
-        Map<String, ?> prefsMap = incrementalAutoSavePrefStore.get();
+        final Map<String, ?> prefsMap = incrementalAutoSavePrefStore.get();
         if (prefsMap.isEmpty()) {
             return Optional.empty();
         }

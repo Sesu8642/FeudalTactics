@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ExceptionLoggingChangeListener implements EventListener {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final Runnable listener;
 

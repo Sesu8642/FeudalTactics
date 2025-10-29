@@ -29,7 +29,7 @@ import java.net.URISyntaxException;
 @Singleton
 public class CrashReportScreen extends GameScreen {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final EventBus eventBus;
     private final CrashReportStage crashReportStage;
@@ -56,7 +56,7 @@ public class CrashReportScreen extends GameScreen {
 
     @Override
     public void show() {
-        String crashReportText = crashReportDao.getLastCrashReport();
+        final String crashReportText = crashReportDao.getLastCrashReport();
         if (!Strings.isNullOrEmpty(crashReportText)) {
             crashReportStage.crashReportSlide.textArea.setText(crashReportText);
         } else {
@@ -70,19 +70,19 @@ public class CrashReportScreen extends GameScreen {
 
     private void registerEventListeners() {
         crashReportStage.setFinishedCallback(() -> {
-            ScreenTransitionTarget onFinishedTarget = isGameStartup ? ScreenTransitionTarget.SPLASH_SCREEN
+            final ScreenTransitionTarget onFinishedTarget = isGameStartup ? ScreenTransitionTarget.SPLASH_SCREEN
                 : ScreenTransitionTarget.INFORMATION_MENU_SCREEN;
             eventBus.post(new ScreenTransitionTriggerEvent(onFinishedTarget));
         });
         crashReportStage.crashReportSlide.sendMailButton.addListener(new ExceptionLoggingChangeListener(() -> {
             try {
-                String totallyUnharvestableEmail = "con" + "tact@sesu" + "8642.de";
-                URI mailtoUri = new URI("mailto", totallyUnharvestableEmail, null,
+                final String totallyUnharvestableEmail = "con" + "tact@sesu" + "8642.de";
+                final URI mailtoUri = new URI("mailto", totallyUnharvestableEmail, null,
                     "subject=FeudalTactics Crash Report&body="
                         + crashReportStage.crashReportSlide.textArea.getText(),
                     null);
                 // couldn't find a way to build a proper mailto uri without the forward slashes
-                String mailtoUriString = mailtoUri.toString().replaceFirst("://", ":");
+                final String mailtoUriString = mailtoUri.toString().replaceFirst("://", ":");
                 logger.debug("Opening bug report mailto URI.");
                 Gdx.net.openURI(mailtoUriString);
             } catch (URISyntaxException e) {

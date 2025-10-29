@@ -23,7 +23,7 @@ public class CrashReportDao {
 
     @Inject
     public CrashReportDao(@CrashReportPrefStore Preferences gamePrefs) {
-        this.prefStore = gamePrefs;
+        prefStore = gamePrefs;
     }
 
     /**

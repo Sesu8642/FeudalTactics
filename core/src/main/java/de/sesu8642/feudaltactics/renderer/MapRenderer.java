@@ -125,16 +125,16 @@ public class MapRenderer {
         redLineEndPoints.clear();
         darkenBeaches = gameState.getHeldObject() != null;
         for (Entry<Vector2, HexTile> hexTileEntry : gameState.getMap().entrySet()) {
-            Vector2 hexCoords = hexTileEntry.getKey();
-            Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
-            HexTile tile = hexTileEntry.getValue();
+            final Vector2 hexCoords = hexTileEntry.getKey();
+            final Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
+            final HexTile tile = hexTileEntry.getValue();
 
             // create tiles
-            DrawTile drawTile = new DrawTile();
+            final DrawTile drawTile = new DrawTile();
             drawTile.mapCoords = mapCoords;
             drawTile.color = PLAYER_COLOR_PALETTE.get(tile.getPlayer().getPlayerIndex());
             // create beaches on the edges
-            List<HexTile> neighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
+            final List<HexTile> neighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
             if (neighbors.get(0) == null) {
                 // top left
                 drawTile.topLeftBeach = true;
@@ -167,7 +167,7 @@ public class MapRenderer {
                 for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
                     if (neighborTile == null || neighborTile.getKingdom() == null
                         || neighborTile.getKingdom() != tile.getKingdom()) {
-                        Line line = getNeighborLine(mapCoords, index);
+                        final Line line = getNeighborLine(mapCoords, index);
                         whiteLineStartPoints.add(line.start);
                         whiteLineEndPoints.add(line.end);
                     }
@@ -187,8 +187,8 @@ public class MapRenderer {
                         if (neighborTile == null
                             || (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidationHelper
                             .checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
-                            Line line = getNeighborLine(mapCoords, index);
-                            Collection<Line> dottedLineParts = lineToDottedLine(line);
+                            final Line line = getNeighborLine(mapCoords, index);
+                            final Collection<Line> dottedLineParts = lineToDottedLine(line);
                             for (Line linePart : dottedLineParts) {
                                 redLineStartPoints.add(linePart.start);
                                 redLineEndPoints.add(linePart.end);
@@ -206,7 +206,7 @@ public class MapRenderer {
             tiles.put(tile.getPosition(), drawTile);
 
             // create content (units etc)
-            TileContent tileContent = tile.getContent();
+            final TileContent tileContent = tile.getContent();
             if (tileContent != null) {
                 boolean animate = false;
                 if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
@@ -258,7 +258,7 @@ public class MapRenderer {
 
             if (gameState.getHeldObject() != null) {
                 // create protection indicators
-                int protectionLevel = GameStateHelper.getProtectionLevel(gameState, tile);
+                final int protectionLevel = GameStateHelper.getProtectionLevel(gameState, tile);
                 switch (protectionLevel) {
                     case 4:
                         shields.put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
@@ -298,11 +298,11 @@ public class MapRenderer {
 
     private Collection<Line> lineToDottedLine(Line line) {
         final int partAmount = 3;
-        Collection<Line> resultLines = new HashSet<>();
-        float lineDiffX = line.end.x - line.start.x;
-        float lineDiffY = line.end.y - line.start.y;
+        final Collection<Line> resultLines = new HashSet<>();
+        final float lineDiffX = line.end.x - line.start.x;
+        final float lineDiffY = line.end.y - line.start.y;
         for (int i = 1; i <= partAmount; i += 2) {
-            Line linePart = new Line();
+            final Line linePart = new Line();
             linePart.start = new Vector2(line.start.x + (lineDiffX / partAmount) * (i - 1),
                 line.start.y + (lineDiffY / partAmount) * (i - 1));
             linePart.end = new Vector2(line.start.x + (lineDiffX / partAmount) * i,
@@ -313,8 +313,8 @@ public class MapRenderer {
     }
 
     private Line getNeighborLine(Vector2 mapCoords, int index) {
-        Vector2 start;
-        Vector2 end;
+        final Vector2 start;
+        final Vector2 end;
         switch (index) {
             case 0:
                 // top left
@@ -354,7 +354,7 @@ public class MapRenderer {
             default:
                 throw new AssertionError(String.format("Cannot map index %s to a hexagon side", index));
         }
-        Line result = new Line();
+        final Line result = new Line();
         result.start = start;
         result.end = end;
         return result;
@@ -372,8 +372,8 @@ public class MapRenderer {
      * Renders the map.
      */
     public synchronized void render() {
-        HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
-        HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
+        final HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
+        final HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
         spriteBatch.setProjectionMatrix(camera.combined);
         updateStateTime(Gdx.graphics.getDeltaTime());
         // get the correct frames
@@ -383,26 +383,26 @@ public class MapRenderer {
         for (Entry<Vector2, Animation<TextureRegion>> content : darkenedAnimatedContents.entrySet()) {
             darkenedFrames.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
         }
-        TextureRegion waterRegion = waterAnimation.getKeyFrame(stateTime, true);
-        TextureRegion bottomRightBeachSandRegion = beachSandAnimation.getKeyFrame(stateTime, true);
-        TextureRegion bottomLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+        final TextureRegion waterRegion = waterAnimation.getKeyFrame(stateTime, true);
+        final TextureRegion bottomRightBeachSandRegion = beachSandAnimation.getKeyFrame(stateTime, true);
+        final TextureRegion bottomLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
         bottomLeftBeachSandRegion.flip(true, false);
-        TextureRegion topLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+        final TextureRegion topLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
         topLeftBeachSandRegion.flip(true, true);
-        TextureRegion topRightBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+        final TextureRegion topRightBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
         topRightBeachSandRegion.flip(false, true);
-        TextureRegion bottomRightBeachWaterRegion = beachWaterAnimation.getKeyFrame(stateTime, true);
-        TextureRegion bottomLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+        final TextureRegion bottomRightBeachWaterRegion = beachWaterAnimation.getKeyFrame(stateTime, true);
+        final TextureRegion bottomLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
         bottomLeftBeachWaterRegion.flip(true, false);
-        TextureRegion topLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+        final TextureRegion topLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
         topLeftBeachWaterRegion.flip(true, true);
-        TextureRegion topRightBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+        final TextureRegion topRightBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
         topRightBeachWaterRegion.flip(false, true);
 
-        Vector2 waterOriginPoint = calculateWaterOriginPoint();
+        final Vector2 waterOriginPoint = calculateWaterOriginPoint();
 
-        float itemOffsetX = HEXTILE_WIDTH * 0.0F;
-        float itemOffsetY = HEXTILE_HEIGHT * -0.075F;
+        final float itemOffsetX = HEXTILE_WIDTH * 0.0F;
+        final float itemOffsetY = HEXTILE_HEIGHT * -0.075F;
 
         // colors for normal and darkened stuff
         final Color normalColor = new Color(1, 1, 1, 1);
@@ -436,7 +436,7 @@ public class MapRenderer {
         // draw all the beaches first because they would cover some of the tiles
         // otherwise
         // beach water first (should not cover any sand)
-        Color beachWaterColor = new Color(BEACH_WATER_COLOR);
+        final Color beachWaterColor = new Color(BEACH_WATER_COLOR);
         if (darkenBeaches) {
             beachWaterColor.mul(0.75F, 0.75F, 0.75F, 1);
         }
@@ -460,7 +460,7 @@ public class MapRenderer {
             }
         }
         // beach sand
-        Color beachSandColor = new Color(normalColor);
+        final Color beachSandColor = new Color(normalColor);
         if (darkenBeaches) {
             beachSandColor.mul(0.5F, 0.5F, 0.5F, 1);
         }
@@ -486,7 +486,7 @@ public class MapRenderer {
 
         // draw all the tiles
         for (DrawTile tile : tiles.values()) {
-            Color color = new Color(tile.color);
+            final Color color = new Color(tile.color);
             // darken tile
             if (tile.darken) {
                 color.mul(0.5F, 0.5F, 0.5F, 1);
@@ -497,9 +497,9 @@ public class MapRenderer {
         }
 
         // draw all the shields
-        Color shieldColor = new Color(normalColor);
+        final Color shieldColor = new Color(normalColor);
         shieldColor.sub(0, 0, 0, 0.7F);
-        Color darkenedShieldColor = new Color(shieldColor);
+        final Color darkenedShieldColor = new Color(shieldColor);
         darkenedShieldColor.mul(0.5F, 0.5F, 0.5F, 1);
         for (Entry<Vector2, Boolean> shield : shields.entrySet()) {
             if (Boolean.TRUE.equals(shield.getValue())) {
@@ -565,14 +565,14 @@ public class MapRenderer {
      * @return map coords
      */
     public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
-        float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
-        float y = (float) (HexMapHelper.HEX_OUTER_RADIUS
+        final float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
+        final float y = (float) (HexMapHelper.HEX_OUTER_RADIUS
             * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
         return new Vector2(x, y);
     }
 
     private Vector2 calculateWaterOriginPoint() {
-        float waterTileSizePx = WATER_TILE_SIZE / camera.zoom;
+        final float waterTileSizePx = WATER_TILE_SIZE / camera.zoom;
         int waterTilesNeededToCoverScreenHorizonally = (int) Math
             .ceil((camera.viewportWidth * camera.zoom) / WATER_TILE_SIZE);
         int waterTilesNeededToCoverScreenVertically = (int) Math
@@ -584,14 +584,14 @@ public class MapRenderer {
         if (waterTilesNeededToCoverScreenVertically % 2 != 0) {
             waterTilesNeededToCoverScreenVertically += 1;
         }
-        float waterOffsetForZoomInPxX = (waterTilesNeededToCoverScreenHorizonally * waterTileSizePx
+        final float waterOffsetForZoomInPxX = (waterTilesNeededToCoverScreenHorizonally * waterTileSizePx
             - camera.viewportWidth) / 2;
-        float waterOffsetForZoomInPxY = (waterTilesNeededToCoverScreenVertically * waterTileSizePx
+        final float waterOffsetForZoomInPxY = (waterTilesNeededToCoverScreenVertically * waterTileSizePx
             - camera.viewportHeight) / 2;
-        float waterOffsetForMovementX = camera.position.x % WATER_TILE_SIZE;
-        float waterOffsetForMovementY = camera.position.y % WATER_TILE_SIZE;
+        final float waterOffsetForMovementX = camera.position.x % WATER_TILE_SIZE;
+        final float waterOffsetForMovementY = camera.position.y % WATER_TILE_SIZE;
         // bottom left point from where the water is drawn
-        Vector3 waterOriginPoint = camera
+        final Vector3 waterOriginPoint = camera
             .unproject(new Vector3(-waterOffsetForZoomInPxX, camera.viewportHeight + waterOffsetForZoomInPxY, 0));
         waterOriginPoint.x -= waterOffsetForMovementX;
         waterOriginPoint.y -= waterOffsetForMovementY;
@@ -609,14 +609,14 @@ public class MapRenderer {
      */
     public void placeCameraForFullMapView(GameState gameState, long marginLeftPx, long marginBottomPx,
                                           long marginRightPx, long marginTopPx) {
-        MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(gameState.getMap().keySet());
+        final MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(gameState.getMap().keySet());
         // get the factors needed to adjust the camera zoom
-        float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
-        float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
+        final float useViewportWidth = (camera.viewportWidth - marginLeftPx - marginRightPx);
+        final float useViewportHeight = (camera.viewportHeight - marginBottomPx - marginTopPx);
         final float xFactor = (dims.getWidth() / camera.zoom) / useViewportWidth; // lol
         final float yFactor = (dims.getHeight() / camera.zoom) / useViewportHeight;
         // use the bigger factor because both dimensions must fit
-        float scaleFactor = Math.max(xFactor, yFactor);
+        final float scaleFactor = Math.max(xFactor, yFactor);
         camera.zoom *= scaleFactor;
         camera.update();
         // move camera to center
@@ -633,12 +633,12 @@ public class MapRenderer {
      * @param kingdom kingdom to focus
      */
     public void placeCameraForOnKingdom(GameState gameState, Kingdom kingdom) {
-        Set<Vector2> kingdomTileCoordinates =
+        final Set<Vector2> kingdomTileCoordinates =
             gameState.getMap().entrySet().stream().filter(entry ->
                     kingdom.getTiles().contains(entry.getValue()))
                 .map(Entry::getKey)
                 .collect(Collectors.toSet());
-        MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(kingdomTileCoordinates);
+        final MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(kingdomTileCoordinates);
         // move camera to center
         camera.position.set(dims.getCenter(), 0);
         camera.update();

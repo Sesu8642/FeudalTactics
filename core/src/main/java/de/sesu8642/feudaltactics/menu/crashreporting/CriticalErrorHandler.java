@@ -23,7 +23,6 @@ public class CriticalErrorHandler extends Handler {
     private final List<LogRecord> bufferedRecords = new ArrayList<>();
 
     public CriticalErrorHandler() {
-        super();
         setFormatter(new SimpleFormatter());
     }
 
@@ -32,9 +31,9 @@ public class CriticalErrorHandler extends Handler {
         bufferedRecords.add(logRecord);
         // if a critical error happened, crash!
         if (logRecord.getLevel() == Level.SEVERE && logRecord.getThrown() != null) {
-            StringBuilder builder = new StringBuilder();
+            final StringBuilder builder = new StringBuilder();
             for (LogRecord bufferedRecord : bufferedRecords) {
-                String formattedRecord = getFormatter().format(bufferedRecord);
+                final String formattedRecord = getFormatter().format(bufferedRecord);
                 builder.append(formattedRecord);
             }
             FeudalTactics.getDaggerComponent().getGameCrasher().crashAfterGeneratingReport(builder.toString(),

@@ -17,7 +17,7 @@ import javax.inject.Singleton;
 @Singleton
 public class DataMigrator {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final NagPreferencesDao nagPreferencesDao;
 
@@ -34,9 +34,9 @@ public class DataMigrator {
      */
     @SuppressWarnings("checkstyle:FallThrough")
     public void migrateData(String previousVersion) {
-        String[] versionComponents = previousVersion.split("\\.");
+        final String[] versionComponents = previousVersion.split("\\.");
         // e.g. "1.2"
-        String majorMinorVersionOnly = versionComponents[0] + "." + versionComponents[1];
+        final String majorMinorVersionOnly = versionComponents[0] + "." + versionComponents[1];
         switch (majorMinorVersionOnly) {
             // fall-through intentional
             case "1.1":
@@ -55,7 +55,7 @@ public class DataMigrator {
      * least clears them.
      */
     private void clearObsoleteAutoSavePreferences() {
-        Preferences oldPrefs = Gdx.app.getPreferences("FeudalTactics_autoSavePreferences");
+        final Preferences oldPrefs = Gdx.app.getPreferences("FeudalTactics_autoSavePreferences");
         if (!oldPrefs.get().isEmpty()) {
             oldPrefs.clear();
             oldPrefs.flush();

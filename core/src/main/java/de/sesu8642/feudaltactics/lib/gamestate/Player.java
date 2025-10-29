@@ -64,7 +64,7 @@ public class Player {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Player player = (Player) o;
+        final Player player = (Player) o;
         return playerIndex == player.playerIndex && type == player.type && Objects.equals(roundOfDefeat,
             player.roundOfDefeat);
     }

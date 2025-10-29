@@ -80,25 +80,26 @@ public class ParameterInputStage extends ResizableResettableStage {
     }
 
     private void initUi() {
-        Label startingPositionLabel = new Label("Starting\nPosition",
+        final Label startingPositionLabel = new Label("Starting\nPosition",
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
-        Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY,
+            LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
         difficultySelect.setItems(EnumDisplayNameConverter.DIFFICULTIES.toArray(new String[0]));
 
-        Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
         sizeSelect.setItems(EnumDisplayNameConverter.MAP_SIZES.toArray(new String[0]));
 
-        Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
         densitySelect.setItems(EnumDisplayNameConverter.DENSITIES.toArray(new String[0]));
 
-        Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         seedTextField = new TextField("", skin);
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
         seedTextField.setMaxLength(18);
@@ -117,10 +118,10 @@ public class ParameterInputStage extends ResizableResettableStage {
          * characters at max and 7 is the widest number. Scrolling the text is possible.
          * Generated seeds are normally much shorter than the worst case (only 7s).
          */
-        float maxSeedNumberWidth = new GlyphLayout(seedTextField.getStyle().font, "7").width;
-        float seedTextFieldWidth = maxSeedNumberWidth * 20;
+        final float maxSeedNumberWidth = new GlyphLayout(seedTextField.getStyle().font, "7").width;
+        final float seedTextFieldWidth = maxSeedNumberWidth * 20;
 
-        Table seedTable = new Table();
+        final Table seedTable = new Table();
         seedTable.defaults().uniformX();
         seedTable.add(seedTextField).colspan(2).fill().expand();
         seedTable.add(randomButton).height(INPUT_HEIGHT_PX).width(INPUT_HEIGHT_PX);
@@ -157,7 +158,7 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.row();
         rootTable.add(playButton).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
             OUTER_PADDING_PX);
-        this.addActor(rootTable);
+        addActor(rootTable);
     }
 
     /**
@@ -167,9 +168,9 @@ public class ParameterInputStage extends ResizableResettableStage {
     public void updateNumberOfStartingPositions(int numberOfStartingPositions) {
         // markup must be enabled in the font for this coloring to work
         // h is a hexagon chraracter in the font
-        List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
+        final List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
             .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
-        List<String> limitedStartingPositions = startingPositions.subList(0, numberOfStartingPositions);
+        final List<String> limitedStartingPositions = startingPositions.subList(0, numberOfStartingPositions);
         startingPositionSelect.setItems(limitedStartingPositions.toArray(new String[0]));
     }
 

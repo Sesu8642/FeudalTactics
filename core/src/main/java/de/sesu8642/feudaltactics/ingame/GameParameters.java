@@ -36,12 +36,12 @@ public class GameParameters {
     public GameParameters(int humanPlayerIndex, long seed, int landMass, float density, Intelligence botIntelligence,
                           int numberOfBotPlayers) {
         this.botIntelligence = botIntelligence;
-        this.players = new ArrayList<>();
+        players = new ArrayList<>();
         for (int i = 0; i < numberOfBotPlayers + 1; i++) {
             if (i == humanPlayerIndex) {
-                this.players.add(new Player(i, Type.LOCAL_PLAYER));
+                players.add(new Player(i, Type.LOCAL_PLAYER));
             } else {
-                this.players.add(new Player(i, Type.LOCAL_BOT));
+                players.add(new Player(i, Type.LOCAL_BOT));
             }
         }
         this.seed = seed;

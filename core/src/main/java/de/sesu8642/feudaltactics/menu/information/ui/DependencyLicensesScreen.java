@@ -59,9 +59,9 @@ public class DependencyLicensesScreen extends GameScreen {
             dependencyNameLabel.addListener(new ExceptionLoggingClickListener(() -> {
                 dependencyDetailsStage.reset();
                 Gdx.input.setInputProcessor(dependencyDetailsStage);
-                String dependencyName = dependencyNameLabel.getText().toString();
+                final String dependencyName = dependencyNameLabel.getText().toString();
                 dependencyDetailsStage.dependencyDetailsSlide.setHeadline(dependencyName);
-                String dependencyDetailsText = generateLicenseDetailsText(dependencyName);
+                final String dependencyDetailsText = generateLicenseDetailsText(dependencyName);
                 dependencyDetailsStage.dependencyDetailsSlide.label.setText(dependencyDetailsText);
                 setActiveStage(dependencyDetailsStage);
             }));
@@ -75,8 +75,8 @@ public class DependencyLicensesScreen extends GameScreen {
     }
 
     private String generateLicenseDetailsText(String dependencyName) {
-        Map<String, String> dependencyLicenseFiles = dependencyLicenses.get(dependencyName);
-        StringBuilder resultBuilder = new StringBuilder();
+        final Map<String, String> dependencyLicenseFiles = dependencyLicenses.get(dependencyName);
+        final StringBuilder resultBuilder = new StringBuilder();
         for (Entry<String, String> entry : dependencyLicenseFiles.entrySet()) {
             resultBuilder.append(entry.getKey());
             resultBuilder.append("\n");

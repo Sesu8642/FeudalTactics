@@ -71,7 +71,7 @@ public class PreferencesStage extends SlideStage {
     public void reset() {
         super.reset();
         // sync the UI with the current preferences
-        MainGamePreferences currentPreferences = mainPrefsDao.getMainPreferences();
+        final MainGamePreferences currentPreferences = mainPrefsDao.getMainPreferences();
         preferencesSlide.getForgottenKingdomSelectBox().setSelected(currentPreferences.isWarnAboutForgottenKingdoms());
         preferencesSlide.getShowEnemyTurnsSelectBox().setSelected(currentPreferences.isShowEnemyTurns());
     }

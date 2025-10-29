@@ -26,11 +26,9 @@ public class Unit implements TileContent {
     // only for deserialization
     @Deprecated
     public Unit() {
-        super();
     }
 
     public Unit(UnitTypes unitType) {
-        super();
         this.unitType = unitType;
     }
 
@@ -46,14 +44,14 @@ public class Unit implements TileContent {
 
     @Override
     public Unit getCopy() {
-        Unit newUnit = new Unit(this.getUnitType());
-        newUnit.setCanAct(this.canAct);
+        final Unit newUnit = new Unit(getUnitType());
+        newUnit.setCanAct(canAct);
         return newUnit;
     }
 
     @Override
     public String toString() {
-        String superStr = super.toString();
+        final String superStr = super.toString();
         return superStr + ", Type: " + unitType.toString() + ", CanAct: " + canAct;
     }
 
@@ -75,7 +73,7 @@ public class Unit implements TileContent {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Unit other = (Unit) obj;
+        final Unit other = (Unit) obj;
         return canAct == other.canAct && unitType == other.unitType;
     }
 

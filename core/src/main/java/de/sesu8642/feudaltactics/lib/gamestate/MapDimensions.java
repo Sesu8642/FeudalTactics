@@ -38,7 +38,7 @@ public class MapDimensions {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        MapDimensions other = (MapDimensions) obj;
+        final MapDimensions other = (MapDimensions) obj;
         return Objects.equals(center, other.center)
             && Float.floatToIntBits(height) == Float.floatToIntBits(other.height)
             && Float.floatToIntBits(width) == Float.floatToIntBits(other.width);

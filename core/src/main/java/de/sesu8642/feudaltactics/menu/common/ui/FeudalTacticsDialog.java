@@ -34,20 +34,20 @@ public class FeudalTacticsDialog extends Dialog {
 
     @Override
     public FeudalTacticsDialog text(String text) {
-        Label responsiveLabel = new Label(text, skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        LabelStyle style = new LabelStyle(responsiveLabel.getStyle());
+        final Label responsiveLabel = new Label(text, skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final LabelStyle style = new LabelStyle(responsiveLabel.getStyle());
         responsiveLabel.setStyle(style);
 
         responsiveLabel.setWrap(true);
-        this.getContentTable().add(responsiveLabel)
+        getContentTable().add(responsiveLabel)
             .width(Math.min(DIALOG_LABEL_MAX_WIDTH, Gdx.graphics.getWidth() - 2 * DIALOG_PADDING));
-        this.getContentTable().row();
+        getContentTable().row();
         return this;
     }
 
     @Override
     public FeudalTacticsDialog button(String text, Object param) {
-        TextButton button = ButtonFactory.createTextButton(text, skin);
+        final TextButton button = ButtonFactory.createTextButton(text, skin);
         return button(button, param);
     }
 
@@ -71,17 +71,18 @@ public class FeudalTacticsDialog extends Dialog {
      * @return this dialog
      */
     public FeudalTacticsDialog addTable(List<List<String>> data) {
-        Table dataTable = new Table();
+        final Table dataTable = new Table();
         dataTable.defaults().pad(5);
         for (List<String> rowContent : data) {
             for (String cellContent : rowContent) {
-                Label responsiveLabel = new Label(cellContent, skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+                final Label responsiveLabel = new Label(cellContent, skin.get(SkinConstants.FONT_OVERLAY,
+                    LabelStyle.class));
                 dataTable.add(responsiveLabel);
             }
             dataTable.row();
         }
-        this.getContentTable().add(dataTable);
-        this.getContentTable().row();
+        getContentTable().add(dataTable);
+        getContentTable().row();
         return this;
     }
 
@@ -92,11 +93,11 @@ public class FeudalTacticsDialog extends Dialog {
      * @return this dialog
      */
     public FeudalTacticsDialog addButtonImage(String spriteName) {
-        Sprite sprite = skin.getSprite(spriteName);
-        Image image = new Image(sprite);
+        final Sprite sprite = skin.getSprite(spriteName);
+        final Image image = new Image(sprite);
         image.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
-        this.getContentTable().add(image).size(Value.percentWidth(0.2F, this.getContentTable()));
-        this.getContentTable().row();
+        getContentTable().add(image).size(Value.percentWidth(0.2F, getContentTable()));
+        getContentTable().row();
         return this;
     }
 

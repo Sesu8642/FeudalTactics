@@ -40,10 +40,10 @@ public class HexMapHelper {
     public static Vector2 hexCoordsToWorldCoords(Vector2 hexCoords) {
         // https://www.redblobgames.com/grids/hexagons/#hex-to-pixel
         // get third coordinate
-        float cubeZ = -hexCoords.x - hexCoords.y;
+        final float cubeZ = -hexCoords.x - hexCoords.y;
         // calculate world coordinates
-        float worldX = hexCoords.x * HEX_OUTER_RADIUS * 1.5F;
-        float worldY = (float) (HEX_OUTER_RADIUS * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * cubeZ));
+        final float worldX = hexCoords.x * HEX_OUTER_RADIUS * 1.5F;
+        final float worldY = (float) (HEX_OUTER_RADIUS * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * cubeZ));
         return new Vector2(worldX, worldY);
     }
 
@@ -55,8 +55,8 @@ public class HexMapHelper {
      * there was one)
      */
     public static Vector2 worldCoordsToHexCoords(Vector2 worldCoords) {
-        float hexX = (2F / 3 * worldCoords.x) / HEX_OUTER_RADIUS;
-        float hexY = (float) ((-1F / 3 * worldCoords.x + Math.sqrt(3) / 3 * worldCoords.y) / HEX_OUTER_RADIUS);
+        final float hexX = (2F / 3 * worldCoords.x) / HEX_OUTER_RADIUS;
+        final float hexY = (float) ((-1F / 3 * worldCoords.x + Math.sqrt(3) / 3 * worldCoords.y) / HEX_OUTER_RADIUS);
         return roundToHexCoords(new Vector2(hexX, hexY));
     }
 
@@ -70,15 +70,15 @@ public class HexMapHelper {
     public static Vector2 roundToHexCoords(Vector2 coords) {
         // https://www.redblobgames.com/grids/hexagons/#rounding
         // get third coordinate
-        float cubeZ = -coords.x - coords.y;
+        final float cubeZ = -coords.x - coords.y;
         // round
         float x = Math.round(coords.x);
-        float y = Math.round(coords.y);
+        final float y = Math.round(coords.y);
         float z = Math.round(cubeZ);
         // find greatest difference from rounding and re-calculate it from the others
-        float diffX = Math.abs(coords.x - x);
-        float diffY = Math.abs(coords.y - y);
-        float diffZ = Math.abs(cubeZ - z);
+        final float diffX = Math.abs(coords.x - x);
+        final float diffY = Math.abs(coords.y - y);
+        final float diffZ = Math.abs(cubeZ - z);
 
         if (diffX > diffY && diffX > diffZ) {
             x = -y - z;
@@ -96,7 +96,7 @@ public class HexMapHelper {
      * @return neighbors' coordinates
      */
     public static List<Vector2> getNeighborCoords(Vector2 tileCoords) {
-        ArrayList<Vector2> neighbors = new ArrayList<>();
+        final ArrayList<Vector2> neighbors = new ArrayList<>();
         neighbors.add(new Vector2(tileCoords.x - 1, tileCoords.y));
         neighbors.add(new Vector2(tileCoords.x, tileCoords.y - 1));
         neighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 1));
@@ -115,7 +115,7 @@ public class HexMapHelper {
      * @return neighbors' neighbors neighbor coordinates
      */
     public static List<Vector2> getNeighborsNeighborCoords(Vector2 tileCoords) {
-        ArrayList<Vector2> neighborsNeighbors = new ArrayList<>();
+        final ArrayList<Vector2> neighborsNeighbors = new ArrayList<>();
         neighborsNeighbors.add(new Vector2(tileCoords.x, tileCoords.y - 2));
         neighborsNeighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 2));
         neighborsNeighbors.add(new Vector2(tileCoords.x + 2, tileCoords.y - 2));
@@ -164,8 +164,8 @@ public class HexMapHelper {
      * @return neighbor tiles
      */
     private static List<HexTile> getNeighborTiles(Map<Vector2, HexTile> map, Vector2 tileCoords) {
-        List<Vector2> neighborCoords = getNeighborCoords(tileCoords);
-        List<HexTile> neighborTiles = new ArrayList<>();
+        final List<Vector2> neighborCoords = getNeighborCoords(tileCoords);
+        final List<HexTile> neighborTiles = new ArrayList<>();
         for (Vector2 coord : neighborCoords) {
             neighborTiles.add(map.get(coord));
         }
@@ -177,8 +177,8 @@ public class HexMapHelper {
     }
 
     private static List<HexTile> getNeighborsNeighborTiles(Map<Vector2, HexTile> map, Vector2 tileCoords) {
-        List<Vector2> neighborsNeighborCoords = getNeighborsNeighborCoords(tileCoords);
-        List<HexTile> neighborsNeighborTiles = new ArrayList<>();
+        final List<Vector2> neighborsNeighborCoords = getNeighborsNeighborCoords(tileCoords);
+        final List<HexTile> neighborsNeighborTiles = new ArrayList<>();
         for (Vector2 coord : neighborsNeighborCoords) {
             neighborsNeighborTiles.add(map.get(coord));
         }
@@ -193,8 +193,8 @@ public class HexMapHelper {
      * @return empty neighbors' coordinates
      */
     public static List<Vector2> getUnusedNeighborCoords(Map<Vector2, HexTile> map, Vector2 tileCoords) {
-        List<Vector2> neighbors = getNeighborCoords(tileCoords);
-        List<Vector2> unusedNeighbors = new ArrayList<>();
+        final List<Vector2> neighbors = getNeighborCoords(tileCoords);
+        final List<Vector2> unusedNeighbors = new ArrayList<>();
         for (Vector2 neighbor : neighbors) {
             if (!map.containsKey(neighbor)) {
                 unusedNeighbors.add(neighbor);
@@ -217,7 +217,7 @@ public class HexMapHelper {
         float maxWorldY = 0;
         boolean firstTile = true;
         for (Vector2 hexCoords : tileCoords) {
-            Vector2 mapCoords = hexCoordsToWorldCoords(hexCoords);
+            final Vector2 mapCoords = hexCoordsToWorldCoords(hexCoords);
             if (firstTile || mapCoords.x < minWorldX) {
                 minWorldX = mapCoords.x;
             }
@@ -239,7 +239,7 @@ public class HexMapHelper {
         maxWorldX += HEX_OUTER_RADIUS;
         minWorldY -= HEX_OUTER_RADIUS;
         maxWorldY += HEX_OUTER_RADIUS;
-        MapDimensions dims = new MapDimensions();
+        final MapDimensions dims = new MapDimensions();
         dims.setWidth(maxWorldX - minWorldX);
         dims.setHeight(maxWorldY - minWorldY);
         dims.setCenter(new Vector2());

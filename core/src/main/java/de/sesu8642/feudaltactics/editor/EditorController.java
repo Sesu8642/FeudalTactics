@@ -23,7 +23,7 @@ import java.util.ArrayList;
 @Singleton
 public class EditorController {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final EventBus eventBus;
     private final AutoSaveRepository autoSaveRepo;
@@ -53,7 +53,7 @@ public class EditorController {
      */
     public void generateEmptyGameState() {
         gameState = new GameState();
-        ArrayList<Player> players = new ArrayList<>();
+        final ArrayList<Player> players = new ArrayList<>();
         players.add(new Player(0, Type.LOCAL_PLAYER));
         for (int i = 1; i < 6; i++) {
             players.add(new Player(i, Type.LOCAL_BOT));
@@ -64,19 +64,19 @@ public class EditorController {
 
     public void placeHeldObject(Vector2 hexCoords) {
         if (heldTilePlayerIndex != null) {
-            Player newPlayer =
+            final Player newPlayer =
                 gameState.getPlayers().stream()
                     .filter(player -> player.getPlayerIndex() == heldTilePlayerIndex).findAny().get();
             GameStateHelper.placeTile(gameState, hexCoords, newPlayer);
         } else if (heldTileContent != null) {
-            HexTile tile = gameState.getMap().get(hexCoords);
+            final HexTile tile = gameState.getMap().get(hexCoords);
             if (tile != null) {
                 logger.debug("placing object {} on tile at position {}", heldTileContent.getClass().getName(),
                     hexCoords);
                 GameStateHelper.placeTileContent(gameState, tile, heldTileContent);
             }
         } else {
-            HexTile tile = gameState.getMap().get(hexCoords);
+            final HexTile tile = gameState.getMap().get(hexCoords);
             if (tile != null) {
                 logger.debug("deleting tile at position {}", hexCoords);
                 GameStateHelper.deleteTile(gameState, tile);

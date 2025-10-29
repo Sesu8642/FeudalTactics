@@ -24,7 +24,7 @@ public class ButtonFactory {
      * Creates a text button.
      */
     public static TextButton createTextButton(String text, Skin skin) {
-        TextButton result = new TextButton(text, skin);
+        final TextButton result = new TextButton(text, skin);
         result.addListener(new ExceptionLoggingChangeListener(() -> buttonLogger.debug("clicked text button: {}",
             result.getText())));
         return result;
@@ -34,7 +34,7 @@ public class ButtonFactory {
      * Creates a text button.
      */
     public static CopyButton createCopyButton(String text, Skin skin, boolean renderButtonBackground) {
-        CopyButton result = new CopyButton(text, skin, renderButtonBackground);
+        final CopyButton result = new CopyButton(text, skin, renderButtonBackground);
         result.addListener(new ExceptionLoggingChangeListener(() -> buttonLogger.debug("clicked copy button")));
         return result;
     }
@@ -43,7 +43,7 @@ public class ButtonFactory {
      * Creates an image button.
      */
     public static ImageButton createImageButton(String styleName, Skin skin) {
-        ImageButton result = new ImageButton(skin.get(styleName, ImageButton.ImageButtonStyle.class));
+        final ImageButton result = new ImageButton(skin.get(styleName, ImageButton.ImageButtonStyle.class));
         result.addListener(new ExceptionLoggingChangeListener(() -> buttonLogger.debug("clicked image button: {}",
             styleName)));
         return result;

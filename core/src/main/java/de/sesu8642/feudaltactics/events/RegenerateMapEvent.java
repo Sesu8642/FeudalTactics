@@ -20,7 +20,6 @@ public class RegenerateMapEvent {
      * Constructor.
      */
     public RegenerateMapEvent(GameParameters gameParams) {
-        super();
         this.gameParams = gameParams;
     }
 

@@ -29,9 +29,9 @@ class GameStateHelperTest {
     List<Player> players;
 
     static Collection<Arguments> provideMapSizesAndSeeds() {
-        List<Integer> mapSizes = provideMapSizes().collect(Collectors.toList());
-        List<Long> seeds = provideSeeds().collect(Collectors.toList());
-        List<Arguments> sizesAndSeeds = new ArrayList<>();
+        final List<Integer> mapSizes = provideMapSizes().collect(Collectors.toList());
+        final List<Long> seeds = provideSeeds().collect(Collectors.toList());
+        final List<Arguments> sizesAndSeeds = new ArrayList<>();
         for (int i = 0; i < mapSizes.size() - 1; i++) {
             sizesAndSeeds.add(Arguments.of(mapSizes.get(i), seeds.get(i)));
         }
@@ -57,11 +57,11 @@ class GameStateHelperTest {
 
     @Test
     void copiedGameStateEqualsOriginal() {
-        GameState original = new GameState();
+        final GameState original = new GameState();
         GameStateHelper.initializeMap(original, players, 500, 2, 0.2F, 12345L);
         original.setActiveKingdom(original.getKingdoms().get(0));
 
-        GameState copy = GameStateHelper.getCopy(original);
+        final GameState copy = GameStateHelper.getCopy(original);
 
         assertEquals(original, copy);
     }
@@ -69,7 +69,7 @@ class GameStateHelperTest {
     @ParameterizedTest
     @MethodSource("provideMapSizesAndSeeds")
     void initializedMapHasCorrectLandMass(int landMass, long seed) {
-        GameState gameState = new GameState();
+        final GameState gameState = new GameState();
 
         GameStateHelper.initializeMap(gameState, players, landMass, 2, 0.2F, seed);
 
@@ -79,7 +79,7 @@ class GameStateHelperTest {
     @ParameterizedTest
     @MethodSource("provideSeeds")
     void initializedMapHasAtLeastOneKingdomPerPlayer(long seed) {
-        GameState gameState = new GameState();
+        final GameState gameState = new GameState();
 
         // generating a random map
         // use size of 6 for the lowest chance for every player to have a kingdom when
@@ -93,20 +93,20 @@ class GameStateHelperTest {
     @ParameterizedTest
     @MethodSource("provideMapSizesAndSeeds")
     void initializedMapHasTilesEvenlyDistributedAcrossPlayers(int mapSize, long seed) {
-        GameState gameState = new GameState();
+        final GameState gameState = new GameState();
 
         // generating a random map
         GameStateHelper.initializeMap(gameState, players, 6, 2, 0.2F, seed);
 
-        Player firstPlayer = gameState.getPlayers().get(0);
-        long firstPlayerTileAmount = gameState.getMap().values().stream()
+        final Player firstPlayer = gameState.getPlayers().get(0);
+        final long firstPlayerTileAmount = gameState.getMap().values().stream()
             .filter(tile -> tile.getPlayer().equals(firstPlayer)).count();
         gameState.getPlayers().forEach(player -> {
             // the difference between the tiles of any player and the first one should not
             // be larger than 1
-            long otherPlayerTileAmount = gameState.getMap().values().stream()
+            final long otherPlayerTileAmount = gameState.getMap().values().stream()
                 .filter(tile -> tile.getPlayer().equals(player)).count();
-            long tileDifference = Math.abs(firstPlayerTileAmount - otherPlayerTileAmount);
+            final long tileDifference = Math.abs(firstPlayerTileAmount - otherPlayerTileAmount);
             assertTrue(tileDifference <= 1);
         });
     }
@@ -114,17 +114,18 @@ class GameStateHelperTest {
     @ParameterizedTest
     @MethodSource("provideSeeds")
     void initializedGameStateHasPlayersOrderedByincomeLowestFirst(long seed) {
-        GameState gameState = new GameState();
+        final GameState gameState = new GameState();
 
         // generating a random map
         GameStateHelper.initializeMap(gameState, players, 100, 2, 0.2F, seed);
 
         for (int i = 1; i < gameState.getPlayers().size(); i++) {
-            Player playerI = gameState.getPlayers().get(i);
-            Player prevPlayer = gameState.getPlayers().get(i - 1);
-            int playerIncome = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer().equals(playerI))
+            final Player playerI = gameState.getPlayers().get(i);
+            final Player prevPlayer = gameState.getPlayers().get(i - 1);
+            final int playerIncome =
+                gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer().equals(playerI))
                 .mapToInt(GameStateHelper::getKingdomIncome).sum();
-            int prevPlayerIncome = gameState.getKingdoms().stream()
+            final int prevPlayerIncome = gameState.getKingdoms().stream()
                 .filter(kingdom -> kingdom.getPlayer().equals(prevPlayer))
                 .mapToInt(GameStateHelper::getKingdomIncome).sum();
             assertTrue(prevPlayerIncome <= playerIncome);

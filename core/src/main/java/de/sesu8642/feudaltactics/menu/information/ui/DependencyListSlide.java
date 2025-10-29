@@ -40,14 +40,14 @@ public class DependencyListSlide extends Slide {
         descriptionLabel.setAlignment(Align.topLeft);
         getTable().add(descriptionLabel).fill().expandX();
         getTable().row();
-        List<String> dependencyNames = new ArrayList<>(dependencyLicenses.keySet());
+        final List<String> dependencyNames = new ArrayList<>(dependencyLicenses.keySet());
         dependencyNames.sort(Comparable::compareTo);
         for (String dependencyName : dependencyNames) {
-            Table labelTable = new Table();
-            Label dashLabel = new Label(dependencyName, skin);
+            final Table labelTable = new Table();
+            final Label dashLabel = new Label(dependencyName, skin);
             dashLabel.setText("- ");
             labelTable.add(dashLabel);
-            Label dependencyNameLabel = new Label(dependencyName, skin);
+            final Label dependencyNameLabel = new Label(dependencyName, skin);
             dependencyNameLabel.setWrap(true);
             dependencyNameLabels.add(dependencyNameLabel);
             labelTable.add(dependencyNameLabel).expandX().fillX();

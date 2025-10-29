@@ -37,7 +37,7 @@ public class SplashScreen extends GameScreen {
         super.render(delta);
         if (TimeUtils.timeSinceMillis(startTime) > 1000) {
             eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
-            this.hide();
+            hide();
         }
     }
 

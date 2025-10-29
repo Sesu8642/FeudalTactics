@@ -42,7 +42,7 @@ public class IngameScreenDialogHelper {
 
     void showGiveUpGameMessage(Stage stage, boolean win, int winningRound, ScenarioMap scenarioMap,
                                NewGamePreferences newGamePreferences, Runnable onExit, Runnable onRetry) {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
+        final Dialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -59,7 +59,7 @@ public class IngameScreenDialogHelper {
             }
         });
         endDialog.button("Exit", (byte) 1);
-        String sharingPreemble;
+        final String sharingPreemble;
         if (win) {
             sharingPreemble = String.format(SHARING_PREEMBLE_VICTORY, winningRound);
             endDialog.text(String.format("VICTORY! Your Enemies surrendered in round %s.\n\nDo you wish to " +
@@ -80,7 +80,7 @@ public class IngameScreenDialogHelper {
     void showAllEnemiesDefeatedMessage(Stage stage, boolean botsGaveUpPreviously, int winningRound,
                                        ScenarioMap scenarioMap, NewGamePreferences newGamePreferences,
                                        Runnable onExit, Runnable onRetry) {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
+        final Dialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -98,7 +98,7 @@ public class IngameScreenDialogHelper {
         });
         endDialog.button("Exit", (byte) 1);
         endDialog.button("Replay", (byte) 2);
-        String sharingPreemble = String.format(SHARING_PREEMBLE_VICTORY, winningRound);
+        final String sharingPreemble = String.format(SHARING_PREEMBLE_VICTORY, winningRound);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
         String dialogText;
         if (botsGaveUpPreviously) {
@@ -117,7 +117,7 @@ public class IngameScreenDialogHelper {
     void showPlayerDefeatedMessage(Stage stage, int currentRound, ScenarioMap scenarioMap,
                                    NewGamePreferences newGamePreferences,
                                    Runnable onExit, Runnable onRetry, Runnable onSpectate) {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
+        final Dialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -137,7 +137,7 @@ public class IngameScreenDialogHelper {
         });
         endDialog.button("Exit", (byte) 1);
         endDialog.button("Retry", (byte) 2);
-        String sharingPreemble = String.format(SHARING_PREEMBLE_DEFEAT, currentRound);
+        final String sharingPreemble = String.format(SHARING_PREEMBLE_DEFEAT, currentRound);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
         endDialog.button("Spectate", (byte) 0);
         String dialogText = String.format("DEFEAT! All your kingdoms were conquered by the enemy in round %s.",
@@ -150,7 +150,7 @@ public class IngameScreenDialogHelper {
     void showEnemyWonMessage(Stage stage, int roundOfDefeat, ScenarioMap scenarioMap,
                              NewGamePreferences newGamePreferences,
                              Runnable onExit, Runnable onRetry) {
-        Dialog endDialog = dialogFactory.createDialog(result -> {
+        final Dialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -166,7 +166,7 @@ public class IngameScreenDialogHelper {
         });
         endDialog.button("Exit", (byte) 1);
         endDialog.button("Retry", (byte) 2);
-        String sharingPreemble = String.format(SHARING_PREEMBLE_DEFEAT, roundOfDefeat);
+        final String sharingPreemble = String.format(SHARING_PREEMBLE_DEFEAT, roundOfDefeat);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
 
         String dialogText = String.format("Your enemy defeated all other players. You lost in round %s.",
@@ -178,7 +178,7 @@ public class IngameScreenDialogHelper {
 
 
     void showTutorialObjectiveMessage(Stage stage, int newProgress) {
-        Dialog dialog = tutorialDialogFactory.createDialog(newProgress);
+        final Dialog dialog = tutorialDialogFactory.createDialog(newProgress);
         dialog.show(stage);
     }
 
@@ -193,9 +193,9 @@ public class IngameScreenDialogHelper {
     }
 
     private void showGameDetails(Stage stage, int currentRound, NewGamePreferences newGamePreferences) {
-        String gameDetails = String.format("Round: %s\n", currentRound)
+        final String gameDetails = String.format("Round: %s\n", currentRound)
             + newGamePreferences.toSharableString();
-        FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
+        final FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
         addShareOrCopyButtonToDialog(SHARING_PREEMBLE_ONGOING, dialog, newGamePreferences
             , ScenarioMap.NONE);
@@ -208,8 +208,8 @@ public class IngameScreenDialogHelper {
             // dont offer the option in the tutorial
             return;
         }
-        String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString();
-        String buttonText = "Share";
+        final String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString();
+        final String buttonText = "Share";
         if (Gdx.app.getType() == Application.ApplicationType.Android) {
             dialogFactory.addNonClosingTextButtonToDialog(endDialog, buttonText,
                 () -> platformSharing.shareText(fullSharedMessage));

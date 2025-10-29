@@ -112,13 +112,13 @@ public class IngameHudStage extends ResizableResettableStage {
         handContentTable = new Table();
         handContent = new Image();
 
-        Sprite handSprite = skin.getSprite(SkinConstants.SPRITE_HAND);
+        final Sprite handSprite = skin.getSprite(SkinConstants.SPRITE_HAND);
         handSprite.setFlip(true, false);
-        Image handImage = new Image(handSprite);
+        final Image handImage = new Image(handSprite);
         handImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
-        Sprite thumbSprite = skin.getSprite(SkinConstants.SPRITE_HAND_THUMB);
+        final Sprite thumbSprite = skin.getSprite(SkinConstants.SPRITE_HAND_THUMB);
         thumbSprite.setFlip(true, false);
-        Image thumbImage = new Image(thumbSprite);
+        final Image thumbImage = new Image(thumbSprite);
         thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 
         infoHexagonLabel = new Label("", skin.get(SkinConstants.FONT_HEXAGON, LabelStyle.class));
@@ -156,7 +156,7 @@ public class IngameHudStage extends ResizableResettableStage {
             .height(ValueWithSize.percentSizeDensityMin(0.1F, rootTable, 100));
         rootTable.row();
 
-        Table bottomInsetTable = new Table(skin);
+        final Table bottomInsetTable = new Table(skin);
         bottomInsetTable.background(SkinConstants.SEMI_TRANSPARENT_BACKGROUND_DRAWABLE);
         rootTable.add(bottomInsetTable).height(insets.getBottomInset()).colspan(3).fill();
 
@@ -168,7 +168,7 @@ public class IngameHudStage extends ResizableResettableStage {
         handContentTable.setFillParent(true);
         handContentTable.add(handContent).height(Value.percentHeight(.5F, handContentTable))
             .width(Value.percentHeight(1.16F));
-        this.addActor(rootTable);
+        addActor(rootTable);
     }
 
     @Override

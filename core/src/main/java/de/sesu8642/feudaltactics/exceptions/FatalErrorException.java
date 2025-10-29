@@ -11,7 +11,6 @@ public class FatalErrorException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public FatalErrorException() {
-        super();
     }
 
     public FatalErrorException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {

@@ -39,7 +39,8 @@ public class LocalIngameInputHandler {
     }
 
     private void carryOutPlayerMoveIfLegal(PlayerMove move) {
-        Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+        final Optional<Player> playerOptional =
+            GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
         if (!playerOptional.isPresent()) {
             return;
         }
@@ -55,20 +56,21 @@ public class LocalIngameInputHandler {
      */
     @Subscribe
     public void handleTapInput(TapInputEvent event) {
-        Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
-        Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
+        final Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
+        final Optional<Player> playerOptional =
+            GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
         if (!playerOptional.isPresent()) {
             return;
         }
-        Player player = playerOptional.get();
-        Map<Vector2, HexTile> map = gameController.getGameState().getMap();
-        HexTile tile = map.get(hexCoords);
+        final Player player = playerOptional.get();
+        final Map<Vector2, HexTile> map = gameController.getGameState().getMap();
+        final HexTile tile = map.get(hexCoords);
 
         gameController.printTileInfo(hexCoords);
 
         carryOutPlayerMoveIfLegal(PlayerMove.activateKingdom(hexCoords));
 
-        Optional<PlayerMove> moveOptional = determineTapMove(player, tile, event.getCount());
+        final Optional<PlayerMove> moveOptional = determineTapMove(player, tile, event.getCount());
         moveOptional.ifPresent(this::carryOutPlayerMoveIfLegal);
     }
 
@@ -129,7 +131,7 @@ public class LocalIngameInputHandler {
      */
     @Subscribe
     public void handleBuyAndPlaceCastle(BuyAndPlaceCastleEvent event) {
-        Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
+        final Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
         carryOutPlayerMoveIfLegal(PlayerMove.buyAndPlaceCastle(hexCoords));
     }
 

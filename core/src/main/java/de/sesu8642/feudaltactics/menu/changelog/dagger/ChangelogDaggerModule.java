@@ -46,7 +46,7 @@ public class ChangelogDaggerModule {
     @ChangelogText
     static String provideChangelogText() {
         try {
-            URL url = Resources.getResource("changelog.txt");
+            final URL url = Resources.getResource("changelog.txt");
             return Resources.toString(url, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new InitializationException("Changelog cannot be read!", e);
@@ -74,7 +74,8 @@ public class ChangelogDaggerModule {
     static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport, Insets insets,
                                                  @ChangelogText String changelogText,
                                                  @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-        Slide changelogSlide = new Slide(skin, "Changelog").addLabel("Join the Feudal Tactics Community on Matrix! " +
+        final Slide changelogSlide = new Slide(skin, "Changelog").addLabel("Join the Feudal Tactics Community on " +
+            "Matrix! " +
             "See Information menu.").addLabel(changelogText);
         return new SlideStage(viewport, Collections.singletonList(changelogSlide), insets,
             () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),

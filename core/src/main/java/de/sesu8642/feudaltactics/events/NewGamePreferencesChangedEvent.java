@@ -19,7 +19,6 @@ public class NewGamePreferencesChangedEvent {
      * Constructor.
      */
     public NewGamePreferencesChangedEvent(NewGamePreferences newGamePreferences) {
-        super();
         this.newGamePreferences = newGamePreferences;
     }
 }

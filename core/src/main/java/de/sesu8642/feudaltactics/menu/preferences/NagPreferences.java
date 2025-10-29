@@ -22,7 +22,6 @@ public class NagPreferences {
      * @param showTutorialNag whether the player should be offered to play the tutorial
      */
     public NagPreferences(boolean showTutorialNag) {
-        super();
         this.showTutorialNag = showTutorialNag;
     }
 
@@ -31,7 +30,7 @@ public class NagPreferences {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        NagPreferences that = (NagPreferences) o;
+        final NagPreferences that = (NagPreferences) o;
         return showTutorialNag == that.showTutorialNag;
     }
 

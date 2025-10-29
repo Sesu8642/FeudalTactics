@@ -78,7 +78,7 @@ public class NewGamePreferences {
      * default values are used.
      */
     public static NewGamePreferences fromSharableString(String sharedString) {
-        NewGamePreferences preferences = new NewGamePreferences(0, Intelligence.LEVEL_1, MapSizes.SMALL,
+        final NewGamePreferences preferences = new NewGamePreferences(0, Intelligence.LEVEL_1, MapSizes.SMALL,
             Densities.DENSE, 0);
         try {
             fillPreferences(sharedString, preferences);
@@ -93,32 +93,32 @@ public class NewGamePreferences {
      * Updates the given preferences from the given preferences string.
      */
     private static void fillPreferences(String sharedString, NewGamePreferences preferences) throws IOException {
-        BufferedReader reader = new BufferedReader(new StringReader(sharedString));
+        final BufferedReader reader = new BufferedReader(new StringReader(sharedString));
         String line;
         line = reader.readLine();
         while (line != null) {
             try {
-                String[] stringParts = line.split(":");
+                final String[] stringParts = line.split(":");
                 if (stringParts.length < 2) {
                     continue;
                 }
-                String firstStringPart = stringParts[0].trim();
-                String secondStringPart = stringParts[1].trim();
+                final String firstStringPart = stringParts[0].trim();
+                final String secondStringPart = stringParts[1].trim();
                 switch (firstStringPart) {
                     case SEED_DISPLAY_NAME:
                         preferences.setSeed(Long.parseLong(secondStringPart));
                         break;
                     case BOT_INTELLIGENCE_DISPLAY_NAME:
-                        Intelligence botIntelligence =
+                        final Intelligence botIntelligence =
                             EnumDisplayNameConverter.getBotIntelligenceFromDisplayName(secondStringPart);
                         preferences.setBotIntelligence(botIntelligence);
                         break;
                     case MAP_SIZE_DISPLAY_NAME:
-                        MapSizes mapSize = EnumDisplayNameConverter.getMapSizeFromDisplayName(secondStringPart);
+                        final MapSizes mapSize = EnumDisplayNameConverter.getMapSizeFromDisplayName(secondStringPart);
                         preferences.setMapSize(mapSize);
                         break;
                     case DENSITY_DISPLAY_NAME:
-                        Densities mapDensity =
+                        final Densities mapDensity =
                             EnumDisplayNameConverter.getMapDensityFromDisplayName(secondStringPart);
                         preferences.setDensity(mapDensity);
                         break;
@@ -153,7 +153,7 @@ public class NewGamePreferences {
     public GameParameters toGameParameters() {
         // starting position may not be larger than the number of players; needs to be corrected in case the number
         // of bot players is reduced from default
-        int correctedStartingPosition = Math.min(startingPosition, numberOfBotPlayers);
+        final int correctedStartingPosition = Math.min(startingPosition, numberOfBotPlayers);
         return new GameParameters(correctedStartingPosition, seed, mapSize.amountOfTiles, density.densityFloat,
             botIntelligence, numberOfBotPlayers);
     }

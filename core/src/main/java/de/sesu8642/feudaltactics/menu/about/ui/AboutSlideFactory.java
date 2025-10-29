@@ -39,16 +39,17 @@ public class AboutSlideFactory {
      * @return about slides
      */
     public Slide createAboutSlide() {
-        String text1 = "by Sesu8642\nVersion " + version;
-        String text2 = "This program is free software: you can redistribute it and/or modify it under the terms of " +
+        final String text1 = "by Sesu8642\nVersion " + version;
+        final String text2 = "This program is free software: you can redistribute it and/or modify it under the terms" +
+            " of " +
             "the GNU General Public License as published by the Free Software Foundation, either version 3 of the " +
             "License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will " +
             "be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR" +
             " A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received" +
             " a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu" +
             ".org/licenses/>.";
-        String imagePath = "square_logo_64.png";
-        Slide slide = new Slide(skin, "About FeudalTactics");
+        final String imagePath = "square_logo_64.png";
+        final Slide slide = new Slide(skin, "About FeudalTactics");
         slide.getTable().add(new Image(new Texture(imagePath))).row();
         slide.getTable().add(new Label(text1, skin)).center().row();
         slide.addLabel(text2);

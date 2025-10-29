@@ -39,7 +39,7 @@ public class InformationMenuPage2Stage extends MenuStage {
                                      @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
                                      @VersionProperty String gameVersion) {
         super(viewport, BUTTON_TEXTS, camera, insets, mapRenderer, skin);
-        Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
+        final Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
 

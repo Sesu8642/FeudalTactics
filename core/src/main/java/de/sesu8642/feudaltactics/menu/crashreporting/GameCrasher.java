@@ -37,7 +37,7 @@ public class GameCrasher {
 
     private String buildCrashreportText(String previousLogs, Throwable throwable) {
         try {
-            String template = "Date: %s\n" + "\n" + "Game version: %s\n" + "\n" + "Platform: %s\n" + "\n"
+            final String template = "Date: %s\n" + "\n" + "Game version: %s\n" + "\n" + "Platform: %s\n" + "\n"
                 + "Platform version: %s\n" + "\n" + "Thread: %s\n" + "\n" + "Thrown:\n" + "%s\n" + "\n"
                 + "Last full save:\n" + "%s\n" + "\n" + "Incremental saves:\n" + "%s\n" + "\n" + "Previous logs:\n"
                 + "%s";
@@ -68,7 +68,7 @@ public class GameCrasher {
      * needing to report it.
      */
     public void crashAfterGeneratingReport(String previousLogs, Throwable throwable) {
-        String crashReportText = buildCrashreportText(previousLogs, throwable);
+        final String crashReportText = buildCrashreportText(previousLogs, throwable);
         crashReportDao.saveCrashReport(crashReportText);
         // The game state may lead to the same crash over and over again. Better delete
         // it.

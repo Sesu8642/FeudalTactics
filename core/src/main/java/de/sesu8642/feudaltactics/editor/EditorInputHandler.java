@@ -37,7 +37,7 @@ public class EditorInputHandler {
      */
     @Subscribe
     public void handleTapInput(TapInputEvent event) {
-        Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
+        final Vector2 hexCoords = HexMapHelper.worldCoordsToHexCoords(event.getWorldCoords());
         editorController.placeHeldObject(hexCoords);
     }
 

@@ -17,7 +17,7 @@ public class ValueWithSize extends Value {
      * Returns a value that is a percentage of the specified actor's size. The
      * context actor is ignored.
      */
-    public static Value percentSize(final float percent, final Actor actor) {
+    public static Value percentSize(float percent, Actor actor) {
         Objects.requireNonNull(actor);
         return new Value() {
             @Override
@@ -31,8 +31,8 @@ public class ValueWithSize extends Value {
      * Returns a value that is the smaller of 1. a percentage of the specified actor's size. 2. the pixel density
      * multiplied by a given multiplier. The context actor is ignored.
      */
-    public static Value percentSizeDensityMin(final float percent, final Actor actor,
-                                              final int pixelDensityMultiplier) {
+    public static Value percentSizeDensityMin(float percent, Actor actor,
+                                              int pixelDensityMultiplier) {
         Objects.requireNonNull(actor);
         return new Value() {
             @Override

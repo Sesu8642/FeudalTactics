@@ -26,7 +26,6 @@ public class InitializeScenarioEvent {
      * @param scenarioMap     map to be loaded
      */
     public InitializeScenarioEvent(Intelligence botIntelligence, ScenarioMap scenarioMap) {
-        super();
         this.botIntelligence = botIntelligence;
         this.scenarioMap = scenarioMap;
     }

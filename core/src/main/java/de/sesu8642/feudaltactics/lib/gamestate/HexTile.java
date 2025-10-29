@@ -43,7 +43,7 @@ public class HexTile implements Comparable<HexTile> {
     public void setKingdom(Kingdom kingdom) {
         this.kingdom = kingdom;
         if (kingdom != null) {
-            this.player = kingdom.getPlayer();
+            player = kingdom.getPlayer();
         }
     }
 
@@ -63,7 +63,7 @@ public class HexTile implements Comparable<HexTile> {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        HexTile other = (HexTile) obj;
+        final HexTile other = (HexTile) obj;
         return Objects.equals(content, other.content) && Objects.equals(player, other.player)
             && Objects.equals(position, other.position);
     }
@@ -72,10 +72,10 @@ public class HexTile implements Comparable<HexTile> {
     // unwanted randomness
     @Override
     public int compareTo(HexTile o) {
-        int result = Float.compare(this.getPosition().x, o.getPosition().x);
+        int result = Float.compare(getPosition().x, o.getPosition().x);
         if (result == 0) {
             // both x and y cannot be the same for different tiles
-            result = Float.compare(this.getPosition().y, o.getPosition().y);
+            result = Float.compare(getPosition().y, o.getPosition().y);
         }
         return result;
     }

@@ -114,7 +114,7 @@ public class ScenarioRuleEnforcerTutorial {
     }
 
     private static void updateObjectiveProgressFrom7(GameState gameState) {
-        HexTile treeTile = gameState.getMap().get(new Vector2(8, -2));
+        final HexTile treeTile = gameState.getMap().get(new Vector2(8, -2));
         if (treeTile.getContent() == null || !ClassReflection.isAssignableFrom(PalmTree.class,
             treeTile.getContent().getClass())) {
             incrementObjectiveProgress(gameState);

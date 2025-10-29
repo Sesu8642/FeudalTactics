@@ -51,9 +51,9 @@ public class GameStateSerializer implements Serializer<GameState> {
     Integer lastId = 0;
 
     private int getId(Map<Object, Integer> idMap, Object obj) {
-        Integer exisingId = idMap.get(obj);
+        final Integer exisingId = idMap.get(obj);
         if (exisingId == null) {
-            int newId = ++lastId;
+            final int newId = ++lastId;
             idMap.put(obj, newId);
             return newId;
         } else {
@@ -64,7 +64,7 @@ public class GameStateSerializer implements Serializer<GameState> {
     @Override
     public void write(Json json, GameState object, Class knownType) {
         lastId = 0;
-        Map<Object, Integer> idMap = new HashMap<>();
+        final Map<Object, Integer> idMap = new HashMap<>();
         json.writeObjectStart();
         json.writeArrayStart(PLAYERS_NAME);
         for (Player player : object.getPlayers()) {
@@ -131,36 +131,36 @@ public class GameStateSerializer implements Serializer<GameState> {
 
     @Override
     public GameState read(Json json, JsonValue jsonData, Class type) {
-        Map<Integer, Object> reverseIdMap = new HashMap<>();
+        final Map<Integer, Object> reverseIdMap = new HashMap<>();
 
-        GameState result = new GameState();
+        final GameState result = new GameState();
         result.setPlayers(new ArrayList<>());
-        JsonValue playersJson = jsonData.get(PLAYERS_NAME);
+        final JsonValue playersJson = jsonData.get(PLAYERS_NAME);
         playersJson.forEach(playerJson -> {
-            int id = playerJson.getInt(ID_NAME);
+            final int id = playerJson.getInt(ID_NAME);
             playerJson.remove(ID_NAME);
-            Player player = json.fromJson(Player.class, playerJson.toString());
+            final Player player = json.fromJson(Player.class, playerJson.toString());
             reverseIdMap.put(id, player);
             result.getPlayers().add(player);
         });
         result.setMap(new LinkedHashMap<>());
-        JsonValue tilesJson = jsonData.get(TILES_NAME);
+        final JsonValue tilesJson = jsonData.get(TILES_NAME);
         tilesJson.forEach(tileJson -> {
             final int id = tileJson.getInt(ID_NAME);
             final int playerId = tileJson.getInt(PLAYER_ID_NAME);
             tileJson.remove(ID_NAME);
             tileJson.remove(PLAYER_ID_NAME);
-            JsonValue contentJson = tileJson.get(CONTENT_NAME);
+            final JsonValue contentJson = tileJson.get(CONTENT_NAME);
             int contentId = -1;
             if (contentJson != null) {
                 contentId = contentJson.getInt(ID_NAME);
                 contentJson.remove(ID_NAME);
                 // replace short class name with full one
-                String shortClassName = contentJson.getString(CLASS_NAME);
+                final String shortClassName = contentJson.getString(CLASS_NAME);
                 contentJson.remove(CLASS_NAME);
                 contentJson.addChild(CLASS_NAME, new JsonValue(MAPOBJECTS_CLASS_BASE_NAME + shortClassName));
             }
-            HexTile tile = json.fromJson(HexTile.class, tileJson.toString());
+            final HexTile tile = json.fromJson(HexTile.class, tileJson.toString());
             if (tile.getContent() != null) {
                 reverseIdMap.put(contentId, tile.getContent());
             }
@@ -169,51 +169,52 @@ public class GameStateSerializer implements Serializer<GameState> {
             result.getMap().put(tile.getPosition(), tile);
         });
         result.setKingdoms(new ArrayList<>());
-        JsonValue kingdomsJson = jsonData.get(KINGDOMS_NAME);
+        final JsonValue kingdomsJson = jsonData.get(KINGDOMS_NAME);
         kingdomsJson.forEach(kingdomJson -> {
             final int id = kingdomJson.getInt(ID_NAME);
             final int playerId = kingdomJson.getInt(PLAYER_ID_NAME);
-            JsonValue tileIdsJson = kingdomJson.get(TILE_IDS_NAME);
-            ArrayList<HexTile> kingdomTiles = new ArrayList<>();
+            final JsonValue tileIdsJson = kingdomJson.get(TILE_IDS_NAME);
+            final ArrayList<HexTile> kingdomTiles = new ArrayList<>();
             tileIdsJson.forEach(tileIdJson -> {
-                int tileId = tileIdJson.asInt();
+                final int tileId = tileIdJson.asInt();
                 kingdomTiles.add((HexTile) reverseIdMap.get(tileId));
             });
             kingdomJson.remove(TILE_IDS_NAME);
             kingdomJson.remove(ID_NAME);
             kingdomJson.remove(PLAYER_ID_NAME);
-            Kingdom kingdom = json.fromJson(Kingdom.class, kingdomJson.toString());
+            final Kingdom kingdom = json.fromJson(Kingdom.class, kingdomJson.toString());
             kingdom.setPlayer((Player) reverseIdMap.get(playerId));
             kingdom.setTiles(kingdomTiles);
             reverseIdMap.put(id, kingdom);
             result.getKingdoms().add(kingdom);
         });
         if (jsonData.has(HELD_OBJ_NAME)) {
-            JsonValue heldObjJson = jsonData.get(HELD_OBJ_NAME);
+            final JsonValue heldObjJson = jsonData.get(HELD_OBJ_NAME);
             // replace short class name with full one
-            String shortClassName = heldObjJson.getString(CLASS_NAME);
+            final String shortClassName = heldObjJson.getString(CLASS_NAME);
             heldObjJson.remove(CLASS_NAME);
             heldObjJson.addChild(CLASS_NAME, new JsonValue(MAPOBJECTS_CLASS_BASE_NAME + shortClassName));
             heldObjJson.remove(KINGDOM_FIELD_NAME);
             // toString causes an error here... maybe because of the enum?
-            TileContent heldObject = json.fromJson(TileContent.class, heldObjJson.prettyPrint(OutputType.json, 1));
+            final TileContent heldObject = json.fromJson(TileContent.class, heldObjJson.prettyPrint(OutputType.json,
+                1));
             result.setHeldObject(heldObject);
         }
         result.setPlayerTurn(jsonData.getInt(PLAYER_TURN_NAME));
-        JsonValue botIntelligenceJson = jsonData.get(BOT_INTELLIGENCE_NAME);
+        final JsonValue botIntelligenceJson = jsonData.get(BOT_INTELLIGENCE_NAME);
         result.setBotIntelligence(Intelligence.valueOf(botIntelligenceJson.asString()));
-        JsonValue seedJson = jsonData.get(SEED_NAME);
+        final JsonValue seedJson = jsonData.get(SEED_NAME);
         result.setSeed(seedJson.asLong());
-        JsonValue roundJson = jsonData.get(ROUND_NAME);
+        final JsonValue roundJson = jsonData.get(ROUND_NAME);
         result.setRound(roundJson.asInt());
-        JsonValue objectiveProgessJson = jsonData.get(OBJECTIVE_PROGRESS_NAME);
+        final JsonValue objectiveProgessJson = jsonData.get(OBJECTIVE_PROGRESS_NAME);
         if (objectiveProgessJson != null) {
             result.setObjectiveProgress(objectiveProgessJson.asInt());
         } else {
             // for backwards compatibility
             result.setObjectiveProgress(0);
         }
-        JsonValue scenarioMapJson = jsonData.get(SCENARIO_MAP_NAME);
+        final JsonValue scenarioMapJson = jsonData.get(SCENARIO_MAP_NAME);
         if (scenarioMapJson != null) {
             result.setScenarioMap(ScenarioMap.valueOf(scenarioMapJson.asString()));
         } else {
@@ -221,17 +222,17 @@ public class GameStateSerializer implements Serializer<GameState> {
             result.setScenarioMap(ScenarioMap.NONE);
         }
         if (jsonData.has(WINNER_ID_NAME)) {
-            Integer winnerId = jsonData.getInt(WINNER_ID_NAME);
-            Player winner = (Player) reverseIdMap.get(winnerId);
+            final Integer winnerId = jsonData.getInt(WINNER_ID_NAME);
+            final Player winner = (Player) reverseIdMap.get(winnerId);
             result.setWinner(winner);
         }
         if (jsonData.has(WINNING_ROUND_NAME)) {
-            Integer winningRound = jsonData.getInt(WINNING_ROUND_NAME);
+            final Integer winningRound = jsonData.getInt(WINNING_ROUND_NAME);
             result.setWinningRound(winningRound);
         }
         if (jsonData.has(ACTIVE_KINGDOM_ID_NAME)) {
-            Integer activeKingdomId = jsonData.getInt(ACTIVE_KINGDOM_ID_NAME);
-            Kingdom activeKingdom = (Kingdom) reverseIdMap.get(activeKingdomId);
+            final Integer activeKingdomId = jsonData.getInt(ACTIVE_KINGDOM_ID_NAME);
+            final Kingdom activeKingdom = (Kingdom) reverseIdMap.get(activeKingdomId);
             result.setActiveKingdom(activeKingdom);
         }
         // add missing references

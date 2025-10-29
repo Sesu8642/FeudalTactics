@@ -33,7 +33,7 @@ public class GameScreen implements Screen {
     public GameScreen(OrthographicCamera camera, Viewport viewport, ResizableResettableStage stage) {
         this.camera = camera;
         this.viewport = viewport;
-        this.activeStage = stage;
+        activeStage = stage;
     }
 
     @Override

@@ -39,7 +39,7 @@ import java.util.List;
 @Singleton
 public class MainMenuScreen extends GameScreen {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final NewGamePreferencesDao newGamePreferencesDao;
     private final NagPreferencesDao nagPreferencesDao;
@@ -66,7 +66,7 @@ public class MainMenuScreen extends GameScreen {
     }
 
     private void initUi(MenuStage stage) {
-        List<TextButton> buttons = stage.getButtons();
+        final List<TextButton> buttons = stage.getButtons();
         int i = 0;
         // play button
         buttons.get(i).addListener(new ExceptionLoggingChangeListener(() -> {
@@ -106,8 +106,8 @@ public class MainMenuScreen extends GameScreen {
     }
 
     private void initSandboxGame() {
-        NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
-        long newSeed = System.currentTimeMillis();
+        final NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
+        final long newSeed = System.currentTimeMillis();
         savedPrefs.setSeed(newSeed);
         newGamePreferencesDao.saveNewGamePreferences(savedPrefs);
         eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
@@ -127,7 +127,7 @@ public class MainMenuScreen extends GameScreen {
 
     private void showTutorialNag() {
         logger.debug("showing tutorial nag");
-        Dialog tutorialNagDialog = dialogFactory.createDialog(result -> {
+        final Dialog tutorialNagDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 0:
                     // no
@@ -151,7 +151,7 @@ public class MainMenuScreen extends GameScreen {
 
     private void showNewVersionDialog() {
         logger.debug("informing the user about the version upgrade");
-        Dialog newVersionDialog = dialogFactory.createDialog(result -> {
+        final Dialog newVersionDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 0:
                     // ok button

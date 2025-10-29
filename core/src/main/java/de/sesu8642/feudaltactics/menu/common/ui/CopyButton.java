@@ -40,14 +40,14 @@ public class CopyButton extends ImageTextButton {
             tickStyle = skin.get(SkinConstants.BUTTON_COPY_TICK_NO_BACKGROUND, ImageTextButtonStyle.class);
         }
 
-        this.addListener(new ExceptionLoggingChangeListener(() -> {
+        addListener(new ExceptionLoggingChangeListener(() -> {
             // give feedback to the user by adding the tick for a moment
-            this.setStyle(tickStyle);
+            setStyle(tickStyle);
             if (copyButtonFeedBackFuture != null) {
                 copyButtonFeedBackFuture.cancel(false);
             }
             copyButtonFeedBackFuture = copyButtonFeedbackExecutorService.schedule(
-                () -> Gdx.app.postRunnable(() -> this.setStyle(defaultStyle)), 1000, TimeUnit.MILLISECONDS);
+                () -> Gdx.app.postRunnable(() -> setStyle(defaultStyle)), 1000, TimeUnit.MILLISECONDS);
         }));
     }
 

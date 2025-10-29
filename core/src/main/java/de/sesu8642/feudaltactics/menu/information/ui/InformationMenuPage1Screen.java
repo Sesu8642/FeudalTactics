@@ -25,13 +25,13 @@ public class InformationMenuPage1Screen extends GameScreen {
     public InformationMenuPage1Screen(EventBus eventBus, @MenuCamera OrthographicCamera camera,
                                       @MenuViewport Viewport viewport, InformationMenuPage1Stage menuStage) {
         super(camera, viewport, menuStage);
-        List<TextButton> buttons = menuStage.getButtons();
+        final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(
             () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN))));
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
             // Java thinks that this is not a valid URI. Android disagrees. So there's a fallback that redirects to
             // the actual site.
-            boolean success = Gdx.net.openURI("https://matrix.to/#/#feudal-tactics-community:matrix.org");
+            final boolean success = Gdx.net.openURI("https://matrix.to/#/#feudal-tactics-community:matrix.org");
             if (!success) {
                 Gdx.net.openURI("https://sesu8642.github.io/FeudalTacticsCommunityRedirect/");
             }

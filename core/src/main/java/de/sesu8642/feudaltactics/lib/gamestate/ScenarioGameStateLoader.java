@@ -28,10 +28,10 @@ public class ScenarioGameStateLoader {
      * @return loaded gameState
      */
     public GameState loadScenarioGameState(ScenarioMap scenarioMap) {
-        FileHandle assetsFileHandle = Gdx.files.internal(scenarioMap.mapPath);
-        String loadedString = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
+        final FileHandle assetsFileHandle = Gdx.files.internal(scenarioMap.mapPath);
+        final String loadedString = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
 
-        JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
+        final JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
         return json.readValue(GameState.class, loadedStateJsonValue);
     }
 

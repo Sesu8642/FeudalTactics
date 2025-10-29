@@ -43,7 +43,7 @@ public class MainMenuStage extends MenuStage {
                          @VersionProperty String gameVersion, @EnableLevelEditorProperty boolean levelEditorEnabled) {
         super(viewport, levelEditorEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR, camera, insets,
             mapRenderer, skin);
-        Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
+        final Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }

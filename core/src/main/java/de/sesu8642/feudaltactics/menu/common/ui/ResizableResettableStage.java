@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public abstract class ResizableResettableStage extends Stage implements NeedsUpdateOnResize {
 
     protected ResizableResettableStage() {
-        super();
     }
 
     protected ResizableResettableStage(Viewport viewport, Batch batch) {

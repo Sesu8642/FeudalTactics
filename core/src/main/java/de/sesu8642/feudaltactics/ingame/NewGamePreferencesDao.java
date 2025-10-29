@@ -29,7 +29,7 @@ public class NewGamePreferencesDao {
 
     @Inject
     public NewGamePreferencesDao(@NewGamePrefsPrefStore Preferences newGamePrefs) {
-        this.prefStore = newGamePrefs;
+        prefStore = newGamePrefs;
     }
 
     /**
@@ -52,12 +52,12 @@ public class NewGamePreferencesDao {
      * @return preferences to load
      */
     public NewGamePreferences getNewGamePreferences() {
-        long seed = prefStore.getLong(NEW_GAME_PREFERENCES_SEED_NAME, System.currentTimeMillis());
-        Intelligence botIntelligence = Intelligence.values()[prefStore
+        final long seed = prefStore.getLong(NEW_GAME_PREFERENCES_SEED_NAME, System.currentTimeMillis());
+        final Intelligence botIntelligence = Intelligence.values()[prefStore
             .getInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, 0)];
-        MapSizes mapSize = MapSizes.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, 0)];
-        Densities density = Densities.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, 0)];
-        int startingPosition = prefStore.getInteger(NEW_GAME_PREFERENCES_STARTING_POSITION_NAME, 0);
+        final MapSizes mapSize = MapSizes.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, 0)];
+        final Densities density = Densities.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, 0)];
+        final int startingPosition = prefStore.getInteger(NEW_GAME_PREFERENCES_STARTING_POSITION_NAME, 0);
         return new NewGamePreferences(seed, botIntelligence, mapSize, density, startingPosition);
     }
 

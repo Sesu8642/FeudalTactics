@@ -36,7 +36,7 @@ public class DialogFactory {
             @Override
             public void result(Object result) {
                 action.accept(result);
-                this.remove();
+                remove();
             }
 
         };
@@ -60,7 +60,7 @@ public class DialogFactory {
      * @return new dialog
      */
     public FeudalTacticsDialog createConfirmDialog(String message, Runnable actionOnConfirm, Runnable actionOnCancel) {
-        FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
+        final FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
 
             @Override
             public void result(Object result) {
@@ -69,7 +69,7 @@ public class DialogFactory {
                 } else {
                     actionOnCancel.run();
                 }
-                this.remove();
+                remove();
             }
 
         };
@@ -87,13 +87,13 @@ public class DialogFactory {
      * @return new dialog
      */
     public FeudalTacticsDialog createInformationDialog(String message, Runnable action) {
-        FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
+        final FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
 
             @Override
             public void result(Object result) {
                 if (Boolean.TRUE == result) {
                     action.run();
-                    this.remove();
+                    remove();
                 }
             }
 
@@ -106,7 +106,7 @@ public class DialogFactory {
      * See {@link #addCopyButtonToDialog(Supplier, Dialog, String)} with a default copyButtonText.
      */
     public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog) {
-        CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
+        final CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
             () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in in a way that doesn't cause the dialog to hide automatically
@@ -121,7 +121,7 @@ public class DialogFactory {
      * @param copyButtonText label text for the button
      */
     public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog, String copyButtonText) {
-        CopyButton copyButton = ButtonFactory.createCopyButton(copyButtonText, skin, true);
+        final CopyButton copyButton = ButtonFactory.createCopyButton(copyButtonText, skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
             () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in in a way that doesn't cause the dialog to hide automatically
@@ -135,7 +135,7 @@ public class DialogFactory {
      * @param buttonText label text for the button
      */
     public void addNonClosingTextButtonToDialog(Dialog dialog, String buttonText, Runnable listener) {
-        TextButton button = ButtonFactory.createTextButton(buttonText, skin);
+        final TextButton button = ButtonFactory.createTextButton(buttonText, skin);
         button.addListener(new ExceptionLoggingChangeListener(listener));
         // add in in a way that doesn't cause the dialog to hide automatically
         dialog.getButtonTable().add(button);

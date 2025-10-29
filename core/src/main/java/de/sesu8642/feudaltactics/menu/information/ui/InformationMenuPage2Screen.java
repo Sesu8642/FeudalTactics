@@ -25,7 +25,7 @@ public class InformationMenuPage2Screen extends GameScreen {
     public InformationMenuPage2Screen(EventBus eventBus, @MenuCamera OrthographicCamera camera,
                                       @MenuViewport Viewport viewport, InformationMenuPage2Stage menuStage) {
         super(camera, viewport, menuStage);
-        List<TextButton> buttons = menuStage.getButtons();
+        final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(
             () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN))));
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> eventBus

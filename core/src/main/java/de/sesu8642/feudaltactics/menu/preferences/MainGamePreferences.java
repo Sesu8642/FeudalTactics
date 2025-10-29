@@ -29,7 +29,6 @@ public class MainGamePreferences {
      *                                   their turns
      */
     public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns) {
-        super();
         this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
         this.showEnemyTurns = showEnemyTurns;
     }
@@ -50,7 +49,7 @@ public class MainGamePreferences {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        MainGamePreferences other = (MainGamePreferences) obj;
+        final MainGamePreferences other = (MainGamePreferences) obj;
         return showEnemyTurns == other.showEnemyTurns && warnAboutForgottenKingdoms == other.warnAboutForgottenKingdoms;
     }
 

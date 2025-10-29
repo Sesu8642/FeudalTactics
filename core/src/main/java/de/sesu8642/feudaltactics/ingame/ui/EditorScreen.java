@@ -103,7 +103,7 @@ public class EditorScreen extends GameScreen {
         cachedGameState = GameStateHelper.getCopy(newGameState);
         // update the UI
 
-        String hudStageInfoText = "Map Size: " + newGameState.getMap().size();
+        final String hudStageInfoText = "Map Size: " + newGameState.getMap().size();
 
         editorHudStage.infoTextLabel.setText(hudStageInfoText);
     }
@@ -112,7 +112,7 @@ public class EditorScreen extends GameScreen {
      * Centers the map in the available screen space.
      */
     void centerMap() {
-        Margin centeringMargin = calculateMapScreenArea();
+        final Margin centeringMargin = calculateMapScreenArea();
         eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
             centeringMargin.marginTop, centeringMargin.marginRight));
     }
@@ -128,9 +128,9 @@ public class EditorScreen extends GameScreen {
     private Margin calculateMapScreenArea() {
         // calculate what is the bigger rectangular area for the map to fit: above the
         // inputs or to their right
-        float aboveArea =
+        final float aboveArea =
             ingameCamera.viewportWidth * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
-        float rightArea =
+        final float rightArea =
             (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH) * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX - ParameterInputStage.OUTER_PADDING_PX);
         if (aboveArea > rightArea) {
             return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT, 0, 0);

@@ -71,14 +71,14 @@ public class SlideStage extends ResizableResettableStage {
 
         currentSlide = slides.get(0);
 
-        TextArea backgroundArea = new TextArea(null, skin);
+        final TextArea backgroundArea = new TextArea(null, skin);
         backgroundArea.setDisabled(true);
 
         slideContainer.fill();
         slideContainer.pad(20, 25, 20, 20);
         slideContainer.setActor(currentSlide);
 
-        Stack slideAreaStack = new Stack(backgroundArea, slideContainer);
+        final Stack slideAreaStack = new Stack(backgroundArea, slideContainer);
 
         scrollPane = new ScrollPane(slideAreaStack, skin);
         scrollPane.setFadeScrollBars(false);
@@ -95,12 +95,12 @@ public class SlideStage extends ResizableResettableStage {
         rootTable.add(backButton);
         rootTable.add(nextButton);
 
-        this.addActor(rootTable);
+        addActor(rootTable);
 
         nextButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            int currentSlideIndex = slides.indexOf(currentSlide);
+            final int currentSlideIndex = slides.indexOf(currentSlide);
             if (slides.size() > currentSlideIndex + 1) {
-                Table newSlide = slides.get(currentSlideIndex + 1);
+                final Table newSlide = slides.get(currentSlideIndex + 1);
                 slideContainer.setActor(newSlide);
                 currentSlide = newSlide;
                 if (slides.size() == currentSlideIndex + 2) {
@@ -116,9 +116,9 @@ public class SlideStage extends ResizableResettableStage {
         }));
 
         backButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            int currentSlideIndex = slides.indexOf(currentSlide);
+            final int currentSlideIndex = slides.indexOf(currentSlide);
             if (currentSlideIndex > 0) {
-                Table newSlide = slides.get(currentSlideIndex - 1);
+                final Table newSlide = slides.get(currentSlideIndex - 1);
                 slideContainer.setActor(newSlide);
                 currentSlide = newSlide;
                 nextButton.setText("Next");
@@ -136,7 +136,7 @@ public class SlideStage extends ResizableResettableStage {
         backButton.setTouchable(Touchable.disabled);
         backButton.setDisabled(true);
         backButton.setText("");
-        String nextButtonText = slides.size() == 1 ? "Finish" : "Next";
+        final String nextButtonText = slides.size() == 1 ? "Finish" : "Next";
         nextButton.setText(nextButtonText);
         currentSlide = slides.get(0);
         slideContainer.setActor(currentSlide);

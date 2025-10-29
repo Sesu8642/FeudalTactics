@@ -22,7 +22,7 @@ public class NagPreferencesDao {
 
     @Inject
     public NagPreferencesDao(@NagPrefsPrefStore Preferences gamePrefs) {
-        this.prefStore = gamePrefs;
+        prefStore = gamePrefs;
     }
 
     /**

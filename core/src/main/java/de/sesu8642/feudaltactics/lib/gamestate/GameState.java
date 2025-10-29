@@ -24,10 +24,10 @@ public class GameState {
     private List<Player> players = new ArrayList<>();
     @Getter
     @Setter
-    private Player winner = null;
+    private Player winner;
     @Getter
     @Setter
-    private Integer winningRound = null;
+    private Integer winningRound;
     @Getter
     @Setter
     private int playerTurn = 0;
@@ -40,10 +40,10 @@ public class GameState {
     private List<Kingdom> kingdoms;
     @Getter
     @Setter
-    private Kingdom activeKingdom = null;
+    private Kingdom activeKingdom;
     @Getter
     @Setter
-    private TileContent heldObject = null;
+    private TileContent heldObject;
     @Getter
     @Setter
     private Intelligence botIntelligence = Intelligence.LEVEL_1;
@@ -73,7 +73,7 @@ public class GameState {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        GameState gameState = (GameState) o;
+        final GameState gameState = (GameState) o;
         return playerTurn == gameState.playerTurn && objectiveProgress == gameState.objectiveProgress && round == gameState.round && Objects.equals(players, gameState.players) && Objects.equals(winner, gameState.winner) && Objects.equals(winningRound, gameState.winningRound) && Objects.equals(map, gameState.map) && Objects.equals(kingdoms, gameState.kingdoms) && Objects.equals(activeKingdom, gameState.activeKingdom) && Objects.equals(heldObject, gameState.heldObject) && botIntelligence == gameState.botIntelligence && Objects.equals(seed, gameState.seed) && scenarioMap == gameState.scenarioMap;
     }
 

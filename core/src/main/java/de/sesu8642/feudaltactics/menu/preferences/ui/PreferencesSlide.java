@@ -36,7 +36,7 @@ public class PreferencesSlide extends Slide {
     public PreferencesSlide(Skin skin) {
         super(skin, "Preferences");
 
-        Table preferencesTable = new Table();
+        final Table preferencesTable = new Table();
 
         forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Warn about forgotten kingdoms",
             skin);
@@ -51,10 +51,10 @@ public class PreferencesSlide extends Slide {
     }
 
     private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin) {
-        Label newLabel = new Label(labelText, skin);
+        final Label newLabel = new Label(labelText, skin);
         newLabel.setWrap(true);
         preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
-        SelectBox<Boolean> newSelectBox = new SelectBox<>(skin);
+        final SelectBox<Boolean> newSelectBox = new SelectBox<>(skin);
         newSelectBox.setItems(true, false);
         preferencesTable.add(newSelectBox).center().fillX().expandX();
         preferencesTable.row();

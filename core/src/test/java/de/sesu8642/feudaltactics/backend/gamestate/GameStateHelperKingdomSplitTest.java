@@ -37,7 +37,7 @@ class GameStateHelperKingdomSplitTest {
     }
 
     static Stream<Arguments> provideMapContents() {
-        Unit conqueringUnit = new Unit(UnitTypes.BARON);
+        final Unit conqueringUnit = new Unit(UnitTypes.BARON);
         conqueringUnit.setCanAct(false);
         return Stream.of(
             // capital and empty tile, conquering capital --> capital destroyed
@@ -98,14 +98,14 @@ class GameStateHelperKingdomSplitTest {
         // create a kingdom of tiles in a straight line filled with the given contents
         // and create another kingdom next to it that attacks
         HexTile tileToConquer = null;
-        GameState gameState = new GameState();
+        final GameState gameState = new GameState();
         gameState.setPlayers(players);
         gameState.setPlayerTurn(1);
-        Kingdom attackedKingdom = new Kingdom(player1);
-        Kingdom attackingKingdom = new Kingdom(player2);
+        final Kingdom attackedKingdom = new Kingdom(player1);
+        final Kingdom attackingKingdom = new Kingdom(player2);
         for (int i = 0; i < mapContentsBefore.size(); i++) {
-            Vector2 attackedKingdomTilePosition = new Vector2(0, i);
-            HexTile attackedKingdomTile = new HexTile(player1, attackedKingdomTilePosition);
+            final Vector2 attackedKingdomTilePosition = new Vector2(0, i);
+            final HexTile attackedKingdomTile = new HexTile(player1, attackedKingdomTilePosition);
             attackedKingdomTile.setKingdom(attackedKingdom);
             attackedKingdomTile.setContent(mapContentsBefore.get(i));
             gameState.getMap().put(attackedKingdomTilePosition, attackedKingdomTile);
@@ -114,8 +114,8 @@ class GameStateHelperKingdomSplitTest {
                 tileToConquer = attackedKingdomTile;
             }
             // for each tile, create a tile of the attacking kingdom next to it
-            Vector2 attackingKingdomTilePosition = new Vector2(1, i);
-            HexTile attackingKingdomTile = new HexTile(player2, attackingKingdomTilePosition);
+            final Vector2 attackingKingdomTilePosition = new Vector2(1, i);
+            final HexTile attackingKingdomTile = new HexTile(player2, attackingKingdomTilePosition);
             attackingKingdomTile.setKingdom(attackingKingdom);
             attackingKingdomTile.setContent(mapContentsBefore.get(i));
             gameState.getMap().put(attackingKingdomTilePosition, attackingKingdomTile);
@@ -124,7 +124,7 @@ class GameStateHelperKingdomSplitTest {
         gameState.setKingdoms(Stream.of(attackedKingdom, attackingKingdom).collect(Collectors.toList()));
 
         // prepare a baron for conquering
-        Unit conqueringUnit = new Unit(UnitTypes.BARON);
+        final Unit conqueringUnit = new Unit(UnitTypes.BARON);
         gameState.setHeldObject(conqueringUnit);
         gameState.setActiveKingdom(attackingKingdom);
 
@@ -133,7 +133,7 @@ class GameStateHelperKingdomSplitTest {
 
         // assert the correct contents
         for (int i = 0; i < mapContentsExpected.size(); i++) {
-            HexTile tile = gameState.getMap().get(new Vector2(0, i));
+            final HexTile tile = gameState.getMap().get(new Vector2(0, i));
             assertEquals(mapContentsExpected.get(i), tile.getContent());
         }
     }
