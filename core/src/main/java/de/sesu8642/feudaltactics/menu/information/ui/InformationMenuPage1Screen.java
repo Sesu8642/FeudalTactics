@@ -27,20 +27,21 @@ public class InformationMenuPage1Screen extends GameScreen {
         super(camera, viewport, menuStage);
         List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN))));
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.ABOUT_SCREEN))));
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            // Java thinks that this is not a valid URI. Android disagrees. So there's a fallback that redirects to the actual site.
+            // Java thinks that this is not a valid URI. Android disagrees. So there's a fallback that redirects to
+            // the actual site.
             boolean success = Gdx.net.openURI("https://matrix.to/#/#feudal-tactics-community:matrix.org");
             if (!success) {
                 Gdx.net.openURI("https://sesu8642.github.io/FeudalTacticsCommunityRedirect/");
             }
         }));
         buttons.get(2).addListener(new ExceptionLoggingChangeListener(() -> eventBus
-                .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_IN_MAIN_MENU))));
+            .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_IN_MAIN_MENU))));
         buttons.get(3).addListener(new ExceptionLoggingChangeListener(() -> eventBus
-                .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2))));
+            .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2))));
         buttons.get(4).addListener(new ExceptionLoggingChangeListener(
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN))));
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN))));
     }
 
 }

@@ -32,8 +32,8 @@ public class MainDaggerModule {
         return new EventBus((exception, context) -> {
             Logger logger = LoggerFactory.getLogger(SubscriberExceptionHandler.class.getName());
             logger.error(String.format(
-                    "an unexpected error happened while handling the event %s in method %s of subscriber %s",
-                    context.getEvent(), context.getSubscriberMethod(), context.getSubscriber()), exception);
+                "an unexpected error happened while handling the event %s in method %s of subscriber %s",
+                context.getEvent(), context.getSubscriberMethod(), context.getSubscriber()), exception);
         });
     }
 

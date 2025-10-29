@@ -100,12 +100,12 @@ class GameStateHelperTest {
 
         Player firstPlayer = gameState.getPlayers().get(0);
         long firstPlayerTileAmount = gameState.getMap().values().stream()
-                .filter(tile -> tile.getPlayer().equals(firstPlayer)).count();
+            .filter(tile -> tile.getPlayer().equals(firstPlayer)).count();
         gameState.getPlayers().forEach(player -> {
             // the difference between the tiles of any player and the first one should not
             // be larger than 1
             long otherPlayerTileAmount = gameState.getMap().values().stream()
-                    .filter(tile -> tile.getPlayer().equals(player)).count();
+                .filter(tile -> tile.getPlayer().equals(player)).count();
             long tileDifference = Math.abs(firstPlayerTileAmount - otherPlayerTileAmount);
             assertTrue(tileDifference <= 1);
         });
@@ -123,10 +123,10 @@ class GameStateHelperTest {
             Player playerI = gameState.getPlayers().get(i);
             Player prevPlayer = gameState.getPlayers().get(i - 1);
             int playerIncome = gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer().equals(playerI))
-                    .mapToInt(GameStateHelper::getKingdomIncome).sum();
+                .mapToInt(GameStateHelper::getKingdomIncome).sum();
             int prevPlayerIncome = gameState.getKingdoms().stream()
-                    .filter(kingdom -> kingdom.getPlayer().equals(prevPlayer))
-                    .mapToInt(GameStateHelper::getKingdomIncome).sum();
+                .filter(kingdom -> kingdom.getPlayer().equals(prevPlayer))
+                .mapToInt(GameStateHelper::getKingdomIncome).sum();
             assertTrue(prevPlayerIncome <= playerIncome);
         }
     }

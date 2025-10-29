@@ -93,10 +93,10 @@ public class MainMenuScreen extends GameScreen {
         }));
         // preferences button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN))));
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN))));
         // information button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
     }
 
     private void initTutorial() {

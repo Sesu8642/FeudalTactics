@@ -39,8 +39,10 @@ public class DependencyLicensesScreen extends GameScreen {
      */
     @Inject
     public DependencyLicensesScreen(@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera,
-                                    DependencyLicensesStage dependencyListStage, DependencyDetailsStage dependencyDetailsStage,
-                                    EventBus eventBus, @DependencyLicenses Map<String, Map<String, String>> dependencyLicenses) {
+                                    DependencyLicensesStage dependencyListStage,
+                                    DependencyDetailsStage dependencyDetailsStage,
+                                    EventBus eventBus,
+                                    @DependencyLicenses Map<String, Map<String, String>> dependencyLicenses) {
         super(camera, viewport, dependencyListStage);
         this.eventBus = eventBus;
         this.dependencyListStage = dependencyListStage;
@@ -51,7 +53,7 @@ public class DependencyLicensesScreen extends GameScreen {
 
     private void registerEventListeners() {
         dependencyListStage.setFinishedCallback(() -> eventBus
-                .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)));
+            .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)));
 
         for (Label dependencyNameLabel : dependencyListStage.dependencyListSlide.dependencyNameLabels) {
             dependencyNameLabel.addListener(new ExceptionLoggingClickListener(() -> {

@@ -64,7 +64,8 @@ public enum Intelligence {
 
     Intelligence(float chanceToConquerPerTurn, int blockingObjectRemovalScoreTreshold,
                  boolean reconsidersWhichTilesToProtect, int protectWithCastleScoreTreshold,
-                 int protectWithUnitScoreTreshold, int attackOtherBotsBias, boolean smartDefending, boolean smartAttacking) {
+                 int protectWithUnitScoreTreshold, int attackOtherBotsBias, boolean smartDefending,
+                 boolean smartAttacking) {
         this.chanceToConquerPerTurn = chanceToConquerPerTurn;
         this.blockingObjectRemovalScoreTreshold = blockingObjectRemovalScoreTreshold;
         this.reconsidersWhichTilesToProtect = reconsidersWhichTilesToProtect;

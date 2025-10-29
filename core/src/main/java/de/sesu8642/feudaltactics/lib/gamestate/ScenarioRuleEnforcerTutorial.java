@@ -91,16 +91,16 @@ public class ScenarioRuleEnforcerTutorial {
 
     private static void updateObjectiveProgressFrom5(GameState gameState) {
         if (gameState.getHeldObject() != null && ClassReflection.isAssignableFrom(Unit.class,
-                gameState.getHeldObject().getClass())
-                && gameState.getHeldObject().getStrength() == Unit.UnitTypes.SPEARMAN.strength()) {
+            gameState.getHeldObject().getClass())
+            && gameState.getHeldObject().getStrength() == Unit.UnitTypes.SPEARMAN.strength()) {
             incrementObjectiveProgress(gameState);
             return;
         }
         for (HexTile tile : gameState.getMap().values()) {
             if (tile.getPlayer().getType() == Player.Type.LOCAL_PLAYER
-                    && tile.getContent() != null
-                    && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
-                    && tile.getContent().getStrength() == Unit.UnitTypes.SPEARMAN.strength()) {
+                && tile.getContent() != null
+                && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
+                && tile.getContent().getStrength() == Unit.UnitTypes.SPEARMAN.strength()) {
                 incrementObjectiveProgress(gameState);
                 return;
             }
@@ -124,8 +124,8 @@ public class ScenarioRuleEnforcerTutorial {
     private static void updateObjectiveProgressFrom8(GameState gameState) {
         for (HexTile tile : gameState.getMap().values()) {
             if (tile.getPlayer().getType() == Player.Type.LOCAL_PLAYER
-                    && tile.getContent() != null && ClassReflection.isAssignableFrom(Castle.class,
-                    tile.getContent().getClass())) {
+                && tile.getContent() != null && ClassReflection.isAssignableFrom(Castle.class,
+                tile.getContent().getClass())) {
                 incrementObjectiveProgress(gameState);
                 return;
             }

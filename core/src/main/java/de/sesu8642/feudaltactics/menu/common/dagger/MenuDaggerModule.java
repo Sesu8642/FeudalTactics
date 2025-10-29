@@ -53,7 +53,8 @@ public class MenuDaggerModule {
     @Singleton
     @MenuBackgroundRenderer
     static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera,
-                                              TextureAtlas textureAtlas, ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
+                                              TextureAtlas textureAtlas, ShapeRenderer shapeRenderer,
+                                              SpriteBatch spriteBatch) {
         return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch, true);
     }
 

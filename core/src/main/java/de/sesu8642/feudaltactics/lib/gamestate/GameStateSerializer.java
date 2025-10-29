@@ -214,7 +214,7 @@ public class GameStateSerializer implements Serializer<GameState> {
             result.setObjectiveProgress(0);
         }
         JsonValue scenarioMapJson = jsonData.get(SCENARIO_MAP_NAME);
-        if(scenarioMapJson != null) {
+        if (scenarioMapJson != null) {
             result.setScenarioMap(ScenarioMap.valueOf(scenarioMapJson.asString()));
         } else {
             // for backwards compatibility

@@ -44,7 +44,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         float adjAmount = (amountY * camera.zoom) / 3;
         if ((adjAmount < 0 && camera.zoom + adjAmount > MIN_ZOOM)
-                || (adjAmount > 0 && camera.zoom + adjAmount < MAX_ZOOM)) {
+            || (adjAmount > 0 && camera.zoom + adjAmount < MAX_ZOOM)) {
             Vector3 oldMousePosition = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             camera.zoom += adjAmount;
             camera.update();
@@ -59,7 +59,7 @@ public class CombinedInputProcessor implements GestureListener, InputProcessor {
     public boolean pan(float x, float y, float deltaX, float deltaY) {
         if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
             Vector3 worldDistance = camera.unproject(new Vector3(x, y, 0))
-                    .sub(camera.unproject(new Vector3(x + deltaX, y + deltaY, 0)));
+                .sub(camera.unproject(new Vector3(x + deltaX, y + deltaY, 0)));
             camera.translate(worldDistance);
             camera.update();
             return true;

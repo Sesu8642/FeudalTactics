@@ -108,7 +108,7 @@ public class DialogFactory {
     public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog) {
         CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
-                () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
+            () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in in a way that doesn't cause the dialog to hide automatically
         dialog.getButtonTable().add(copyButton);
     }
@@ -123,7 +123,7 @@ public class DialogFactory {
     public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog, String copyButtonText) {
         CopyButton copyButton = ButtonFactory.createCopyButton(copyButtonText, skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
-                () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
+            () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in in a way that doesn't cause the dialog to hide automatically
         dialog.getButtonTable().add(copyButton);
     }

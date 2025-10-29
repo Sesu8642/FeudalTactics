@@ -97,7 +97,7 @@ public class Unit implements TileContent {
 
         public static UnitTypes ofStrength(int strength) {
             return Arrays.stream(UnitTypes.values()).filter(unitType -> unitType.strength() == strength).findAny()
-                    .orElseThrow(() -> new AssertionError("Cannot find unit with requested strength " + strength));
+                .orElseThrow(() -> new AssertionError("Cannot find unit with requested strength " + strength));
         }
 
         public static UnitTypes strongest() {

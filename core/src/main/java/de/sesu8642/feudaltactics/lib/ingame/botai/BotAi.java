@@ -57,7 +57,7 @@ public class BotAi {
      */
     public void doTurn(GameState gameState, Intelligence intelligence) throws InterruptedException {
         logger.debug("doing the turn for bot player '{}' with intelligence level '{}'", gameState.getActivePlayer(),
-                intelligence);
+            intelligence);
         Random random = new Random(gameState.hashCode());
         Optional<Kingdom> nextKingdomOptional = getNextKingdom(gameState);
         while (nextKingdomOptional.isPresent()) {
@@ -85,7 +85,7 @@ public class BotAi {
     }
 
     private GameState doKingdomMove(GameState gameState, Kingdom kingdom, Intelligence intelligence, Random random)
-            throws InterruptedException {
+        throws InterruptedException {
         logger.debug("doing moves in kingdom '{}'", kingdom);
         gameState.setActiveKingdom(kingdom);
         delayForPreview(gameState);
@@ -133,7 +133,7 @@ public class BotAi {
         logger.debug("picking up all available units");
         for (HexTile tile : kingdom.getTiles()) {
             if (tile.getContent() != null && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())
-                    && ((Unit) tile.getContent()).isCanAct()) {
+                && ((Unit) tile.getContent()).isCanAct()) {
                 int strength = tile.getContent().getStrength();
                 pickedUpUnits.addUnitOfStrength(strength);
                 tile.setContent(null);
@@ -155,15 +155,15 @@ public class BotAi {
         // not using a hashset because the tiles are changed in this function which
         // changes their hashcode as well
         Map<Vector2, HexTile> tilesWithBlockingObjects = gameState.getActiveKingdom().getTiles().stream().filter(
-                        tile -> tile.getContent() != null && Blocking.class.isAssignableFrom(tile.getContent().getClass()))
-                .collect(Collectors.toMap(HexTile::getPosition, tile -> tile));
+                tile -> tile.getContent() != null && Blocking.class.isAssignableFrom(tile.getContent().getClass()))
+            .collect(Collectors.toMap(HexTile::getPosition, tile -> tile));
         TileScoreInfo bestRemovalCandidate = getBestBlockingObjectRemovalScore(gameState,
-                tilesWithBlockingObjects.values());
+            tilesWithBlockingObjects.values());
         while (bestRemovalCandidate.score >= minimumRemovalScoreTreshold) {
             if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1 || acquireUnit(gameState, gameState.getActiveKingdom(),
-                    pickedUpUnits, UnitTypes.PEASANT.strength())) {
+                pickedUpUnits, UnitTypes.PEASANT.strength())) {
                 logger.debug("removing blocking object with score {} from tile {}", bestRemovalCandidate.score,
-                        bestRemovalCandidate.tile);
+                    bestRemovalCandidate.tile);
                 pickedUpUnits.removeUnit(UnitTypes.PEASANT);
                 gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
                 GameStateHelper.placeOwn(gameState, bestRemovalCandidate.tile);
@@ -180,7 +180,7 @@ public class BotAi {
         logger.debug("defending most important tiles");
         Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
         TileScoreInfo bestProtectionCandidate = getBestDefenseTileScore(gameState, intelligence,
-                interestingProtectionTiles);
+            interestingProtectionTiles);
         while (bestProtectionCandidate.score >= intelligence.protectWithCastleScoreTreshold) {
             // if enough money buy castle
             if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.class)) {
@@ -203,7 +203,7 @@ public class BotAi {
         }
         while (bestProtectionCandidate.score >= intelligence.protectWithUnitScoreTreshold) {
             if (pickedUpUnits.ofType(UnitTypes.PEASANT) > 0 || acquireUnit(gameState, gameState.getActiveKingdom(),
-                    pickedUpUnits, UnitTypes.PEASANT.strength())) {
+                pickedUpUnits, UnitTypes.PEASANT.strength())) {
                 // protect with existing peasant
                 pickedUpUnits.removeUnit(UnitTypes.PEASANT);
                 gameState.setHeldObject(new Unit(UnitTypes.PEASANT));
@@ -229,9 +229,9 @@ public class BotAi {
 
             // determine how "valuable" the tiles are for conquering
             Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
-                    .newSetFromMap(new ConcurrentHashMap<OffenseTileScoreInfo, Boolean>());
+                .newSetFromMap(new ConcurrentHashMap<OffenseTileScoreInfo, Boolean>());
             possibleConquerTiles.parallelStream().forEach(conquerTile -> offenseTileScoreInfoSet
-                    .add(getOffenseTileScoreInfo(gameState, intelligence, conquerTile)));
+                .add(getOffenseTileScoreInfo(gameState, intelligence, conquerTile)));
             List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
             offenseTileScoreInfos.sort((OffenseTileScoreInfo o1, OffenseTileScoreInfo o2) -> {
                 int result = Integer.compare(o2.score, o1.score);
@@ -248,7 +248,7 @@ public class BotAi {
                 }
                 for (int i = offenseTileScoreInfo.requiredStrength; i <= UnitTypes.strongest().strength(); i++) {
                     if (conquerTileWithStoredUnit(gameState, offenseTileScoreInfo.tile, UnitTypes.ofStrength(i),
-                            pickedUpUnits.ofStrength(i))) {
+                        pickedUpUnits.ofStrength(i))) {
                         pickedUpUnits.removeUnitOfStrength(i);
                         continue whileloop;
                     }
@@ -257,11 +257,11 @@ public class BotAi {
             // at this point no more tiles can be conquered with the existing units --> buy
             // some more or combine
             int minimumRequiredStrengthForConquering = offenseTileScoreInfos
-                    .stream().min((OffenseTileScoreInfo t1, OffenseTileScoreInfo t2) -> Integer
-                            .compare(t1.requiredStrength, t2.requiredStrength))
-                    .orElse(new OffenseTileScoreInfo(null, -1, -1)).requiredStrength;
+                .stream().min((OffenseTileScoreInfo t1, OffenseTileScoreInfo t2) -> Integer
+                    .compare(t1.requiredStrength, t2.requiredStrength))
+                .orElse(new OffenseTileScoreInfo(null, -1, -1)).requiredStrength;
             if (!acquireUnit(gameState, gameState.getActiveKingdom(), pickedUpUnits,
-                    minimumRequiredStrengthForConquering)) {
+                minimumRequiredStrengthForConquering)) {
                 unableToConquerAnyMore = true;
             }
         }
@@ -314,10 +314,10 @@ public class BotAi {
             pickedUpUnits.addUnit(UnitTypes.SPEARMAN);
             return true;
         } else if (pickedUpUnits.ofType(UnitTypes.PEASANT) >= 1
-                && (GameStateHelper.getKingdomIncome(kingdom)
-                - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.SPEARMAN.salary()
-                + UnitTypes.PEASANT.salary() >= 0 || kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
-                && kingdom.getSavings() >= Unit.COST) {
+            && (GameStateHelper.getKingdomIncome(kingdom)
+            - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.SPEARMAN.salary()
+            + UnitTypes.PEASANT.salary() >= 0 || kingdom.getSavings() > UnitTypes.SPEARMAN.salary() * 3)
+            && kingdom.getSavings() >= Unit.COST) {
             // buy 1 peasant and combine with an existing one
             kingdom.setSavings(kingdom.getSavings() - Unit.COST);
             pickedUpUnits.addUnit(UnitTypes.SPEARMAN);
@@ -339,10 +339,10 @@ public class BotAi {
             pickedUpUnits.addUnit(UnitTypes.KNIGHT);
             return true;
         } else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 1
-                && (GameStateHelper.getKingdomIncome(kingdom)
-                - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.KNIGHT.salary()
-                + UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
-                && kingdom.getSavings() > Unit.COST) {
+            && (GameStateHelper.getKingdomIncome(kingdom)
+            - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.KNIGHT.salary()
+            + UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.KNIGHT.salary() * 3)
+            && kingdom.getSavings() > Unit.COST) {
             // buy 1 peasant and combine with an existing spearman
             kingdom.setSavings(kingdom.getSavings() - Unit.COST);
             pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
@@ -371,20 +371,20 @@ public class BotAi {
             pickedUpUnits.addUnit(UnitTypes.BARON);
             return true;
         } else if (pickedUpUnits.ofType(UnitTypes.KNIGHT) >= 1
-                && (GameStateHelper.getKingdomIncome(kingdom)
-                - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
-                + UnitTypes.KNIGHT.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
-                && kingdom.getSavings() >= Unit.COST) {
+            && (GameStateHelper.getKingdomIncome(kingdom)
+            - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
+            + UnitTypes.KNIGHT.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
+            && kingdom.getSavings() >= Unit.COST) {
             // buy 1 peasant and combine with an existing knight
             kingdom.setSavings(kingdom.getSavings() - Unit.COST);
             pickedUpUnits.removeUnit(UnitTypes.KNIGHT);
             pickedUpUnits.addUnit(UnitTypes.BARON);
             return true;
         } else if (pickedUpUnits.ofType(UnitTypes.SPEARMAN) >= 1
-                && (GameStateHelper.getKingdomIncome(kingdom)
-                - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
-                + UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
-                && kingdom.getSavings() >= 2 * Unit.COST) {
+            && (GameStateHelper.getKingdomIncome(kingdom)
+            - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits) - UnitTypes.BARON.salary()
+            + UnitTypes.SPEARMAN.salary() >= 0 || kingdom.getSavings() > UnitTypes.BARON.salary() * 3)
+            && kingdom.getSavings() >= 2 * Unit.COST) {
             // buy 2 peasants and combine with an existing spearman
             kingdom.setSavings(kingdom.getSavings() - (2 * Unit.COST));
             pickedUpUnits.removeUnit(UnitTypes.SPEARMAN);
@@ -403,8 +403,8 @@ public class BotAi {
         // this does not account for units that will no longer be there after combining
         // them to get the new one
         return ((GameStateHelper.getKingdomIncome(kingdom) - getActualKingdomSalaries(gameState, kingdom, pickedUpUnits)
-                - unitType.salary() >= 0 || kingdom.getSavings() > unitType.salary() * 3)
-                && kingdom.getSavings() >= Unit.COST * unitType.strength());
+            - unitType.salary() >= 0 || kingdom.getSavings() > unitType.salary() * 3)
+            && kingdom.getSavings() >= Unit.COST * unitType.strength());
     }
 
     private void buyUnitDirectly(Kingdom kingdom, PickedUpUnits pickedUpUnits, UnitTypes unitType) {
@@ -416,7 +416,7 @@ public class BotAi {
         logger.debug("protecting the kingdom with leftover units");
         Set<HexTile> interestingProtectionTiles = getInterestingProtectionTiles(gameState);
         TileScoreInfo bestDefenseTileScore = getBestDefenseTileScore(gameState, intelligence,
-                interestingProtectionTiles);
+            interestingProtectionTiles);
         while (bestDefenseTileScore.score >= 0) {
             if (pickedUpUnits.getTotalNoOfUnits() == 0) {
                 break;
@@ -424,7 +424,7 @@ public class BotAi {
             // use the strongest units to protect the most important tiles --> use negative
             // strength to get strongest units first
             List<UnitTypes> orderedUnitTypes = Arrays.stream(UnitTypes.values())
-                    .sorted(Comparator.comparingInt(type -> type.strength() * -1)).collect(Collectors.toList());
+                .sorted(Comparator.comparingInt(type -> type.strength() * -1)).collect(Collectors.toList());
             for (UnitTypes type : orderedUnitTypes) {
                 if (pickedUpUnits.ofType(type) > 0) {
                     gameState.setHeldObject(new Unit(type));
@@ -454,7 +454,7 @@ public class BotAi {
 
     private Optional<HexTile> findEmptyOrTreeTileInActiveKingdom(GameState gameState) {
         return gameState.getActiveKingdom().getTiles().stream().filter(tile -> tile.getContent() == null
-                || ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).findFirst();
+            || ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())).findFirst();
     }
 
     private void sellCastles(Kingdom kingdom, Set<HexTile> placedCastleTiles) {
@@ -493,7 +493,7 @@ public class BotAi {
                                                             Collection<HexTile> tilesWithBlockingObjects) {
         Set<TileScoreInfo> scores = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
         tilesWithBlockingObjects.parallelStream()
-                .forEach(tile -> scores.add(new TileScoreInfo(tile, getBlockingObjectRemovalScore(gameState, tile))));
+            .forEach(tile -> scores.add(new TileScoreInfo(tile, getBlockingObjectRemovalScore(gameState, tile))));
         return scores.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
             int result = Integer.compare(t1.score, t2.score);
             // if the score is the same, use the coordinates to eliminate randomness
@@ -519,7 +519,7 @@ public class BotAi {
     private int getPalmTreeRemovalScore(GameState gameState, HexTile tile) {
         for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
             if (neighborTile != null && !isTileBlockedForTreeSpreading(neighborTile)
-                    && areTilesInTheSameKingdom(tile, neighborTile) && isBeachTile(gameState, neighborTile)) {
+                && areTilesInTheSameKingdom(tile, neighborTile) && isBeachTile(gameState, neighborTile)) {
                 return 9;
             }
         }
@@ -533,11 +533,11 @@ public class BotAi {
         for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
             if (neighborTile != null) {
                 if (!isTileBlockedForTreeSpreading(neighborTile) && areTilesInTheSameKingdom(tile, neighborTile)
-                        && !isBeachTile(gameState, neighborTile)) {
+                    && !isBeachTile(gameState, neighborTile)) {
                     hasSpaceToSpread = true;
                 }
                 if (neighborTile.getContent() != null
-                        && Tree.class.isAssignableFrom(neighborTile.getContent().getClass())) {
+                    && Tree.class.isAssignableFrom(neighborTile.getContent().getClass())) {
                     hasPartnerTree = true;
                 }
             }
@@ -576,7 +576,7 @@ public class BotAi {
                                                   Set<HexTile> interestingProtectionTiles) {
         Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
         interestingProtectionTiles.parallelStream().forEach(
-                tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
+            tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
         return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
             int result = Integer.compare(t1.score, t2.score);
             // if the score is the same, use the coordinates to eliminate randomness
@@ -625,11 +625,11 @@ public class BotAi {
                     for (HexTile neighborsNeighbor : neighborsNeighbors) {
                         if (neighborsNeighbor != null) {
                             if (neighborsNeighbor.getKingdom() != null
-                                    && neighborsNeighbor.getKingdom() != tile.getKingdom()) {
+                                && neighborsNeighbor.getKingdom() != tile.getKingdom()) {
                                 neighborIsBorder = true;
                             } else if (neighborsNeighbor.getKingdom() == tile.getKingdom()
-                                    && neighborsNeighbor.getContent() != null
-                                    && neighborsNeighbor.getContent().getStrength() > 0) {
+                                && neighborsNeighbor.getContent() != null
+                                && neighborsNeighbor.getContent().getStrength() > 0) {
                                 neighborIsProtected = true;
                             }
                         }
@@ -682,8 +682,8 @@ public class BotAi {
             neighborTiles.add(tile);
             for (HexTile neighborTile : neighborTiles) {
                 if (neighborTile != null && neighborTile.getKingdom() == tile.getKingdom()
-                        && neighborTile.getContent() != null
-                        && neighborTile.getContent().getStrength() >= requiredStrength) {
+                    && neighborTile.getContent() != null
+                    && neighborTile.getContent().getStrength() >= requiredStrength) {
                     requiredStrength = neighborTile.getContent().getStrength() + 1;
                 } else if (neighborTile != null && neighborTile.getKingdom() == gameState.getActiveKingdom()) {
                     score++;

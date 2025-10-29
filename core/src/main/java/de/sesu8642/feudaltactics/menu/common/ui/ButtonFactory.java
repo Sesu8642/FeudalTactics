@@ -26,7 +26,7 @@ public class ButtonFactory {
     public static TextButton createTextButton(String text, Skin skin) {
         TextButton result = new TextButton(text, skin);
         result.addListener(new ExceptionLoggingChangeListener(() -> buttonLogger.debug("clicked text button: {}",
-                result.getText())));
+            result.getText())));
         return result;
     }
 
@@ -45,7 +45,7 @@ public class ButtonFactory {
     public static ImageButton createImageButton(String styleName, Skin skin) {
         ImageButton result = new ImageButton(skin.get(styleName, ImageButton.ImageButtonStyle.class));
         result.addListener(new ExceptionLoggingChangeListener(() -> buttonLogger.debug("clicked image button: {}",
-                styleName)));
+            styleName)));
         return result;
     }
 

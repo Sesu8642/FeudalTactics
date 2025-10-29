@@ -40,7 +40,7 @@ public class FeudalTacticsDialog extends Dialog {
 
         responsiveLabel.setWrap(true);
         this.getContentTable().add(responsiveLabel)
-                .width(Math.min(DIALOG_LABEL_MAX_WIDTH, Gdx.graphics.getWidth() - 2 * DIALOG_PADDING));
+            .width(Math.min(DIALOG_LABEL_MAX_WIDTH, Gdx.graphics.getWidth() - 2 * DIALOG_PADDING));
         this.getContentTable().row();
         return this;
     }

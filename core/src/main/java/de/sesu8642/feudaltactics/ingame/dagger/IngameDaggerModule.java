@@ -101,7 +101,7 @@ public class IngameDaggerModule {
     @Singleton
     static ExecutorService provideBotAiExecutor() {
         return Executors
-                .newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("botai-%d").setDaemon(true).build());
+            .newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("botai-%d").setDaemon(true).build());
     }
-    
+
 }

@@ -38,9 +38,9 @@ public class GameCrasher {
     private String buildCrashreportText(String previousLogs, Throwable throwable) {
         try {
             String template = "Date: %s\n" + "\n" + "Game version: %s\n" + "\n" + "Platform: %s\n" + "\n"
-                    + "Platform version: %s\n" + "\n" + "Thread: %s\n" + "\n" + "Thrown:\n" + "%s\n" + "\n"
-                    + "Last full save:\n" + "%s\n" + "\n" + "Incremental saves:\n" + "%s\n" + "\n" + "Previous logs:\n"
-                    + "%s";
+                + "Platform version: %s\n" + "\n" + "Thread: %s\n" + "\n" + "Thrown:\n" + "%s\n" + "\n"
+                + "Last full save:\n" + "%s\n" + "\n" + "Incremental saves:\n" + "%s\n" + "\n" + "Previous logs:\n"
+                + "%s";
             String lastAutoSave;
             try {
                 lastAutoSave = autoSaveRepository.getFullSaveAsString();
@@ -54,8 +54,8 @@ public class GameCrasher {
                 incrementalSaves = Throwables.getStackTraceAsString(e);
             }
             return String.format(template, new Date(), gameVersion, Gdx.app.getType(), Gdx.app.getVersion(),
-                    Thread.currentThread().getName(), Throwables.getStackTraceAsString(throwable), lastAutoSave,
-                    incrementalSaves, previousLogs);
+                Thread.currentThread().getName(), Throwables.getStackTraceAsString(throwable), lastAutoSave,
+                incrementalSaves, previousLogs);
         } catch (Exception e) {
             return Throwables.getStackTraceAsString(e);
         }

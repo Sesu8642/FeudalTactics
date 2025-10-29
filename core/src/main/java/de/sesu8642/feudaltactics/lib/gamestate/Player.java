@@ -66,7 +66,7 @@ public class Player {
         }
         Player player = (Player) o;
         return playerIndex == player.playerIndex && type == player.type && Objects.equals(roundOfDefeat,
-                player.roundOfDefeat);
+            player.roundOfDefeat);
     }
 
     @Override
@@ -77,10 +77,10 @@ public class Player {
     @Override
     public String toString() {
         return "Player{" +
-                "playerIndex=" + playerIndex +
-                ", type=" + type +
-                ", roundOfDefeat=" + roundOfDefeat +
-                '}';
+            "playerIndex=" + playerIndex +
+            ", type=" + type +
+            ", roundOfDefeat=" + roundOfDefeat +
+            '}';
     }
 
     /**

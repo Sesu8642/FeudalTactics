@@ -117,13 +117,13 @@ public class InputValidationHelper {
             return false;
         }
         if (tile.getContent() != null && ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass())
-                && !ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
+            && !ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
             // non-unit on blocking object
             return false;
         }
         // not empty or blocking object
         return tile.getContent() == null
-                || ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass());
+            || ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass());
     }
 
     /**
@@ -155,7 +155,7 @@ public class InputValidationHelper {
         }
         // not empty or blocking object
         return tile.getContent() == null
-                || ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass());
+            || ClassReflection.isAssignableFrom(Blocking.class, tile.getContent().getClass());
     }
 
     /**
@@ -280,7 +280,7 @@ public class InputValidationHelper {
             TileContent neighborContent = neighborTile.getContent();
             // check if there is no stronger object next to it protecting it
             if (tile.getKingdom() != null && neighborTile.getKingdom() == tile.getKingdom() && neighborContent != null
-                    && neighborContent.getStrength() >= gameState.getHeldObject().getStrength()) {
+                && neighborContent.getStrength() >= gameState.getHeldObject().getStrength()) {
                 return false;
             }
         }
@@ -331,8 +331,8 @@ public class InputValidationHelper {
         }
         // allow upgrading a held unit
         return gameState.getHeldObject() == null || (Unit.class.isAssignableFrom(gameState.getHeldObject().getClass())
-                && gameState.getHeldObject().getStrength() < UnitTypes.strongest().strength()
-                && Unit.class.isAssignableFrom(targetClass));
+            && gameState.getHeldObject().getStrength() < UnitTypes.strongest().strength()
+            && Unit.class.isAssignableFrom(targetClass));
     }
 
     /**
@@ -375,13 +375,13 @@ public class InputValidationHelper {
                 return checkBuyObject(gameState, player, Castle.class);
             case BUY_AND_PLACE_PEASANT:
                 return checkBuyAndPlaceUnitInstantly(gameState, player,
-                        findTileAtPosition(gameState, move.getTilePosition()));
+                    findTileAtPosition(gameState, move.getTilePosition()));
             case BUY_AND_PLACE_CASTLE:
                 return checkBuyAndPlaceCastleInstantly(gameState, player,
-                        findTileAtPosition(gameState, move.getTilePosition()));
+                    findTileAtPosition(gameState, move.getTilePosition()));
             case ACTIVATE_KINGDOM:
                 return checkChangeActiveKingdom(gameState, player, findTileAtPosition(gameState,
-                        move.getTilePosition()));
+                    move.getTilePosition()));
             case END_TURN:
                 return checkEndTurn(gameState, player);
             case UNDO_LAST_MOVE:

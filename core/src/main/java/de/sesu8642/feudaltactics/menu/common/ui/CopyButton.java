@@ -20,8 +20,8 @@ public class CopyButton extends ImageTextButton {
     private final ImageTextButtonStyle defaultStyle;
     private final ImageTextButtonStyle tickStyle;
     private final ScheduledExecutorService copyButtonFeedbackExecutorService = Executors
-            .newSingleThreadScheduledExecutor(
-                    new ThreadFactoryBuilder().setNameFormat("copy-button-%d").setDaemon(true).build());
+        .newSingleThreadScheduledExecutor(
+            new ThreadFactoryBuilder().setNameFormat("copy-button-%d").setDaemon(true).build());
     private ScheduledFuture<?> copyButtonFeedBackFuture;
 
     /**
@@ -29,8 +29,8 @@ public class CopyButton extends ImageTextButton {
      */
     public CopyButton(String text, Skin skin, boolean renderButtonBackground) {
         super(text,
-                skin.get(renderButtonBackground ? SkinConstants.BUTTON_COPY : SkinConstants.BUTTON_COPY_NO_BACKGROUND,
-                        ImageTextButtonStyle.class));
+            skin.get(renderButtonBackground ? SkinConstants.BUTTON_COPY : SkinConstants.BUTTON_COPY_NO_BACKGROUND,
+                ImageTextButtonStyle.class));
 
         if (renderButtonBackground) {
             defaultStyle = skin.get(SkinConstants.BUTTON_COPY, ImageTextButtonStyle.class);
@@ -47,7 +47,7 @@ public class CopyButton extends ImageTextButton {
                 copyButtonFeedBackFuture.cancel(false);
             }
             copyButtonFeedBackFuture = copyButtonFeedbackExecutorService.schedule(
-                    () -> Gdx.app.postRunnable(() -> this.setStyle(defaultStyle)), 1000, TimeUnit.MILLISECONDS);
+                () -> Gdx.app.postRunnable(() -> this.setStyle(defaultStyle)), 1000, TimeUnit.MILLISECONDS);
         }));
     }
 

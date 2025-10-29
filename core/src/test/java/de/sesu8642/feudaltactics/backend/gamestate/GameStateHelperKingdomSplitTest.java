@@ -40,54 +40,54 @@ class GameStateHelperKingdomSplitTest {
         Unit conqueringUnit = new Unit(UnitTypes.BARON);
         conqueringUnit.setCanAct(false);
         return Stream.of(
-                // capital and empty tile, conquering capital --> capital destroyed
-                Arguments.of(Arrays.asList(new Capital(), null), 0, Arrays.asList(conqueringUnit, null)),
+            // capital and empty tile, conquering capital --> capital destroyed
+            Arguments.of(Arrays.asList(new Capital(), null), 0, Arrays.asList(conqueringUnit, null)),
 
-                // capital and empty tile, conquering empty tile --> capital becomes (palm) tree
-                Arguments.of(Arrays.asList(new Capital(), null), 1, Arrays.asList(new PalmTree(), conqueringUnit)),
+            // capital and empty tile, conquering empty tile --> capital becomes (palm) tree
+            Arguments.of(Arrays.asList(new Capital(), null), 1, Arrays.asList(new PalmTree(), conqueringUnit)),
 
-                // capital and unit, conquering capital --> unit stays (turns into gravestone
-                // later)
-                Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.PEASANT)), 0,
-                        Arrays.asList(conqueringUnit, new Unit(UnitTypes.PEASANT))),
+            // capital and unit, conquering capital --> unit stays (turns into gravestone
+            // later)
+            Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.PEASANT)), 0,
+                Arrays.asList(conqueringUnit, new Unit(UnitTypes.PEASANT))),
 
-                // capital and tree, conquering capital --> tree stays
-                Arguments.of(Arrays.asList(new Capital(), new Tree()), 0, Arrays.asList(conqueringUnit, new Tree())),
+            // capital and tree, conquering capital --> tree stays
+            Arguments.of(Arrays.asList(new Capital(), new Tree()), 0, Arrays.asList(conqueringUnit, new Tree())),
 
-                // capital and palm, conquering capital --> palm stays
-                Arguments.of(Arrays.asList(new Capital(), new PalmTree()), 0,
-                        Arrays.asList(conqueringUnit, new PalmTree())),
+            // capital and palm, conquering capital --> palm stays
+            Arguments.of(Arrays.asList(new Capital(), new PalmTree()), 0,
+                Arrays.asList(conqueringUnit, new PalmTree())),
 
-                // capital and gravestone, conquering capital --> gravestone stays
-                Arguments.of(Arrays.asList(new Capital(), new Gravestone()), 0,
-                        Arrays.asList(conqueringUnit, new Gravestone())),
+            // capital and gravestone, conquering capital --> gravestone stays
+            Arguments.of(Arrays.asList(new Capital(), new Gravestone()), 0,
+                Arrays.asList(conqueringUnit, new Gravestone())),
 
-                // capital and castle, conquering capital --> castle is destroyed
-                Arguments.of(Arrays.asList(new Capital(), new Castle()), 0, Arrays.asList(conqueringUnit, null)),
+            // capital and castle, conquering capital --> castle is destroyed
+            Arguments.of(Arrays.asList(new Capital(), new Castle()), 0, Arrays.asList(conqueringUnit, null)),
 
-                // capital, empty tile, empty tile, conquering capital --> capital moves one
-                // tile
-                Arguments.of(Arrays.asList(new Capital(), null, null), 0,
-                        Arrays.asList(conqueringUnit, new Capital(), null)),
+            // capital, empty tile, empty tile, conquering capital --> capital moves one
+            // tile
+            Arguments.of(Arrays.asList(new Capital(), null, null), 0,
+                Arrays.asList(conqueringUnit, new Capital(), null)),
 
-                // capital, unit, empty tile, conquering capital --> capital moves to the right
-                // tile
-                Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.SPEARMAN), null), 0,
-                        Arrays.asList(conqueringUnit, new Unit(UnitTypes.SPEARMAN), new Capital())),
+            // capital, unit, empty tile, conquering capital --> capital moves to the right
+            // tile
+            Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.SPEARMAN), null), 0,
+                Arrays.asList(conqueringUnit, new Unit(UnitTypes.SPEARMAN), new Capital())),
 
-                // capital, unit, tree, conquering capital --> capital moves to where the unit
-                // was
-                Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.SPEARMAN), new Tree()), 0,
-                        Arrays.asList(conqueringUnit, new Capital(), new Tree())),
+            // capital, unit, tree, conquering capital --> capital moves to where the unit
+            // was
+            Arguments.of(Arrays.asList(new Capital(), new Unit(UnitTypes.SPEARMAN), new Tree()), 0,
+                Arrays.asList(conqueringUnit, new Capital(), new Tree())),
 
-                // capital, empty tile, empty tile, conquering empty tile in the middle -->
-                // capital becomes tree
-                Arguments.of(Arrays.asList(new Capital(), null, null), 1,
-                        Arrays.asList(new PalmTree(), conqueringUnit, null)),
+            // capital, empty tile, empty tile, conquering empty tile in the middle -->
+            // capital becomes tree
+            Arguments.of(Arrays.asList(new Capital(), null, null), 1,
+                Arrays.asList(new PalmTree(), conqueringUnit, null)),
 
-                // empty tile, capital, empty tile, conquering capital in the middle --> capital
-                // destroyed
-                Arguments.of(Arrays.asList(null, new Capital(), null), 1, Arrays.asList(null, conqueringUnit, null)));
+            // empty tile, capital, empty tile, conquering capital in the middle --> capital
+            // destroyed
+            Arguments.of(Arrays.asList(null, new Capital(), null), 1, Arrays.asList(null, conqueringUnit, null)));
     }
 
     @ParameterizedTest

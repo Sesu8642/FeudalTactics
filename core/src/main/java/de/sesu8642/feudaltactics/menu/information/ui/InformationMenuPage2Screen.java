@@ -27,15 +27,15 @@ public class InformationMenuPage2Screen extends GameScreen {
         super(camera, viewport, menuStage);
         List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN))));
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN))));
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> eventBus
-                .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.DEPENDENCY_LICENSES_SCREEN))));
+            .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.DEPENDENCY_LICENSES_SCREEN))));
         buttons.get(2).addListener(new ExceptionLoggingChangeListener(() -> Gdx.net
-                .openURI("https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt")));
+            .openURI("https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt")));
         buttons.get(3).addListener(new ExceptionLoggingChangeListener(() -> eventBus
-                .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
+            .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
         buttons.get(4).addListener(new ExceptionLoggingChangeListener(
-                () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN))));
+            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN))));
     }
 
 }

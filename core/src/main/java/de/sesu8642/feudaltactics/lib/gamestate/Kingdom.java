@@ -60,14 +60,14 @@ public class Kingdom {
         // ignore order of the tiles; not a perfect method but good enough since there
         // shouldnt be duplicates
         return doneMoving == other.doneMoving && Objects.equals(player, other.player) && savings == other.savings
-                && tiles.size() == other.tiles.size() && tiles.containsAll(other.tiles)
-                && wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
+            && tiles.size() == other.tiles.size() && tiles.containsAll(other.tiles)
+            && wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
     }
 
     @Override
     public String toString() {
         return String.format("Kingdom [tiles=%s, player=%s, savings=%s, doneMoving=%s, wasActiveInCurrentTurn=%s]",
-                tiles.stream().map(HexTile::getPosition), player, savings, doneMoving, wasActiveInCurrentTurn);
+            tiles.stream().map(HexTile::getPosition), player, savings, doneMoving, wasActiveInCurrentTurn);
     }
 
 }

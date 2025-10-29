@@ -96,7 +96,7 @@ public class GameController {
         gameState.setBotIntelligence(gameParams.getBotIntelligence());
 
         GameStateHelper.initializeMap(gameState, gameParams.getPlayers(), gameParams.getLandMass(),
-                gameParams.getDensity(), null, gameParams.getSeed());
+            gameParams.getDensity(), null, gameParams.getSeed());
         eventBus.post(new GameStateChangeEvent(gameState));
     }
 
@@ -108,7 +108,7 @@ public class GameController {
      */
     public void initializeScenario(Intelligence botIntelligence, ScenarioMap scenarioMap) {
         logger.info("initializing a game state with bot intelligence {} and scenario map {}", botIntelligence,
-                scenarioMap);
+            scenarioMap);
 
         gameState = scenarioGameStateLoader.loadScenarioGameState(scenarioMap);
 

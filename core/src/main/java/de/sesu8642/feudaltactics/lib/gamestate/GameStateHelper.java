@@ -8,7 +8,6 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.Map.Entry;

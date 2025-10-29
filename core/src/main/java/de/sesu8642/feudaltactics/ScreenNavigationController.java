@@ -99,7 +99,7 @@ public class ScreenNavigationController {
 
     private void unregisterAllEventHandlers() {
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
-                preferencesScreenEventHandler).forEach(object -> {
+            preferencesScreenEventHandler).forEach(object -> {
             try {
                 eventBus.unregister(object);
             } catch (IllegalArgumentException e) {
@@ -160,13 +160,13 @@ public class ScreenNavigationController {
     private void transitionToIngameScreen() {
         changeScreen(ingameScreen);
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
-                .forEach(eventBus::register);
+            .forEach(eventBus::register);
     }
 
     private void transitionToEditorScreen() {
         changeScreen(editorScreen);
         Stream.of(editorInputHandler, editorEventHandler, editorScreen, rendererEventHandler)
-                .forEach(eventBus::register);
+            .forEach(eventBus::register);
     }
 
     private void transitionToCrashReportScreenInMainMenu() {

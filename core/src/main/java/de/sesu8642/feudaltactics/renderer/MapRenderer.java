@@ -35,8 +35,8 @@ public class MapRenderer {
     public static final float HEXTILE_WIDTH = HexMapHelper.HEX_OUTER_RADIUS * 2;
     public static final float HEXTILE_HEIGHT = HexMapHelper.HEX_OUTER_RADIUS * (float) Math.sqrt(3);
     public static final List<Color> PLAYER_COLOR_PALETTE = ImmutableList.of(new Color(0.2F, 0.45F, 0.8F, 1),
-            new Color(0.75F, 0.5F, 0F, 1), new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1),
-            new Color(1F, 1F, 1F, 1), new Color(0F, 1F, 0F, 1));
+        new Color(0.75F, 0.5F, 0F, 1), new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1),
+        new Color(1F, 1F, 1F, 1), new Color(0F, 1F, 0F, 1));
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
      * The reason is that the stateTime must stay relatively small because of float limitations.
@@ -162,11 +162,11 @@ public class MapRenderer {
 
             // create lines for highlighting active kingdom
             if (gameState.getActiveKingdom() != null && tile.getKingdom() != null
-                    && tile.getKingdom() == gameState.getActiveKingdom()) {
+                && tile.getKingdom() == gameState.getActiveKingdom()) {
                 int index = 0;
                 for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
                     if (neighborTile == null || neighborTile.getKingdom() == null
-                            || neighborTile.getKingdom() != tile.getKingdom()) {
+                        || neighborTile.getKingdom() != tile.getKingdom()) {
                         Line line = getNeighborLine(mapCoords, index);
                         whiteLineStartPoints.add(line.start);
                         whiteLineEndPoints.add(line.end);
@@ -175,8 +175,8 @@ public class MapRenderer {
                 }
                 // darken the tile if placing is impossible
                 if (gameState.getHeldObject() != null
-                        && !InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-                        && !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
+                    && !InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
+                    && !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
                     drawTile.darken = true;
                 }
             } else if (gameState.getHeldObject() != null) {
@@ -185,8 +185,8 @@ public class MapRenderer {
                     int index = 0;
                     for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
                         if (neighborTile == null
-                                || (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidationHelper
-                                .checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
+                            || (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidationHelper
+                            .checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
                             Line line = getNeighborLine(mapCoords, index);
                             Collection<Line> dottedLineParts = lineToDottedLine(line);
                             for (Line linePart : dottedLineParts) {
@@ -200,7 +200,7 @@ public class MapRenderer {
                     drawTile.darken = true;
                 }
             } else if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT
-                    && gameState.getActiveKingdom() != null) {
+                && gameState.getActiveKingdom() != null) {
                 drawTile.darken = true;
             }
             tiles.put(tile.getPosition(), drawTile);
@@ -211,12 +211,12 @@ public class MapRenderer {
                 boolean animate = false;
                 if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
                     if (ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
-                            && ((Unit) tileContent).isCanAct()) {
+                        && ((Unit) tileContent).isCanAct()) {
                         // animate units that can act
                         animate = true;
                     } else if (ClassReflection.isAssignableFrom(Capital.class, tileContent.getClass())
-                            && gameState.getActivePlayer() == tile.getKingdom().getPlayer()
-                            && tile.getKingdom().getSavings() > Unit.COST) {
+                        && gameState.getActivePlayer() == tile.getKingdom().getPlayer()
+                        && tile.getKingdom().getSavings() > Unit.COST) {
                         // animate capitals if they can buy something
                         animate = true;
                     }
@@ -225,32 +225,32 @@ public class MapRenderer {
                     if (drawTile.darken) {
                         // darkened content
                         darkenedAnimatedContents.put(
-                                new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                        mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                                getAnimationFromName(tileContent.getSpriteName()));
+                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+                            getAnimationFromName(tileContent.getSpriteName()));
                     } else {
                         animatedContents.put(
-                                new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                        mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                                getAnimationFromName(tileContent.getSpriteName()));
+                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+                            getAnimationFromName(tileContent.getSpriteName()));
                     }
                 } else {
                     if (drawTile.darken
-                            // darken own units that have already acted
-                            || (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
-                            && tile.getContent() != null
-                            && ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
-                            && !((Unit) tile.getContent()).isCanAct())) {
+                        // darken own units that have already acted
+                        || (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
+                        && tile.getContent() != null
+                        && ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
+                        && !((Unit) tile.getContent()).isCanAct())) {
                         // darkened content
                         darkenedNonAnimatedContents.put(
-                                new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                        mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                                getTextureRegionFromName(tileContent.getSpriteName()));
+                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+                            getTextureRegionFromName(tileContent.getSpriteName()));
                     } else {
                         nonAnimatedContents.put(
-                                new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                        mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                                getTextureRegionFromName(tileContent.getSpriteName()));
+                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
+                            getTextureRegionFromName(tileContent.getSpriteName()));
                     }
                 }
 
@@ -262,29 +262,29 @@ public class MapRenderer {
                 switch (protectionLevel) {
                     case 4:
                         shields.put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
                         shields.put(new Vector2(mapCoords.x + SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         break;
                     case 3:
                         shields.put(new Vector2(mapCoords.x - SHIELD_SIZE * 1.5F, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         shields.put(new Vector2(mapCoords.x + SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         break;
                     case 2:
                         shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
                         break;
                     case 1:
                         shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
-                                drawTile.darken);
+                            drawTile.darken);
                         break;
                     case 0:
                         break;
@@ -304,9 +304,9 @@ public class MapRenderer {
         for (int i = 1; i <= partAmount; i += 2) {
             Line linePart = new Line();
             linePart.start = new Vector2(line.start.x + (lineDiffX / partAmount) * (i - 1),
-                    line.start.y + (lineDiffY / partAmount) * (i - 1));
+                line.start.y + (lineDiffY / partAmount) * (i - 1));
             linePart.end = new Vector2(line.start.x + (lineDiffX / partAmount) * i,
-                    line.start.y + (lineDiffY / partAmount) * i);
+                line.start.y + (lineDiffY / partAmount) * i);
             resultLines.add(linePart);
         }
         return resultLines;
@@ -319,7 +319,7 @@ public class MapRenderer {
             case 0:
                 // top left
                 start = new Vector2(mapCoords.x - HEXTILE_WIDTH / 4 + LINE_EXTENSION,
-                        mapCoords.y + HEXTILE_HEIGHT / 2 + LINE_EXTENSION);
+                    mapCoords.y + HEXTILE_HEIGHT / 2 + LINE_EXTENSION);
                 end = new Vector2(mapCoords.x - HEXTILE_WIDTH / 2 - LINE_EXTENSION, mapCoords.y - LINE_EXTENSION);
                 break;
             case 1:
@@ -331,13 +331,13 @@ public class MapRenderer {
             case 2:
                 // top right
                 start = new Vector2(mapCoords.x + HEXTILE_WIDTH / 4 - LINE_EXTENSION,
-                        mapCoords.y + HEXTILE_HEIGHT / 2 + LINE_EXTENSION);
+                    mapCoords.y + HEXTILE_HEIGHT / 2 + LINE_EXTENSION);
                 end = new Vector2(mapCoords.x + HEXTILE_WIDTH / 2 + LINE_EXTENSION, mapCoords.y - LINE_EXTENSION);
                 break;
             case 3:
                 // bottom right
                 start = new Vector2(mapCoords.x + HEXTILE_WIDTH / 4 - LINE_EXTENSION,
-                        mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
+                    mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
                 end = new Vector2(mapCoords.x + HEXTILE_WIDTH / 2 + LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
                 break;
             case 4:
@@ -348,7 +348,7 @@ public class MapRenderer {
             case 5:
                 // bottom left
                 start = new Vector2(mapCoords.x - HEXTILE_WIDTH / 4 + LINE_EXTENSION,
-                        mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
+                    mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
                 end = new Vector2(mapCoords.x - HEXTILE_WIDTH / 2 - LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
                 break;
             default:
@@ -424,7 +424,7 @@ public class MapRenderer {
                     // it later
                     // the 0.01F is a hack that seems to mitigate this
                     spriteBatch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
-                            waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
+                        waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
                 }
             }
         } else {
@@ -444,19 +444,19 @@ public class MapRenderer {
         for (DrawTile tile : tiles.values()) {
             if (tile.bottomBeach || tile.bottomRightBeach) {
                 spriteBatch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT * 2,
-                        HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
+                    HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
             }
             if (tile.bottomBeach || tile.bottomLeftBeach) {
                 spriteBatch.draw(bottomLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2,
-                        tile.mapCoords.y - HEXTILE_HEIGHT * 2, HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
+                    tile.mapCoords.y - HEXTILE_HEIGHT * 2, HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
             }
             if (tile.topBeach || tile.topLeftBeach) {
                 spriteBatch.draw(topLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2, tile.mapCoords.y,
-                        HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
+                    HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
             }
             if (tile.topBeach || tile.topRightBeach) {
                 spriteBatch.draw(topRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH * 2,
-                        HEXTILE_HEIGHT * 2);
+                    HEXTILE_HEIGHT * 2);
             }
         }
         // beach sand
@@ -468,19 +468,19 @@ public class MapRenderer {
         for (DrawTile tile : tiles.values()) {
             if (tile.bottomBeach || tile.bottomRightBeach) {
                 spriteBatch.draw(bottomRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT,
-                        HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                    HEXTILE_WIDTH, HEXTILE_HEIGHT);
             }
             if (tile.bottomBeach || tile.bottomLeftBeach) {
                 spriteBatch.draw(bottomLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH,
-                        tile.mapCoords.y - HEXTILE_HEIGHT, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                    tile.mapCoords.y - HEXTILE_HEIGHT, HEXTILE_WIDTH, HEXTILE_HEIGHT);
             }
             if (tile.topBeach || tile.topLeftBeach) {
                 spriteBatch.draw(topLeftBeachSandRegion, tile.mapCoords.x - HEXTILE_WIDTH, tile.mapCoords.y,
-                        HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                    HEXTILE_WIDTH, HEXTILE_HEIGHT);
             }
             if (tile.topBeach || tile.topRightBeach) {
                 spriteBatch.draw(topRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH,
-                        HEXTILE_HEIGHT);
+                    HEXTILE_HEIGHT);
             }
         }
 
@@ -493,7 +493,7 @@ public class MapRenderer {
             }
             spriteBatch.setColor(color);
             spriteBatch.draw(tileRegion, tile.mapCoords.x - HEXTILE_WIDTH / 2, tile.mapCoords.y - HEXTILE_HEIGHT / 2,
-                    HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
 
         // draw all the shields
@@ -514,32 +514,32 @@ public class MapRenderer {
         spriteBatch.setColor(normalColor);
         for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
             spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
-                    currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
         // draw the darkened contents like normal but then draw a shadow over them
         for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
             spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
-                    currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
         spriteBatch.setColor(darkenedColor);
         for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
             spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
-                    currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
         spriteBatch.setColor(normalColor);
         // draw all the non-animated contents
         for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {
             spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
-                    HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
         for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
             spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
-                    HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
         spriteBatch.setColor(darkenedColor);
         for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
             spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
-                    HEXTILE_WIDTH, HEXTILE_HEIGHT);
+                HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
         spriteBatch.end();
         // draw all the lines
@@ -548,12 +548,12 @@ public class MapRenderer {
         shapeRenderer.setColor(1F, 1F, 1F, 1);
         for (int i = 0; i < whiteLineStartPoints.size(); i++) {
             shapeRenderer.rectLine(whiteLineStartPoints.get(i).x, whiteLineStartPoints.get(i).y,
-                    whiteLineEndPoints.get(i).x, whiteLineEndPoints.get(i).y, 0.6F);
+                whiteLineEndPoints.get(i).x, whiteLineEndPoints.get(i).y, 0.6F);
         }
         shapeRenderer.setColor(1F, 0F, 0F, 1);
         for (int i = 0; i < redLineStartPoints.size(); i++) {
             shapeRenderer.rectLine(redLineStartPoints.get(i).x, redLineStartPoints.get(i).y, redLineEndPoints.get(i).x,
-                    redLineEndPoints.get(i).y, 0.6F);
+                redLineEndPoints.get(i).y, 0.6F);
         }
         shapeRenderer.end();
     }
@@ -567,16 +567,16 @@ public class MapRenderer {
     public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
         float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
         float y = (float) (HexMapHelper.HEX_OUTER_RADIUS
-                * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
+            * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
         return new Vector2(x, y);
     }
 
     private Vector2 calculateWaterOriginPoint() {
         float waterTileSizePx = WATER_TILE_SIZE / camera.zoom;
         int waterTilesNeededToCoverScreenHorizonally = (int) Math
-                .ceil((camera.viewportWidth * camera.zoom) / WATER_TILE_SIZE);
+            .ceil((camera.viewportWidth * camera.zoom) / WATER_TILE_SIZE);
         int waterTilesNeededToCoverScreenVertically = (int) Math
-                .ceil((camera.viewportHeight * camera.zoom) / WATER_TILE_SIZE);
+            .ceil((camera.viewportHeight * camera.zoom) / WATER_TILE_SIZE);
         // make sure the tile number is even or there will be visible steps when zooming
         if (waterTilesNeededToCoverScreenHorizonally % 2 != 0) {
             waterTilesNeededToCoverScreenHorizonally += 1;
@@ -585,14 +585,14 @@ public class MapRenderer {
             waterTilesNeededToCoverScreenVertically += 1;
         }
         float waterOffsetForZoomInPxX = (waterTilesNeededToCoverScreenHorizonally * waterTileSizePx
-                - camera.viewportWidth) / 2;
+            - camera.viewportWidth) / 2;
         float waterOffsetForZoomInPxY = (waterTilesNeededToCoverScreenVertically * waterTileSizePx
-                - camera.viewportHeight) / 2;
+            - camera.viewportHeight) / 2;
         float waterOffsetForMovementX = camera.position.x % WATER_TILE_SIZE;
         float waterOffsetForMovementY = camera.position.y % WATER_TILE_SIZE;
         // bottom left point from where the water is drawn
         Vector3 waterOriginPoint = camera
-                .unproject(new Vector3(-waterOffsetForZoomInPxX, camera.viewportHeight + waterOffsetForZoomInPxY, 0));
+            .unproject(new Vector3(-waterOffsetForZoomInPxX, camera.viewportHeight + waterOffsetForZoomInPxY, 0));
         waterOriginPoint.x -= waterOffsetForMovementX;
         waterOriginPoint.y -= waterOffsetForMovementY;
         return new Vector2(waterOriginPoint.x, waterOriginPoint.y);
@@ -623,7 +623,7 @@ public class MapRenderer {
         camera.position.set(dims.getCenter(), 0);
         // offset to apply the margin
         camera.translate(marginRightPx * camera.zoom / 2 - marginLeftPx * camera.zoom / 2,
-                marginTopPx * camera.zoom / 2 - marginBottomPx * camera.zoom / 2);
+            marginTopPx * camera.zoom / 2 - marginBottomPx * camera.zoom / 2);
         camera.update();
     }
 
@@ -634,10 +634,10 @@ public class MapRenderer {
      */
     public void placeCameraForOnKingdom(GameState gameState, Kingdom kingdom) {
         Set<Vector2> kingdomTileCoordinates =
-                gameState.getMap().entrySet().stream().filter(entry ->
-                                kingdom.getTiles().contains(entry.getValue()))
-                        .map(Entry::getKey)
-                        .collect(Collectors.toSet());
+            gameState.getMap().entrySet().stream().filter(entry ->
+                    kingdom.getTiles().contains(entry.getValue()))
+                .map(Entry::getKey)
+                .collect(Collectors.toSet());
         MapDimensions dims = HexMapHelper.getMapDimensionsInWorldCoords(kingdomTileCoordinates);
         // move camera to center
         camera.position.set(dims.getCenter(), 0);

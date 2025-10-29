@@ -71,16 +71,16 @@ public class CrashReportScreen extends GameScreen {
     private void registerEventListeners() {
         crashReportStage.setFinishedCallback(() -> {
             ScreenTransitionTarget onFinishedTarget = isGameStartup ? ScreenTransitionTarget.SPLASH_SCREEN
-                    : ScreenTransitionTarget.INFORMATION_MENU_SCREEN;
+                : ScreenTransitionTarget.INFORMATION_MENU_SCREEN;
             eventBus.post(new ScreenTransitionTriggerEvent(onFinishedTarget));
         });
         crashReportStage.crashReportSlide.sendMailButton.addListener(new ExceptionLoggingChangeListener(() -> {
             try {
                 String totallyUnharvestableEmail = "con" + "tact@sesu" + "8642.de";
                 URI mailtoUri = new URI("mailto", totallyUnharvestableEmail, null,
-                        "subject=FeudalTactics Crash Report&body="
-                                + crashReportStage.crashReportSlide.textArea.getText(),
-                        null);
+                    "subject=FeudalTactics Crash Report&body="
+                        + crashReportStage.crashReportSlide.textArea.getText(),
+                    null);
                 // couldn't find a way to build a proper mailto uri without the forward slashes
                 String mailtoUriString = mailtoUri.toString().replaceFirst("://", ":");
                 logger.debug("Opening bug report mailto URI.");
@@ -88,7 +88,7 @@ public class CrashReportScreen extends GameScreen {
             } catch (URISyntaxException e) {
                 // do not throw an exception while the user is trying to report an exception
                 logger.warn("unable to build mailto URI with body: {}",
-                        crashReportStage.crashReportSlide.textArea.getText());
+                    crashReportStage.crashReportSlide.textArea.getText());
             }
         }));
         crashReportStage.crashReportSlide.copyButton.addListener(new ExceptionLoggingChangeListener(() -> {

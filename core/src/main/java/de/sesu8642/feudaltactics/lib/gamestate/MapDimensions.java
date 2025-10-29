@@ -40,8 +40,8 @@ public class MapDimensions {
         }
         MapDimensions other = (MapDimensions) obj;
         return Objects.equals(center, other.center)
-                && Float.floatToIntBits(height) == Float.floatToIntBits(other.height)
-                && Float.floatToIntBits(width) == Float.floatToIntBits(other.width);
+            && Float.floatToIntBits(height) == Float.floatToIntBits(other.height)
+            && Float.floatToIntBits(width) == Float.floatToIntBits(other.width);
     }
 
 }

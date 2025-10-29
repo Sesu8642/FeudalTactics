@@ -65,14 +65,14 @@ public class EditorController {
     public void placeHeldObject(Vector2 hexCoords) {
         if (heldTilePlayerIndex != null) {
             Player newPlayer =
-                    gameState.getPlayers().stream()
-                            .filter(player -> player.getPlayerIndex() == heldTilePlayerIndex).findAny().get();
+                gameState.getPlayers().stream()
+                    .filter(player -> player.getPlayerIndex() == heldTilePlayerIndex).findAny().get();
             GameStateHelper.placeTile(gameState, hexCoords, newPlayer);
         } else if (heldTileContent != null) {
             HexTile tile = gameState.getMap().get(hexCoords);
             if (tile != null) {
                 logger.debug("placing object {} on tile at position {}", heldTileContent.getClass().getName(),
-                        hexCoords);
+                    hexCoords);
                 GameStateHelper.placeTileContent(gameState, tile, heldTileContent);
             }
         } else {

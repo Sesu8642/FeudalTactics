@@ -7,7 +7,6 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,7 +79,7 @@ public class NewGamePreferences {
      */
     public static NewGamePreferences fromSharableString(String sharedString) {
         NewGamePreferences preferences = new NewGamePreferences(0, Intelligence.LEVEL_1, MapSizes.SMALL,
-                Densities.DENSE, 0);
+            Densities.DENSE, 0);
         try {
             fillPreferences(sharedString, preferences);
         } catch (IOException e) {
@@ -111,7 +110,7 @@ public class NewGamePreferences {
                         break;
                     case BOT_INTELLIGENCE_DISPLAY_NAME:
                         Intelligence botIntelligence =
-                                EnumDisplayNameConverter.getBotIntelligenceFromDisplayName(secondStringPart);
+                            EnumDisplayNameConverter.getBotIntelligenceFromDisplayName(secondStringPart);
                         preferences.setBotIntelligence(botIntelligence);
                         break;
                     case MAP_SIZE_DISPLAY_NAME:
@@ -120,7 +119,7 @@ public class NewGamePreferences {
                         break;
                     case DENSITY_DISPLAY_NAME:
                         Densities mapDensity =
-                                EnumDisplayNameConverter.getMapDensityFromDisplayName(secondStringPart);
+                            EnumDisplayNameConverter.getMapDensityFromDisplayName(secondStringPart);
                         preferences.setDensity(mapDensity);
                         break;
                     case STARTING_POSITION_DISPLAY_NAME:
@@ -156,7 +155,7 @@ public class NewGamePreferences {
         // of bot players is reduced from default
         int correctedStartingPosition = Math.min(startingPosition, numberOfBotPlayers);
         return new GameParameters(correctedStartingPosition, seed, mapSize.amountOfTiles, density.densityFloat,
-                botIntelligence, numberOfBotPlayers);
+            botIntelligence, numberOfBotPlayers);
     }
 
     /**
@@ -164,14 +163,14 @@ public class NewGamePreferences {
      */
     public String toSharableString() {
         return String.format(PARAMETER_DISPLAY_FORMAT, SEED_DISPLAY_NAME, seed)
-                + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_NAME,
-                startingPosition + 1)
-                + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_NAME,
-                EnumDisplayNameConverter.getDisplayName(botIntelligence))
-                + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_NAME,
-                EnumDisplayNameConverter.getDisplayName(mapSize))
-                + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_NAME,
-                EnumDisplayNameConverter.getDisplayName(density));
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_NAME,
+            startingPosition + 1)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_NAME,
+            EnumDisplayNameConverter.getDisplayName(botIntelligence))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_NAME,
+            EnumDisplayNameConverter.getDisplayName(mapSize))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_NAME,
+            EnumDisplayNameConverter.getDisplayName(density));
     }
 
     /**

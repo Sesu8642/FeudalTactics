@@ -54,7 +54,7 @@ public class NewGamePreferencesDao {
     public NewGamePreferences getNewGamePreferences() {
         long seed = prefStore.getLong(NEW_GAME_PREFERENCES_SEED_NAME, System.currentTimeMillis());
         Intelligence botIntelligence = Intelligence.values()[prefStore
-                .getInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, 0)];
+            .getInteger(NEW_GAME_PREFERENCES_BOT_INTELLIGENCE_NAME, 0)];
         MapSizes mapSize = MapSizes.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_MAP_SIZE_NAME, 0)];
         Densities density = Densities.values()[prefStore.getInteger(NEW_GAME_PREFERENCES_DENSITY_NAME, 0)];
         int startingPosition = prefStore.getInteger(NEW_GAME_PREFERENCES_STARTING_POSITION_NAME, 0);

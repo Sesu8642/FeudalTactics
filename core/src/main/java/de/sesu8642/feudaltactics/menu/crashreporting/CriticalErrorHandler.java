@@ -38,7 +38,7 @@ public class CriticalErrorHandler extends Handler {
                 builder.append(formattedRecord);
             }
             FeudalTactics.getDaggerComponent().getGameCrasher().crashAfterGeneratingReport(builder.toString(),
-                    logRecord.getThrown());
+                logRecord.getThrown());
         }
     }
 

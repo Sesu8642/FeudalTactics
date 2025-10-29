@@ -65,7 +65,7 @@ public class HexTile implements Comparable<HexTile> {
         }
         HexTile other = (HexTile) obj;
         return Objects.equals(content, other.content) && Objects.equals(player, other.player)
-                && Objects.equals(position, other.position);
+            && Objects.equals(position, other.position);
     }
 
     // compare using the coordinates; a fix order is needed in some places to avoid

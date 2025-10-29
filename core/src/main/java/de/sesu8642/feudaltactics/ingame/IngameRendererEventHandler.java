@@ -46,7 +46,7 @@ public class IngameRendererEventHandler {
     @Subscribe
     public void handleMapCentering(CenterMapEvent event) {
         mapRenderer.placeCameraForFullMapView(event.getGameState(), event.getMarginLeftPx(), event.getMarginBottomPx(),
-                event.getMarginRightPx(), event.getMarginTopPx());
+            event.getMarginRightPx(), event.getMarginTopPx());
     }
 
     /**

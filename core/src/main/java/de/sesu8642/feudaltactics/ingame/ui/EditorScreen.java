@@ -44,8 +44,8 @@ public class EditorScreen extends GameScreen {
     private final EditorHudStage editorHudStage;
 
     List<TileContent> possibleTileContents = ImmutableList.of(new Unit(Unit.UnitTypes.PEASANT),
-            new Unit(Unit.UnitTypes.SPEARMAN), new Unit(Unit.UnitTypes.KNIGHT), new Unit(Unit.UnitTypes.BARON),
-            new Tree(), new Castle());
+        new Unit(Unit.UnitTypes.SPEARMAN), new Unit(Unit.UnitTypes.KNIGHT), new Unit(Unit.UnitTypes.BARON),
+        new Tree(), new Castle());
 
     /**
      * Tile content for the hand, if a tile content is to be placed.
@@ -114,7 +114,7 @@ public class EditorScreen extends GameScreen {
     void centerMap() {
         Margin centeringMargin = calculateMapScreenArea();
         eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
-                centeringMargin.marginTop, centeringMargin.marginRight));
+            centeringMargin.marginTop, centeringMargin.marginRight));
     }
 
     /**
@@ -129,14 +129,14 @@ public class EditorScreen extends GameScreen {
         // calculate what is the bigger rectangular area for the map to fit: above the
         // inputs or to their right
         float aboveArea =
-                ingameCamera.viewportWidth * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
+            ingameCamera.viewportWidth * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
         float rightArea =
-                (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH) * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX - ParameterInputStage.OUTER_PADDING_PX);
+            (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH) * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX - ParameterInputStage.OUTER_PADDING_PX);
         if (aboveArea > rightArea) {
             return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT, 0, 0);
         } else {
             return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
-                    ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
+                ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
         }
     }
 
@@ -191,7 +191,7 @@ public class EditorScreen extends GameScreen {
             eventBus.post(new EditorHandContentUpdatedEvent(heldTilePlayerIndex));
             if (heldTilePlayerIndex != null) {
                 editorHudStage.updateHandContent(HexTile.SPRITE_NAME,
-                        MapRenderer.PLAYER_COLOR_PALETTE.get(heldTilePlayerIndex));
+                    MapRenderer.PLAYER_COLOR_PALETTE.get(heldTilePlayerIndex));
             } else {
                 editorHudStage.updateHandContent(null);
             }

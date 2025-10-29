@@ -52,11 +52,11 @@ public class GameParameters {
     @Override
     public String toString() {
         return "GameParameters{" +
-                "players=" + players +
-                ", seed=" + seed +
-                ", landMass=" + landMass +
-                ", density=" + density +
-                ", botIntelligence=" + botIntelligence +
-                '}';
+            "players=" + players +
+            ", seed=" + seed +
+            ", landMass=" + landMass +
+            ", density=" + density +
+            ", botIntelligence=" + botIntelligence +
+            '}';
     }
 }

@@ -117,8 +117,8 @@ public class AutoSaveRepository {
                 SortedMap<Long, PlayerMove> incrementalSaves = getIncrementalSavesInOrder();
                 // keep enough incremental saves to enable undoing moves
                 SortedMap<Long, PlayerMove> incrementalSavesToMerge =
-                        incrementalSaves.subMap(incrementalSaves.firstKey(),
-                                new ArrayList<Long>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
+                    incrementalSaves.subMap(incrementalSaves.firstKey(),
+                        new ArrayList<Long>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
                 mergeIncrementalSavesIntoFull(fullSave, incrementalSavesToMerge.values());
                 String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
                 fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveStringFullSave);
@@ -175,10 +175,10 @@ public class AutoSaveRepository {
 
     private SortedMap<Long, PlayerMove> getIncrementalSavesInOrder() {
         return incrementalAutoSavePrefStore.get().entrySet().stream()
-                .filter(entry -> !entry.getKey().equals(CURRENT_UNDO_DEPTH_NAME))
-                .collect(Collectors.toMap(entry -> Long.parseLong(entry.getKey()),
-                        entry -> incrementalSaveJson.fromJson(PlayerMove.class, (String) entry.getValue()),
-                        (entry1, entry2) -> entry1, TreeMap::new));
+            .filter(entry -> !entry.getKey().equals(CURRENT_UNDO_DEPTH_NAME))
+            .collect(Collectors.toMap(entry -> Long.parseLong(entry.getKey()),
+                entry -> incrementalSaveJson.fromJson(PlayerMove.class, (String) entry.getValue()),
+                (entry1, entry2) -> entry1, TreeMap::new));
     }
 
     /**
@@ -240,7 +240,7 @@ public class AutoSaveRepository {
             return Optional.empty();
         }
         return prefsMap.keySet().stream().filter(key -> !key.equals(CURRENT_UNDO_DEPTH_NAME))
-                .max((a, b) -> Long.compare(Long.parseLong(a), Long.parseLong(b)));
+            .max((a, b) -> Long.compare(Long.parseLong(a), Long.parseLong(b)));
     }
 
     /**

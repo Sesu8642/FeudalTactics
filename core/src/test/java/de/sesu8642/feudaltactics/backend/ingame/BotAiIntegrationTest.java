@@ -61,22 +61,22 @@ class BotAiIntegrationTest {
 
     static Stream<Arguments> provideMapParameters() {
         return Stream.of(Arguments.of(Intelligence.LEVEL_1, 12F, 0F, 1L),
-                Arguments.of(Intelligence.LEVEL_1, 100F, -3F, 2L), Arguments.of(Intelligence.LEVEL_1, 200F, 3F, 3L),
-                Arguments.of(Intelligence.LEVEL_1, 250F, 1F, 4L), Arguments.of(Intelligence.LEVEL_1, 250F, -3F, 5L),
-                Arguments.of(Intelligence.LEVEL_2, 12F, 0F, 6L), Arguments.of(Intelligence.LEVEL_2, 100F, -3F, 7L),
-                Arguments.of(Intelligence.LEVEL_2, 200F, 3F, 8L), Arguments.of(Intelligence.LEVEL_2, 250F, 1F, 9L),
-                Arguments.of(Intelligence.LEVEL_2, 250F, -3F, 10L), Arguments.of(Intelligence.LEVEL_2, 12F, 0F, 6L),
-                Arguments.of(Intelligence.LEVEL_2, 100F, -3F, 7L), Arguments.of(Intelligence.LEVEL_2, 200F, 3F, 8L),
-                Arguments.of(Intelligence.LEVEL_2, 250F, 1F, 9L), Arguments.of(Intelligence.LEVEL_2, 250F, -3F, 10L),
-                Arguments.of(Intelligence.LEVEL_4, 12F, 0F, 11L), Arguments.of(Intelligence.LEVEL_4, 100F, -3F, 12L),
-                Arguments.of(Intelligence.LEVEL_4, 200F, 3F, 13L), Arguments.of(Intelligence.LEVEL_4, 250F, 1F, 14L),
-                Arguments.of(Intelligence.LEVEL_4, 250F, -3F, 15L));
+            Arguments.of(Intelligence.LEVEL_1, 100F, -3F, 2L), Arguments.of(Intelligence.LEVEL_1, 200F, 3F, 3L),
+            Arguments.of(Intelligence.LEVEL_1, 250F, 1F, 4L), Arguments.of(Intelligence.LEVEL_1, 250F, -3F, 5L),
+            Arguments.of(Intelligence.LEVEL_2, 12F, 0F, 6L), Arguments.of(Intelligence.LEVEL_2, 100F, -3F, 7L),
+            Arguments.of(Intelligence.LEVEL_2, 200F, 3F, 8L), Arguments.of(Intelligence.LEVEL_2, 250F, 1F, 9L),
+            Arguments.of(Intelligence.LEVEL_2, 250F, -3F, 10L), Arguments.of(Intelligence.LEVEL_2, 12F, 0F, 6L),
+            Arguments.of(Intelligence.LEVEL_2, 100F, -3F, 7L), Arguments.of(Intelligence.LEVEL_2, 200F, 3F, 8L),
+            Arguments.of(Intelligence.LEVEL_2, 250F, 1F, 9L), Arguments.of(Intelligence.LEVEL_2, 250F, -3F, 10L),
+            Arguments.of(Intelligence.LEVEL_4, 12F, 0F, 11L), Arguments.of(Intelligence.LEVEL_4, 100F, -3F, 12L),
+            Arguments.of(Intelligence.LEVEL_4, 200F, 3F, 13L), Arguments.of(Intelligence.LEVEL_4, 250F, 1F, 14L),
+            Arguments.of(Intelligence.LEVEL_4, 250F, -3F, 15L));
     }
 
     static void assertIntegreKingdomTileLinks(GameState gameState) {
         // the kingdom of each tile contains the tile
         gameState.getMap().values().stream().filter(tile -> tile.getKingdom() != null)
-                .forEach(tile -> assertTrue(tile.getKingdom().getTiles().contains(tile)));
+            .forEach(tile -> assertTrue(tile.getKingdom().getTiles().contains(tile)));
         // every tile in a kingdom knows that it is part of that kingdom
         for (Kingdom kingdom : gameState.getKingdoms()) {
             kingdom.getTiles().forEach(tile -> {
@@ -88,8 +88,8 @@ class BotAiIntegrationTest {
     static void assertEveryKingdomHasExactlyOneCapital(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             long amountCapitals = kingdom.getTiles().stream().filter(
-                            tile -> tile.getContent() != null && Capital.class.isAssignableFrom(tile.getContent().getClass()))
-                    .count();
+                    tile -> tile.getContent() != null && Capital.class.isAssignableFrom(tile.getContent().getClass()))
+                .count();
             assertEquals(1, amountCapitals);
         }
     }
@@ -110,7 +110,7 @@ class BotAiIntegrationTest {
     @ParameterizedTest
     @MethodSource("provideMapParameters")
     void botsDoNotGainOrLoseValueDuringTurn(Intelligence botIntelligence, Float landMass, Float density, Long seed)
-            throws Exception {
+        throws Exception {
         GameState gameState = createGameState(landMass, density, seed);
 
         for (int i = 1; i <= 1000; i++) {
@@ -145,7 +145,7 @@ class BotAiIntegrationTest {
     @ParameterizedTest
     @MethodSource("provideMapParameters")
     void botsActConsistentWithTheSameSeed(Intelligence botIntelligence, Float landMass, Float density, Long seed)
-            throws Exception {
+        throws Exception {
         GameState gameState1 = createGameState(landMass, density, seed);
         GameState gameState2 = createGameState(landMass, density, seed);
 
@@ -167,7 +167,7 @@ class BotAiIntegrationTest {
     @ParameterizedTest
     @MethodSource("provideMapParameters")
     void gameStateStaysConsistent(Intelligence botIntelligence, Float landMass, Float density, Long seed)
-            throws Exception {
+        throws Exception {
         GameState gameState = createGameState(landMass, density, seed);
 
         for (int i = 1; i <= 1000; i++) {
@@ -198,22 +198,22 @@ class BotAiIntegrationTest {
     private int calculateActivePlayerCapital(GameState gameState) {
         // first sum up the value of all map objects the player owns
         int result = gameState.getMap().values().stream()
-                .filter(tile -> tile.getPlayer().equals(gameState.getActivePlayer())).mapToInt(tile -> {
-                    if (tile.getContent() == null) {
-                        return 0;
-                    }
-                    if (Unit.class.isAssignableFrom(tile.getContent().getClass())) {
-                        return tile.getContent().getStrength() * Unit.COST;
-                    }
-                    if (Castle.class.isAssignableFrom(tile.getContent().getClass())) {
-                        return Castle.COST;
-                    }
+            .filter(tile -> tile.getPlayer().equals(gameState.getActivePlayer())).mapToInt(tile -> {
+                if (tile.getContent() == null) {
                     return 0;
-                }).sum();
+                }
+                if (Unit.class.isAssignableFrom(tile.getContent().getClass())) {
+                    return tile.getContent().getStrength() * Unit.COST;
+                }
+                if (Castle.class.isAssignableFrom(tile.getContent().getClass())) {
+                    return Castle.COST;
+                }
+                return 0;
+            }).sum();
         // add cash savings
         result += gameState.getKingdoms().stream()
-                .filter(kingdom -> kingdom.getPlayer().equals(gameState.getActivePlayer()))
-                .mapToInt(kingdom -> kingdom.getSavings()).sum();
+            .filter(kingdom -> kingdom.getPlayer().equals(gameState.getActivePlayer()))
+            .mapToInt(kingdom -> kingdom.getSavings()).sum();
         return result;
     }
 

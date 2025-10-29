@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 // there's no factory for this cause its just a single slide
-// this is not created by the DependencyLicensesStage because that could only use static methods as the slide needs to be passed to the super constructor
+// this is not created by the DependencyLicensesStage because that could only use static methods as the slide needs
+// to be passed to the super constructor
 
 /**
  * UI for the dependency list.

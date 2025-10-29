@@ -80,7 +80,7 @@ public class GameState {
     @Override
     public int hashCode() {
         return Objects.hash(players, winner, winningRound, playerTurn, map, kingdoms, activeKingdom, heldObject,
-                botIntelligence, seed, objectiveProgress, scenarioMap, round);
+            botIntelligence, seed, objectiveProgress, scenarioMap, round);
     }
 
 }

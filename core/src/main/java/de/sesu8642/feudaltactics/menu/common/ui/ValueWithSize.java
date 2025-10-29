@@ -38,7 +38,7 @@ public class ValueWithSize extends Value {
             @Override
             public float get(Actor context) {
                 return (float) Math.min(Math.sqrt(actor.getHeight() * actor.getWidth()) * percent,
-                        Gdx.graphics.getDensity() * pixelDensityMultiplier);
+                    Gdx.graphics.getDensity() * pixelDensityMultiplier);
             }
         };
     }

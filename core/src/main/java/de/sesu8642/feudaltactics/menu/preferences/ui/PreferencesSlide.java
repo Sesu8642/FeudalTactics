@@ -13,7 +13,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 // this is not just a slide created by a factory because it needs the additional accessors for the preferences
-// it is not created by the PreferencesStage because that could only use static methods as the slide needs to be passed to the super constructor
+// it is not created by the PreferencesStage because that could only use static methods as the slide needs to be
+// passed to the super constructor
 
 /**
  * UI for the preferences.
@@ -38,7 +39,7 @@ public class PreferencesSlide extends Slide {
         Table preferencesTable = new Table();
 
         forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Warn about forgotten kingdoms",
-                skin);
+            skin);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Show enemy turns", skin);
 
         // add a row to fill the rest of the space in order for the other options to be

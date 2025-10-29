@@ -9,7 +9,8 @@ import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-// this is not created by the DependencyLicensesStage because that could only use static methods as the slide needs to be passed to the super constructor
+// this is not created by the DependencyLicensesStage because that could only use static methods as the slide needs
+// to be passed to the super constructor
 
 /**
  * UI for the dependency details.

@@ -68,7 +68,7 @@ public class Slide {
         Image image = new Image(imageTexture);
         float aspectRatio = ((float) imageTexture.getHeight()) / ((float) imageTexture.getWidth());
         table.add(image).prefWidth(0).maxWidth(MAX_RESPONSIVE_IMAGE_WIDTH).height(Value.percentWidth(aspectRatio))
-                .expand().fill();
+            .expand().fill();
         table.row();
         return this;
     }
