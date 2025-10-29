@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/902681158/source.android.iml" filepath="$PROJECT_DIR$/.idea/modules/902681158/source.android.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/932150056/source.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/932150056/source.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/932150056/source.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/932150056/source.core.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1587143528/source.lwjgl3.main.iml" filepath="$PROJECT_DIR$/.idea/modules/-1587143528/source.lwjgl3.main.iml" />
     </modules>
   </component>
