@@ -18,6 +18,8 @@ import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
 import de.sesu8642.feudaltactics.platformspecific.Insets;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -50,6 +52,8 @@ public class IngameHudStage extends ResizableResettableStage {
     private Table handContentTable;
     private Image handContent;
     private Table bottomTable;
+    @Getter
+    @Setter
     private boolean enemyTurnButtonsShown = false;
 
     /**
@@ -240,14 +244,6 @@ public class IngameHudStage extends ResizableResettableStage {
     @Override
     public void reset() {
         // nothing to reset
-    }
-
-    public boolean isEnemyTurnButtonsShown() {
-        return enemyTurnButtonsShown;
-    }
-
-    public void setEnemyTurnButtonsShown(boolean enemyTurnButtonsShown) {
-        this.enemyTurnButtonsShown = enemyTurnButtonsShown;
     }
 
 }

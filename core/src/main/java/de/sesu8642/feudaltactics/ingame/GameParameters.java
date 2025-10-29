@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.ingame;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +14,15 @@ import java.util.List;
  * Game settings and settings for map generation. Immutable class.
  */
 public class GameParameters {
+    @Getter
     private final List<Player> players;
+    @Getter
     private final long seed;
+    @Getter
     private final int landMass;
+    @Getter
     private final float density;
+    @Getter
     private final Intelligence botIntelligence;
 
     /**
@@ -41,26 +47,6 @@ public class GameParameters {
         this.seed = seed;
         this.landMass = landMass;
         this.density = density;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public long getSeed() {
-        return seed;
-    }
-
-    public int getLandMass() {
-        return landMass;
-    }
-
-    public float getDensity() {
-        return density;
-    }
-
-    public Intelligence getBotIntelligence() {
-        return botIntelligence;
     }
 
     @Override

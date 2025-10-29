@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
+import lombok.Getter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,7 +21,9 @@ import javax.inject.Singleton;
 @Singleton
 public class PreferencesSlide extends Slide {
 
+    @Getter
     private final SelectBox<Boolean> forgottenKingdomSelectBox;
+    @Getter
     private final SelectBox<Boolean> showEnemyTurnsSelectBox;
 
     /**
@@ -57,14 +60,6 @@ public class PreferencesSlide extends Slide {
         preferencesTable.add().height(20);
         preferencesTable.row();
         return newSelectBox;
-    }
-
-    public SelectBox<Boolean> getForgottenKingdomSelectBox() {
-        return forgottenKingdomSelectBox;
-    }
-
-    public SelectBox<Boolean> getShowEnemyTurnsSelectBox() {
-        return showEnemyTurnsSelectBox;
     }
 
 }

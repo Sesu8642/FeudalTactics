@@ -4,8 +4,10 @@ package de.sesu8642.feudaltactics.ingame;
 
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import java.io.StringReader;
 /**
  * Value object: preferences for a new game.
  */
+@Slf4j
 public class NewGamePreferences {
 
     public static final String PARAMETER_DISPLAY_FORMAT = "%s: %s";
@@ -23,12 +26,23 @@ public class NewGamePreferences {
     private static final String DENSITY_DISPLAY_NAME = "Map Density";
     private static final String STARTING_POSITION_DISPLAY_NAME = "Starting Position";
     private static final String NUMBER_OF_BOT_PLAYERS_DISPLAY_NAME = "Number of Bots";
-    private static final Logger LOGGER = LoggerFactory.getLogger(NewGamePreferences.class);
+    @Getter
+    @Setter
     private long seed;
+    @Getter
+    @Setter
     private Intelligence botIntelligence;
+    @Getter
+    @Setter
     private MapSizes mapSize;
+    @Getter
+    @Setter
     private Densities density;
+    @Getter
+    @Setter
     private int startingPosition;
+    @Getter
+    @Setter
     private int numberOfBotPlayers;
 
     /**
@@ -71,7 +85,7 @@ public class NewGamePreferences {
             fillPreferences(sharedString, preferences);
         } catch (IOException e) {
             // no need to crash, just return what's there
-            LOGGER.warn("error reading string from clipboard", e);
+            log.warn("error reading string from clipboard", e);
         }
         return preferences;
     }
@@ -160,68 +174,17 @@ public class NewGamePreferences {
                 EnumDisplayNameConverter.getDisplayName(density));
     }
 
-    public long getSeed() {
-        return seed;
-    }
-
-    public void setSeed(long seed) {
-        this.seed = seed;
-    }
-
-    public Intelligence getBotIntelligence() {
-        return botIntelligence;
-    }
-
-    public void setBotIntelligence(Intelligence botIntelligence) {
-        this.botIntelligence = botIntelligence;
-    }
-
-    public MapSizes getMapSize() {
-        return mapSize;
-    }
-
-    public void setMapSize(MapSizes mapSize) {
-        this.mapSize = mapSize;
-    }
-
-    public Densities getDensity() {
-        return density;
-    }
-
-    public void setDensity(Densities density) {
-        this.density = density;
-    }
-
-    public int getStartingPosition() {
-        return startingPosition;
-    }
-
-    public void setStartingPosition(int startingPosition) {
-        this.startingPosition = startingPosition;
-    }
-
-    public int getNumberOfBotPlayers() {
-        return numberOfBotPlayers;
-    }
-
-    public void setNumberOfBotPlayers(int numberOfBotPlayers) {
-        this.numberOfBotPlayers = numberOfBotPlayers;
-    }
-
     /**
      * Map sizes that can be generated.
      */
     public enum MapSizes {
         SMALL(50), MEDIUM(150), LARGE(250), XLARGE(500), XXLARGE(1000);
 
+        @Getter
         private final int amountOfTiles;
 
         MapSizes(int amountOfTiles) {
             this.amountOfTiles = amountOfTiles;
-        }
-
-        public int getAmountOfTiles() {
-            return this.amountOfTiles;
         }
 
     }
@@ -232,14 +195,11 @@ public class NewGamePreferences {
     public enum Densities {
         LOOSE(-3), MEDIUM(0), DENSE(3);
 
+        @Getter
         private final float densityFloat;
 
         Densities(float densityFloat) {
             this.densityFloat = densityFloat;
-        }
-
-        public float getDensityFloat() {
-            return this.densityFloat;
         }
     }
 

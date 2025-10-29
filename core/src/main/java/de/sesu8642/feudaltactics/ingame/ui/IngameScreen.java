@@ -29,6 +29,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import lombok.Setter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -63,6 +64,7 @@ public class IngameScreen extends GameScreen {
 
     private final NewGamePreferencesDao newGamePrefDao;
 
+    @Setter
     private NewGamePreferences cachedNewGamePreferences;
     /**
      * Cached version of the game state from the game controller.
@@ -536,10 +538,6 @@ public class IngameScreen extends GameScreen {
 
     public MenuStage getMenuStage() {
         return menuStage;
-    }
-
-    public void setCachedNewGamePreferences(NewGamePreferences cachedNewGamePreferences) {
-        this.cachedNewGamePreferences = cachedNewGamePreferences;
     }
 
     /**

@@ -2,6 +2,9 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -14,7 +17,10 @@ public class Unit implements TileContent {
 
     public static final int COST = 10;
 
+    @Getter
+    @Setter
     private boolean canAct = true;
+    @Getter
     private UnitTypes unitType;
 
     // only for deserialization
@@ -33,21 +39,9 @@ public class Unit implements TileContent {
         return unitType.spriteName();
     }
 
-    public UnitTypes getUnitType() {
-        return unitType;
-    }
-
     @Override
     public int getStrength() {
         return unitType.strength();
-    }
-
-    public boolean isCanAct() {
-        return canAct;
-    }
-
-    public void setCanAct(boolean canAct) {
-        this.canAct = canAct;
     }
 
     @Override

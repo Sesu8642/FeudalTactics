@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class Slide {
 
     private final Skin skin;
     private final Label headlineLabel;
+    @Getter
     private final Table table = new Table();
 
     /**
@@ -90,10 +92,6 @@ public class Slide {
         table.add(dataTable);
         table.row();
         return this;
-    }
-
-    public Table getTable() {
-        return table;
     }
 
     /**

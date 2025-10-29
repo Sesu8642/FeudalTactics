@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +24,7 @@ import java.util.Set;
  */
 public class MenuStage extends ResizableResettableStage {
 
+    @Getter
     private final List<TextButton> buttons = new ArrayList<>();
     private final MapRenderer mapRenderer;
     private final Insets insets;
@@ -29,7 +32,9 @@ public class MenuStage extends ResizableResettableStage {
     private final OrthographicCamera camera;
     Set<Disposable> disposables = new HashSet<>();
     private Table rootTable;
+    @Getter(AccessLevel.PROTECTED)
     private Table bottomLeftTable;
+    @Getter(AccessLevel.PROTECTED)
     private Table bottomRightTable;
 
     /**
@@ -78,18 +83,6 @@ public class MenuStage extends ResizableResettableStage {
         rootTable.add(bottomRightTable).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
 
         this.addActor(rootTable);
-    }
-
-    public List<TextButton> getButtons() {
-        return buttons;
-    }
-
-    protected Table getBottomLeftTable() {
-        return bottomLeftTable;
-    }
-
-    protected Table getBottomRightTable() {
-        return bottomRightTable;
     }
 
     @Override

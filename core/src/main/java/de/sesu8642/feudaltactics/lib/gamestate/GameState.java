@@ -4,6 +4,9 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 
 import com.badlogic.gdx.math.Vector2;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,137 +16,56 @@ import java.util.Objects;
 /**
  * Contains all information about a running game.
  **/
+@NoArgsConstructor
 public class GameState {
 
+    @Getter
+    @Setter
     private List<Player> players = new ArrayList<>();
+    @Getter
+    @Setter
     private Player winner = null;
+    @Getter
+    @Setter
     private Integer winningRound = null;
+    @Getter
+    @Setter
     private int playerTurn = 0;
     // need a map with fix iteration order to avoid randomness
+    @Getter
+    @Setter
     private LinkedHashMap<Vector2, HexTile> map = new LinkedHashMap<>();
+    @Getter
+    @Setter
     private List<Kingdom> kingdoms;
+    @Getter
+    @Setter
     private Kingdom activeKingdom = null;
+    @Getter
+    @Setter
     private TileContent heldObject = null;
+    @Getter
+    @Setter
     private Intelligence botIntelligence = Intelligence.LEVEL_1;
+    @Getter
+    @Setter
     private Long seed;
+    @Getter
+    @Setter
     private int objectiveProgress = 0;
+    @Getter
+    @Setter
     private ScenarioMap scenarioMap = ScenarioMap.NONE;
 
     /**
      * A round consists of one turn per player. Not 0-based as it might be displayed to the player.
      */
+    @Getter
+    @Setter
     private int round = 1;
-
-    public GameState() {
-        // no fields must be set on construction
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<Player> players) {
-        this.players = players;
-    }
-
-    public Player getWinner() {
-        return winner;
-    }
-
-    public void setWinner(Player winner) {
-        this.winner = winner;
-    }
-
-    public Integer getWinningRound() {
-        return winningRound;
-    }
-
-    public void setWinningRound(Integer winningRound) {
-        this.winningRound = winningRound;
-    }
-
-    public int getPlayerTurn() {
-        return playerTurn;
-    }
-
-    public void setPlayerTurn(int playerTurn) {
-        this.playerTurn = playerTurn;
-    }
-
-    public LinkedHashMap<Vector2, HexTile> getMap() {
-        return map;
-    }
-
-    public void setMap(LinkedHashMap<Vector2, HexTile> map) {
-        this.map = map;
-    }
-
-    public List<Kingdom> getKingdoms() {
-        return kingdoms;
-    }
-
-    public void setKingdoms(List<Kingdom> kingdoms) {
-        this.kingdoms = kingdoms;
-    }
-
-    public Kingdom getActiveKingdom() {
-        return activeKingdom;
-    }
-
-    public void setActiveKingdom(Kingdom activeKingdom) {
-        this.activeKingdom = activeKingdom;
-    }
-
-    public TileContent getHeldObject() {
-        return heldObject;
-    }
-
-    public void setHeldObject(TileContent heldObject) {
-        this.heldObject = heldObject;
-    }
 
     public Player getActivePlayer() {
         return players.get(playerTurn);
-    }
-
-    public Intelligence getBotIntelligence() {
-        return botIntelligence;
-    }
-
-    public void setBotIntelligence(Intelligence botIntelligence) {
-        this.botIntelligence = botIntelligence;
-    }
-
-    public Long getSeed() {
-        return seed;
-    }
-
-    public void setSeed(Long seed) {
-        this.seed = seed;
-    }
-
-    public int getRound() {
-        return round;
-    }
-
-    public void setRound(int round) {
-        this.round = round;
-    }
-
-    public int getObjectiveProgress() {
-        return objectiveProgress;
-    }
-
-    public void setObjectiveProgress(int objectiveProgress) {
-        this.objectiveProgress = objectiveProgress;
-    }
-
-    public ScenarioMap getScenarioMap() {
-        return scenarioMap;
-    }
-
-    public void setScenarioMap(ScenarioMap scenarioMap) {
-        this.scenarioMap = scenarioMap;
     }
 
     @Override

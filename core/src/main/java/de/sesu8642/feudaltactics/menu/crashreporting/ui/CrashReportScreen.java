@@ -14,6 +14,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,7 @@ public class CrashReportScreen extends GameScreen {
      * Whether the screen is shown on startup. Causes the splash screen to be shown
      * on finish instead of the menu.
      */
+    @Getter
     private boolean isGameStartup = false;
 
     /**
@@ -97,10 +99,6 @@ public class CrashReportScreen extends GameScreen {
             logger.debug("opening GitHub issue URI.");
             Gdx.net.openURI("https://github.com/Sesu8642/FeudalTactics/issues");
         }));
-    }
-
-    public boolean isGameStartup() {
-        return isGameStartup;
     }
 
     public void setGameStartup(boolean isGameStartup) {

@@ -3,6 +3,8 @@
 package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.ingame.GameParameters;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event: Map needs to be re-generated because the Parameters of the generated
@@ -10,6 +12,8 @@ import de.sesu8642.feudaltactics.ingame.GameParameters;
  */
 public class RegenerateMapEvent {
 
+    @Getter
+    @Setter
     private GameParameters gameParams;
 
     /**
@@ -17,14 +21,6 @@ public class RegenerateMapEvent {
      */
     public RegenerateMapEvent(GameParameters gameParams) {
         super();
-        this.gameParams = gameParams;
-    }
-
-    public GameParameters getGameParams() {
-        return gameParams;
-    }
-
-    public void setGameParams(GameParameters gameParams) {
         this.gameParams = gameParams;
     }
 

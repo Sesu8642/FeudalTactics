@@ -2,6 +2,9 @@
 
 package de.sesu8642.feudaltactics.menu.preferences;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
 /**
@@ -9,6 +12,8 @@ import java.util.Objects;
  */
 public class NagPreferences {
 
+    @Getter
+    @Setter
     private boolean showTutorialNag;
 
     /**
@@ -18,14 +23,6 @@ public class NagPreferences {
      */
     public NagPreferences(boolean showTutorialNag) {
         super();
-        this.showTutorialNag = showTutorialNag;
-    }
-
-    public boolean isShowTutorialNag() {
-        return showTutorialNag;
-    }
-
-    public void setShowTutorialNag(boolean showTutorialNag) {
         this.showTutorialNag = showTutorialNag;
     }
 

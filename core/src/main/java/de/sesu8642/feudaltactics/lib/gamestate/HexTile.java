@@ -3,6 +3,9 @@
 package de.sesu8642.feudaltactics.lib.gamestate;
 
 import com.badlogic.gdx.math.Vector2;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Objects;
@@ -10,42 +13,28 @@ import java.util.Objects;
 /**
  * A tile of land on the map.
  **/
+@NoArgsConstructor
 public class HexTile implements Comparable<HexTile> {
 
     public static String SPRITE_NAME = "tile_bw";
 
+    @Getter
+    @Setter
     private Player player;
+    @Getter
+    @Setter
     private TileContent content;
+    @Getter
     private Kingdom kingdom;
+    @Getter
     private Vector2 position;
+    @Getter
+    @Setter
     private List<HexTile> cachedNeighborTiles;
-
-    public HexTile() {
-    }
 
     public HexTile(Player player, Vector2 position) {
         this.player = player;
         this.position = position;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public TileContent getContent() {
-        return content;
-    }
-
-    public void setContent(TileContent content) {
-        this.content = content;
-    }
-
-    public Kingdom getKingdom() {
-        return kingdom;
     }
 
     /**
@@ -56,18 +45,6 @@ public class HexTile implements Comparable<HexTile> {
         if (kingdom != null) {
             this.player = kingdom.getPlayer();
         }
-    }
-
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    public List<HexTile> getCachedNeighborTiles() {
-        return cachedNeighborTiles;
-    }
-
-    public void setCachedNeighborTiles(List<HexTile> neighborTiles) {
-        this.cachedNeighborTiles = neighborTiles;
     }
 
     @Override

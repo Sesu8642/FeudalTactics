@@ -3,6 +3,8 @@
 package de.sesu8642.feudaltactics.lib.gamestate;
 
 import com.badlogic.gdx.math.Vector2;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Objects;
 
@@ -10,33 +12,15 @@ import java.util.Objects;
  * Class containing metadata about the map size and its center.
  **/
 public class MapDimensions {
+    @Getter
+    @Setter
     private Vector2 center;
+    @Getter
+    @Setter
     private float width;
+    @Getter
+    @Setter
     private float height;
-
-    public Vector2 getCenter() {
-        return center;
-    }
-
-    public void setCenter(Vector2 center) {
-        this.center = center;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
 
     @Override
     public int hashCode() {

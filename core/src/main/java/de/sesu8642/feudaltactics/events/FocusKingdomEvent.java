@@ -4,13 +4,16 @@ package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
+import lombok.Getter;
 
 /**
  * Event: Kingdom needs to be focused with the camera.
  */
 public class FocusKingdomEvent {
 
+    @Getter
     private final GameState gameState;
+    @Getter
     private final Kingdom kingdom;
 
     /**
@@ -21,14 +24,6 @@ public class FocusKingdomEvent {
     public FocusKingdomEvent(GameState gameState, Kingdom kingdom) {
         this.gameState = gameState;
         this.kingdom = kingdom;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public Kingdom getKingdom() {
-        return kingdom;
     }
 
 }

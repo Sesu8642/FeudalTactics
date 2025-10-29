@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -17,11 +17,11 @@ import java.util.Map.Entry;
  * Helper class that is used to modify a {@link GameState} in a way that
  * respects the game rules and guarantees integrity.
  **/
+@Slf4j
 public class GameStateHelper {
 
     public static final float DEAFULT_INITIAL_TREE_DENSITY = 0.1F;
     public static final float WIN_LANDMASS_PERCENTAGE = 0.8F;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GameStateHelper.class);
 
     // prevent instantiation
     private GameStateHelper() {
@@ -352,7 +352,7 @@ public class GameStateHelper {
                     newCapitalTile = emptyTileOptional.get();
                 } else {
                     // no suitable candidate found, this is ok
-                    LOGGER.debug("no suitable capital tile found after the old one was destroyed");
+                    log.debug("no suitable capital tile found after the old one was destroyed");
                     return;
                 }
             }

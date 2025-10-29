@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.platformspecific.Insets;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +33,7 @@ public class SlideStage extends ResizableResettableStage {
     private TextButton backButton;
     private TextButton nextButton;
     private ScrollPane scrollPane;
+    @Setter
     private Runnable finishedCallback;
 
     /**
@@ -163,10 +165,6 @@ public class SlideStage extends ResizableResettableStage {
         for (Disposable disposable : disposables) {
             disposable.dispose();
         }
-    }
-
-    public void setFinishedCallback(Runnable finishedCallback) {
-        this.finishedCallback = finishedCallback;
     }
 
 }

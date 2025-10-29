@@ -2,6 +2,9 @@
 
 package de.sesu8642.feudaltactics.menu.preferences;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
 /**
@@ -9,7 +12,11 @@ import java.util.Objects;
  */
 public class MainGamePreferences {
 
+    @Getter
+    @Setter
     private boolean warnAboutForgottenKingdoms;
+    @Getter
+    @Setter
     private boolean showEnemyTurns;
 
     /**
@@ -24,22 +31,6 @@ public class MainGamePreferences {
     public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns) {
         super();
         this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
-        this.showEnemyTurns = showEnemyTurns;
-    }
-
-    public boolean isWarnAboutForgottenKingdoms() {
-        return warnAboutForgottenKingdoms;
-    }
-
-    public void setWarnAboutForgottenKingdoms(boolean warnAboutForgottenKingdoms) {
-        this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
-    }
-
-    public boolean isShowEnemyTurns() {
-        return showEnemyTurns;
-    }
-
-    public void setShowEnemyTurns(boolean showEnemyTurns) {
         this.showEnemyTurns = showEnemyTurns;
     }
 

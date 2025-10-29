@@ -9,6 +9,7 @@ import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public class EditorController {
     private final EventBus eventBus;
     private final AutoSaveRepository autoSaveRepo;
     private final ScenarioGameStateLoader scenarioGameStateLoader;
+    @Getter
     private GameState gameState;
 
     private TileContent heldTileContent;
@@ -94,10 +96,6 @@ public class EditorController {
 
         gameState.setScenarioMap(scenarioMap);
         eventBus.post(new GameStateChangeEvent(gameState));
-    }
-
-    public GameState getGameState() {
-        return gameState;
     }
 
 }

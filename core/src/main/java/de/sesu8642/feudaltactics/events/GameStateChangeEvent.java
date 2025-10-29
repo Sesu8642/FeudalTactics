@@ -3,12 +3,16 @@
 package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event: Game state changed.
  */
 public class GameStateChangeEvent {
 
+    @Getter
+    @Setter
     private GameState gameState;
 
     /**
@@ -17,14 +21,6 @@ public class GameStateChangeEvent {
      * @param gameState new game state
      */
     public GameStateChangeEvent(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 

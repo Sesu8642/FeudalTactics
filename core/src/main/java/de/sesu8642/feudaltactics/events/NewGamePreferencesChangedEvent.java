@@ -3,12 +3,16 @@
 package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event: Preferences for new games changed.
  */
 public class NewGamePreferencesChangedEvent {
 
+    @Getter
+    @Setter
     private NewGamePreferences newGamePreferences;
 
     /**
@@ -16,14 +20,6 @@ public class NewGamePreferencesChangedEvent {
      */
     public NewGamePreferencesChangedEvent(NewGamePreferences newGamePreferences) {
         super();
-        this.newGamePreferences = newGamePreferences;
-    }
-
-    public NewGamePreferences getNewGamePreferences() {
-        return newGamePreferences;
-    }
-
-    public void setNewGamePreferences(NewGamePreferences newGamePreferences) {
         this.newGamePreferences = newGamePreferences;
     }
 }

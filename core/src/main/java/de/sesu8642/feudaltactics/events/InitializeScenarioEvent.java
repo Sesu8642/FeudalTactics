@@ -4,13 +4,19 @@ package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event: Scenario needs to be initialized.
  */
 public class InitializeScenarioEvent {
 
+    @Getter
+    @Setter
     private Intelligence botIntelligence;
+    @Getter
+    @Setter
     private ScenarioMap scenarioMap;
 
     /**
@@ -22,22 +28,6 @@ public class InitializeScenarioEvent {
     public InitializeScenarioEvent(Intelligence botIntelligence, ScenarioMap scenarioMap) {
         super();
         this.botIntelligence = botIntelligence;
-        this.scenarioMap = scenarioMap;
-    }
-
-    public Intelligence getBotIntelligence() {
-        return botIntelligence;
-    }
-
-    public void setBotIntelligence(Intelligence botIntelligence) {
-        this.botIntelligence = botIntelligence;
-    }
-
-    public ScenarioMap getScenarioMap() {
-        return scenarioMap;
-    }
-
-    public void setScenarioMap(ScenarioMap scenarioMap) {
         this.scenarioMap = scenarioMap;
     }
 

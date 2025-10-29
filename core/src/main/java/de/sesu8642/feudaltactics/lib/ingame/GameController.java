@@ -14,6 +14,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.ScenarioGameStateLoader;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,8 @@ public class GameController {
     /**
      * State of the currently running game.
      */
+    @Getter
+    @Setter
     private GameState gameState;
 
     public GameController(EventBus eventBus, ExecutorService botTurnExecutor, BotAi botAi,
@@ -219,14 +223,6 @@ public class GameController {
     public void progressObjective() {
         gameState.setObjectiveProgress(gameState.getObjectiveProgress() + 1);
         eventBus.post(new GameStateChangeEvent(gameState));
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
     }
 
 }

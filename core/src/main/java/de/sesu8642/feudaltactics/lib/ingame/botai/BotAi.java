@@ -11,6 +11,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +33,14 @@ public class BotAi {
     /**
      * Current speed.
      */
+    @Getter
     private Speed currentSpeed = Speed.NORMAL;
 
     /**
      * Whether to skip displaying the current turn.
      */
+    @Getter
+    @Setter
     private boolean skipDisplayingTurn = false;
 
     public BotAi(EventBus eventBus, MainPreferencesDao mainPrefsDao) {
@@ -706,21 +711,9 @@ public class BotAi {
         return false;
     }
 
-    public Speed getCurrentSpeed() {
-        return currentSpeed;
-    }
-
     public void setCurrentSpeed(Speed currentSpeed) {
         this.currentSpeed = currentSpeed;
         logger.debug("Bot turn speed set to " + currentSpeed);
-    }
-
-    public boolean isSkipDisplayingTurn() {
-        return skipDisplayingTurn;
-    }
-
-    public void setSkipDisplayingTurn(boolean skipDisplayingTurn) {
-        this.skipDisplayingTurn = skipDisplayingTurn;
     }
 
 }

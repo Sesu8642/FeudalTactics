@@ -3,18 +3,19 @@
 package de.sesu8642.feudaltactics.lib.ingame;
 
 import com.badlogic.gdx.math.Vector2;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Information about an action a player attempts.
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PlayerMove {
 
     private PlayerMoveType playerMoveType;
+    @Getter
     private Vector2 tilePosition;
-
-    private PlayerMove() {
-        // for JSON serialization only
-    }
 
     private PlayerMove(PlayerMoveType playerMoveType, Vector2 tilePosition) {
         this.playerMoveType = playerMoveType;
@@ -67,10 +68,6 @@ public class PlayerMove {
 
     public PlayerMoveType getPlayerActionType() {
         return playerMoveType;
-    }
-
-    public Vector2 getTilePosition() {
-        return tilePosition;
     }
 
     @Override

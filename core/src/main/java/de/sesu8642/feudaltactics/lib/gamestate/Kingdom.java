@@ -2,6 +2,10 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -9,63 +13,31 @@ import java.util.Objects;
 /**
  * Group of connected tiles that belong to the same player.
  **/
+@NoArgsConstructor
 public class Kingdom {
 
     // need a list to have consistent iteration order; LinkedHashSet doesn't work
     // because the tiles can change
+    @Getter
+    @Setter
     private List<HexTile> tiles = new ArrayList<>();
+    @Getter
+    @Setter
     private Player player;
+    @Getter
+    @Setter
     private int savings = 0;
     // only used by ai
+    @Getter
+    @Setter
     private boolean doneMoving = false;
     // for displaying a hint when the player forgets the kingdom
+    @Getter
+    @Setter
     private boolean wasActiveInCurrentTurn = false;
-
-    public Kingdom() {
-    }
 
     public Kingdom(Player player) {
         this.player = player;
-    }
-
-    public List<HexTile> getTiles() {
-        return tiles;
-    }
-
-    public void setTiles(List<HexTile> tiles) {
-        this.tiles = tiles;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public int getSavings() {
-        return savings;
-    }
-
-    public void setSavings(int savings) {
-        this.savings = savings;
-    }
-
-    public boolean isDoneMoving() {
-        return doneMoving;
-    }
-
-    public void setDoneMoving(boolean doneMoving) {
-        this.doneMoving = doneMoving;
-    }
-
-    public boolean isWasActiveInCurrentTurn() {
-        return wasActiveInCurrentTurn;
-    }
-
-    public void setWasActiveInCurrentTurn(boolean wasActiveInCurrentTurn) {
-        this.wasActiveInCurrentTurn = wasActiveInCurrentTurn;
     }
 
     @Override

@@ -3,12 +3,16 @@
 package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event: Bot player finished its turn.
  */
 public class BotTurnFinishedEvent {
 
+    @Getter
+    @Setter
     private GameState gameState;
 
     /**
@@ -17,14 +21,6 @@ public class BotTurnFinishedEvent {
      * @param gameState new game state
      */
     public BotTurnFinishedEvent(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
         this.gameState = gameState;
     }
 }

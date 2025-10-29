@@ -2,16 +2,24 @@
 
 package de.sesu8642.feudaltactics.menu.crashreporting;
 
+import lombok.Getter;
+
 /**
  * Value object: crash report information.
  */
 public class CrashReportInfo {
 
+    @Getter
     private final String gameVersion;
+    @Getter
     private final String platform;
+    @Getter
     private final String platformVersion;
+    @Getter
     private final String threadName;
+    @Getter
     private final String trace;
+    @Getter
     private final String previousLogs;
 
     /**
@@ -25,30 +33,6 @@ public class CrashReportInfo {
         this.threadName = threadName;
         this.trace = trace;
         this.previousLogs = previousLogs;
-    }
-
-    public String getGameVersion() {
-        return gameVersion;
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public String getPlatformVersion() {
-        return platformVersion;
-    }
-
-    public String getThreadName() {
-        return threadName;
-    }
-
-    public String getTrace() {
-        return trace;
-    }
-
-    public String getPreviousLogs() {
-        return previousLogs;
     }
 
 }

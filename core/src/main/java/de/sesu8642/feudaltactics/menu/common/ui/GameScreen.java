@@ -7,6 +7,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Superclass for this game's screens.
@@ -14,7 +17,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class GameScreen implements Screen {
 
     private final OrthographicCamera camera;
+    @Getter
     private final Viewport viewport;
+    @Getter
+    @Setter(AccessLevel.PROTECTED)
     private ResizableResettableStage activeStage;
 
     /**
@@ -74,21 +80,6 @@ public class GameScreen implements Screen {
     public void dispose() {
         // note: slides can contain other stuff that should be disposed as well
         activeStage.dispose();
-    }
-
-    public ResizableResettableStage getActiveStage() {
-        return activeStage;
-    }
-
-    /**
-     * Switches to a new stage. Doesn't set it as the active InputProcessor.
-     */
-    protected void setActiveStage(ResizableResettableStage activeStage) {
-        this.activeStage = activeStage;
-    }
-
-    public Viewport getViewport() {
-        return viewport;
     }
 
 }

@@ -3,16 +3,28 @@
 package de.sesu8642.feudaltactics.events;
 
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Event: Map needs to be centered in the UI.
  */
 public class CenterMapEvent {
 
+    @Getter
+    @Setter
     private GameState gameState;
+    @Getter
+    @Setter
     private long marginLeftPx;
+    @Getter
+    @Setter
     private long marginBottomPx;
+    @Getter
+    @Setter
     private long marginRightPx;
+    @Getter
+    @Setter
     private long marginTopPx;
 
     /**
@@ -26,46 +38,6 @@ public class CenterMapEvent {
         this.marginLeftPx = marginLeftPx;
         this.marginBottomPx = marginBottomPx;
         this.marginRightPx = marginRightPx;
-        this.marginTopPx = marginTopPx;
-    }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public void setGameState(GameState gameState) {
-        this.gameState = gameState;
-    }
-
-    public long getMarginLeftPx() {
-        return marginLeftPx;
-    }
-
-    public void setMarginLeftPx(long marginLeftPx) {
-        this.marginLeftPx = marginLeftPx;
-    }
-
-    public long getMarginBottomPx() {
-        return marginBottomPx;
-    }
-
-    public void setMarginBottomPx(long marginBottomPx) {
-        this.marginBottomPx = marginBottomPx;
-    }
-
-    public long getMarginRightPx() {
-        return marginRightPx;
-    }
-
-    public void setMarginRightPx(long marginRightPx) {
-        this.marginRightPx = marginRightPx;
-    }
-
-    public long getMarginTopPx() {
-        return marginTopPx;
-    }
-
-    public void setMarginTopPx(long marginTopPx) {
         this.marginTopPx = marginTopPx;
     }
 

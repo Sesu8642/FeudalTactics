@@ -2,22 +2,19 @@
 
 package de.sesu8642.feudaltactics.events;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Event: Screen transition triggered.
  */
 public class ScreenTransitionTriggerEvent {
 
+    @Getter
+    @Setter
     private ScreenTransitionTarget transitionTarget;
 
     public ScreenTransitionTriggerEvent(ScreenTransitionTarget transitionTarget) {
-        this.transitionTarget = transitionTarget;
-    }
-
-    public ScreenTransitionTarget getTransitionTarget() {
-        return transitionTarget;
-    }
-
-    public void setTransitionTarget(ScreenTransitionTarget transitionTarget) {
         this.transitionTarget = transitionTarget;
     }
 

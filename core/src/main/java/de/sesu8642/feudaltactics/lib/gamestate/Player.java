@@ -2,19 +2,26 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Objects;
 
 /**
  * A human or bot player participating in a game.
  **/
+@NoArgsConstructor
 public class Player {
 
+    @Getter
+    @Setter
     private int playerIndex;
+    @Getter
     private Type type;
+    @Getter
+    @Setter
     private Integer roundOfDefeat;
-
-    public Player() {
-    }
 
     /**
      * Constructor.
@@ -50,26 +57,6 @@ public class Player {
 
     public boolean isDefeated() {
         return roundOfDefeat != null;
-    }
-
-    public int getPlayerIndex() {
-        return playerIndex;
-    }
-
-    public void setPlayerIndex(int playerIndex) {
-        this.playerIndex = playerIndex;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public Integer getRoundOfDefeat() {
-        return roundOfDefeat;
-    }
-
-    public void setRoundOfDefeat(Integer roundOfDefeat) {
-        this.roundOfDefeat = roundOfDefeat;
     }
 
     @Override
