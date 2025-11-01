@@ -10,12 +10,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
-import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -74,7 +71,7 @@ public class MainMenuScreen extends GameScreen {
                 nagPreferencesDao.setShowTutorialNag(false);
                 showTutorialNag();
             } else {
-                initSandboxGame();
+                eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PLAY_SCREEN));
             }
         }));
         if (levelEditorEnabled) {
@@ -105,16 +102,6 @@ public class MainMenuScreen extends GameScreen {
         eventBus.post(new GameStartEvent());
     }
 
-    private void initSandboxGame() {
-        final NewGamePreferences savedPrefs = newGamePreferencesDao.getNewGamePreferences();
-        final long newSeed = System.currentTimeMillis();
-        savedPrefs.setSeed(newSeed);
-        newGamePreferencesDao.saveNewGamePreferences(savedPrefs);
-        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
-        eventBus.post(new NewGamePreferencesChangedEvent(savedPrefs));
-        eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
-    }
-
     @Override
     public void show() {
         super.show();
@@ -137,7 +124,7 @@ public class MainMenuScreen extends GameScreen {
                 case 1:
                     // yes
                     logger.debug("the user dismissed the tutorial nag dialog");
-                    initSandboxGame();
+                    eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PLAY_SCREEN));
                     break;
                 default:
                     break;

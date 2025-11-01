@@ -23,6 +23,7 @@ import de.sesu8642.feudaltactics.menu.information.ui.DependencyLicensesScreen;
 import de.sesu8642.feudaltactics.menu.information.ui.InformationMenuPage1Screen;
 import de.sesu8642.feudaltactics.menu.information.ui.InformationMenuPage2Screen;
 import de.sesu8642.feudaltactics.menu.mainmenu.ui.MainMenuScreen;
+import de.sesu8642.feudaltactics.menu.play.ui.PlayMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
@@ -43,6 +44,7 @@ public class ScreenNavigationController {
     private final SplashScreen splashScreen;
     private final IngameScreen ingameScreen;
     private final GameScreen mainMenuScreen;
+    private final PlayMenuScreen playMenuScreen;
     private final GameScreen aboutScreen;
     private final GameScreen preferencesScreen;
     private final GameScreen informationMenuScreen;
@@ -64,7 +66,8 @@ public class ScreenNavigationController {
     public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
                                       EditorInputHandler editorInputHandler, SplashScreen splashScreen,
                                       IngameScreen ingameScreen,
-                                      MainMenuScreen mainMenuScreen, @AboutScreen GameScreen aboutScreen,
+                                      MainMenuScreen mainMenuScreen, PlayMenuScreen playMenuScreen,
+                                      @AboutScreen GameScreen aboutScreen,
                                       PreferencesScreen preferencesScreen,
                                       InformationMenuPage1Screen informationMenuScreen,
                                       InformationMenuPage2Screen informationMenuScreen2,
@@ -82,6 +85,7 @@ public class ScreenNavigationController {
         this.splashScreen = splashScreen;
         this.ingameScreen = ingameScreen;
         this.mainMenuScreen = mainMenuScreen;
+        this.playMenuScreen = playMenuScreen;
         this.aboutScreen = aboutScreen;
         this.preferencesScreen = preferencesScreen;
         this.informationMenuScreen = informationMenuScreen;
@@ -121,6 +125,9 @@ public class ScreenNavigationController {
                 break;
             case MAIN_MENU_SCREEN:
                 changeScreen(mainMenuScreen);
+                break;
+            case PLAY_SCREEN:
+                changeScreen(playMenuScreen);
                 break;
             case INGAME_SCREEN:
                 transitionToIngameScreen();
