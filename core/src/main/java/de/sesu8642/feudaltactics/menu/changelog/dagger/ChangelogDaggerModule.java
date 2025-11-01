@@ -7,13 +7,11 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.eventbus.EventBus;
 import com.google.common.io.Resources;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.exceptions.InitializationException;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -34,7 +32,7 @@ import java.util.Collections;
  * Dagger module for the changelog.
  */
 @Module
-public class ChangelogDaggerModule {
+public final class ChangelogDaggerModule {
 
     private ChangelogDaggerModule() {
         // prevent instantiation
@@ -71,14 +69,15 @@ public class ChangelogDaggerModule {
     @Provides
     @Singleton
     @ChangelogSlideStage
-    static SlideStage provideChangelogSlideStage(EventBus eventBus, @MenuViewport Viewport viewport, Insets insets,
+    static SlideStage provideChangelogSlideStage(ScreenNavigationController screenNavigationController,
+                                                 @MenuViewport Viewport viewport, Insets insets,
                                                  @ChangelogText String changelogText,
                                                  @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
         final Slide changelogSlide = new Slide(skin, "Changelog").addLabel("Join the Feudal Tactics Community on " +
             "Matrix! " +
             "See Information menu.").addLabel(changelogText);
         return new SlideStage(viewport, Collections.singletonList(changelogSlide), insets,
-            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)),
+            screenNavigationController::transitionToInformationMenuScreenPage2,
             camera, skin);
     }
 

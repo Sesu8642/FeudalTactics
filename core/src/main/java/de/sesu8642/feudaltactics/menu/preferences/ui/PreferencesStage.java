@@ -7,9 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
@@ -30,35 +29,30 @@ import java.util.stream.Stream;
 public class PreferencesStage extends SlideStage {
 
     private final EventBus eventBus;
+    private final ScreenNavigationController screenNavigationController;
     private final PreferencesSlide preferencesSlide;
     private final MainPreferencesDao mainPrefsDao;
 
     /**
      * Constructor.
-     *
-     * @param eventBus     event bus
-     * @param mainPrefsDao main preferences dao
-     * @param viewport     viewport for the stage
-     * @param camera       camera to use
-     * @param skin         game skin
      */
     @Inject
     public PreferencesStage(EventBus eventBus, PreferencesSlide preferencesSlide, MainPreferencesDao mainPrefsDao,
                             @MenuViewport Viewport viewport, Insets insets, @MenuCamera OrthographicCamera camera,
-                            Skin skin) {
+                            Skin skin, ScreenNavigationController screenNavigationController) {
         super(viewport, Collections.singletonList(preferencesSlide), insets,
-            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN)), camera,
-            skin);
+            screenNavigationController::transitionToMainMenuScreen, camera, skin);
         this.eventBus = eventBus;
         this.preferencesSlide = preferencesSlide;
         this.mainPrefsDao = mainPrefsDao;
+        this.screenNavigationController = screenNavigationController;
         initUi();
     }
 
     private void initUi() {
         Stream.of(preferencesSlide.getForgottenKingdomSelectBox(), preferencesSlide.getShowEnemyTurnsSelectBox())
-            .forEach((actor) -> actor
-                .addListener(new ExceptionLoggingChangeListener(() -> sendPreferencesChangedEvent())));
+            .forEach(actor -> actor
+                .addListener(new ExceptionLoggingChangeListener(this::sendPreferencesChangedEvent)));
     }
 
     private void sendPreferencesChangedEvent() {

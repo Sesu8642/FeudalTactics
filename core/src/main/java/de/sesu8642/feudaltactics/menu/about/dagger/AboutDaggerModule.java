@@ -5,11 +5,9 @@ package de.sesu8642.feudaltactics.menu.about.dagger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.eventbus.EventBus;
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.about.ui.AboutSlideFactory;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -25,7 +23,7 @@ import java.util.Collections;
  * Dagger module for the about menu.
  */
 @Module
-public class AboutDaggerModule {
+public final class AboutDaggerModule {
 
     private AboutDaggerModule() {
         // prevent instantiation
@@ -35,11 +33,12 @@ public class AboutDaggerModule {
     @Provides
     @Singleton
     @AboutSlideStage
-    static SlideStage provideAboutSlideStage(EventBus eventBus, @MenuViewport Viewport viewport,
+    static SlideStage provideAboutSlideStage(ScreenNavigationController screenNavigationController,
+                                             @MenuViewport Viewport viewport,
                                              AboutSlideFactory slideFactory, Insets insets,
                                              @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
         return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()), insets,
-            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN)),
+            screenNavigationController::transitionToInformationMenuScreenPage1,
             camera, skin);
     }
 

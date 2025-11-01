@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.*;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.events.moves.*;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
@@ -50,6 +50,7 @@ public class IngameScreen extends GameScreen {
     private final MapRenderer mapRenderer;
     private final InputMultiplexer inputMultiplexer;
     private final EventBus eventBus;
+    private final ScreenNavigationController screenNavigationController;
     private final CombinedInputProcessor inputProcessor;
     private final FeudalTacticsGestureDetector gestureDetector;
     private final InputValidationHelper inputValidationHelper;
@@ -93,6 +94,7 @@ public class IngameScreen extends GameScreen {
     public IngameScreen(MainPreferencesDao mainPrefsDao, NewGamePreferencesDao newGamePrefDao,
                         @IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
                         @IngameRenderer MapRenderer mapRenderer, DialogFactory dialogFactory, EventBus eventBus,
+                        ScreenNavigationController screenNavigationController,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
                         IngameScreenDialogHelper ingameScreenDialogHelper, IngameHudStage ingameHudStage,
@@ -103,6 +105,7 @@ public class IngameScreen extends GameScreen {
         this.ingameCamera = ingameCamera;
         this.mapRenderer = mapRenderer;
         this.dialogFactory = dialogFactory;
+        this.screenNavigationController = screenNavigationController;
         this.inputMultiplexer = inputMultiplexer;
         this.gestureDetector = gestureDetector;
         this.inputValidationHelper = inputValidationHelper;
@@ -172,7 +175,7 @@ public class IngameScreen extends GameScreen {
 
     private void exitToMenu() {
         eventBus.post(new GameExitedEvent());
-        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+        screenNavigationController.transitionToMainMenuScreen();
         clearCache();
     }
 

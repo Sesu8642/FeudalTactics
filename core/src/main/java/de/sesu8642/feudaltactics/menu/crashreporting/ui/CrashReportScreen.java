@@ -6,15 +6,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
 import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +30,13 @@ public class CrashReportScreen extends GameScreen {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final EventBus eventBus;
     private final CrashReportStage crashReportStage;
     private final CrashReportDao crashReportDao;
     /**
      * Whether the screen is shown on startup. Causes the splash screen to be shown
      * on finish instead of the menu.
      */
+    @Setter
     @Getter
     private boolean isGameStartup = false;
 
@@ -45,13 +44,13 @@ public class CrashReportScreen extends GameScreen {
      * Constructor.
      */
     @Inject
-    public CrashReportScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+    public CrashReportScreen(ScreenNavigationController screenNavigationController,
+                             @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
                              CrashReportStage crashReportStage, CrashReportDao crashReportDao) {
         super(camera, viewport, crashReportStage);
-        this.eventBus = eventBus;
         this.crashReportStage = crashReportStage;
         this.crashReportDao = crashReportDao;
-        registerEventListeners();
+        registerEventListeners(screenNavigationController);
     }
 
     @Override
@@ -68,11 +67,13 @@ public class CrashReportScreen extends GameScreen {
         super.show();
     }
 
-    private void registerEventListeners() {
+    private void registerEventListeners(ScreenNavigationController screenNavigationController) {
         crashReportStage.setFinishedCallback(() -> {
-            final ScreenTransitionTarget onFinishedTarget = isGameStartup ? ScreenTransitionTarget.SPLASH_SCREEN
-                : ScreenTransitionTarget.INFORMATION_MENU_SCREEN;
-            eventBus.post(new ScreenTransitionTriggerEvent(onFinishedTarget));
+            if (isGameStartup) {
+                screenNavigationController.transitionToSplashScreen();
+            } else {
+                screenNavigationController.transitionToInformationMenuScreenPage1();
+            }
         });
         crashReportStage.crashReportSlide.sendMailButton.addListener(new ExceptionLoggingChangeListener(() -> {
             try {
@@ -99,10 +100,6 @@ public class CrashReportScreen extends GameScreen {
             logger.debug("opening GitHub issue URI.");
             Gdx.net.openURI("https://github.com/Sesu8642/FeudalTactics/issues");
         }));
-    }
-
-    public void setGameStartup(boolean isGameStartup) {
-        this.isGameStartup = isGameStartup;
     }
 
 }

@@ -9,8 +9,6 @@ import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.exceptions.InitializationException;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
@@ -77,22 +75,20 @@ public class GameInitializer {
             // do not close on android back key
             Gdx.input.setCatchKey(Keys.BACK, true);
 
-            eventBus.register(screenNavigationController);
-
             // show appropriate screen
             if (crashReportDao.hasFreshCrashReport()) {
                 // the game crashed on the previous run --> show the crash report screen
                 crashReportDao.markCrashReportAsNonFresh();
-                eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CRASH_REPORT_SCREEN_ON_STARTUP));
+                screenNavigationController.transitionToCrashReportScreenOnStartup();
             } else {
                 if (autoSaveRepository.hasFullAutosave()) {
                     // resume running game
-                    eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+                    screenNavigationController.transitionToIngameScreen();
                     eventBus.post(new GameResumedEvent());
                     eventBus.post(new CenterMapUIEvent());
                 } else {
                     // fresh start
-                    eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.SPLASH_SCREEN));
+                    screenNavigationController.transitionToSplashScreen();
                 }
             }
 

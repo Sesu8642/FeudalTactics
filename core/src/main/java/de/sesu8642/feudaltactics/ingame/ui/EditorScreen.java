@@ -9,11 +9,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
@@ -35,11 +34,10 @@ import java.util.List;
 @Singleton
 public class EditorScreen extends GameScreen {
 
+    private final ScreenNavigationController screenNavigationController;
     private final OrthographicCamera ingameCamera;
     private final MapRenderer mapRenderer;
     private final InputMultiplexer inputMultiplexer;
-    private final CombinedInputProcessor inputProcessor;
-    private final FeudalTacticsGestureDetector gestureDetector;
     private final EventBus eventBus;
     private final EditorHudStage editorHudStage;
 
@@ -64,15 +62,15 @@ public class EditorScreen extends GameScreen {
 
     @Inject
     public EditorScreen(@IngameCamera OrthographicCamera ingameCamera, @MenuViewport Viewport viewport,
+                        ScreenNavigationController screenNavigationController,
                         @IngameRenderer MapRenderer mapRenderer, EventBus eventBus,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputMultiplexer inputMultiplexer, EditorHudStage editorHudStage) {
         super(ingameCamera, viewport, editorHudStage);
         this.ingameCamera = ingameCamera;
+        this.screenNavigationController = screenNavigationController;
         this.mapRenderer = mapRenderer;
         this.inputMultiplexer = inputMultiplexer;
-        this.inputProcessor = inputProcessor;
-        this.gestureDetector = gestureDetector;
         this.eventBus = eventBus;
         this.editorHudStage = editorHudStage;
         addHudListeners();
@@ -84,7 +82,7 @@ public class EditorScreen extends GameScreen {
 
     private void exitToMenu() {
         eventBus.post(new GameExitedEvent());
-        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+        screenNavigationController.transitionToMainMenuScreen();
         clearCache();
     }
 

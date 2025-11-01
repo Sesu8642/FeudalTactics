@@ -7,10 +7,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -31,6 +30,7 @@ public class PlayMenuScreen extends GameScreen {
 
     private final NewGamePreferencesDao newGamePreferencesDao;
     private final EventBus eventBus;
+    private final ScreenNavigationController screenNavigationController;
 
     /**
      * Constructor.
@@ -38,10 +38,12 @@ public class PlayMenuScreen extends GameScreen {
     @Inject
     public PlayMenuScreen(NewGamePreferencesDao newGamePreferencesDao,
                           @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                          PlayMenuStage playMenuStage, EventBus eventBus) {
+                          PlayMenuStage playMenuStage, EventBus eventBus,
+                          ScreenNavigationController screenNavigationController) {
         super(camera, viewport, playMenuStage);
         this.newGamePreferencesDao = newGamePreferencesDao;
         this.eventBus = eventBus;
+        this.screenNavigationController = screenNavigationController;
         initUi(playMenuStage);
     }
 
@@ -56,7 +58,7 @@ public class PlayMenuScreen extends GameScreen {
         final long newSeed = System.currentTimeMillis();
         savedPrefs.setSeed(newSeed);
         newGamePreferencesDao.saveNewGamePreferences(savedPrefs);
-        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+        screenNavigationController.transitionToIngameScreen();
         eventBus.post(new NewGamePreferencesChangedEvent(savedPrefs));
         eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
     }

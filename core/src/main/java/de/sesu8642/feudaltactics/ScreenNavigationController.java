@@ -5,10 +5,8 @@ package de.sesu8642.feudaltactics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.editor.EditorInputHandler;
 import de.sesu8642.feudaltactics.editor.EventHandler;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
 import de.sesu8642.feudaltactics.ingame.IngameRendererEventHandler;
 import de.sesu8642.feudaltactics.ingame.LocalIngameInputHandler;
 import de.sesu8642.feudaltactics.ingame.ui.EditorScreen;
@@ -29,6 +27,7 @@ import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandl
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import java.util.stream.Stream;
 
@@ -41,161 +40,196 @@ public class ScreenNavigationController {
     private final EventBus eventBus;
     private final LocalIngameInputHandler localIngameInputHandler;
     private final EditorInputHandler editorInputHandler;
-    private final SplashScreen splashScreen;
-    private final IngameScreen ingameScreen;
-    private final GameScreen mainMenuScreen;
-    private final PlayMenuScreen playMenuScreen;
-    private final GameScreen aboutScreen;
-    private final GameScreen preferencesScreen;
-    private final GameScreen informationMenuScreen;
-    private final GameScreen informationMenuScreen2;
-    private final GameScreen dependencyLicensesScreen;
-    private final GameScreen changelogScreen;
-    private final GameScreen editorScreen;
-    private final CrashReportScreen crashReportScreen;
+
+    // using providers here because there's a cyclic dependency
+    private final Provider<SplashScreen> splashScreenProvider;
+    private final Provider<IngameScreen> ingameScreenProvider;
+    private final Provider<MainMenuScreen> mainMenuScreenProvider;
+    private final Provider<PlayMenuScreen> playMenuScreenProvider;
+    private final Provider<GameScreen> aboutScreenProvider;
+    private final Provider<PreferencesScreen> preferencesScreenProvider;
+    private final Provider<InformationMenuPage1Screen> informationMenuScreenProvider;
+    private final Provider<InformationMenuPage2Screen> informationMenuScreen2Provider;
+    private final Provider<DependencyLicensesScreen> dependencyLicensesScreenProvider;
+    private final Provider<GameScreen> changelogScreenProvider;
+    private final Provider<EditorScreen> editorScreenProvider;
+    private final Provider<CrashReportScreen> crashReportScreenProvider;
+
     private final GameControllerEventHandler gameLogicEventHandler;
     private final EventHandler editorEventHandler;
     private final IngameRendererEventHandler rendererEventHandler;
-    private final IngameScreenEventHandler ingameScreenEventHandler;
-    private final PreferencesScreenEventHandler preferencesScreenEventHandler;
+    private final Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider;
+    private final Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider;
 
     /**
      * Constructor.
      */
     @Inject
-    public ScreenNavigationController(EventBus eventBus, LocalIngameInputHandler localIngameInputHandler,
-                                      EditorInputHandler editorInputHandler, SplashScreen splashScreen,
-                                      IngameScreen ingameScreen,
-                                      MainMenuScreen mainMenuScreen, PlayMenuScreen playMenuScreen,
-                                      @AboutScreen GameScreen aboutScreen,
-                                      PreferencesScreen preferencesScreen,
-                                      InformationMenuPage1Screen informationMenuScreen,
-                                      InformationMenuPage2Screen informationMenuScreen2,
-                                      DependencyLicensesScreen dependencyLicensesScreen,
-                                      @ChangelogScreen GameScreen changelogScreen,
-                                      EditorScreen editorScreen,
-                                      CrashReportScreen crashReportScreen,
-                                      GameControllerEventHandler gameLogicEventHandler,
-                                      EventHandler editorEventHandler, IngameRendererEventHandler rendererEventHandler,
-                                      IngameScreenEventHandler ingameScreenEventHandler,
-                                      PreferencesScreenEventHandler preferencesScreenEventHandler) {
+    public ScreenNavigationController(
+        EventBus eventBus,
+        LocalIngameInputHandler localIngameInputHandler,
+        EditorInputHandler editorInputHandler,
+        Provider<SplashScreen> splashScreenProvider,
+        Provider<IngameScreen> ingameScreenProvider,
+        Provider<MainMenuScreen> mainMenuScreenProvider,
+        Provider<PlayMenuScreen> playMenuScreenProvider,
+        @AboutScreen Provider<GameScreen> aboutScreenProvider,
+        Provider<PreferencesScreen> preferencesScreenProvider,
+        Provider<InformationMenuPage1Screen> informationMenuScreenProvider,
+        Provider<InformationMenuPage2Screen> informationMenuScreen2Provider,
+        Provider<DependencyLicensesScreen> dependencyLicensesScreenProvider,
+        @ChangelogScreen Provider<GameScreen> changelogScreenProvider,
+        Provider<EditorScreen> editorScreenProvider,
+        Provider<CrashReportScreen> crashReportScreenProvider,
+        GameControllerEventHandler gameLogicEventHandler,
+        EventHandler editorEventHandler,
+        IngameRendererEventHandler rendererEventHandler,
+        Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider,
+        Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider) {
+
         this.eventBus = eventBus;
         this.localIngameInputHandler = localIngameInputHandler;
         this.editorInputHandler = editorInputHandler;
-        this.splashScreen = splashScreen;
-        this.ingameScreen = ingameScreen;
-        this.mainMenuScreen = mainMenuScreen;
-        this.playMenuScreen = playMenuScreen;
-        this.aboutScreen = aboutScreen;
-        this.preferencesScreen = preferencesScreen;
-        this.informationMenuScreen = informationMenuScreen;
-        this.informationMenuScreen2 = informationMenuScreen2;
-        this.dependencyLicensesScreen = dependencyLicensesScreen;
-        this.changelogScreen = changelogScreen;
-        this.editorScreen = editorScreen;
-        this.crashReportScreen = crashReportScreen;
+        this.splashScreenProvider = splashScreenProvider;
+        this.ingameScreenProvider = ingameScreenProvider;
+        this.mainMenuScreenProvider = mainMenuScreenProvider;
+        this.playMenuScreenProvider = playMenuScreenProvider;
+        this.aboutScreenProvider = aboutScreenProvider;
+        this.preferencesScreenProvider = preferencesScreenProvider;
+        this.informationMenuScreenProvider = informationMenuScreenProvider;
+        this.informationMenuScreen2Provider = informationMenuScreen2Provider;
+        this.dependencyLicensesScreenProvider = dependencyLicensesScreenProvider;
+        this.changelogScreenProvider = changelogScreenProvider;
+        this.editorScreenProvider = editorScreenProvider;
+        this.crashReportScreenProvider = crashReportScreenProvider;
         this.gameLogicEventHandler = gameLogicEventHandler;
         this.editorEventHandler = editorEventHandler;
         this.rendererEventHandler = rendererEventHandler;
-        this.ingameScreenEventHandler = ingameScreenEventHandler;
-        this.preferencesScreenEventHandler = preferencesScreenEventHandler;
-    }
-
-    private void unregisterAllEventHandlers() {
-        Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler,
-            preferencesScreenEventHandler).forEach(object -> {
-            try {
-                eventBus.unregister(object);
-            } catch (IllegalArgumentException e) {
-                // noop: expected; not all of the objects were registered in the first place
-            }
-        });
+        this.ingameScreenEventHandlerProvider = ingameScreenEventHandlerProvider;
+        this.preferencesScreenEventHandlerProvider = preferencesScreenEventHandlerProvider;
     }
 
     /**
-     * Event handler for Screen transition events.
-     *
-     * @param event event to handle
+     * Transitions to the changelog screen.
      */
-    @Subscribe
-    public void handleScreenTransitionTrigger(ScreenTransitionTriggerEvent event) {
-        switch (event.getTransitionTarget()) {
-            case SPLASH_SCREEN:
-                changeScreen(splashScreen);
-                break;
-            case MAIN_MENU_SCREEN:
-                changeScreen(mainMenuScreen);
-                break;
-            case PLAY_SCREEN:
-                changeScreen(playMenuScreen);
-                break;
-            case INGAME_SCREEN:
-                transitionToIngameScreen();
-                break;
-            case EDITOR_SCREEN:
-                transitionToEditorScreen();
-                break;
-            case ABOUT_SCREEN:
-                changeScreen(aboutScreen);
-                break;
-            case PREFERENCES_SCREEN:
-                transitionToPreferencesScreen();
-                break;
-            case INFORMATION_MENU_SCREEN:
-                changeScreen(informationMenuScreen);
-                break;
-            case INFORMATION_MENU_SCREEN_2:
-                changeScreen(informationMenuScreen2);
-                break;
-            case DEPENDENCY_LICENSES_SCREEN:
-                changeScreen(dependencyLicensesScreen);
-                break;
-            case CHANGELOG_SCREEN:
-                changeScreen(changelogScreen);
-                break;
-            case CRASH_REPORT_SCREEN_IN_MAIN_MENU:
-                transitionToCrashReportScreenInMainMenu();
-                break;
-            case CRASH_REPORT_SCREEN_ON_STARTUP:
-                transitionToCrashReportScreenOnStartup();
-                break;
-            default:
-                throw new AssertionError("Unimplemented transition target: " + event.getTransitionTarget());
-        }
+    public void transitionToChangelogScreen() {
+        changeScreen(changelogScreenProvider.get());
     }
 
-    private void transitionToIngameScreen() {
-        changeScreen(ingameScreen);
-        Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandler, rendererEventHandler)
+    /**
+     * Transitions to the dependency licenses screen.
+     */
+    public void transitionToDependencyLicensesScreen() {
+        changeScreen(dependencyLicensesScreenProvider.get());
+    }
+
+    /**
+     * Transitions to the information menu screen.
+     */
+    public void transitionToInformationMenuScreenPage2() {
+        changeScreen(informationMenuScreen2Provider.get());
+    }
+
+    /**
+     * Transitions to the information menu screen.
+     */
+    public void transitionToInformationMenuScreenPage1() {
+        changeScreen(informationMenuScreenProvider.get());
+    }
+
+    /**
+     * Transitions to the about screen.
+     */
+    public void transitionToAboutScreen() {
+        changeScreen(aboutScreenProvider.get());
+    }
+
+    /**
+     * Transitions to the play manu screen.
+     */
+    public void transitionToPlayMenuScreen() {
+        changeScreen(playMenuScreenProvider.get());
+    }
+
+    /**
+     * Transitions to the main menu screen.
+     */
+    public void transitionToMainMenuScreen() {
+        changeScreen(mainMenuScreenProvider.get());
+    }
+
+    /**
+     * Transitions to the splash screen.
+     */
+    public void transitionToSplashScreen() {
+        changeScreen(splashScreenProvider.get());
+    }
+
+    /**
+     * Transitions to the ingame screen.
+     */
+    public void transitionToIngameScreen() {
+        changeScreen(ingameScreenProvider.get());
+        Stream.of(localIngameInputHandler, gameLogicEventHandler,
+                ingameScreenEventHandlerProvider.get(), rendererEventHandler)
             .forEach(eventBus::register);
     }
 
-    private void transitionToEditorScreen() {
-        changeScreen(editorScreen);
-        Stream.of(editorInputHandler, editorEventHandler, editorScreen, rendererEventHandler)
+    /**
+     * Transitions to the editor screen.
+     */
+    public void transitionToEditorScreen() {
+        changeScreen(editorScreenProvider.get());
+        Stream.of(editorInputHandler, editorEventHandler,
+                editorScreenProvider.get(), rendererEventHandler)
             .forEach(eventBus::register);
     }
 
-    private void transitionToCrashReportScreenInMainMenu() {
-        changeScreen(crashReportScreen);
-        crashReportScreen.setGameStartup(false);
+    /**
+     * Transitions to the crash report screen after the user explicitly opening it.
+     */
+    public void transitionToCrashReportScreenInMainMenu() {
+        final CrashReportScreen screen = crashReportScreenProvider.get();
+        changeScreen(screen);
+        screen.setGameStartup(false);
     }
 
-    private void transitionToCrashReportScreenOnStartup() {
-        changeScreen(crashReportScreen);
-        crashReportScreen.setGameStartup(true);
+    /**
+     * Transitions to the crash report screen on game startup.
+     */
+    public void transitionToCrashReportScreenOnStartup() {
+        final CrashReportScreen screen = crashReportScreenProvider.get();
+        changeScreen(screen);
+        screen.setGameStartup(true);
+    }
+
+    /**
+     * Transitions to the preferences screen.
+     */
+    public void transitionToPreferencesScreen() {
+        changeScreen(preferencesScreenProvider.get());
+        eventBus.register(preferencesScreenEventHandlerProvider.get());
     }
 
     private void changeScreen(Screen screen) {
         unregisterAllEventHandlers();
         // changing the screen needs to happen in the UI thread, otherwise there can be
         // some exception in native code
-        Gdx.app.postRunnable(() -> FeudalTactics.getDaggerComponent().getGameInstance().setScreen(screen));
+        Gdx.app.postRunnable(() ->
+            FeudalTactics.getDaggerComponent()
+                .getGameInstance()
+                .setScreen(screen));
     }
 
-    private void transitionToPreferencesScreen() {
-        changeScreen(preferencesScreen);
-        eventBus.register(preferencesScreenEventHandler);
+    private void unregisterAllEventHandlers() {
+        Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandlerProvider.get(),
+            rendererEventHandler, preferencesScreenEventHandlerProvider.get()).forEach(object -> {
+            try {
+                eventBus.unregister(object);
+            } catch (IllegalArgumentException e) {
+                // noop: expected; not all of the objects were registered in the first place
+            }
+        });
     }
 
 }

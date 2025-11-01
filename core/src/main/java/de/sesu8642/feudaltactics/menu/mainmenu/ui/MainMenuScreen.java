@@ -8,12 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -38,26 +36,26 @@ public class MainMenuScreen extends GameScreen {
 
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
-    private final NewGamePreferencesDao newGamePreferencesDao;
     private final NagPreferencesDao nagPreferencesDao;
     private final DialogFactory dialogFactory;
     private final EventBus eventBus;
+    private final ScreenNavigationController screenNavigationController;
     private final boolean levelEditorEnabled;
 
     /**
      * Constructor.
      */
     @Inject
-    public MainMenuScreen(NewGamePreferencesDao newGamePreferencesDao,
-                          @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+    public MainMenuScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
                           MainMenuStage mainMenuStage, NagPreferencesDao nagPreferencesDao,
                           DialogFactory dialogFactory, EventBus eventBus,
+                          ScreenNavigationController screenNavigationController,
                           @EnableLevelEditorProperty boolean levelEditorEnabled) {
         super(camera, viewport, mainMenuStage);
-        this.newGamePreferencesDao = newGamePreferencesDao;
         this.nagPreferencesDao = nagPreferencesDao;
         this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
+        this.screenNavigationController = screenNavigationController;
         this.levelEditorEnabled = levelEditorEnabled;
         initUi(mainMenuStage);
     }
@@ -71,13 +69,13 @@ public class MainMenuScreen extends GameScreen {
                 nagPreferencesDao.setShowTutorialNag(false);
                 showTutorialNag();
             } else {
-                eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PLAY_SCREEN));
+                screenNavigationController.transitionToPlayMenuScreen();
             }
         }));
         if (levelEditorEnabled) {
             // level editor
             buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
-                eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.EDITOR_SCREEN));
+                screenNavigationController.transitionToEditorScreen();
                 eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
             }));
         }
@@ -90,14 +88,14 @@ public class MainMenuScreen extends GameScreen {
         }));
         // preferences button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
-            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PREFERENCES_SCREEN))));
+            screenNavigationController::transitionToPreferencesScreen));
         // information button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
-            () -> eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN))));
+            screenNavigationController::transitionToInformationMenuScreenPage1));
     }
 
     private void initTutorial() {
-        eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INGAME_SCREEN));
+        screenNavigationController.transitionToIngameScreen();
         eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
         eventBus.post(new GameStartEvent());
     }
@@ -124,7 +122,7 @@ public class MainMenuScreen extends GameScreen {
                 case 1:
                     // yes
                     logger.debug("the user dismissed the tutorial nag dialog");
-                    eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.PLAY_SCREEN));
+                    screenNavigationController.transitionToPlayMenuScreen();
                     break;
                 default:
                     break;
@@ -147,7 +145,7 @@ public class MainMenuScreen extends GameScreen {
                 case 1:
                     // open changelog button
                     logger.debug("the user openened the changelog");
-                    eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.CHANGELOG_SCREEN));
+                    screenNavigationController.transitionToChangelogScreen();
                     break;
                 default:
                     break;

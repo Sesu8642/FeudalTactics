@@ -6,9 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
@@ -22,21 +20,24 @@ import javax.inject.Singleton;
 @Singleton
 public class SplashScreen extends GameScreen {
 
-    private final EventBus eventBus;
+    private final ScreenNavigationController screenNavigationController;
     private long startTime;
 
+    /**
+     * Constructor.
+     */
     @Inject
-    public SplashScreen(EventBus eventBus, @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                        SplashScreenStage stage) {
+    public SplashScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+                        SplashScreenStage stage, ScreenNavigationController screenNavigationController) {
         super(camera, viewport, stage);
-        this.eventBus = eventBus;
+        this.screenNavigationController = screenNavigationController;
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         if (TimeUtils.timeSinceMillis(startTime) > 1000) {
-            eventBus.post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.MAIN_MENU_SCREEN));
+            screenNavigationController.transitionToMainMenuScreen();
             hide();
         }
     }

@@ -8,9 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.base.Strings;
-import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent;
-import de.sesu8642.feudaltactics.events.ScreenTransitionTriggerEvent.ScreenTransitionTarget;
+import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
@@ -30,7 +28,6 @@ public class DependencyLicensesScreen extends GameScreen {
 
     private final DependencyLicensesStage dependencyListStage;
     private final DependencyDetailsStage dependencyDetailsStage;
-    private final EventBus eventBus;
 
     Map<String, Map<String, String>> dependencyLicenses;
 
@@ -41,19 +38,17 @@ public class DependencyLicensesScreen extends GameScreen {
     public DependencyLicensesScreen(@MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera,
                                     DependencyLicensesStage dependencyListStage,
                                     DependencyDetailsStage dependencyDetailsStage,
-                                    EventBus eventBus,
+                                    ScreenNavigationController screenNavigationController,
                                     @DependencyLicenses Map<String, Map<String, String>> dependencyLicenses) {
         super(camera, viewport, dependencyListStage);
-        this.eventBus = eventBus;
         this.dependencyListStage = dependencyListStage;
         this.dependencyDetailsStage = dependencyDetailsStage;
         this.dependencyLicenses = dependencyLicenses;
-        registerEventListeners();
+        registerEventListeners(screenNavigationController);
     }
 
-    private void registerEventListeners() {
-        dependencyListStage.setFinishedCallback(() -> eventBus
-            .post(new ScreenTransitionTriggerEvent(ScreenTransitionTarget.INFORMATION_MENU_SCREEN_2)));
+    private void registerEventListeners(ScreenNavigationController screenNavigationController) {
+        dependencyListStage.setFinishedCallback(screenNavigationController::transitionToInformationMenuScreenPage2);
 
         for (Label dependencyNameLabel : dependencyListStage.dependencyListSlide.dependencyNameLabels) {
             dependencyNameLabel.addListener(new ExceptionLoggingClickListener(() -> {
