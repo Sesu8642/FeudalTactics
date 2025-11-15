@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
  */
 public class MapRenderer {
 
-    public static final float SPRITE_SIZE_MULTIPLIER = 1.05F;
     public static final float LINE_EXTENSION = 0.14F;
     public static final float WATER_TILE_SIZE = 12;
     public static final float SHIELD_SIZE = 2;
@@ -45,26 +43,15 @@ public class MapRenderer {
      * Equal to one day in seconds.
      */
     private static final float STATE_TIME_THRESHOLD = 24 * 60 * 60f;
-    /**
-     * Map of sprite names and their sprites. Functions as cache to avoid frequent
-     * lookups.
-     */
-    private final Map<String, TextureRegion> textureRegions = new HashMap<>();
 
     /**
      * Map of sprite names and their animations. Functions as cache to avoid
      * frequent lookups.
      */
-    private final Map<String, Animation<TextureRegion>> animations = new HashMap<>();
     private final ShapeRenderer shapeRenderer;
     private final OrthographicCamera camera;
     private final SpriteBatch spriteBatch;
-    private final TextureAtlas textureAtlas;
-    private final TextureRegion tileRegion;
-    private final TextureRegion shieldRegion;
-    private final Animation<TextureRegion> waterAnimation;
-    private final Animation<TextureRegion> beachSandAnimation;
-    private final Animation<TextureRegion> beachWaterAnimation;
+    private final TextureAtlasHelper textureAtlasHelper;
     // stuff that is to be drawn
     // keeping those in separate, flat collections is more efficient when rendering
     private final Map<Vector2, DrawTile> tiles = new HashMap<>();
@@ -84,25 +71,14 @@ public class MapRenderer {
 
     /**
      * Constructor.
-     *
-     * @param camera        in-game camera
-     * @param textureAtlas  texture atlas contaiing the sprites
-     * @param shapeRenderer renderer for shapes
-     * @param spriteBatch   spriteBatch to use for rendering
      */
-    public MapRenderer(OrthographicCamera camera, TextureAtlas textureAtlas, ShapeRenderer shapeRenderer,
+    public MapRenderer(OrthographicCamera camera, TextureAtlasHelper textureAtlasHelper, ShapeRenderer shapeRenderer,
                        SpriteBatch spriteBatch, boolean enableDeepWaterRendering) {
         this.camera = camera;
         this.shapeRenderer = shapeRenderer;
         this.spriteBatch = spriteBatch;
-        this.textureAtlas = textureAtlas;
+        this.textureAtlasHelper = textureAtlasHelper;
         this.enableDeepWaterRendering = enableDeepWaterRendering;
-
-        tileRegion = textureAtlas.findRegion(HexTile.SPRITE_NAME);
-        shieldRegion = textureAtlas.findRegion("shield");
-        waterAnimation = getAnimationFromName("water");
-        beachSandAnimation = getAnimationFromName("beach_sand");
-        beachWaterAnimation = getAnimationFromName("beach_water");
     }
 
     /**
@@ -227,12 +203,12 @@ public class MapRenderer {
                         darkenedAnimatedContents.put(
                             new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
                                 mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            getAnimationFromName(tileContent.getSpriteName()));
+                            textureAtlasHelper.findAnimationForTileContent(tileContent));
                     } else {
                         animatedContents.put(
                             new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
                                 mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            getAnimationFromName(tileContent.getSpriteName()));
+                            textureAtlasHelper.findAnimationForTileContent(tileContent));
                     }
                 } else {
                     if (drawTile.darken
@@ -245,12 +221,12 @@ public class MapRenderer {
                         darkenedNonAnimatedContents.put(
                             new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
                                 mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            getTextureRegionFromName(tileContent.getSpriteName()));
+                            textureAtlasHelper.findTextureRegionForTileContent(tileContent));
                     } else {
                         nonAnimatedContents.put(
                             new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
                                 mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            getTextureRegionFromName(tileContent.getSpriteName()));
+                            textureAtlasHelper.findTextureRegionForTileContent(tileContent));
                     }
                 }
 
@@ -360,14 +336,6 @@ public class MapRenderer {
         return result;
     }
 
-    private TextureRegion getTextureRegionFromName(String name) {
-        return textureRegions.computeIfAbsent(name, textureAtlas::findRegion);
-    }
-
-    private Animation<TextureRegion> getAnimationFromName(String name) {
-        return animations.computeIfAbsent(name, n2 -> new Animation<TextureRegion>(1F, textureAtlas.findRegions(n2)));
-    }
-
     /**
      * Renders the map.
      */
@@ -383,15 +351,18 @@ public class MapRenderer {
         for (Entry<Vector2, Animation<TextureRegion>> content : darkenedAnimatedContents.entrySet()) {
             darkenedFrames.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
         }
-        final TextureRegion waterRegion = waterAnimation.getKeyFrame(stateTime, true);
-        final TextureRegion bottomRightBeachSandRegion = beachSandAnimation.getKeyFrame(stateTime, true);
+        final TextureRegion waterRegion = textureAtlasHelper.getWaterAnimation().getKeyFrame(stateTime, true);
+        final TextureRegion bottomRightBeachSandRegion =
+            textureAtlasHelper.getBeachSandAnimation().getKeyFrame(stateTime
+            , true);
         final TextureRegion bottomLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
         bottomLeftBeachSandRegion.flip(true, false);
         final TextureRegion topLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
         topLeftBeachSandRegion.flip(true, true);
         final TextureRegion topRightBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
         topRightBeachSandRegion.flip(false, true);
-        final TextureRegion bottomRightBeachWaterRegion = beachWaterAnimation.getKeyFrame(stateTime, true);
+        final TextureRegion bottomRightBeachWaterRegion =
+            textureAtlasHelper.getBeachWaterAnimation().getKeyFrame(stateTime, true);
         final TextureRegion bottomLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
         bottomLeftBeachWaterRegion.flip(true, false);
         final TextureRegion topLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
@@ -492,7 +463,8 @@ public class MapRenderer {
                 color.mul(0.5F, 0.5F, 0.5F, 1);
             }
             spriteBatch.setColor(color);
-            spriteBatch.draw(tileRegion, tile.mapCoords.x - HEXTILE_WIDTH / 2, tile.mapCoords.y - HEXTILE_HEIGHT / 2,
+            spriteBatch.draw(textureAtlasHelper.getTileRegion(), tile.mapCoords.x - HEXTILE_WIDTH / 2,
+                tile.mapCoords.y - HEXTILE_HEIGHT / 2,
                 HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
 
@@ -507,7 +479,8 @@ public class MapRenderer {
             } else {
                 spriteBatch.setColor(shieldColor);
             }
-            spriteBatch.draw(shieldRegion, shield.getKey().x, shield.getKey().y, SHIELD_SIZE, SHIELD_SIZE);
+            spriteBatch.draw(textureAtlasHelper.getShieldRegion(), shield.getKey().x, shield.getKey().y, SHIELD_SIZE,
+                SHIELD_SIZE);
         }
 
         // draw all the animated contents

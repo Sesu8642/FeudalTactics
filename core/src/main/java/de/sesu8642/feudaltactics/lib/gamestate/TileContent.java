@@ -8,11 +8,6 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 public interface TileContent {
 
     /**
-     * Name of the Sprite of this object in the texture atlas.
-     */
-    String getSpriteName();
-
-    /**
      * Getter for strength.
      *
      * @return The strength of this object which determines the capability of the

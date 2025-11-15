@@ -8,13 +8,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 public class Castle implements TileContent {
 
     public static final int COST = 15;
-    public static final String SPRITE_NAME = "castle";
     public static final int STRENGTH = 2;
-
-    @Override
-    public String getSpriteName() {
-        return SPRITE_NAME;
-    }
 
     @Override
     public int getStrength() {

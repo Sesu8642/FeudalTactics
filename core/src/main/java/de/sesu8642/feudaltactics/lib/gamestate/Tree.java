@@ -8,13 +8,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
  **/
 public class Tree implements TileContent, Blocking {
 
-    public static final String SPRITE_NAME = "tree";
     private static final int STRENGTH = 0;
-
-    @Override
-    public String getSpriteName() {
-        return SPRITE_NAME;
-    }
 
     @Override
     public int getStrength() {

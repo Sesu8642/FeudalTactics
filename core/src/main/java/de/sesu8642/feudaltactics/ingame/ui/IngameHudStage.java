@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -30,7 +29,6 @@ import java.util.List;
  */
 public class IngameHudStage extends ResizableResettableStage {
 
-    private final TextureAtlas textureAtlas;
     private final Skin skin;
     private final List<ImageButton> playerTurnButtons = new ArrayList<>();
     private final List<ImageButton> enemyTurnButtons = new ArrayList<>();
@@ -58,15 +56,10 @@ public class IngameHudStage extends ResizableResettableStage {
 
     /**
      * Constructor.
-     *
-     * @param viewport     viewport for the stage
-     * @param textureAtlas texture atlas containing the button textures
-     * @param skin         game skin
      */
     @Inject
-    public IngameHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Insets insets, Skin skin) {
+    public IngameHudStage(@MenuViewport Viewport viewport, Insets insets, Skin skin) {
         super(viewport);
-        this.textureAtlas = textureAtlas;
         this.skin = skin;
         initUi(insets);
     }
@@ -180,13 +173,12 @@ public class IngameHudStage extends ResizableResettableStage {
     /**
      * Sets the hand content to a given sprite.
      *
-     * @param spriteName name if the sprite to set the hand content to; can be null
-     *                   to show an empty hand
+     * @param sprite sprite to set the hand content to; can be null to show an empty hand
      */
-    public void updateHandContent(String spriteName) {
-        if (spriteName != null) {
+    public void updateHandContent(Sprite sprite) {
+        if (sprite != null) {
             handStack.setVisible(true);
-            handContent.setDrawable(new TextureRegionDrawable(textureAtlas.createSprite(spriteName)));
+            handContent.setDrawable(new TextureRegionDrawable(sprite));
         } else {
             handStack.setVisible(false);
         }

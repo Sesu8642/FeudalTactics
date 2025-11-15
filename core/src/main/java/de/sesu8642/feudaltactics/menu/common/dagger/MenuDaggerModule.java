@@ -5,13 +5,13 @@ package de.sesu8642.feudaltactics.menu.common.dagger;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dagger.Module;
 import dagger.Provides;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
 import javax.inject.Singleton;
 
@@ -53,9 +53,9 @@ public class MenuDaggerModule {
     @Singleton
     @MenuBackgroundRenderer
     static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera,
-                                              TextureAtlas textureAtlas, ShapeRenderer shapeRenderer,
+                                              TextureAtlasHelper textureAtlasHelper, ShapeRenderer shapeRenderer,
                                               SpriteBatch spriteBatch) {
-        return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch, true);
+        return new MapRenderer(camera, textureAtlasHelper, shapeRenderer, spriteBatch, true);
     }
 
 }

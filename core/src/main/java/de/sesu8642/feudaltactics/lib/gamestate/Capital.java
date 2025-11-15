@@ -8,13 +8,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
  **/
 public class Capital implements TileContent {
 
-    public static final String SPRITE_NAME = "capital";
     public static final int STRENGTH = 1;
-
-    @Override
-    public String getSpriteName() {
-        return SPRITE_NAME;
-    }
 
     @Override
     public int getStrength() {

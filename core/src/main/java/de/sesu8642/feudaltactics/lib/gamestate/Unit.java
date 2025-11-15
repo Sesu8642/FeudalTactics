@@ -33,11 +33,6 @@ public class Unit implements TileContent {
     }
 
     @Override
-    public String getSpriteName() {
-        return unitType.spriteName();
-    }
-
-    @Override
     public int getStrength() {
         return unitType.strength();
     }
@@ -78,19 +73,17 @@ public class Unit implements TileContent {
     }
 
     /**
-     * Type of a unit determining its strength and sprite.
+     * Type of unit determining its strength and sprite.
      **/
     public enum UnitTypes {
-        PEASANT(1, 2, "peasant"), SPEARMAN(2, 6, "spearman"), KNIGHT(3, 18, "knight"), BARON(4, 54, "baron");
+        PEASANT(1, 2), SPEARMAN(2, 6), KNIGHT(3, 18), BARON(4, 54);
 
         private final int strength;
         private final int salary;
-        private final String spriteName;
 
-        UnitTypes(int strength, int salary, String spriteName) {
+        UnitTypes(int strength, int salary) {
             this.strength = strength;
             this.salary = salary;
-            this.spriteName = spriteName;
         }
 
         public static UnitTypes ofStrength(int strength) {
@@ -110,9 +103,6 @@ public class Unit implements TileContent {
             return salary;
         }
 
-        public String spriteName() {
-            return spriteName;
-        }
     }
 
 }

@@ -29,6 +29,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.platformspecific.Insets;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 import lombok.Setter;
 
 import javax.inject.Inject;
@@ -55,6 +56,7 @@ public class IngameScreen extends GameScreen {
     private final FeudalTacticsGestureDetector gestureDetector;
     private final InputValidationHelper inputValidationHelper;
     private final IngameScreenDialogHelper ingameScreenDialogHelper;
+    private final TextureAtlasHelper textureAtlasHelper;
 
     private final ParameterInputStage parameterInputStage;
     private final Insets insets;
@@ -97,7 +99,8 @@ public class IngameScreen extends GameScreen {
                         ScreenNavigationController screenNavigationController,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
-                        IngameScreenDialogHelper ingameScreenDialogHelper, IngameHudStage ingameHudStage,
+                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper,
+                        IngameHudStage ingameHudStage,
                         IngameMenuStage menuStage, ParameterInputStage parameterInputStage, Insets insets) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
@@ -112,6 +115,7 @@ public class IngameScreen extends GameScreen {
         this.eventBus = eventBus;
         this.inputProcessor = inputProcessor;
         this.ingameScreenDialogHelper = ingameScreenDialogHelper;
+        this.textureAtlasHelper = textureAtlasHelper;
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
@@ -207,7 +211,7 @@ public class IngameScreen extends GameScreen {
         final GameState newGameState = gameState;
         // hand content
         if (newGameState.getHeldObject() != null) {
-            ingameHudStage.updateHandContent(newGameState.getHeldObject().getSpriteName());
+            ingameHudStage.updateHandContent(textureAtlasHelper.createSpriteForTileContent(newGameState.getHeldObject()));
         } else {
             ingameHudStage.updateHandContent(null);
         }

@@ -16,8 +16,6 @@ import java.util.Objects;
 @NoArgsConstructor
 public class HexTile implements Comparable<HexTile> {
 
-    public static String SPRITE_NAME = "tile_bw";
-
     @Getter
     @Setter
     private Player player;

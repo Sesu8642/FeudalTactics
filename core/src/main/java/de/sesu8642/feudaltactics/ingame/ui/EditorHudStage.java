@@ -4,20 +4,19 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
 import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
 import javax.inject.Inject;
 
@@ -26,8 +25,8 @@ import javax.inject.Inject;
  */
 public class EditorHudStage extends ResizableResettableStage {
 
-    private final TextureAtlas textureAtlas;
     private final Skin skin;
+    private final TextureAtlasHelper textureAtlasHelper;
     Label infoTextLabel;
     ImageButton menuButton;
     ImageButton tileButton;
@@ -39,26 +38,23 @@ public class EditorHudStage extends ResizableResettableStage {
 
     /**
      * Constructor.
-     *
-     * @param viewport     viewport for the stage
-     * @param textureAtlas texture atlas containing the button textures
-     * @param skin         game skin
      */
     @Inject
-    public EditorHudStage(@MenuViewport Viewport viewport, TextureAtlas textureAtlas, Insets insets, Skin skin) {
+    public EditorHudStage(@MenuViewport Viewport viewport, Insets insets, Skin skin,
+                          TextureAtlasHelper textureAtlasHelper) {
         super(viewport);
-        this.textureAtlas = textureAtlas;
         this.skin = skin;
+        this.textureAtlasHelper = textureAtlasHelper;
         initUi(insets);
     }
 
     private void initUi(Insets insets) {
         final Table bottomTable;
-        final Sprite tileSprite = textureAtlas.createSprite("tile_bw");
+        final Sprite tileSprite = textureAtlasHelper.getTileSprite();
         final SpriteDrawable tileSpriteDrawable = new SpriteDrawable(tileSprite);
         tileButton = new ImageButton(tileSpriteDrawable);
 
-        final Sprite unitSprite = textureAtlas.createSprite(Unit.UnitTypes.SPEARMAN.spriteName());
+        final Sprite unitSprite = textureAtlasHelper.getSpearmanSprite();
         final SpriteDrawable unitSpriteDrawable = new SpriteDrawable(unitSprite);
         tileContentButton = new ImageButton(unitSpriteDrawable);
 
@@ -118,13 +114,12 @@ public class EditorHudStage extends ResizableResettableStage {
     }
 
     /**
-     * See {@link #updateHandContent(String)} with additional coloring (meant for the tiles)
+     * See {@link #updateHandContent(Sprite)} with additional coloring (meant for the tiles)
      */
-    public void updateHandContent(String spriteName, Color color) {
-        if (spriteName != null) {
+    public void updateHandContent(Sprite sprite, Color color) {
+        if (sprite != null) {
             handStack.setVisible(true);
 
-            final Sprite sprite = textureAtlas.createSprite(spriteName);
             final TextureRegionDrawable drawable = new TextureRegionDrawable(sprite);
             handContent.setDrawable(drawable);
             handContent.setColor(color);
@@ -136,11 +131,10 @@ public class EditorHudStage extends ResizableResettableStage {
     /**
      * Sets the hand content to a given sprite.
      *
-     * @param spriteName name if the sprite to set the hand content to; can be null
-     *                   to show an empty hand
+     * @param sprite sprite to set the hand content to; can be null to show an empty hand
      */
-    public void updateHandContent(String spriteName) {
-        updateHandContent(spriteName, Color.WHITE);
+    public void updateHandContent(Sprite sprite) {
+        updateHandContent(sprite, Color.WHITE);
     }
 
     @Override

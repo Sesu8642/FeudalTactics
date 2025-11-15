@@ -87,7 +87,7 @@ public class FeudalTacticsDialog extends Dialog {
     }
 
     /**
-     * Adds an image of a button from the texture atlas to the dialog fluent style.
+     * Adds an image of a button from the skin to the dialog fluent style.
      *
      * @param spriteName name of the button in the skin
      * @return this dialog
@@ -96,6 +96,30 @@ public class FeudalTacticsDialog extends Dialog {
         final Sprite sprite = skin.getSprite(spriteName);
         final Image image = new Image(sprite);
         image.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+        getContentTable().add(image).size(Value.percentWidth(0.2F, getContentTable()));
+        getContentTable().row();
+        return this;
+    }
+
+    /**
+     * Adds an image of a button from the skin to the dialog fluent style.
+     *
+     * @param textureName name of the button in the skin
+     * @return this dialog
+     */
+    public FeudalTacticsDialog addTextureImage(String textureName) {
+        final Sprite sprite = skin.getSprite(textureName);
+        addSpriteImage(sprite);
+        return this;
+    }
+
+    /**
+     * Adds an image of a sprite to the dialog fluent style.
+     *
+     * @return this dialog
+     */
+    public FeudalTacticsDialog addSpriteImage(Sprite sprite) {
+        final Image image = new Image(sprite);
         getContentTable().add(image).size(Value.percentWidth(0.2F, getContentTable()));
         getContentTable().row();
         return this;

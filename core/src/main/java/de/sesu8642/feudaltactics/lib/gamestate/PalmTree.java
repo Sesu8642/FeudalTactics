@@ -9,13 +9,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
  **/
 public class PalmTree implements TileContent, Blocking {
 
-    public static final String SPRITE_NAME = "palm_tree";
     private static final int STRENGTH = 0;
-
-    @Override
-    public String getSpriteName() {
-        return SPRITE_NAME;
-    }
 
     @Override
     public int getStrength() {

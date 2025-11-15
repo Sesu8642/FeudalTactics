@@ -23,6 +23,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.Margin;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -40,6 +41,7 @@ public class EditorScreen extends GameScreen {
     private final InputMultiplexer inputMultiplexer;
     private final EventBus eventBus;
     private final EditorHudStage editorHudStage;
+    private final TextureAtlasHelper textureAtlasHelper;
 
     List<TileContent> possibleTileContents = ImmutableList.of(new Unit(Unit.UnitTypes.PEASANT),
         new Unit(Unit.UnitTypes.SPEARMAN), new Unit(Unit.UnitTypes.KNIGHT), new Unit(Unit.UnitTypes.BARON),
@@ -65,7 +67,8 @@ public class EditorScreen extends GameScreen {
                         ScreenNavigationController screenNavigationController,
                         @IngameRenderer MapRenderer mapRenderer, EventBus eventBus,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
-                        InputMultiplexer inputMultiplexer, EditorHudStage editorHudStage) {
+                        InputMultiplexer inputMultiplexer, EditorHudStage editorHudStage,
+                        TextureAtlasHelper textureAtlasHelper) {
         super(ingameCamera, viewport, editorHudStage);
         this.ingameCamera = ingameCamera;
         this.screenNavigationController = screenNavigationController;
@@ -73,6 +76,7 @@ public class EditorScreen extends GameScreen {
         this.inputMultiplexer = inputMultiplexer;
         this.eventBus = eventBus;
         this.editorHudStage = editorHudStage;
+        this.textureAtlasHelper = textureAtlasHelper;
         addHudListeners();
 
         inputMultiplexer.addProcessor(editorHudStage);
@@ -172,7 +176,7 @@ public class EditorScreen extends GameScreen {
             }
             eventBus.post(new EditorHandContentUpdatedEvent(heldTileContent));
             if (heldTileContent != null) {
-                editorHudStage.updateHandContent(heldTileContent.getSpriteName());
+                editorHudStage.updateHandContent(textureAtlasHelper.createSpriteForTileContent(heldTileContent));
             } else {
                 editorHudStage.updateHandContent(null);
             }
@@ -188,7 +192,7 @@ public class EditorScreen extends GameScreen {
             }
             eventBus.post(new EditorHandContentUpdatedEvent(heldTilePlayerIndex));
             if (heldTilePlayerIndex != null) {
-                editorHudStage.updateHandContent(HexTile.SPRITE_NAME,
+                editorHudStage.updateHandContent(textureAtlasHelper.getTileSprite(),
                     MapRenderer.PLAYER_COLOR_PALETTE.get(heldTilePlayerIndex));
             } else {
                 editorHudStage.updateHandContent(null);

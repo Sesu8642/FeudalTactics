@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -21,6 +20,7 @@ import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
 import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
@@ -70,10 +70,11 @@ public class IngameDaggerModule {
     @Provides
     @Singleton
     @IngameRenderer
-    static MapRenderer provideIngameMapRenderer(@IngameCamera OrthographicCamera camera, TextureAtlas textureAtlas,
+    static MapRenderer provideIngameMapRenderer(@IngameCamera OrthographicCamera camera,
+                                                TextureAtlasHelper textureAtlasHelper,
                                                 ShapeRenderer shapeRenderer, SpriteBatch spriteBatch,
                                                 @EnableDeepWaterRenderingProperty boolean enableDeepWaterRendering) {
-        return new MapRenderer(camera, textureAtlas, shapeRenderer, spriteBatch, enableDeepWaterRendering);
+        return new MapRenderer(camera, textureAtlasHelper, shapeRenderer, spriteBatch, enableDeepWaterRendering);
     }
 
     @Provides
