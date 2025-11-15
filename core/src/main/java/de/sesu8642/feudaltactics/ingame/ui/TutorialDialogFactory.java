@@ -7,6 +7,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
+import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,13 +22,15 @@ import java.util.List;
 public class TutorialDialogFactory {
 
     private final DialogFactory dialogFactory;
+    private final TextureAtlasHelper textureAtlasHelper;
 
     /**
      * Constructor.
      */
     @Inject
-    public TutorialDialogFactory(DialogFactory dialogFactory) {
+    public TutorialDialogFactory(DialogFactory dialogFactory, TextureAtlasHelper textureAtlasHelper) {
         this.dialogFactory = dialogFactory;
+        this.textureAtlasHelper = textureAtlasHelper;
     }
 
     /**
@@ -121,13 +124,15 @@ public class TutorialDialogFactory {
     }
 
     private void fillTutorialDialog5(FeudalTacticsDialog dialog) {
-        final String text = "The tiles of your enemy's adjacent kingdom are protected by the capital. Units, capitals" +
-            " and " +
-            "castles protect the tile they are placed on as well as all adjacent tiles.\n\nTo conquer a protected" +
+        final String text1 = "The tiles of your enemy's adjacent kingdom are protected by the capital. Units, " +
+            "capitals" +
+            " and castles protect the tile they are placed on as well as all adjacent tiles. The protection level of " +
+            "a tile is indicated by up to four shield icons.";
+        final String text2 = "To conquer a protected" +
             " tile, you need a unit with greater strength. In this case, you need at least a spearman to conquer " +
             "a tile protected by a capital. To get stronger units, place a peasant on another unit.\n\nObjective:" +
-            " Buy another peasant and place it on your existing one to create a spearman.\n";
-        dialog.text(text);
+            " Buy another peasant and place it on your existing one to create a spearman.";
+        dialog.text(text1).addSpriteImage(textureAtlasHelper.getShieldSprite()).text(text2);
     }
 
     private void fillTutorialDialog6(FeudalTacticsDialog dialog) {
