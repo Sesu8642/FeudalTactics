@@ -232,7 +232,7 @@ public class MapRenderer {
 
             }
 
-            if (gameState.getHeldObject() != null) {
+            if (gameState.getHeldObject() != null || (gameState.getActiveKingdom() != null && tile.getKingdom() == gameState.getActiveKingdom())) {
                 // create protection indicators
                 final int protectionLevel = GameStateHelper.getProtectionLevel(gameState, tile);
                 switch (protectionLevel) {
