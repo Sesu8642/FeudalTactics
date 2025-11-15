@@ -239,19 +239,23 @@ public class IngameScreen extends GameScreen {
 
     private String handleGameStateChangeHumanPlayerTurn(boolean humanPlayerTurnJustStarted, boolean winnerChanged,
                                                         GameState newGameState) {
-        final String infoText;
+        String infoText = "";
         final Player localPlayer = newGameState.getActivePlayer();
         // info text
         final Kingdom kingdom = newGameState.getActiveKingdom();
         if (kingdom != null) {
             final int income = GameStateHelper.getKingdomIncome(kingdom);
             final int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
-            final int result = income - salaries;
+            final int budgetBalance = income - salaries;
             final int savings = kingdom.getSavings();
-            final String resultText = result < 0 ? String.valueOf(result) : "+" + result;
-            infoText = "Savings: " + savings + " (" + resultText + ")";
+            final String budgetBalanceText = budgetBalance < 0 ? String.valueOf(budgetBalance) : "+" + budgetBalance;
+            if (savings + budgetBalance < 0) {
+                // warn the user with red text
+                infoText += "[RED]";
+            }
+            infoText += "Savings: " + savings + " (" + budgetBalanceText + ")";
         } else {
-            infoText = "Your turn.";
+            infoText = "Your turn – select a kingdom.";
         }
         // buttons
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
