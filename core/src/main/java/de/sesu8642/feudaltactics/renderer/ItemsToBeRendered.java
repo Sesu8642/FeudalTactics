@@ -30,7 +30,12 @@ public class ItemsToBeRendered {
 
     final Map<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<>();
 
+    /**
+     * Value: whether the shield should be darkened or not.
+     */
     final Map<Vector2, Boolean> shields = new HashMap<>();
+    
+    final List<Vector2> semitransparentGraveStones = new ArrayList<>();
 
     final List<Vector2> whiteLineStartPoints = new ArrayList<>();
 

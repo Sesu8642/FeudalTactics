@@ -2,10 +2,13 @@
 
 package de.sesu8642.feudaltactics.renderer;
 
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.google.common.collect.ImmutableList;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import lombok.Getter;
 
@@ -51,6 +54,8 @@ public class TextureAtlasHelper {
     @Getter
     private final TextureRegion shieldRegion;
     @Getter
+    private final Animation<TextureRegion> blinkingGravestoneAnimation;
+    @Getter
     private final Animation<TextureRegion> waterAnimation;
     @Getter
     private final Animation<TextureRegion> beachSandAnimation;
@@ -70,6 +75,10 @@ public class TextureAtlasHelper {
         shieldSprite = textureAtlas.createSprite(SHIELD_TEXTURE_NAME);
         tileRegion = textureAtlas.findRegion(TILE_TEXTURE_NAME);
         shieldRegion = textureAtlas.findRegion(SHIELD_TEXTURE_NAME);
+        blinkingGravestoneAnimation = new Animation<>(1F,
+            ImmutableList.of(textureAtlas.findRegion(GRAVESTONE_TEXTURE_NAME),
+                new TextureAtlas.AtlasRegion(new Texture(0, 0,
+                Pixmap.Format.Alpha), 0, 0, 0, 0)).toArray(new TextureAtlas.AtlasRegion[0]));
         waterAnimation = new Animation<>(1F,
             textureAtlas.findRegions(WATER_TEXTURE_NAME));
         beachSandAnimation = new Animation<>(1F,

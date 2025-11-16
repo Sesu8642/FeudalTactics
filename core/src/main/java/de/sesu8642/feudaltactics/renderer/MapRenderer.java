@@ -44,6 +44,9 @@ public class MapRenderer {
     private static final float TILE_CONTENT_OFFSET_Y = HEXTILE_HEIGHT * -0.075F;
     // colors for normal and darkened stuff
     private static final Color NORMAL_COLOR = new Color(1, 1, 1, 1);
+    private static final Color SEMITRANSPARENT_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.7F);
+    private static final Color DARKENED_SHIELD_COLOR = new Color(SEMITRANSPARENT_COLOR).mul(0.5F, 0.5F, 0.5F, 1);
+    private static final Color BIT_LESS_SEMITRANSPARENT_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.3F);
     private static final Color DARKENED_COLOR = new Color(0, 0, 0, 0.4F);
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
@@ -127,12 +130,14 @@ public class MapRenderer {
         drawShields();
 
         // draw animated tile contents
-        drawContents(animatedTileContentframes.entrySet());
+        drawRegularColorContents(animatedTileContentframes.entrySet());
         drawDarkenedContents(darkenedAnimatedTileContentframes.entrySet());
 
         // draw non-animated tile contents
-        drawContents(itemsToBeRendered.getNonAnimatedContents().entrySet());
+        drawRegularColorContents(itemsToBeRendered.getNonAnimatedContents().entrySet());
         drawDarkenedContents(itemsToBeRendered.getDarkenedNonAnimatedContents().entrySet());
+
+        drawSemitransparentGraveStones();
 
         spriteBatch.end();
 
@@ -158,33 +163,45 @@ public class MapRenderer {
         shapeRenderer.end();
     }
 
-    private void drawContents(Set<Entry<Vector2, TextureRegion>> textureRegions) {
+    private void drawRegularColorContents(Set<Entry<Vector2, TextureRegion>> textureRegions) {
         spriteBatch.setColor(NORMAL_COLOR);
+        drawContents(textureRegions);
+    }
+
+    private void drawDarkenedContents(Set<Entry<Vector2, TextureRegion>> darkenedTextureRegions) {
+        drawRegularColorContents(darkenedTextureRegions);
+        // draw a shade on top
+        spriteBatch.setColor(DARKENED_COLOR);
+        drawContents(darkenedTextureRegions);
+    }
+
+    private void drawContents(Set<Entry<Vector2, TextureRegion>> textureRegions) {
         for (Entry<Vector2, TextureRegion> currentFrame : textureRegions) {
             spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - TILE_CONTENT_OFFSET_X,
                 currentFrame.getKey().y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
     }
 
-    private void drawDarkenedContents(Set<Entry<Vector2, TextureRegion>> darkenedTextureRegions) {
-        drawContents(darkenedTextureRegions);
-        spriteBatch.setColor(DARKENED_COLOR);
-        for (Entry<Vector2, TextureRegion> currentFrame : darkenedTextureRegions) {
-            spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - TILE_CONTENT_OFFSET_X,
-                currentFrame.getKey().y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+    private void drawSemitransparentGraveStones() {
+        final TextureRegion gravestoneRegion =
+            textureAtlasHelper.getBlinkingGravestoneAnimation().getKeyFrame(stateTime, true);
+        if (gravestoneRegion == textureAtlasHelper.getBlinkingGravestoneAnimation().getKeyFrames()[1]) {
+            // return on second frame for blinking effect (second frame would be a dark square otherwise)
+            return;
+        }
+        for (Vector2 coords : itemsToBeRendered.getSemitransparentGraveStones()) {
+            spriteBatch.setColor(BIT_LESS_SEMITRANSPARENT_COLOR);
+            spriteBatch.draw(gravestoneRegion, coords.x - TILE_CONTENT_OFFSET_X,
+                coords.y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
     }
 
     private void drawShields() {
-        final Color shieldColor = new Color(NORMAL_COLOR);
-        shieldColor.sub(0, 0, 0, 0.7F);
-        final Color darkenedShieldColor = new Color(shieldColor);
-        darkenedShieldColor.mul(0.5F, 0.5F, 0.5F, 1);
         for (Entry<Vector2, Boolean> shield : itemsToBeRendered.getShields().entrySet()) {
             if (Boolean.TRUE.equals(shield.getValue())) {
-                spriteBatch.setColor(darkenedShieldColor);
+                spriteBatch.setColor(DARKENED_SHIELD_COLOR);
             } else {
-                spriteBatch.setColor(shieldColor);
+                spriteBatch.setColor(SEMITRANSPARENT_COLOR);
             }
             spriteBatch.draw(textureAtlasHelper.getShieldRegion(), shield.getKey().x, shield.getKey().y, SHIELD_SIZE,
                 SHIELD_SIZE);

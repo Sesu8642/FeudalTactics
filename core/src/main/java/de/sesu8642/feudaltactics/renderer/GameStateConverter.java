@@ -217,8 +217,23 @@ public class GameStateConverter {
             } else {
                 createNonAnimatedTileContent(gameState, tile, drawTile, result, mapCoords, tileContent);
             }
-
+            if (isUnitAboutToDie(gameState, tile, tileContent)) {
+                result.semitransparentGraveStones.add(new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+                    mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS));
+            }
         }
+    }
+
+    private boolean isUnitAboutToDie(GameState gameState, HexTile tile, TileContent tileContent) {
+        return gameState.getActivePlayer().getType() == Player.Type.LOCAL_PLAYER && tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer() && !canKingdomSustainUnitsForOneTurn(gameState, tile.getKingdom()) && ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass());
+    }
+
+    private boolean canKingdomSustainUnitsForOneTurn(GameState gameState, Kingdom kingdom) {
+        final int income = GameStateHelper.getKingdomIncome(kingdom);
+        final int salaries = GameStateHelper.getKingdomSalaries(gameState, kingdom);
+        final int budgetBalance = income - salaries;
+        final int savings = kingdom.getSavings();
+        return savings + budgetBalance >= 0;
     }
 
     private void createNonAnimatedTileContent(GameState gameState, HexTile tile, ItemsToBeRendered.DrawTile drawTile,

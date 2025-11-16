@@ -66,8 +66,8 @@ public class GameStateHelper {
         for (Entry<Vector2, HexTile> originalTileEntry : original.getMap().entrySet()) {
             final HexTile originalTile = originalTileEntry.getValue();
             final HexTile newTile =
-                    new HexTile(copiedPlayers.get(original.getPlayers().indexOf(originalTile.getPlayer())),
-                new Vector2(originalTileEntry.getKey()));
+                new HexTile(copiedPlayers.get(original.getPlayers().indexOf(originalTile.getPlayer())),
+                    new Vector2(originalTileEntry.getKey()));
             if (originalTile.getKingdom() != null) {
                 newTile.setKingdom(copiedKingdoms.get(original.getKingdoms().indexOf(originalTile.getKingdom())));
                 newTile.getKingdom().getTiles().add(newTile);
@@ -217,7 +217,7 @@ public class GameStateHelper {
             for (Vector2 candidate : usableCoords) {
                 // factor in density
                 final int usableCoordsCountFromCandidate = HexMapHelper.getUnusedNeighborCoords(gameState.getMap(),
-                                candidate)
+                        candidate)
                     .size();
                 final float score = (float) Math.pow(usableCoordsCountFromCandidate, density);
                 scores.add(score);
@@ -679,7 +679,7 @@ public class GameStateHelper {
         // a really bad situation
         // tiles that belong to no kingdom are irrelevant as they help no player
         final int noOfKingdomTiles =
-                gameState.getKingdoms().stream().mapToInt(kingdom -> kingdom.getTiles().size()).sum();
+            gameState.getKingdoms().stream().mapToInt(kingdom -> kingdom.getTiles().size()).sum();
 
         // update winner
         for (Kingdom kingdom : gameState.getKingdoms()) {
@@ -960,7 +960,7 @@ public class GameStateHelper {
                 && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass()))
             .mapToInt(tile -> ((Unit) tile.getContent()).getUnitType().salary()).sum();
         // if there is a held unit, subtract their salary
-        if (gameState.getHeldObject() != null
+        if (gameState.getActiveKingdom() == kingdom && gameState.getHeldObject() != null
             && ClassReflection.isAssignableFrom(Unit.class, gameState.getHeldObject().getClass())) {
             result += ((Unit) gameState.getHeldObject()).getUnitType().salary();
         }
