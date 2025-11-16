@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.feudaltactics.renderer.GameStateConverter;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
@@ -54,8 +55,9 @@ public class MenuDaggerModule {
     @MenuBackgroundRenderer
     static MapRenderer provideMenuMapRenderer(@MenuBackgroundCamera OrthographicCamera camera,
                                               TextureAtlasHelper textureAtlasHelper, ShapeRenderer shapeRenderer,
+                                              GameStateConverter gameStateConverter,
                                               SpriteBatch spriteBatch) {
-        return new MapRenderer(camera, textureAtlasHelper, shapeRenderer, spriteBatch, true);
+        return new MapRenderer(camera, textureAtlasHelper, shapeRenderer, spriteBatch, gameStateConverter, true);
     }
 
 }

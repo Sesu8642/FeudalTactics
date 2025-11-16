@@ -12,13 +12,17 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.collect.ImmutableList;
-import de.sesu8642.feudaltactics.lib.gamestate.*;
-import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.HexMapHelper;
+import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
+import de.sesu8642.feudaltactics.lib.gamestate.MapDimensions;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +30,6 @@ import java.util.stream.Collectors;
  */
 public class MapRenderer {
 
-    public static final float LINE_EXTENSION = 0.14F;
     public static final float WATER_TILE_SIZE = 12;
     public static final float SHIELD_SIZE = 2;
     public static final Color BEACH_WATER_COLOR = new Color(0F, 1F, 1F, 1F);
@@ -35,6 +38,13 @@ public class MapRenderer {
     public static final List<Color> PLAYER_COLOR_PALETTE = ImmutableList.of(new Color(0.2F, 0.45F, 0.8F, 1),
         new Color(0.75F, 0.5F, 0F, 1), new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1),
         new Color(1F, 1F, 1F, 1), new Color(0F, 1F, 0F, 1));
+
+    // offset for drawing the tile contents
+    private static final float TILE_CONTENT_OFFSET_X = 0.0F;
+    private static final float TILE_CONTENT_OFFSET_Y = HEXTILE_HEIGHT * -0.075F;
+    // colors for normal and darkened stuff
+    private static final Color NORMAL_COLOR = new Color(1, 1, 1, 1);
+    private static final Color DARKENED_COLOR = new Color(0, 0, 0, 0.4F);
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
      * The reason is that the stateTime must stay relatively small because of float limitations.
@@ -52,391 +62,165 @@ public class MapRenderer {
     private final OrthographicCamera camera;
     private final SpriteBatch spriteBatch;
     private final TextureAtlasHelper textureAtlasHelper;
-    // stuff that is to be drawn
-    // keeping those in separate, flat collections is more efficient when rendering
-    private final Map<Vector2, DrawTile> tiles = new HashMap<>();
-    private final Map<Vector2, TextureRegion> nonAnimatedContents = new HashMap<>();
-    private final Map<Vector2, TextureRegion> darkenedNonAnimatedContents = new HashMap<>();
-    private final Map<Vector2, Animation<TextureRegion>> animatedContents = new HashMap<>();
-    private final Map<Vector2, Animation<TextureRegion>> darkenedAnimatedContents = new HashMap<>();
-    private final Map<Vector2, Boolean> shields = new HashMap<>();
-    private final List<Vector2> whiteLineStartPoints = new ArrayList<>();
-    private final List<Vector2> whiteLineEndPoints = new ArrayList<>();
-    private final List<Vector2> redLineStartPoints = new ArrayList<>();
-    private final List<Vector2> redLineEndPoints = new ArrayList<>();
+    private final GameStateConverter gameStateConverter;
     // settings
     private final boolean enableDeepWaterRendering;
+    private ItemsToBeRendered itemsToBeRendered = new ItemsToBeRendered();
     private float stateTime = 0F; // for keeping animations at the correct pace
-    private boolean darkenBeaches;
 
     /**
      * Constructor.
      */
-    public MapRenderer(OrthographicCamera camera, TextureAtlasHelper textureAtlasHelper, ShapeRenderer shapeRenderer,
-                       SpriteBatch spriteBatch, boolean enableDeepWaterRendering) {
+    public MapRenderer(OrthographicCamera camera, TextureAtlasHelper textureAtlasHelper,
+                       ShapeRenderer shapeRenderer, SpriteBatch spriteBatch, GameStateConverter gameStateConverter,
+                       boolean enableDeepWaterRendering) {
         this.camera = camera;
         this.shapeRenderer = shapeRenderer;
         this.spriteBatch = spriteBatch;
         this.textureAtlasHelper = textureAtlasHelper;
+        this.gameStateConverter = gameStateConverter;
         this.enableDeepWaterRendering = enableDeepWaterRendering;
     }
 
-    /**
-     * Updates the map that is rendered.
-     *
-     * @param gameState game state containing the map
-     */
     // this method and rendering must be synchronized to not happen at the same time
-    public synchronized void updateMap(GameState gameState) {
-        // create tiles
-        tiles.clear();
-        nonAnimatedContents.clear();
-        animatedContents.clear();
-        darkenedNonAnimatedContents.clear();
-        darkenedAnimatedContents.clear();
-        shields.clear();
-        whiteLineStartPoints.clear();
-        whiteLineEndPoints.clear();
-        redLineStartPoints.clear();
-        redLineEndPoints.clear();
-        darkenBeaches = gameState.getHeldObject() != null;
-        for (Entry<Vector2, HexTile> hexTileEntry : gameState.getMap().entrySet()) {
-            final Vector2 hexCoords = hexTileEntry.getKey();
-            final Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
-            final HexTile tile = hexTileEntry.getValue();
-
-            // create tiles
-            final DrawTile drawTile = new DrawTile();
-            drawTile.mapCoords = mapCoords;
-            drawTile.color = PLAYER_COLOR_PALETTE.get(tile.getPlayer().getPlayerIndex());
-            // create beaches on the edges
-            final List<HexTile> neighbors = HexMapHelper.getNeighborTiles(gameState.getMap(), tile);
-            if (neighbors.get(0) == null) {
-                // top left
-                drawTile.topLeftBeach = true;
-            }
-            if (neighbors.get(1) == null) {
-                // top
-                drawTile.topBeach = true;
-            }
-            if (neighbors.get(2) == null) {
-                // top right
-                drawTile.topRightBeach = true;
-            }
-            if (neighbors.get(3) == null) {
-                // bottom right
-                drawTile.bottomRightBeach = true;
-            }
-            if (neighbors.get(4) == null) {
-                // bottom
-                drawTile.bottomBeach = true;
-            }
-            if (neighbors.get(5) == null) {
-                // bottom left
-                drawTile.bottomLeftBeach = true;
-            }
-
-            // create lines for highlighting active kingdom
-            if (gameState.getActiveKingdom() != null && tile.getKingdom() != null
-                && tile.getKingdom() == gameState.getActiveKingdom()) {
-                int index = 0;
-                for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
-                    if (neighborTile == null || neighborTile.getKingdom() == null
-                        || neighborTile.getKingdom() != tile.getKingdom()) {
-                        final Line line = getNeighborLine(mapCoords, index);
-                        whiteLineStartPoints.add(line.start);
-                        whiteLineEndPoints.add(line.end);
-                    }
-                    index++;
-                }
-                // darken the tile if placing is impossible
-                if (gameState.getHeldObject() != null
-                    && !InputValidationHelper.checkPlaceOwn(gameState, gameState.getActivePlayer(), tile)
-                    && !InputValidationHelper.checkCombineUnits(gameState, gameState.getActivePlayer(), tile)) {
-                    drawTile.darken = true;
-                }
-            } else if (gameState.getHeldObject() != null) {
-                // red lines for indicating if able to conquer
-                if (InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
-                    int index = 0;
-                    for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
-                        if (neighborTile == null
-                            || (neighborTile.getKingdom() != gameState.getActiveKingdom() && !InputValidationHelper
-                            .checkConquer(gameState, gameState.getActivePlayer(), neighborTile))) {
-                            final Line line = getNeighborLine(mapCoords, index);
-                            final Collection<Line> dottedLineParts = lineToDottedLine(line);
-                            for (Line linePart : dottedLineParts) {
-                                redLineStartPoints.add(linePart.start);
-                                redLineEndPoints.add(linePart.end);
-                            }
-                        }
-                        index++;
-                    }
-                } else {
-                    drawTile.darken = true;
-                }
-            } else if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT
-                && gameState.getActiveKingdom() != null) {
-                drawTile.darken = true;
-            }
-            tiles.put(tile.getPosition(), drawTile);
-
-            // create content (units etc)
-            final TileContent tileContent = tile.getContent();
-            if (tileContent != null) {
-                boolean animate = false;
-                if (tile.getKingdom() != null && tile.getKingdom().getPlayer() == gameState.getActivePlayer()) {
-                    if (ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
-                        && ((Unit) tileContent).isCanAct()) {
-                        // animate units that can act
-                        animate = true;
-                    } else if (ClassReflection.isAssignableFrom(Capital.class, tileContent.getClass())
-                        && gameState.getActivePlayer() == tile.getKingdom().getPlayer()
-                        && tile.getKingdom().getSavings() > Unit.COST) {
-                        // animate capitals if they can buy something
-                        animate = true;
-                    }
-                }
-                if (animate) {
-                    if (drawTile.darken) {
-                        // darkened content
-                        darkenedAnimatedContents.put(
-                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            textureAtlasHelper.findAnimationForTileContent(tileContent));
-                    } else {
-                        animatedContents.put(
-                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            textureAtlasHelper.findAnimationForTileContent(tileContent));
-                    }
-                } else {
-                    if (drawTile.darken
-                        // darken own units that have already acted
-                        || (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
-                        && tile.getContent() != null
-                        && ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass())
-                        && !((Unit) tile.getContent()).isCanAct())) {
-                        // darkened content
-                        darkenedNonAnimatedContents.put(
-                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            textureAtlasHelper.findTextureRegionForTileContent(tileContent));
-                    } else {
-                        nonAnimatedContents.put(
-                            new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS),
-                            textureAtlasHelper.findTextureRegionForTileContent(tileContent));
-                    }
-                }
-
-            }
-
-            if (gameState.getHeldObject() != null || (gameState.getActiveKingdom() != null && tile.getKingdom() == gameState.getActiveKingdom())) {
-                // create protection indicators
-                final int protectionLevel = GameStateHelper.getProtectionLevel(gameState, tile);
-                switch (protectionLevel) {
-                    case 4:
-                        shields.put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x + SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        break;
-                    case 3:
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE * 1.5F, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x + SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        break;
-                    case 2:
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        shields.put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2), drawTile.darken);
-                        break;
-                    case 1:
-                        shields.put(new Vector2(mapCoords.x - SHIELD_SIZE / 2, mapCoords.y - SHIELD_SIZE / 2),
-                            drawTile.darken);
-                        break;
-                    case 0:
-                        break;
-                    default:
-                        throw new AssertionError("Unexpected protection level " + protectionLevel);
-                }
-            }
-
-        }
-    }
-
-    private Collection<Line> lineToDottedLine(Line line) {
-        final int partAmount = 3;
-        final Collection<Line> resultLines = new HashSet<>();
-        final float lineDiffX = line.end.x - line.start.x;
-        final float lineDiffY = line.end.y - line.start.y;
-        for (int i = 1; i <= partAmount; i += 2) {
-            final Line linePart = new Line();
-            linePart.start = new Vector2(line.start.x + (lineDiffX / partAmount) * (i - 1),
-                line.start.y + (lineDiffY / partAmount) * (i - 1));
-            linePart.end = new Vector2(line.start.x + (lineDiffX / partAmount) * i,
-                line.start.y + (lineDiffY / partAmount) * i);
-            resultLines.add(linePart);
-        }
-        return resultLines;
-    }
-
-    private Line getNeighborLine(Vector2 mapCoords, int index) {
-        final Vector2 start;
-        final Vector2 end;
-        switch (index) {
-            case 0:
-                // top left
-                start = new Vector2(mapCoords.x - HEXTILE_WIDTH / 4 + LINE_EXTENSION,
-                    mapCoords.y + HEXTILE_HEIGHT / 2 + LINE_EXTENSION);
-                end = new Vector2(mapCoords.x - HEXTILE_WIDTH / 2 - LINE_EXTENSION, mapCoords.y - LINE_EXTENSION);
-                break;
-            case 1:
-                // top
-                start = new Vector2(mapCoords.x - HEXTILE_WIDTH / 4 - LINE_EXTENSION, mapCoords.y + HEXTILE_HEIGHT / 2);
-
-                end = new Vector2(mapCoords.x + HEXTILE_WIDTH / 4 + LINE_EXTENSION, mapCoords.y + HEXTILE_HEIGHT / 2);
-                break;
-            case 2:
-                // top right
-                start = new Vector2(mapCoords.x + HEXTILE_WIDTH / 4 - LINE_EXTENSION,
-                    mapCoords.y + HEXTILE_HEIGHT / 2 + LINE_EXTENSION);
-                end = new Vector2(mapCoords.x + HEXTILE_WIDTH / 2 + LINE_EXTENSION, mapCoords.y - LINE_EXTENSION);
-                break;
-            case 3:
-                // bottom right
-                start = new Vector2(mapCoords.x + HEXTILE_WIDTH / 4 - LINE_EXTENSION,
-                    mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
-                end = new Vector2(mapCoords.x + HEXTILE_WIDTH / 2 + LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
-                break;
-            case 4:
-                // bottom
-                start = new Vector2(mapCoords.x - HEXTILE_WIDTH / 4 - LINE_EXTENSION, mapCoords.y - HEXTILE_HEIGHT / 2);
-                end = new Vector2(mapCoords.x + HEXTILE_WIDTH / 4 + LINE_EXTENSION, mapCoords.y - HEXTILE_HEIGHT / 2);
-                break;
-            case 5:
-                // bottom left
-                start = new Vector2(mapCoords.x - HEXTILE_WIDTH / 4 + LINE_EXTENSION,
-                    mapCoords.y - HEXTILE_HEIGHT / 2 - LINE_EXTENSION);
-                end = new Vector2(mapCoords.x - HEXTILE_WIDTH / 2 - LINE_EXTENSION, mapCoords.y + LINE_EXTENSION);
-                break;
-            default:
-                throw new AssertionError(String.format("Cannot map index %s to a hexagon side", index));
-        }
-        final Line result = new Line();
-        result.start = start;
-        result.end = end;
-        return result;
+    public synchronized void updateGameState(GameState gameState) {
+        itemsToBeRendered = gameStateConverter.convertGameState(gameState);
     }
 
     /**
      * Renders the map.
      */
     public synchronized void render() {
-        final HashMap<Vector2, TextureRegion> frames = new HashMap<>(); // current frame for each map object
-        final HashMap<Vector2, TextureRegion> darkenedFrames = new HashMap<>(); // current frame for each map object
-        spriteBatch.setProjectionMatrix(camera.combined);
+        // current frame for each tile content
+        final Map<Vector2, TextureRegion> animatedTileContentframes = new HashMap<>();
+        // current frame for each tile content
+        final Map<Vector2, TextureRegion> darkenedAnimatedTileContentframes = new HashMap<>();
         updateStateTime(Gdx.graphics.getDeltaTime());
         // get the correct frames
-        for (Entry<Vector2, Animation<TextureRegion>> content : animatedContents.entrySet()) {
-            frames.put(content.getKey(), (content.getValue()).getKeyFrame(stateTime, true));
+        for (Entry<Vector2, Animation<TextureRegion>> content : itemsToBeRendered.getAnimatedContents().entrySet()) {
+            animatedTileContentframes.put(content.getKey(), (content.getValue()).getKeyFrame(stateTime, true));
         }
-        for (Entry<Vector2, Animation<TextureRegion>> content : darkenedAnimatedContents.entrySet()) {
-            darkenedFrames.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
+        for (Entry<Vector2, Animation<TextureRegion>> content :
+            itemsToBeRendered.getDarkenedAnimatedContents().entrySet()) {
+            darkenedAnimatedTileContentframes.put(content.getKey(), content.getValue().getKeyFrame(stateTime, true));
         }
         final TextureRegion waterRegion = textureAtlasHelper.getWaterAnimation().getKeyFrame(stateTime, true);
-        final TextureRegion bottomRightBeachSandRegion =
-            textureAtlasHelper.getBeachSandAnimation().getKeyFrame(stateTime
-            , true);
-        final TextureRegion bottomLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
-        bottomLeftBeachSandRegion.flip(true, false);
-        final TextureRegion topLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
-        topLeftBeachSandRegion.flip(true, true);
-        final TextureRegion topRightBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
-        topRightBeachSandRegion.flip(false, true);
-        final TextureRegion bottomRightBeachWaterRegion =
-            textureAtlasHelper.getBeachWaterAnimation().getKeyFrame(stateTime, true);
-        final TextureRegion bottomLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
-        bottomLeftBeachWaterRegion.flip(true, false);
-        final TextureRegion topLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
-        topLeftBeachWaterRegion.flip(true, true);
-        final TextureRegion topRightBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
-        topRightBeachWaterRegion.flip(false, true);
 
-        final Vector2 waterOriginPoint = calculateWaterOriginPoint();
-
-        final float itemOffsetX = HEXTILE_WIDTH * 0.0F;
-        final float itemOffsetY = HEXTILE_HEIGHT * -0.075F;
-
-        // colors for normal and darkened stuff
-        final Color normalColor = new Color(1, 1, 1, 1);
-        final Color darkenedColor = new Color(0, 0, 0, 0.4F);
-        spriteBatch.setColor(normalColor);
-
+        spriteBatch.setProjectionMatrix(camera.combined);
         spriteBatch.begin();
 
         if (enableDeepWaterRendering) {
-            // draw sea background
-            // subtract -3 in the loop condition because some room is needed due to the
-            // movement offset on the top right
-            // start with -1 to do the same on the bottom left
-            for (int i = -1; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
-                for (int j = -1; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
-                    // there is a bug that causes tiny gaps between the water tiles on the sides
-                    // (but not top/bottom); probably some rounding issue
-                    // a similar thing happens with TiledDrawable so maybe look into that and report
-                    // it later
-                    // the 0.01F is a hack that seems to mitigate this
-                    spriteBatch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
-                        waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
-                }
-            }
+            drawDeepWater(waterRegion);
         } else {
             // when making art like the logo, use black background instead of water
             Gdx.gl.glClearColor(0, 0, 0, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         }
 
-        // draw all the beaches first because they would cover some of the tiles
-        // otherwise
+        // draw all the beaches before the tiles because they would cover some of the tiles otherwise
         // beach water first (should not cover any sand)
-        final Color beachWaterColor = new Color(BEACH_WATER_COLOR);
-        if (darkenBeaches) {
-            beachWaterColor.mul(0.75F, 0.75F, 0.75F, 1);
+        drawBeachWater();
+        drawBeachSand();
+
+        drawTiles();
+
+        drawShields();
+
+        // draw animated tile contents
+        drawContents(animatedTileContentframes.entrySet());
+        drawDarkenedContents(darkenedAnimatedTileContentframes.entrySet());
+
+        // draw non-animated tile contents
+        drawContents(itemsToBeRendered.getNonAnimatedContents().entrySet());
+        drawDarkenedContents(itemsToBeRendered.getDarkenedNonAnimatedContents().entrySet());
+
+        spriteBatch.end();
+
+        drawLines();
+    }
+
+    private void drawLines() {
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(1F, 1F, 1F, 1);
+        for (int i = 0; i < itemsToBeRendered.getWhiteLineStartPoints().size(); i++) {
+            shapeRenderer.rectLine(itemsToBeRendered.getWhiteLineStartPoints().get(i).x,
+                itemsToBeRendered.getWhiteLineStartPoints().get(i).y,
+                itemsToBeRendered.getWhiteLineEndPoints().get(i).x, itemsToBeRendered.getWhiteLineEndPoints().get(i).y,
+                0.6F);
         }
-        spriteBatch.setColor(beachWaterColor);
-        for (DrawTile tile : tiles.values()) {
-            if (tile.bottomBeach || tile.bottomRightBeach) {
-                spriteBatch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT * 2,
-                    HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
-            }
-            if (tile.bottomBeach || tile.bottomLeftBeach) {
-                spriteBatch.draw(bottomLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2,
-                    tile.mapCoords.y - HEXTILE_HEIGHT * 2, HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
-            }
-            if (tile.topBeach || tile.topLeftBeach) {
-                spriteBatch.draw(topLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2, tile.mapCoords.y,
-                    HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
-            }
-            if (tile.topBeach || tile.topRightBeach) {
-                spriteBatch.draw(topRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH * 2,
-                    HEXTILE_HEIGHT * 2);
-            }
+        shapeRenderer.setColor(1F, 0F, 0F, 1);
+        for (int i = 0; i < itemsToBeRendered.getRedLineStartPoints().size(); i++) {
+            shapeRenderer.rectLine(itemsToBeRendered.getRedLineStartPoints().get(i).x,
+                itemsToBeRendered.getRedLineStartPoints().get(i).y, itemsToBeRendered.getRedLineEndPoints().get(i).x,
+                itemsToBeRendered.getRedLineEndPoints().get(i).y, 0.6F);
         }
-        // beach sand
-        final Color beachSandColor = new Color(normalColor);
-        if (darkenBeaches) {
+        shapeRenderer.end();
+    }
+
+    private void drawContents(Set<Entry<Vector2, TextureRegion>> textureRegions) {
+        spriteBatch.setColor(NORMAL_COLOR);
+        for (Entry<Vector2, TextureRegion> currentFrame : textureRegions) {
+            spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - TILE_CONTENT_OFFSET_X,
+                currentFrame.getKey().y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+        }
+    }
+
+    private void drawDarkenedContents(Set<Entry<Vector2, TextureRegion>> darkenedTextureRegions) {
+        drawContents(darkenedTextureRegions);
+        spriteBatch.setColor(DARKENED_COLOR);
+        for (Entry<Vector2, TextureRegion> currentFrame : darkenedTextureRegions) {
+            spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - TILE_CONTENT_OFFSET_X,
+                currentFrame.getKey().y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+        }
+    }
+
+    private void drawShields() {
+        final Color shieldColor = new Color(NORMAL_COLOR);
+        shieldColor.sub(0, 0, 0, 0.7F);
+        final Color darkenedShieldColor = new Color(shieldColor);
+        darkenedShieldColor.mul(0.5F, 0.5F, 0.5F, 1);
+        for (Entry<Vector2, Boolean> shield : itemsToBeRendered.getShields().entrySet()) {
+            if (Boolean.TRUE.equals(shield.getValue())) {
+                spriteBatch.setColor(darkenedShieldColor);
+            } else {
+                spriteBatch.setColor(shieldColor);
+            }
+            spriteBatch.draw(textureAtlasHelper.getShieldRegion(), shield.getKey().x, shield.getKey().y, SHIELD_SIZE,
+                SHIELD_SIZE);
+        }
+    }
+
+    private void drawTiles() {
+        for (ItemsToBeRendered.DrawTile tile : itemsToBeRendered.getTiles().values()) {
+            final Color color = new Color(tile.color);
+            // darken tile
+            if (tile.darken) {
+                color.mul(0.5F, 0.5F, 0.5F, 1);
+            }
+            spriteBatch.setColor(color);
+            spriteBatch.draw(textureAtlasHelper.getTileRegion(), tile.mapCoords.x - HEXTILE_WIDTH / 2,
+                tile.mapCoords.y - HEXTILE_HEIGHT / 2,
+                HEXTILE_WIDTH, HEXTILE_HEIGHT);
+        }
+    }
+
+    private void drawBeachSand() {
+        final TextureRegion bottomRightBeachSandRegion =
+            textureAtlasHelper.getBeachSandAnimation().getKeyFrame(stateTime, true);
+        final TextureRegion bottomLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+        bottomLeftBeachSandRegion.flip(true, false);
+        final TextureRegion topLeftBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+        topLeftBeachSandRegion.flip(true, true);
+        final TextureRegion topRightBeachSandRegion = new TextureRegion(bottomRightBeachSandRegion);
+        topRightBeachSandRegion.flip(false, true);
+
+        final Color beachSandColor = new Color(NORMAL_COLOR);
+        if (itemsToBeRendered.isDarkenBeaches()) {
             beachSandColor.mul(0.5F, 0.5F, 0.5F, 1);
         }
         spriteBatch.setColor(beachSandColor);
-        for (DrawTile tile : tiles.values()) {
+        for (ItemsToBeRendered.DrawTile tile : itemsToBeRendered.getTiles().values()) {
             if (tile.bottomBeach || tile.bottomRightBeach) {
                 spriteBatch.draw(bottomRightBeachSandRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT,
                     HEXTILE_WIDTH, HEXTILE_HEIGHT);
@@ -454,94 +238,60 @@ public class MapRenderer {
                     HEXTILE_HEIGHT);
             }
         }
-
-        // draw all the tiles
-        for (DrawTile tile : tiles.values()) {
-            final Color color = new Color(tile.color);
-            // darken tile
-            if (tile.darken) {
-                color.mul(0.5F, 0.5F, 0.5F, 1);
-            }
-            spriteBatch.setColor(color);
-            spriteBatch.draw(textureAtlasHelper.getTileRegion(), tile.mapCoords.x - HEXTILE_WIDTH / 2,
-                tile.mapCoords.y - HEXTILE_HEIGHT / 2,
-                HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-
-        // draw all the shields
-        final Color shieldColor = new Color(normalColor);
-        shieldColor.sub(0, 0, 0, 0.7F);
-        final Color darkenedShieldColor = new Color(shieldColor);
-        darkenedShieldColor.mul(0.5F, 0.5F, 0.5F, 1);
-        for (Entry<Vector2, Boolean> shield : shields.entrySet()) {
-            if (Boolean.TRUE.equals(shield.getValue())) {
-                spriteBatch.setColor(darkenedShieldColor);
-            } else {
-                spriteBatch.setColor(shieldColor);
-            }
-            spriteBatch.draw(textureAtlasHelper.getShieldRegion(), shield.getKey().x, shield.getKey().y, SHIELD_SIZE,
-                SHIELD_SIZE);
-        }
-
-        // draw all the animated contents
-        spriteBatch.setColor(normalColor);
-        for (Entry<Vector2, TextureRegion> currentFrame : frames.entrySet()) {
-            spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
-                currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-        // draw the darkened contents like normal but then draw a shadow over them
-        for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
-            spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
-                currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-        spriteBatch.setColor(darkenedColor);
-        for (Entry<Vector2, TextureRegion> currentFrame : darkenedFrames.entrySet()) {
-            spriteBatch.draw(currentFrame.getValue(), currentFrame.getKey().x - itemOffsetX,
-                currentFrame.getKey().y - itemOffsetY, HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-        spriteBatch.setColor(normalColor);
-        // draw all the non-animated contents
-        for (Entry<Vector2, TextureRegion> content : nonAnimatedContents.entrySet()) {
-            spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
-                HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-        for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
-            spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
-                HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-        spriteBatch.setColor(darkenedColor);
-        for (Entry<Vector2, TextureRegion> content : darkenedNonAnimatedContents.entrySet()) {
-            spriteBatch.draw(content.getValue(), content.getKey().x - itemOffsetX, content.getKey().y - itemOffsetY,
-                HEXTILE_WIDTH, HEXTILE_HEIGHT);
-        }
-        spriteBatch.end();
-        // draw all the lines
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(1F, 1F, 1F, 1);
-        for (int i = 0; i < whiteLineStartPoints.size(); i++) {
-            shapeRenderer.rectLine(whiteLineStartPoints.get(i).x, whiteLineStartPoints.get(i).y,
-                whiteLineEndPoints.get(i).x, whiteLineEndPoints.get(i).y, 0.6F);
-        }
-        shapeRenderer.setColor(1F, 0F, 0F, 1);
-        for (int i = 0; i < redLineStartPoints.size(); i++) {
-            shapeRenderer.rectLine(redLineStartPoints.get(i).x, redLineStartPoints.get(i).y, redLineEndPoints.get(i).x,
-                redLineEndPoints.get(i).y, 0.6F);
-        }
-        shapeRenderer.end();
     }
 
-    /**
-     * Calculates map coords from hex coords.
-     *
-     * @param hexCoords hex coords
-     * @return map coords
-     */
-    public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
-        final float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
-        final float y = (float) (HexMapHelper.HEX_OUTER_RADIUS
-            * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
-        return new Vector2(x, y);
+    private void drawBeachWater() {
+        final TextureRegion bottomRightBeachWaterRegion =
+            textureAtlasHelper.getBeachWaterAnimation().getKeyFrame(stateTime, true);
+        final TextureRegion bottomLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+        bottomLeftBeachWaterRegion.flip(true, false);
+        final TextureRegion topLeftBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+        topLeftBeachWaterRegion.flip(true, true);
+        final TextureRegion topRightBeachWaterRegion = new TextureRegion(bottomRightBeachWaterRegion);
+        topRightBeachWaterRegion.flip(false, true);
+
+        final Color beachWaterColor = new Color(BEACH_WATER_COLOR);
+        if (itemsToBeRendered.isDarkenBeaches()) {
+            beachWaterColor.mul(0.75F, 0.75F, 0.75F, 1);
+        }
+        spriteBatch.setColor(beachWaterColor);
+        for (ItemsToBeRendered.DrawTile tile : itemsToBeRendered.getTiles().values()) {
+            if (tile.bottomBeach || tile.bottomRightBeach) {
+                spriteBatch.draw(bottomRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y - HEXTILE_HEIGHT * 2,
+                    HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
+            }
+            if (tile.bottomBeach || tile.bottomLeftBeach) {
+                spriteBatch.draw(bottomLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2,
+                    tile.mapCoords.y - HEXTILE_HEIGHT * 2, HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
+            }
+            if (tile.topBeach || tile.topLeftBeach) {
+                spriteBatch.draw(topLeftBeachWaterRegion, tile.mapCoords.x - HEXTILE_WIDTH * 2, tile.mapCoords.y,
+                    HEXTILE_WIDTH * 2, HEXTILE_HEIGHT * 2);
+            }
+            if (tile.topBeach || tile.topRightBeach) {
+                spriteBatch.draw(topRightBeachWaterRegion, tile.mapCoords.x, tile.mapCoords.y, HEXTILE_WIDTH * 2,
+                    HEXTILE_HEIGHT * 2);
+            }
+        }
+    }
+
+    private void drawDeepWater(TextureRegion waterRegion) {
+        spriteBatch.setColor(NORMAL_COLOR);
+        final Vector2 waterOriginPoint = calculateWaterOriginPoint();
+        // subtract -3 in the loop condition because some room is needed due to the
+        // movement offset on the top right
+        // start with -1 to do the same on the bottom left
+        for (int i = -1; (i - 3) * WATER_TILE_SIZE <= camera.viewportWidth * camera.zoom; i++) {
+            for (int j = -1; (j - 3) * WATER_TILE_SIZE <= camera.viewportHeight * camera.zoom; j++) {
+                // there is a bug that causes tiny gaps between the water tiles on the sides
+                // (but not top/bottom); probably some rounding issue
+                // a similar thing happens with TiledDrawable so maybe look into that and report
+                // it later
+                // the 0.01F is a hack that seems to mitigate this
+                spriteBatch.draw(waterRegion, waterOriginPoint.x + i * WATER_TILE_SIZE,
+                    waterOriginPoint.y + j * WATER_TILE_SIZE, WATER_TILE_SIZE + 0.01F, WATER_TILE_SIZE);
+            }
+        }
     }
 
     private Vector2 calculateWaterOriginPoint() {
@@ -634,20 +384,4 @@ public class MapRenderer {
         spriteBatch.dispose();
     }
 
-    private class DrawTile {
-        Vector2 mapCoords;
-        Color color;
-        boolean darken = false;
-        boolean topLeftBeach = false;
-        boolean topBeach = false;
-        boolean topRightBeach = false;
-        boolean bottomRightBeach = false;
-        boolean bottomBeach = false;
-        boolean bottomLeftBeach = false;
-    }
-
-    private class Line {
-        private Vector2 start;
-        private Vector2 end;
-    }
 }

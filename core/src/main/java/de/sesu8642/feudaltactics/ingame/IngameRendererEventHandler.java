@@ -35,7 +35,7 @@ public class IngameRendererEventHandler {
      */
     @Subscribe
     public void handleGameStateChange(GameStateChangeEvent event) {
-        mapRenderer.updateMap(event.getGameState());
+        mapRenderer.updateGameState(event.getGameState());
     }
 
     /**

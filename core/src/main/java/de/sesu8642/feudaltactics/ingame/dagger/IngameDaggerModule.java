@@ -19,6 +19,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.ScenarioGameStateLoader;
 import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.renderer.GameStateConverter;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
@@ -72,9 +73,11 @@ public class IngameDaggerModule {
     @IngameRenderer
     static MapRenderer provideIngameMapRenderer(@IngameCamera OrthographicCamera camera,
                                                 TextureAtlasHelper textureAtlasHelper,
+                                                GameStateConverter gameStateConverter,
                                                 ShapeRenderer shapeRenderer, SpriteBatch spriteBatch,
                                                 @EnableDeepWaterRenderingProperty boolean enableDeepWaterRendering) {
-        return new MapRenderer(camera, textureAtlasHelper, shapeRenderer, spriteBatch, enableDeepWaterRendering);
+        return new MapRenderer(camera, textureAtlasHelper, shapeRenderer, spriteBatch, gameStateConverter,
+            enableDeepWaterRendering);
     }
 
     @Provides
