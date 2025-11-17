@@ -87,9 +87,9 @@ public class TutorialDialogFactory {
         final String text = "Feudal Tactics is a turn based strategy game. You play on an island composed of " +
             "hexagonal " +
             "tiles. Each tile is colored to show which player owns it.\nTwo or more connected tiles of "
-            + "the same color form a kingdom.\n\nObjective: Click/tap your big kingdom in the bottom right to " +
-            "select it.\n\nHint: The turn indicator in the top left corner of the screen shows the color of the " +
-            "player whose turn it is. Since it is your turn, this color matches the color of your tiles." + "\n" +
+            + "the same color form a kingdom.\n\nObjective: Click/tap your big kingdom in the bottom right of the " +
+            "island to select it.\n\nHint: The turn indicator in the top left corner of the screen shows the color of" +
+            " the player whose turn it is. Since it is your turn, this color matches the color of your tiles." + "\n" +
             "\nNote: You can always see your current objective using the button that looks like this:";
         dialog.text(text).addButtonImage(SkinConstants.BUTTON_INFO);
     }
@@ -106,8 +106,7 @@ public class TutorialDialogFactory {
 
     private void fillTutorialDialog3(FeudalTacticsDialog dialog) {
         final String text1 = "Note how your savings and your income have lowered.\nYou now have the peasant in your " +
-            "hand, " +
-            "as indicated by the hand icon on the right side of the screen.";
+            "hand, as indicated by the hand icon on the right side of the screen.";
         final String text2 = "\nYou can place it in your own kingdom or conquer an enemy tile. A peasant can only " +
             "conquer " +
             "tiles that are not protected, as it is the weakest unit.\n\nObjective: Conquer the unprotected tile " +
@@ -137,8 +136,7 @@ public class TutorialDialogFactory {
 
     private void fillTutorialDialog6(FeudalTacticsDialog dialog) {
         final String text1 = "The spearman you created takes a higher salary than a peasant. Here is an overview of " +
-            "all the" +
-            " units.";
+            "all the units.";
         final List<List<String>> tableData = new ArrayList<>();
         tableData.add(Arrays.asList("Unit", "Strength", "Salary"));
         for (UnitTypes unitType : UnitTypes.values()) {
@@ -165,13 +163,11 @@ public class TutorialDialogFactory {
 
     private void fillTutorialDialog8(FeudalTacticsDialog dialog) {
         final String text = "It's now time to buy a castle. Since they don't need salary, they are ideal for long " +
-            "term " +
-            "defense. Only knights and barons can destroy castles.\n\nUse this button to buy a castle for 15 " +
+            "term defense. Only knights and barons can destroy castles.\n\nUse this button to buy a castle for 15 " +
             "coins:";
         final String text2 = "Objective: Buy and place a castle.\n\nNote: You might need to end your turn once or " +
-            "more to " +
-            "collect enough coins.\n\nHint: Place the castle near your enemies, as it only protects the adjacent " +
-            "tiles.\n";
+            "more to collect enough coins.\n\nHint: Place the castle near your enemies, as it only protects the " +
+            "adjacent tiles.\n";
         dialog.text(text).addButtonImage(SkinConstants.BUTTON_BUY_CASTLE).text(text2);
     }
 
@@ -193,8 +189,7 @@ public class TutorialDialogFactory {
 
     private void fillTutorialDialog11(FeudalTacticsDialog dialog) {
         final String text = "There are several shortcuts available:\n- undo move: Android or mouse back button\n- buy" +
-            " " +
-            "peasant: right mouse button click\n- buy and place peasant in own kingdom: double tap/click\n- buy " +
+            " peasant: right mouse button click\n- buy and place peasant in own kingdom: double tap/click\n- buy " +
             "castle: middle mouse button click\n- buy and place castle: long press/click\n\nObjective: conquer " +
             "the whole island to win the game.\n";
         dialog.text(text);
