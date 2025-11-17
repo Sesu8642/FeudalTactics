@@ -34,8 +34,11 @@ public class ItemsToBeRendered {
      * Value: whether the shield should be darkened or not.
      */
     final Map<Vector2, Boolean> shields = new HashMap<>();
-    
-    final List<Vector2> semitransparentGraveStones = new ArrayList<>();
+
+    /**
+     * Value: whether the gravestone should be darkened or not.
+     */
+    final Map<Vector2, Boolean> semitransparentGraveStones = new HashMap<>();
 
     final List<Vector2> whiteLineStartPoints = new ArrayList<>();
 

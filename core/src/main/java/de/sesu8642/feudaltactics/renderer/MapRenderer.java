@@ -44,9 +44,11 @@ public class MapRenderer {
     private static final float TILE_CONTENT_OFFSET_Y = HEXTILE_HEIGHT * -0.075F;
     // colors for normal and darkened stuff
     private static final Color NORMAL_COLOR = new Color(1, 1, 1, 1);
-    private static final Color SEMITRANSPARENT_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.7F);
-    private static final Color DARKENED_SHIELD_COLOR = new Color(SEMITRANSPARENT_COLOR).mul(0.5F, 0.5F, 0.5F, 1);
-    private static final Color BIT_LESS_SEMITRANSPARENT_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.3F);
+    private static final Color SHIELD_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.7F);
+    private static final Color DARKENED_SHIELD_COLOR = new Color(SHIELD_COLOR).mul(0.5F, 0.5F, 0.5F, 1);
+    private static final Color GRAVESTONE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.3F);
+    private static final Color DARKENED_GRAVESTONE_INDICATOR_COLOR = new Color(GRAVESTONE_INDICATOR_COLOR).mul(0.5F,
+        0.5F, 0.5F, 1);
     private static final Color DARKENED_COLOR = new Color(0, 0, 0, 0.4F);
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
@@ -189,10 +191,14 @@ public class MapRenderer {
             // return on second frame for blinking effect (second frame would be a dark square otherwise)
             return;
         }
-        for (Vector2 coords : itemsToBeRendered.getSemitransparentGraveStones()) {
-            spriteBatch.setColor(BIT_LESS_SEMITRANSPARENT_COLOR);
-            spriteBatch.draw(gravestoneRegion, coords.x - TILE_CONTENT_OFFSET_X,
-                coords.y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+        for (Entry<Vector2, Boolean> gravestone : itemsToBeRendered.getSemitransparentGraveStones().entrySet()) {
+            if (Boolean.TRUE.equals(gravestone.getValue())) {
+                spriteBatch.setColor(DARKENED_GRAVESTONE_INDICATOR_COLOR);
+            } else {
+                spriteBatch.setColor(GRAVESTONE_INDICATOR_COLOR);
+            }
+            spriteBatch.draw(gravestoneRegion, gravestone.getKey().x - TILE_CONTENT_OFFSET_X,
+                gravestone.getKey().y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
     }
 
@@ -201,7 +207,7 @@ public class MapRenderer {
             if (Boolean.TRUE.equals(shield.getValue())) {
                 spriteBatch.setColor(DARKENED_SHIELD_COLOR);
             } else {
-                spriteBatch.setColor(SEMITRANSPARENT_COLOR);
+                spriteBatch.setColor(SHIELD_COLOR);
             }
             spriteBatch.draw(textureAtlasHelper.getShieldRegion(), shield.getKey().x, shield.getKey().y, SHIELD_SIZE,
                 SHIELD_SIZE);
