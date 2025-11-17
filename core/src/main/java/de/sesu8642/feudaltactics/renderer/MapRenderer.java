@@ -44,12 +44,13 @@ public class MapRenderer {
     private static final float TILE_CONTENT_OFFSET_Y = HEXTILE_HEIGHT * -0.075F;
     // colors for normal and darkened stuff
     private static final Color NORMAL_COLOR = new Color(1, 1, 1, 1);
+    private static final Color DARKENED_COLOR = new Color(NORMAL_COLOR).mul(0.5F, 0.5F, 0.5F, 1);
     private static final Color SHIELD_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.7F);
     private static final Color DARKENED_SHIELD_COLOR = new Color(SHIELD_COLOR).mul(0.5F, 0.5F, 0.5F, 1);
     private static final Color GRAVESTONE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.3F);
     private static final Color DARKENED_GRAVESTONE_INDICATOR_COLOR = new Color(GRAVESTONE_INDICATOR_COLOR).mul(0.5F,
         0.5F, 0.5F, 1);
-    private static final Color DARKENED_COLOR = new Color(0, 0, 0, 0.4F);
+
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
      * The reason is that the stateTime must stay relatively small because of float limitations.
@@ -171,8 +172,6 @@ public class MapRenderer {
     }
 
     private void drawDarkenedContents(Set<Entry<Vector2, TextureRegion>> darkenedTextureRegions) {
-        drawRegularColorContents(darkenedTextureRegions);
-        // draw a shade on top
         spriteBatch.setColor(DARKENED_COLOR);
         drawContents(darkenedTextureRegions);
     }
