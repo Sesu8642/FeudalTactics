@@ -8,6 +8,8 @@ import de.sesu8642.feudaltactics.FeudalTactics;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.crashreporting.ui.CrashingScreen;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,12 +19,14 @@ import java.util.Date;
  * Soft-crashes the game in case of a critical error after collecting important
  * debug information.
  */
+@Slf4j
 @Singleton
 public class GameCrasher {
 
     private final String gameVersion;
     private final CrashReportDao crashReportDao;
     private final AutoSaveRepository autoSaveRepository;
+    private boolean crashDetectedBefore = false;
 
     /**
      * Constructor.
@@ -67,7 +71,14 @@ public class GameCrasher {
      * with the proper trace because Google will provide the trace without anyone
      * needing to report it.
      */
+    @Synchronized
     public void crashAfterGeneratingReport(String previousLogs, Throwable throwable) {
+        if (crashDetectedBefore) {
+            log.warn("The game ran into a secondary exception which no crash report will be generated for to preserve" +
+                " the initial one.");
+            return;
+        }
+        crashDetectedBefore = true;
         final String crashReportText = buildCrashreportText(previousLogs, throwable);
         crashReportDao.saveCrashReport(crashReportText);
         // The game state may lead to the same crash over and over again. Better delete

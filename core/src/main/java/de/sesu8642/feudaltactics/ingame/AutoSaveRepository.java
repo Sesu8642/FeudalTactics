@@ -107,7 +107,7 @@ public class AutoSaveRepository {
             // again
             if (currentUndoDepth > 0) {
                 incrementalAutoSavePrefStore.putInteger(CURRENT_UNDO_DEPTH_NAME, --currentUndoDepth);
-                logger.info("undo depth decreased to " + currentUndoDepth);
+                logger.info("undo depth decreased to {}", currentUndoDepth);
             }
 
             // if there are too many incremental saves, merge them into the last full one
@@ -118,7 +118,7 @@ public class AutoSaveRepository {
                 // keep enough incremental saves to enable undoing moves
                 final SortedMap<Long, PlayerMove> incrementalSavesToMerge =
                     incrementalSaves.subMap(incrementalSaves.firstKey(),
-                        new ArrayList<Long>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
+                        new ArrayList<>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
                 mergeIncrementalSavesIntoFull(fullSave, incrementalSavesToMerge.values());
                 final String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
                 fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveStringFullSave);
