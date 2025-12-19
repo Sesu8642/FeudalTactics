@@ -228,8 +228,8 @@ public class BotAi {
             }
 
             // determine how "valuable" the tiles are for conquering
-            final Set<OffenseTileScoreInfo> offenseTileScoreInfoSet = Collections
-                .newSetFromMap(new ConcurrentHashMap<OffenseTileScoreInfo, Boolean>());
+            final Set<OffenseTileScoreInfo> offenseTileScoreInfoSet =
+                Collections.newSetFromMap(new ConcurrentHashMap<>());
             possibleConquerTiles.parallelStream().forEach(conquerTile -> offenseTileScoreInfoSet
                 .add(getOffenseTileScoreInfo(gameState, intelligence, conquerTile)));
             final List<OffenseTileScoreInfo> offenseTileScoreInfos = new ArrayList<>(offenseTileScoreInfoSet);
@@ -475,7 +475,7 @@ public class BotAi {
     }
 
     private Set<HexTile> getInterestingProtectionTiles(GameState gameState) {
-        final HashSet<HexTile> interestingPlacementTiles = new HashSet<>();
+        final Set<HexTile> interestingPlacementTiles = new HashSet<>();
         for (HexTile tile : gameState.getActiveKingdom().getTiles()) {
             // tile is interesting for placement if it is close to another kingdom
             final List<HexTile> neighborsNeighbors = HexMapHelper.getNeighborsNeighborTiles(gameState.getMap(), tile);
@@ -491,17 +491,13 @@ public class BotAi {
 
     private TileScoreInfo getBestBlockingObjectRemovalScore(GameState gameState,
                                                             Collection<HexTile> tilesWithBlockingObjects) {
-        final Set<TileScoreInfo> scores = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
-        tilesWithBlockingObjects.parallelStream()
-            .forEach(tile -> scores.add(new TileScoreInfo(tile, getBlockingObjectRemovalScore(gameState, tile))));
-        return scores.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
-            int result = Integer.compare(t1.score, t2.score);
-            // if the score is the same, use the coordinates to eliminate randomness
-            if (result == 0) {
-                result = t1.tile.compareTo(t2.tile);
-            }
-            return result;
-        }).orElse(new TileScoreInfo(null, -1));
+        final Set<TileScoreInfo> scores = Collections.newSetFromMap(new ConcurrentHashMap<>());
+        tilesWithBlockingObjects.parallelStream().forEach(tile -> scores.add(new TileScoreInfo(tile,
+            getBlockingObjectRemovalScore(gameState, tile))));
+        return scores.stream().max(Comparator.comparingInt((TileScoreInfo t) -> t.score)
+                // if the score is the same, use the coordinates to eliminate randomness
+                .thenComparing(t -> t.tile))
+            .orElse(new TileScoreInfo(null, -1));
     }
 
     private int getBlockingObjectRemovalScore(GameState gameState, HexTile tile) {
@@ -577,14 +573,10 @@ public class BotAi {
         final Set<TileScoreInfo> results = Collections.newSetFromMap(new ConcurrentHashMap<TileScoreInfo, Boolean>());
         interestingProtectionTiles.parallelStream().forEach(
             tile -> results.add(new TileScoreInfo(tile, getTileDefenseScore(gameState, intelligence, tile))));
-        return results.stream().max((TileScoreInfo t1, TileScoreInfo t2) -> {
-            int result = Integer.compare(t1.score, t2.score);
-            // if the score is the same, use the coordinates to eliminate randomness
-            if (result == 0) {
-                result = t1.tile.compareTo(t2.tile);
-            }
-            return result;
-        }).orElse(new TileScoreInfo(null, -1));
+        return results.stream().max(Comparator.comparingInt((TileScoreInfo t) -> t.score)
+                // if the score is the same, use the coordinates to eliminate randomness
+                .thenComparing(t -> t.tile))
+            .orElse(new TileScoreInfo(null, -1));
     }
 
     /**
@@ -593,9 +585,9 @@ public class BotAi {
      * tiles get a score of -1. Depending of the intelligence level, all other tiles
      * may get a score of 0. The highest possible value should be 60 (I think).
      *
-     * @param gameStategame state to work with
-     * @param intelligence  intelligence level of the bot player
-     * @param tile          tiles to calculate the score of
+     * @param gameState    game state to work with
+     * @param intelligence intelligence level of the bot player
+     * @param tile         tiles to calculate the score of
      * @return defense score
      */
     private int getTileDefenseScore(GameState gameState, Intelligence intelligence, HexTile tile) {
