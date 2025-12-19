@@ -15,6 +15,12 @@ jobs:
       - name: Run unit tests
         run: ./gradlew core:test
 
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Report
+          path: ./core/build/reports/tests/test/index.html
+
 
   build_desktop:
     runs-on: ubuntu-latest
