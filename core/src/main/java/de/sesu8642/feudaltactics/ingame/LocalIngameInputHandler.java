@@ -12,6 +12,7 @@ import de.sesu8642.feudaltactics.events.moves.*;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
+import lombok.Synchronized;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,6 +39,8 @@ public class LocalIngameInputHandler {
         this.inputValidationHelper = inputValidationHelper;
     }
 
+    // synchronize just in case the UI detects multiple actions very quickly
+    @Synchronized
     private void carryOutPlayerMoveIfLegal(PlayerMove move) {
         final Optional<Player> playerOptional =
             GameStateHelper.determineActingLocalPlayer(gameController.getGameState());
