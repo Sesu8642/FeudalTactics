@@ -13,3 +13,4 @@ By making a contribution to this project, I certify that I multi-license my cont
 | 2024-04-05 | Anthony Clayton (AnthonyClayton12, anthonyclayton12@gmail.com) 
 | 2024-09-13 | @junefish
 | 2024-11-22 | @anthonyryan1
+| 2025-12-21 | Christoph Hannebauer (bb-froggy) |
