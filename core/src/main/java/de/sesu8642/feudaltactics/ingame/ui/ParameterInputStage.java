@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -15,7 +16,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -52,7 +53,7 @@ public class ParameterInputStage extends ResizableResettableStage {
      */
     public static final long TOTAL_INPUT_HEIGHT = OUTER_PADDING_PX + 5 * INPUT_PADDING_PX + BUTTON_HEIGHT_PX
         + 5 * INPUT_HEIGHT_PX;
-    private final Insets insets;
+    private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
     SelectBox<String> startingPositionSelect;
     SelectBox<String> sizeSelect;
@@ -72,9 +73,10 @@ public class ParameterInputStage extends ResizableResettableStage {
      * @param skin     game skin
      */
     @Inject
-    public ParameterInputStage(@MenuViewport Viewport viewport, Insets insets, Skin skin) {
+    public ParameterInputStage(@MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
+                               Skin skin) {
         super(viewport);
-        this.insets = insets;
+        this.platformInsetsProvider = platformInsetsProvider;
         this.skin = skin;
         initUi();
     }
@@ -129,8 +131,8 @@ public class ParameterInputStage extends ResizableResettableStage {
         playButton = ButtonFactory.createTextButton("Play", skin);
 
         rootTable = new Table();
-        rootTable.padTop(insets.getTopInset());
-        rootTable.padBottom(insets.getBottomInset());
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);
         rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
         rootTable.setFillParent(true);
@@ -214,6 +216,8 @@ public class ParameterInputStage extends ResizableResettableStage {
 
     @Override
     public void updateOnResize(int width, int height) {
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         // VERY IMPORTANT!!! makes everything scale correctly on startup and going
         // fullscreen etc.; took me hours to find out
         rootTable.pack();

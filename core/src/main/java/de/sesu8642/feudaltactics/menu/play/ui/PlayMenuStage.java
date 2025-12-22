@@ -10,7 +10,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 import javax.inject.Inject;
@@ -30,10 +30,9 @@ public class PlayMenuStage extends MenuStage {
      */
     @Inject
     public PlayMenuStage(@MenuViewport Viewport viewport,
-                         @MenuBackgroundCamera OrthographicCamera camera, Insets insets,
+                         @MenuBackgroundCamera OrthographicCamera camera, PlatformInsetsProvider platformInsetsProvider,
                          @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
-        super(viewport, BUTTON_TEXTS, camera, insets,
-            mapRenderer, skin);
+        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin);
     }
 
 }

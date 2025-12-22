@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.common.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -9,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class SlideStage extends ResizableResettableStage {
 
     private final List<Table> slides;
-    private final Insets insets;
+    private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
     private final OrthographicCamera camera;
     private final Container<Table> slideContainer = new Container<>();
@@ -39,22 +40,22 @@ public class SlideStage extends ResizableResettableStage {
     /**
      * Constructor.
      */
-    public SlideStage(Viewport viewport, List<Slide> slides, Insets insets, OrthographicCamera camera, Skin skin) {
-        this(viewport, slides, insets, () -> {
+    public SlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
+                      OrthographicCamera camera, Skin skin) {
+        this(viewport, slides, platformInsetsProvider, () -> {
         }, camera, skin);
     }
 
     /**
      * Constructor.
      */
-    public SlideStage(Viewport viewport, List<Slide> slides, Insets insets, Runnable finishedCallback,
-                      OrthographicCamera camera,
-                      Skin skin) {
+    public SlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
+                      Runnable finishedCallback, OrthographicCamera camera, Skin skin) {
         super(viewport);
         if (slides.isEmpty()) {
             throw new IllegalArgumentException("at least one slide is required");
         }
-        this.insets = insets;
+        this.platformInsetsProvider = platformInsetsProvider;
         this.camera = camera;
         this.skin = skin;
         this.slides = slides.stream().map(Slide::getTable).collect(Collectors.toList());
@@ -85,8 +86,8 @@ public class SlideStage extends ResizableResettableStage {
         scrollPane.setOverscroll(false, false);
 
         rootTable = new Table();
-        rootTable.padTop(insets.getTopInset());
-        rootTable.padBottom(insets.getBottomInset());
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.setFillParent(true);
         rootTable.defaults().minSize(0);
         rootTable.add(scrollPane).expand().fill().colspan(2);
@@ -145,6 +146,8 @@ public class SlideStage extends ResizableResettableStage {
 
     @Override
     public void updateOnResize(int width, int height) {
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         camera.viewportHeight = height;
         camera.viewportWidth = width;
         camera.update();
