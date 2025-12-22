@@ -15,14 +15,17 @@ import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 public class StatisticsEventHandler {
 
     private final StatisticsDao statisticsDao;
+    private final StatisticsSlide statisticsSlide;
 
     @Inject
-    public StatisticsEventHandler(StatisticsDao statisticsDao) {
+    public StatisticsEventHandler(StatisticsDao statisticsDao, StatisticsSlide statisticsSlide) {
         this.statisticsDao = statisticsDao;
+        this.statisticsSlide = statisticsSlide;
     }
 
     @Subscribe
     public void handleGameStart(GameStartEvent event) {
         statisticsDao.incrementGamesStarted();
+        statisticsSlide.refreshStatistics();
     }
 }
