@@ -63,6 +63,7 @@ public class ScreenNavigationController {
     private final IngameRendererEventHandler rendererEventHandler;
     private final Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider;
     private final Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider;
+    private final StatisticsEventHandler statisticsEventHandler;
 
     /**
      * Constructor.
@@ -89,7 +90,8 @@ public class ScreenNavigationController {
         EventHandler editorEventHandler,
         IngameRendererEventHandler rendererEventHandler,
         Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider,
-        Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider) {
+        Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider,
+        StatisticsEventHandler statisticsEventHandler) {
 
         this.eventBus = eventBus;
         this.localIngameInputHandler = localIngameInputHandler;
@@ -112,6 +114,7 @@ public class ScreenNavigationController {
         this.rendererEventHandler = rendererEventHandler;
         this.ingameScreenEventHandlerProvider = ingameScreenEventHandlerProvider;
         this.preferencesScreenEventHandlerProvider = preferencesScreenEventHandlerProvider;
+        this.statisticsEventHandler = statisticsEventHandler;
     }
 
     /**
@@ -176,7 +179,7 @@ public class ScreenNavigationController {
     public void transitionToIngameScreen() {
         changeScreen(ingameScreenProvider.get());
         Stream.of(localIngameInputHandler, gameLogicEventHandler,
-                ingameScreenEventHandlerProvider.get(), rendererEventHandler)
+                ingameScreenEventHandlerProvider.get(), rendererEventHandler, statisticsEventHandler)
             .forEach(eventBus::register);
     }
 

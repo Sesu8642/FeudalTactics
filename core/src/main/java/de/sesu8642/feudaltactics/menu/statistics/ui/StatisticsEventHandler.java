@@ -16,10 +16,6 @@ public class StatisticsEventHandler {
 
     private final StatisticsDao statisticsDao;
 
-    public void onStatisticsScreenEvent() {
-        // Logic to handle events on the statistics screen
-    }
-
     @Inject
     public StatisticsEventHandler(StatisticsDao statisticsDao) {
         this.statisticsDao = statisticsDao;
