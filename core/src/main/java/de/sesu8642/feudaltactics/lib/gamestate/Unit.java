@@ -52,8 +52,7 @@ public class Unit implements TileContent {
 
     @Override
     public int hashCode() {
-        // calculating with enum strings because the hashcode must be consistent across
-        // runs
+        // calculating with enum strings because the hashcode must be consistent across runs
         return Objects.hash(canAct, unitType.toString());
     }
 
