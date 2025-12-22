@@ -148,8 +148,8 @@ public class GameStateConverter {
         return gameState.getHeldObject() != null || (gameState.getActiveKingdom() != null && tile.getKingdom() == gameState.getActiveKingdom());
     }
 
-    private static boolean shoudldTileContentBeDarkened(GameState gameState, HexTile tile,
-                                                        ItemsToBeRendered.DrawTile drawTile, TileContent tileContent) {
+    private static boolean shouldTileContentBeDarkened(GameState gameState, HexTile tile,
+                                                       ItemsToBeRendered.DrawTile drawTile, TileContent tileContent) {
         return drawTile.darken
             // darken own units that have already acted
             || (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
@@ -238,7 +238,7 @@ public class GameStateConverter {
 
     private void createNonAnimatedTileContent(GameState gameState, HexTile tile, ItemsToBeRendered.DrawTile drawTile,
                                               ItemsToBeRendered result, Vector2 mapCoords, TileContent tileContent) {
-        if (shoudldTileContentBeDarkened(gameState, tile, drawTile, tileContent)) {
+        if (shouldTileContentBeDarkened(gameState, tile, drawTile, tileContent)) {
             // darkened content
             result.getDarkenedNonAnimatedContents().put(
                 new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
