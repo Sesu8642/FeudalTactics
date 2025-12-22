@@ -46,6 +46,18 @@ public class StatisticsDao {
         prefStore.flush();
     }
 
+    public void incrementGamesWon() {
+        int gamesWon = prefStore.getInteger(GAMES_WON_NAME, 0);
+        prefStore.putInteger(GAMES_WON_NAME, gamesWon + 1);
+        prefStore.flush();
+    }
+
+    public void incrementGamesLost() {
+        int gamesLost = prefStore.getInteger(GAMES_LOST_NAME, 0);
+        prefStore.putInteger(GAMES_LOST_NAME, gamesLost + 1);
+        prefStore.flush();
+    }
+
     /**
      * Loads the statistics data.
      *
@@ -58,5 +70,4 @@ public class StatisticsDao {
         final int gamesLost = prefStore.getInteger(GAMES_LOST_NAME, 0);
         return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost);
     }
-
 }

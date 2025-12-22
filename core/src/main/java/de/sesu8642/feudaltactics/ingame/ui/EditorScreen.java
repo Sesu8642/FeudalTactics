@@ -85,7 +85,7 @@ public class EditorScreen extends GameScreen {
     }
 
     private void exitToMenu() {
-        eventBus.post(new GameExitedEvent());
+        eventBus.post(new GameExitedEvent(null));
         screenNavigationController.transitionToMainMenuScreen();
         clearCache();
     }

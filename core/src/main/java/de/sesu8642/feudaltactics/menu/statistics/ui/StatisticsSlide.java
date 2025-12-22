@@ -60,7 +60,9 @@ public class StatisticsSlide extends Slide {
         statisticsTable.clear();
         Statistics statistics = statisticsDao.getStatistics();
         placeIntegerWithLabel(statisticsTable, "Total games played", statistics.getGamesPlayed());
-        // Add more statistics here as needed
+        placeIntegerWithLabel(statisticsTable, "Total games won", statistics.getGamesWon());
+        placeIntegerWithLabel(statisticsTable, "Total games lost", statistics.getGamesLost());
+
         statisticsTable.row();
         statisticsTable.add().fill().expand();
     }
