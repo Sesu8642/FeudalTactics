@@ -18,6 +18,7 @@ public class StatisticsDao {
     private static final String GAMES_PLAYED_NAME = "GamesPlayed";
     private static final String GAMES_WON_NAME = "GamesWon";
     private static final String GAMES_LOST_NAME = "GamesLost";
+    private static final String GAMES_ABORTED_NAME = "GamesAborted";
     private static final String MAPS_GENERATED_NAME = "MapsGenerated";
 
     private final Preferences prefStore;
@@ -25,19 +26,6 @@ public class StatisticsDao {
     @Inject
     public StatisticsDao(@StatisticsPrefsPrefStore Preferences statisticsPrefs) {
         prefStore = statisticsPrefs;
-    }
-
-    /**
-     * Saves the statistics.
-     *
-     * @param statistics statistics to save
-     */
-    public void saveStatistics(Statistics statistics) {
-        prefStore.putInteger(GAMES_PLAYED_NAME, statistics.getGamesPlayed());
-        prefStore.putInteger(MAPS_GENERATED_NAME, statistics.getMapsGenerated());
-        prefStore.putInteger(GAMES_WON_NAME, statistics.getGamesWon());
-        prefStore.putInteger(GAMES_LOST_NAME, statistics.getGamesLost());
-        prefStore.flush();
     }
 
     public void incrementGamesStarted() {
@@ -58,6 +46,12 @@ public class StatisticsDao {
         prefStore.flush();
     }
 
+    public void incrementGamesAborted() {
+        int gamesAborted = prefStore.getInteger(GAMES_ABORTED_NAME, 0);
+        prefStore.putInteger(GAMES_ABORTED_NAME, gamesAborted + 1);
+        prefStore.flush();
+    }
+
     /**
      * Loads the statistics data.
      *
@@ -68,6 +62,7 @@ public class StatisticsDao {
         final int mapsGenerated = prefStore.getInteger(MAPS_GENERATED_NAME, 0);
         final int gamesWon = prefStore.getInteger(GAMES_WON_NAME, 0);
         final int gamesLost = prefStore.getInteger(GAMES_LOST_NAME, 0);
-        return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost);
+        final int gamesAborted = prefStore.getInteger(GAMES_ABORTED_NAME, 0);
+        return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
     }
 }

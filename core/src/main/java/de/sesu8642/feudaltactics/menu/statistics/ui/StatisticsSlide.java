@@ -62,6 +62,7 @@ public class StatisticsSlide extends Slide {
         placeIntegerWithLabel(statisticsTable, "Total games played", statistics.getGamesPlayed());
         placeIntegerWithLabel(statisticsTable, "Total games won", statistics.getGamesWon());
         placeIntegerWithLabel(statisticsTable, "Total games lost", statistics.getGamesLost());
+        placeIntegerWithLabel(statisticsTable, "Total games aborted", statistics.getGamesAborted());
 
         statisticsTable.row();
         statisticsTable.add().fill().expand();

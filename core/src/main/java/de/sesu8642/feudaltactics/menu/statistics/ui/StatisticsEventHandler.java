@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 
@@ -39,7 +40,16 @@ public class StatisticsEventHandler {
             return;     // Ignore exits from editor or similar
         }
 
-        switch (gameState.getWinner().getType()) {
+        Player winnerOfTheGame = gameState.getWinner();
+        if (null == winnerOfTheGame) {
+            // Game exited without a winner
+            if (gameState.getPlayers().stream()
+                    .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated())) {
+                statisticsDao.incrementGamesLost();
+            } else {
+                statisticsDao.incrementGamesAborted();
+            }
+         } else  switch (winnerOfTheGame.getType()) {
             case LOCAL_PLAYER:
                 statisticsDao.incrementGamesWon();
                 break;
@@ -47,13 +57,8 @@ public class StatisticsEventHandler {
             case REMOTE:
                 statisticsDao.incrementGamesLost();
                 break;
-            default:    // No winner (e.g., exited mid-game)
-                    // Find whether local player is already defeated
-                if (gameState.getPlayers().stream()
-                        .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated())) {
-                    statisticsDao.incrementGamesLost();
-                }
-                    // Otherwise, do not count as win/loss. Although the local player might likely have exited the game because they were losing.
+            default:    // Some unexpected player type
+                // TODO: Log warning?
                 break;
         }
 

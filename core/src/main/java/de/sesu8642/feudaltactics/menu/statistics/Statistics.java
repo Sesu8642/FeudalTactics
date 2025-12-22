@@ -19,6 +19,8 @@ public class Statistics {
     private final int gamesWon;
     @Getter
     private final int gamesLost;
+    @Getter
+    private final int gamesAborted;
 
     /**
      * Constructor.
@@ -27,17 +29,19 @@ public class Statistics {
      * @param mapsGenerated  number of maps generated
      * @param gamesWon       number of games won
      * @param gamesLost      number of games lost
+     * @param gamesAborted   number of games aborted
      */
-    public Statistics(int gamesPlayed, int mapsGenerated, int gamesWon, int gamesLost) {
+    public Statistics(int gamesPlayed, int mapsGenerated, int gamesWon, int gamesLost, int gamesAborted) {
         this.gamesPlayed = gamesPlayed;
         this.mapsGenerated = mapsGenerated;
         this.gamesWon = gamesWon;
         this.gamesLost = gamesLost;
+        this.gamesAborted = gamesAborted;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gamesPlayed, mapsGenerated, gamesWon, gamesLost);
+        return Objects.hash(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
     }
 
     @Override
@@ -53,7 +57,7 @@ public class Statistics {
         }
         final Statistics other = (Statistics) obj;
         return gamesPlayed == other.gamesPlayed && mapsGenerated == other.mapsGenerated
-                && gamesWon == other.gamesWon && gamesLost == other.gamesLost;
+                && gamesWon == other.gamesWon && gamesLost == other.gamesLost && gamesAborted == other.gamesAborted;
     }
 
 }
