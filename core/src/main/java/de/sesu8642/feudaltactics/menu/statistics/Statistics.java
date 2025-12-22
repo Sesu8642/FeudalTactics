@@ -4,7 +4,10 @@ package de.sesu8642.feudaltactics.menu.statistics;
 
 import lombok.Getter;
 
+import java.util.Map;
 import java.util.Objects;
+
+import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
 
 /**
  * Value object: game statistics.
@@ -16,11 +19,11 @@ public class Statistics {
     @Getter
     private final int mapsGenerated;
     @Getter
-    private final int gamesWon;
+    private final CountByAiLevel gamesWon;
     @Getter
-    private final int gamesLost;
+    private final CountByAiLevel gamesLost;
     @Getter
-    private final int gamesAborted;
+    private final CountByAiLevel gamesAborted;
 
     /**
      * Constructor.
@@ -31,7 +34,7 @@ public class Statistics {
      * @param gamesLost      number of games lost
      * @param gamesAborted   number of games aborted
      */
-    public Statistics(int gamesPlayed, int mapsGenerated, int gamesWon, int gamesLost, int gamesAborted) {
+    public Statistics(int gamesPlayed, int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost, CountByAiLevel gamesAborted) {
         this.gamesPlayed = gamesPlayed;
         this.mapsGenerated = mapsGenerated;
         this.gamesWon = gamesWon;

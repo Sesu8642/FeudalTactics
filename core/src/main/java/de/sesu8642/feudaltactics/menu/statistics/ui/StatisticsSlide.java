@@ -9,7 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
+import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
 import de.sesu8642.feudaltactics.menu.statistics.Statistics;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 
@@ -60,11 +63,25 @@ public class StatisticsSlide extends Slide {
         statisticsTable.clear();
         Statistics statistics = statisticsDao.getStatistics();
         placeIntegerWithLabel(statisticsTable, "Total games played", statistics.getGamesPlayed());
-        placeIntegerWithLabel(statisticsTable, "Total games won", statistics.getGamesWon());
-        placeIntegerWithLabel(statisticsTable, "Total games lost", statistics.getGamesLost());
-        placeIntegerWithLabel(statisticsTable, "Total games aborted", statistics.getGamesAborted());
+        CountByAiLevel gamesWon = statistics.getGamesWon();
+        placeIntegerWithLabel(statisticsTable, "Total games won", gamesWon.getTotalCount());
+        CountByAiLevel gamesLost = statistics.getGamesLost();
+        placeIntegerWithLabel(statisticsTable, "Total games lost", gamesLost.getTotalCount());
+        CountByAiLevel gamesAborted = statistics.getGamesAborted();
+        placeIntegerWithLabel(statisticsTable, "Total games aborted", gamesAborted.getTotalCount());
 
         statisticsTable.row();
+
+        Intelligence[] aiLevels = Intelligence.values();
+        for (Intelligence level : aiLevels) {
+            placeIntegerWithLabel(statisticsTable, "  Games won vs " + EnumDisplayNameConverter.getDisplayName(level),
+                gamesWon.getCountByAiLevel().get(level));
+            placeIntegerWithLabel(statisticsTable, "  Games lost vs " + EnumDisplayNameConverter.getDisplayName(level), 
+                gamesLost.getCountByAiLevel().get(level));
+            placeIntegerWithLabel(statisticsTable, "  Games aborted vs " + EnumDisplayNameConverter.getDisplayName(level), 
+                gamesAborted.getCountByAiLevel().get(level));
+            statisticsTable.row();
+        }
         statisticsTable.add().fill().expand();
     }
 }

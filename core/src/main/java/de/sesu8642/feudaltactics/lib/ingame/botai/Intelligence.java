@@ -8,7 +8,8 @@ package de.sesu8642.feudaltactics.lib.ingame.botai;
 public enum Intelligence {
     LEVEL_1(0.5F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 5, false, false),
     LEVEL_2(0.8F, 0, false, Integer.MAX_VALUE, Integer.MAX_VALUE, 5, false, true),
-    LEVEL_3(1F, 4, false, 25, 20, 0, true, true), LEVEL_4(1F, 7, true, 25, 20, 0, true, true);
+    LEVEL_3(1F, 4, false, 25, 20, 0, true, true), 
+    LEVEL_4(1F, 7, true, 25, 20, 0, true, true);
 
     /**
      * Chance that the bot will even try to conquer anything in a given turn.

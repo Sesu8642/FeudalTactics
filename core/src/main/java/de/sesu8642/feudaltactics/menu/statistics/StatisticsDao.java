@@ -3,10 +3,14 @@
 package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.Preferences;
+
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.dagger.StatisticsPrefsPrefStore;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Data access object for the statistics.
@@ -29,27 +33,38 @@ public class StatisticsDao {
     }
 
     public void incrementGamesStarted() {
-        int gamesPlayed = prefStore.getInteger(GAMES_PLAYED_NAME, 0);
-        prefStore.putInteger(GAMES_PLAYED_NAME, gamesPlayed + 1);
+        incrementCountingStat(GAMES_PLAYED_NAME);
+    }
+
+    public void incrementGamesWon(Intelligence aiDifficulty) {
+        incrementCountingStat(GAMES_WON_NAME);
+        incrementCountingStat(GAMES_WON_NAME + "-AI" + aiDifficulty.toString());
+    }
+
+    public void incrementGamesLost(Intelligence aiDifficulty) {
+        incrementCountingStat(GAMES_LOST_NAME);
+        incrementCountingStat(GAMES_LOST_NAME + "-AI" + aiDifficulty.toString());
+    }
+
+    public void incrementGamesAborted(Intelligence aiDifficulty) {
+        incrementCountingStat(GAMES_ABORTED_NAME);
+        incrementCountingStat(GAMES_ABORTED_NAME + "-AI" + aiDifficulty.toString());
+    }
+
+    private void incrementCountingStat(String statName) {
+        int currentValue = prefStore.getInteger(statName, 0);
+        prefStore.putInteger(statName, currentValue + 1);
         prefStore.flush();
     }
 
-    public void incrementGamesWon() {
-        int gamesWon = prefStore.getInteger(GAMES_WON_NAME, 0);
-        prefStore.putInteger(GAMES_WON_NAME, gamesWon + 1);
-        prefStore.flush();
-    }
-
-    public void incrementGamesLost() {
-        int gamesLost = prefStore.getInteger(GAMES_LOST_NAME, 0);
-        prefStore.putInteger(GAMES_LOST_NAME, gamesLost + 1);
-        prefStore.flush();
-    }
-
-    public void incrementGamesAborted() {
-        int gamesAborted = prefStore.getInteger(GAMES_ABORTED_NAME, 0);
-        prefStore.putInteger(GAMES_ABORTED_NAME, gamesAborted + 1);
-        prefStore.flush();
+    private CountByAiLevel loadCountByAiLevel(String baseStatName) {
+        int totalCount = prefStore.getInteger(baseStatName, 0);
+        Map<Intelligence, Integer> countByAiLevel = new HashMap<>();
+        for (Intelligence level : Intelligence.values()) {
+            int count = prefStore.getInteger(baseStatName + "-AI" + level.toString(), 0);
+            countByAiLevel.put(level, count);
+        }
+        return new CountByAiLevel(totalCount, countByAiLevel);
     }
 
     /**
@@ -60,9 +75,9 @@ public class StatisticsDao {
     public Statistics getStatistics() {
         final int gamesPlayed = prefStore.getInteger(GAMES_PLAYED_NAME, 0);
         final int mapsGenerated = prefStore.getInteger(MAPS_GENERATED_NAME, 0);
-        final int gamesWon = prefStore.getInteger(GAMES_WON_NAME, 0);
-        final int gamesLost = prefStore.getInteger(GAMES_LOST_NAME, 0);
-        final int gamesAborted = prefStore.getInteger(GAMES_ABORTED_NAME, 0);
+        final CountByAiLevel gamesWon = loadCountByAiLevel(GAMES_WON_NAME);
+        final CountByAiLevel gamesLost = loadCountByAiLevel(GAMES_LOST_NAME);
+        final CountByAiLevel gamesAborted = loadCountByAiLevel(GAMES_ABORTED_NAME);
         return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
     }
 }

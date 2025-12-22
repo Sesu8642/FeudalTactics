@@ -11,6 +11,7 @@ import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 
 /**
@@ -40,22 +41,24 @@ public class StatisticsEventHandler {
             return;     // Ignore exits from editor or similar
         }
 
+        Intelligence aiDifficulty = gameState.getBotIntelligence();
+
         Player winnerOfTheGame = gameState.getWinner();
         if (null == winnerOfTheGame) {
             // Game exited without a winner
             if (gameState.getPlayers().stream()
                     .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated())) {
-                statisticsDao.incrementGamesLost();
+                statisticsDao.incrementGamesLost(aiDifficulty);
             } else {
-                statisticsDao.incrementGamesAborted();
+                statisticsDao.incrementGamesAborted(aiDifficulty);
             }
          } else  switch (winnerOfTheGame.getType()) {
             case LOCAL_PLAYER:
-                statisticsDao.incrementGamesWon();
+                statisticsDao.incrementGamesWon(aiDifficulty);
                 break;
             case LOCAL_BOT:
             case REMOTE:
-                statisticsDao.incrementGamesLost();
+                statisticsDao.incrementGamesLost(aiDifficulty);
                 break;
             default:    // Some unexpected player type
                 // TODO: Log warning?
