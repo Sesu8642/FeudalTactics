@@ -27,16 +27,13 @@ public class StatisticsEventHandler {
     }
 
     @Subscribe
-    public void handleGameStart(GameStartEvent event) {
-        statisticsDao.incrementGamesStarted();
-    }
-
-    @Subscribe
     public void handleGameExited(GameExitedEvent event) {
         GameState gameState = event.getGameState();
         if (null == gameState) {
             return;     // Ignore exits from editor or similar
         }
+
+        statisticsDao.incrementGamesPlayed();
 
         Intelligence aiDifficulty = gameState.getBotIntelligence();
 

@@ -36,7 +36,7 @@ public class StatisticsDao {
         prefStore = statisticsPrefs;
     }
 
-    public void incrementGamesStarted() {
+    public void incrementGamesPlayed() {
         incrementCountingStat(GAMES_PLAYED_NAME);
     }
 
