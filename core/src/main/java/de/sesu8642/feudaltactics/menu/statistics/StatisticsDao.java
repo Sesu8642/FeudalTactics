@@ -24,6 +24,10 @@ public class StatisticsDao {
     private static final String GAMES_LOST_NAME = "GamesLost";
     private static final String GAMES_ABORTED_NAME = "GamesAborted";
     private static final String MAPS_GENERATED_NAME = "MapsGenerated";
+    private static final String RECORD_SEED_NAME = "RecordSeed";
+    private static final String RECORD_SEED_COUNT_NAME = "RecordSeedCount";
+    private static final String LAST_SEED_NAME = "LastSeed";
+    private static final String LAST_SEED_COUNT_NAME = "LastSeedCount";
 
     private final Preferences prefStore;
 
@@ -54,6 +58,32 @@ public class StatisticsDao {
     private void incrementCountingStat(String statName) {
         int currentValue = prefStore.getInteger(statName, 0);
         prefStore.putInteger(statName, currentValue + 1);
+        prefStore.flush();
+    }
+
+    /**
+     * Registers that a seed has been played, updating the record if necessary.
+     * Only consecutive plays of the same seed count towards the record.
+     *
+     * @param seed the seed that was played
+     */
+    public void registerSeedPlayed(long seed) {
+        final long lastSeed = prefStore.getLong(LAST_SEED_NAME, Long.MAX_VALUE);
+        int lastSeedCount;
+        if (seed != lastSeed) {
+            prefStore.putLong(LAST_SEED_NAME, seed);
+            lastSeedCount = 0;
+        } else {
+            lastSeedCount = prefStore.getInteger(LAST_SEED_COUNT_NAME, 0);
+        }
+        prefStore.putInteger(LAST_SEED_COUNT_NAME, ++lastSeedCount);
+
+        long recordSeedValue = prefStore.getLong(RECORD_SEED_COUNT_NAME, 0);
+        if (lastSeedCount > recordSeedValue) {
+            prefStore.putLong(RECORD_SEED_NAME, seed);
+            prefStore.putInteger(RECORD_SEED_COUNT_NAME, lastSeedCount);
+        }
+
         prefStore.flush();
     }
 
