@@ -20,18 +20,15 @@ import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 public class StatisticsEventHandler {
 
     private final StatisticsDao statisticsDao;
-    private final StatisticsSlide statisticsSlide;
 
     @Inject
-    public StatisticsEventHandler(StatisticsDao statisticsDao, StatisticsSlide statisticsSlide) {
+    public StatisticsEventHandler(StatisticsDao statisticsDao) {
         this.statisticsDao = statisticsDao;
-        this.statisticsSlide = statisticsSlide;
     }
 
     @Subscribe
     public void handleGameStart(GameStartEvent event) {
         statisticsDao.incrementGamesStarted();
-        statisticsSlide.refreshStatistics();
     }
 
     @Subscribe
@@ -62,10 +59,6 @@ public class StatisticsEventHandler {
                 break;
             default:    // Some unexpected player type
                 throw new IllegalStateException("Unknown Player Type " + winnerOfTheGame.getType());
-        }
-
-        if (null != statisticsSlide) {  // can be null in unit tests
-            statisticsSlide.refreshStatistics();
         }
     }
 }

@@ -13,13 +13,13 @@ import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
  * Tests for {@link de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler}.
  */
 public class StatisticsEventHandlerTest {
- 
+
     @Test
     void handleGameExited_handlesAllPlayerTypes() {
         Preferences mockPrefs = new MockPreferences();
         StatisticsDao mockDao = new StatisticsDao(mockPrefs);
 
-        StatisticsEventHandler handler = new StatisticsEventHandler(mockDao, null);
+        StatisticsEventHandler handler = new StatisticsEventHandler(mockDao);
 
         GameState gameState = new GameState();
         for (Player.Type playerType : Player.Type.values()) {

@@ -21,4 +21,12 @@ public class StatisticsScreen extends GameScreen {
     public StatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport, StatisticsStage stage) {
         super(camera, viewport, stage);
     }
+
+    @Override
+    public void show() {
+        super.show();
+
+        StatisticsStage statisticsStage = (StatisticsStage) getActiveStage();
+        statisticsStage.getStatisticsSlide().refreshStatistics();
+    }
 }
