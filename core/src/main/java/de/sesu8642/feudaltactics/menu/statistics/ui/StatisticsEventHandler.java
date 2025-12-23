@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import com.google.common.eventbus.Subscribe;
 
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
@@ -33,8 +32,6 @@ public class StatisticsEventHandler {
             return;     // Ignore exits from editor or similar
         }
 
-        statisticsDao.incrementGamesPlayed();
-
         Intelligence aiDifficulty = gameState.getBotIntelligence();
 
         Player winnerOfTheGame = gameState.getWinner();
@@ -56,6 +53,12 @@ public class StatisticsEventHandler {
                 break;
             default:    // Some unexpected player type
                 throw new IllegalStateException("Unknown Player Type " + winnerOfTheGame.getType());
+        }
+        statisticsDao.incrementGamesPlayed();
+
+        Long seed = gameState.getSeed();
+        if (seed != null) {
+            statisticsDao.registerSeedPlayed(seed);
         }
     }
 }
