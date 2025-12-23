@@ -38,17 +38,17 @@ public class StatisticsDao {
 
     public void incrementGamesWon(Intelligence aiDifficulty) {
         incrementCountingStat(GAMES_WON_NAME);
-        incrementCountingStat(GAMES_WON_NAME + "-AI" + aiDifficulty.toString());
+        incrementCountingStat(GAMES_WON_NAME + "-AI" + aiDifficulty.name());
     }
 
     public void incrementGamesLost(Intelligence aiDifficulty) {
         incrementCountingStat(GAMES_LOST_NAME);
-        incrementCountingStat(GAMES_LOST_NAME + "-AI" + aiDifficulty.toString());
+        incrementCountingStat(GAMES_LOST_NAME + "-AI" + aiDifficulty.name());
     }
 
     public void incrementGamesAborted(Intelligence aiDifficulty) {
         incrementCountingStat(GAMES_ABORTED_NAME);
-        incrementCountingStat(GAMES_ABORTED_NAME + "-AI" + aiDifficulty.toString());
+        incrementCountingStat(GAMES_ABORTED_NAME + "-AI" + aiDifficulty.name());
     }
 
     private void incrementCountingStat(String statName) {
@@ -61,7 +61,7 @@ public class StatisticsDao {
         int totalCount = prefStore.getInteger(baseStatName, 0);
         Map<Intelligence, Integer> countByAiLevel = new HashMap<>();
         for (Intelligence level : Intelligence.values()) {
-            int count = prefStore.getInteger(baseStatName + "-AI" + level.toString(), 0);
+            int count = prefStore.getInteger(baseStatName + "-AI" + level.name(), 0);
             countByAiLevel.put(level, count);
         }
         return new CountByAiLevel(totalCount, countByAiLevel);
