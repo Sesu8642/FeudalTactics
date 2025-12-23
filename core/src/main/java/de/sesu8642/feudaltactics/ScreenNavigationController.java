@@ -25,6 +25,8 @@ import de.sesu8642.feudaltactics.menu.play.ui.PlayMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
+import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsScreen;
+import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -48,6 +50,7 @@ public class ScreenNavigationController {
     private final Provider<PlayMenuScreen> playMenuScreenProvider;
     private final Provider<GameScreen> aboutScreenProvider;
     private final Provider<PreferencesScreen> preferencesScreenProvider;
+    private final Provider<StatisticsScreen> statisticsScreenProvider;
     private final Provider<InformationMenuPage1Screen> informationMenuScreenProvider;
     private final Provider<InformationMenuPage2Screen> informationMenuScreen2Provider;
     private final Provider<DependencyLicensesScreen> dependencyLicensesScreenProvider;
@@ -60,6 +63,7 @@ public class ScreenNavigationController {
     private final IngameRendererEventHandler rendererEventHandler;
     private final Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider;
     private final Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider;
+    private final StatisticsEventHandler statisticsEventHandler;
 
     /**
      * Constructor.
@@ -75,6 +79,7 @@ public class ScreenNavigationController {
         Provider<PlayMenuScreen> playMenuScreenProvider,
         @AboutScreen Provider<GameScreen> aboutScreenProvider,
         Provider<PreferencesScreen> preferencesScreenProvider,
+        Provider<StatisticsScreen> statisticsScreenProvider,
         Provider<InformationMenuPage1Screen> informationMenuScreenProvider,
         Provider<InformationMenuPage2Screen> informationMenuScreen2Provider,
         Provider<DependencyLicensesScreen> dependencyLicensesScreenProvider,
@@ -85,7 +90,8 @@ public class ScreenNavigationController {
         EventHandler editorEventHandler,
         IngameRendererEventHandler rendererEventHandler,
         Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider,
-        Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider) {
+        Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider,
+        StatisticsEventHandler statisticsEventHandler) {
 
         this.eventBus = eventBus;
         this.localIngameInputHandler = localIngameInputHandler;
@@ -96,6 +102,7 @@ public class ScreenNavigationController {
         this.playMenuScreenProvider = playMenuScreenProvider;
         this.aboutScreenProvider = aboutScreenProvider;
         this.preferencesScreenProvider = preferencesScreenProvider;
+        this.statisticsScreenProvider = statisticsScreenProvider;
         this.informationMenuScreenProvider = informationMenuScreenProvider;
         this.informationMenuScreen2Provider = informationMenuScreen2Provider;
         this.dependencyLicensesScreenProvider = dependencyLicensesScreenProvider;
@@ -107,6 +114,7 @@ public class ScreenNavigationController {
         this.rendererEventHandler = rendererEventHandler;
         this.ingameScreenEventHandlerProvider = ingameScreenEventHandlerProvider;
         this.preferencesScreenEventHandlerProvider = preferencesScreenEventHandlerProvider;
+        this.statisticsEventHandler = statisticsEventHandler;
     }
 
     /**
@@ -171,7 +179,7 @@ public class ScreenNavigationController {
     public void transitionToIngameScreen() {
         changeScreen(ingameScreenProvider.get());
         Stream.of(localIngameInputHandler, gameLogicEventHandler,
-                ingameScreenEventHandlerProvider.get(), rendererEventHandler)
+                ingameScreenEventHandlerProvider.get(), rendererEventHandler, statisticsEventHandler)
             .forEach(eventBus::register);
     }
 
@@ -211,6 +219,13 @@ public class ScreenNavigationController {
         eventBus.register(preferencesScreenEventHandlerProvider.get());
     }
 
+        /**
+     * Transitions to the statistics screen.
+     */
+    public void transitionToStatisticsScreen() {
+        changeScreen(statisticsScreenProvider.get());
+    }
+
     private void changeScreen(Screen screen) {
         unregisterAllEventHandlers();
         // changing the screen needs to happen in the UI thread, otherwise there can be
@@ -223,7 +238,7 @@ public class ScreenNavigationController {
 
     private void unregisterAllEventHandlers() {
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandlerProvider.get(),
-            rendererEventHandler, preferencesScreenEventHandlerProvider.get()).forEach(object -> {
+            rendererEventHandler, preferencesScreenEventHandlerProvider.get(), statisticsEventHandler).forEach(object -> {
             try {
                 eventBus.unregister(object);
             } catch (IllegalArgumentException e) {

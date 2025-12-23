@@ -42,8 +42,9 @@ public class InformationMenuPage1Screen extends GameScreen {
             }
         }));
         buttons.get(2).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToCrashReportScreenInMainMenu));
-        buttons.get(3).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToInformationMenuScreenPage2));
-        buttons.get(4).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToMainMenuScreen));
+        buttons.get(3).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToStatisticsScreen));
+        buttons.get(4).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToInformationMenuScreenPage2));
+        buttons.get(5).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToMainMenuScreen));
     }
 
 }

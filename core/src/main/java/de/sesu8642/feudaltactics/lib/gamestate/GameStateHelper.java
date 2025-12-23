@@ -46,6 +46,7 @@ public class GameStateHelper {
         if (original.getWinner() != null) {
             result.setWinner(copiedPlayers.get(original.getPlayers().indexOf(original.getWinner())));
         }
+        result.setBotIntelligence(original.getBotIntelligence());
         if (original.getWinningRound() != null) {
             result.setWinningRound(original.getWinningRound());
         }
