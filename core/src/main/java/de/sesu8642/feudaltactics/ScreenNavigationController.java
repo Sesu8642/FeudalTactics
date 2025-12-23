@@ -238,7 +238,7 @@ public class ScreenNavigationController {
 
     private void unregisterAllEventHandlers() {
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandlerProvider.get(),
-            rendererEventHandler, preferencesScreenEventHandlerProvider.get()).forEach(object -> {
+            rendererEventHandler, preferencesScreenEventHandlerProvider.get(), statisticsEventHandler).forEach(object -> {
             try {
                 eventBus.unregister(object);
             } catch (IllegalArgumentException e) {

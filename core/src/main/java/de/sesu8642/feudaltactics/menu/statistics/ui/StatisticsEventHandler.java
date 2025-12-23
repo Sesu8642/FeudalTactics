@@ -61,10 +61,11 @@ public class StatisticsEventHandler {
                 statisticsDao.incrementGamesLost(aiDifficulty);
                 break;
             default:    // Some unexpected player type
-                // TODO: Log warning?
-                break;
+                throw new IllegalStateException("Unknown Player Type " + winnerOfTheGame.getType());
         }
 
-        statisticsSlide.refreshStatistics();
+        if (null != statisticsSlide) {  // can be null in unit tests
+            statisticsSlide.refreshStatistics();
+        }
     }
 }

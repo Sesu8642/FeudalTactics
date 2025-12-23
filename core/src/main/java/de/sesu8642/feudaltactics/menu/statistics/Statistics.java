@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.statistics;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.Map;
@@ -12,6 +13,7 @@ import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
 /**
  * Value object: game statistics.
  */
+@EqualsAndHashCode
 public class Statistics {
 
     @Getter
@@ -41,26 +43,4 @@ public class Statistics {
         this.gamesLost = gamesLost;
         this.gamesAborted = gamesAborted;
     }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Statistics other = (Statistics) obj;
-        return gamesPlayed == other.gamesPlayed && mapsGenerated == other.mapsGenerated
-                && gamesWon == other.gamesWon && gamesLost == other.gamesLost && gamesAborted == other.gamesAborted;
-    }
-
 }
