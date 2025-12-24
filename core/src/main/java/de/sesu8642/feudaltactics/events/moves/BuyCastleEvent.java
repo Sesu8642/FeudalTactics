@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.events.moves;
 
 /**
- * Event: User buys a peasant.
+ * Event: User buys a castle.
  */
 public class BuyCastleEvent {
 
