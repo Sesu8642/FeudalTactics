@@ -472,6 +472,8 @@ public class IngameScreen extends GameScreen {
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                 parameterInputStage.densitySelect, parameterInputStage.pasteButton)
             .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(this::centerMap)));
+        parameterInputStage.backButton
+            .addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToPlayMenuScreen));
         parameterInputStage.playButton
             .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
     }

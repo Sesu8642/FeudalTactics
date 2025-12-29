@@ -62,6 +62,7 @@ public class ParameterInputStage extends ResizableResettableStage {
     ImageButton randomButton;
     ImageTextButton copyButton;
     ImageButton pasteButton;
+    TextButton backButton;
     TextButton playButton;
     TextField seedTextField;
     private Table rootTable;
@@ -128,7 +129,12 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTable.add(seedTextField).colspan(2).fill().expand();
         seedTable.add(randomButton).height(INPUT_HEIGHT_PX).width(INPUT_HEIGHT_PX);
 
+        backButton = ButtonFactory.createTextButton("Back", skin);
         playButton = ButtonFactory.createTextButton("Play", skin);
+
+        final Table buttonTable = new Table();
+        buttonTable.add(backButton).expandX().fill();
+        buttonTable.add(playButton).expandX().fill();
 
         rootTable = new Table();
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
@@ -158,7 +164,7 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
             .width(INPUT_HEIGHT_PX);
         rootTable.row();
-        rootTable.add(playButton).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
+        rootTable.add(buttonTable).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
             OUTER_PADDING_PX);
         addActor(rootTable);
     }
