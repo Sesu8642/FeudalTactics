@@ -67,4 +67,11 @@ public class ConfigDaggerModule {
         return Boolean.parseBoolean(config.getProperty("enable_leveleditor"));
     }
 
+    @Provides
+    @Singleton
+    @EnableCampaignProperty
+    static Boolean provideEnableCampaignProperty(Properties config) {
+        return Boolean.parseBoolean(config.getProperty("enable_campaign"));
+    }
+
 }

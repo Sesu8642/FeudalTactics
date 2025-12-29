@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.dagger.EnableCampaignProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -23,7 +24,8 @@ import java.util.List;
 @Singleton
 public class PlayMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Sandbox Game");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Sandbox Game", "Campaign", "Back");
+    private static final List<String> BUTTON_TEXTS_WITHOUT_CAMPAIGN = ImmutableList.of("Sandbox Game", "Back");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -31,8 +33,10 @@ public class PlayMenuStage extends MenuStage {
     @Inject
     public PlayMenuStage(@MenuViewport Viewport viewport,
                          @MenuBackgroundCamera OrthographicCamera camera, PlatformInsetsProvider platformInsetsProvider,
-                         @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin) {
-        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin);
+                         @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
+                         @EnableCampaignProperty boolean campaignEnabled) {
+        super(viewport, campaignEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_CAMPAIGN, camera,
+            platformInsetsProvider, mapRenderer, skin);
     }
 
 }

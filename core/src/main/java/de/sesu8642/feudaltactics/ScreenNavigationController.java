@@ -14,6 +14,7 @@ import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler;
 import de.sesu8642.feudaltactics.menu.about.dagger.AboutScreen;
+import de.sesu8642.feudaltactics.menu.campaign.ui.CampaignLevelSelectionScreen;
 import de.sesu8642.feudaltactics.menu.changelog.dagger.ChangelogScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.crashreporting.ui.CrashReportScreen;
@@ -54,6 +55,7 @@ public class ScreenNavigationController {
     private final Provider<GameScreen> changelogScreenProvider;
     private final Provider<EditorScreen> editorScreenProvider;
     private final Provider<CrashReportScreen> crashReportScreenProvider;
+    private final Provider<CampaignLevelSelectionScreen> campaignLevelSelectionScreenProvider;
 
     private final GameControllerEventHandler gameLogicEventHandler;
     private final EventHandler editorEventHandler;
@@ -81,6 +83,7 @@ public class ScreenNavigationController {
         @ChangelogScreen Provider<GameScreen> changelogScreenProvider,
         Provider<EditorScreen> editorScreenProvider,
         Provider<CrashReportScreen> crashReportScreenProvider,
+        Provider<CampaignLevelSelectionScreen> campaignLevelSelectionScreenProvider,
         GameControllerEventHandler gameLogicEventHandler,
         EventHandler editorEventHandler,
         IngameRendererEventHandler rendererEventHandler,
@@ -102,6 +105,7 @@ public class ScreenNavigationController {
         this.changelogScreenProvider = changelogScreenProvider;
         this.editorScreenProvider = editorScreenProvider;
         this.crashReportScreenProvider = crashReportScreenProvider;
+        this.campaignLevelSelectionScreenProvider = campaignLevelSelectionScreenProvider;
         this.gameLogicEventHandler = gameLogicEventHandler;
         this.editorEventHandler = editorEventHandler;
         this.rendererEventHandler = rendererEventHandler;
@@ -209,6 +213,13 @@ public class ScreenNavigationController {
     public void transitionToPreferencesScreen() {
         changeScreen(preferencesScreenProvider.get());
         eventBus.register(preferencesScreenEventHandlerProvider.get());
+    }
+
+    /**
+     * Transitions to the campaign level selection screen.
+     */
+    public void transitionToCampaignLevelSelectionScreen() {
+        changeScreen(campaignLevelSelectionScreenProvider.get());
     }
 
     private void changeScreen(Screen screen) {
