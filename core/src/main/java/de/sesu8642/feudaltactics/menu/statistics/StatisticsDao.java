@@ -81,4 +81,8 @@ public class StatisticsDao {
         final CountByAiLevel gamesAborted = loadCountByAiLevel(GAMES_ABORTED_NAME);
         return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
     }
+
+    public void incrementSeedsGenerated() {
+        incrementCountingStat(MAPS_GENERATED_NAME);
+    }
 }

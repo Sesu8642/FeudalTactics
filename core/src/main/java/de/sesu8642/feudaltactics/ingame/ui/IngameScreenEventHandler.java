@@ -86,7 +86,7 @@ public class IngameScreenEventHandler {
     }
 
     /**
-     * Event handler for centering the map.
+     * Event handler for updating settings after a change.
      *
      * @param event event to handle
      */

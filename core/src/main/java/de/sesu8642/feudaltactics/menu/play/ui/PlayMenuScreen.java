@@ -11,6 +11,7 @@ import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.EnableCampaignProperty;
 import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.events.SeedGeneratedEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -72,6 +73,7 @@ public class PlayMenuScreen extends GameScreen {
         screenNavigationController.transitionToIngameScreen();
         eventBus.post(new NewGamePreferencesChangedEvent(savedPrefs));
         eventBus.post(new RegenerateMapEvent(savedPrefs.toGameParameters()));
+        eventBus.post(new SeedGeneratedEvent());
     }
 
 }

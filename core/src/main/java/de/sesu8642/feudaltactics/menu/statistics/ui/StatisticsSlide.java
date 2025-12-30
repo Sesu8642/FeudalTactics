@@ -85,6 +85,7 @@ public class StatisticsSlide extends Slide {
         placeIntegerWithLabel("Total games lost", gamesLost.getTotalCount());
         CountByAiLevel gamesAborted = statistics.getGamesAborted();
         placeIntegerWithLabel("Total games aborted", gamesAborted.getTotalCount());
+        placeIntegerWithLabel("Total maps generated", statistics.getMapsGenerated());
 
         statisticsTable.row();
 
@@ -99,5 +100,6 @@ public class StatisticsSlide extends Slide {
                 gamesAborted.getCountByAiLevel().get(level));
             statisticsTable.row();
         }
+
     }
 }

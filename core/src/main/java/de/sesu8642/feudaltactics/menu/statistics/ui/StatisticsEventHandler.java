@@ -56,4 +56,9 @@ public class StatisticsEventHandler {
         }
         statisticsDao.incrementGamesPlayed();
     }
+
+    @Subscribe
+    public void handleSeedGenerated(de.sesu8642.feudaltactics.events.SeedGeneratedEvent event) {
+        statisticsDao.incrementSeedsGenerated();
+    }
 }

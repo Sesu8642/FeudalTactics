@@ -442,6 +442,7 @@ public class IngameScreen extends GameScreen {
                 parameterInputStage.seedTextField.setText(String.valueOf(newSeed));
                 cachedNewGamePreferences.setSeed(newSeed);
                 newGamePrefDao.saveNewGamePreferences(cachedNewGamePreferences);
+                eventBus.post(new SeedGeneratedEvent());
             }));
 
         parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
