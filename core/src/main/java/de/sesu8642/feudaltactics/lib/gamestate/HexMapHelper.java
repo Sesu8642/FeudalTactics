@@ -96,7 +96,7 @@ public class HexMapHelper {
      * @return neighbors' coordinates
      */
     public static List<Vector2> getNeighborCoords(Vector2 tileCoords) {
-        final ArrayList<Vector2> neighbors = new ArrayList<>();
+        final List<Vector2> neighbors = new ArrayList<>();
         neighbors.add(new Vector2(tileCoords.x - 1, tileCoords.y));
         neighbors.add(new Vector2(tileCoords.x, tileCoords.y - 1));
         neighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 1));
@@ -115,7 +115,7 @@ public class HexMapHelper {
      * @return neighbors' neighbors neighbor coordinates
      */
     public static List<Vector2> getNeighborsNeighborCoords(Vector2 tileCoords) {
-        final ArrayList<Vector2> neighborsNeighbors = new ArrayList<>();
+        final List<Vector2> neighborsNeighbors = new ArrayList<>();
         neighborsNeighbors.add(new Vector2(tileCoords.x, tileCoords.y - 2));
         neighborsNeighbors.add(new Vector2(tileCoords.x + 1, tileCoords.y - 2));
         neighborsNeighbors.add(new Vector2(tileCoords.x + 2, tileCoords.y - 2));

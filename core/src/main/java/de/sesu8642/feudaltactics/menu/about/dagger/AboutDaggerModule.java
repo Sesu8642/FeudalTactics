@@ -14,7 +14,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 
 import javax.inject.Singleton;
 import java.util.Collections;
@@ -35,9 +35,11 @@ public final class AboutDaggerModule {
     @AboutSlideStage
     static SlideStage provideAboutSlideStage(ScreenNavigationController screenNavigationController,
                                              @MenuViewport Viewport viewport,
-                                             AboutSlideFactory slideFactory, Insets insets,
+                                             AboutSlideFactory slideFactory,
+                                             PlatformInsetsProvider platformInsetsProvider,
                                              @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-        return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()), insets,
+        return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()),
+            platformInsetsProvider,
             screenNavigationController::transitionToInformationMenuScreenPage1,
             camera, skin);
     }

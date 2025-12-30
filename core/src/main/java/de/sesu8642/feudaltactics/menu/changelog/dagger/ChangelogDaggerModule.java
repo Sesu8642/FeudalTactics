@@ -20,7 +20,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -70,13 +70,14 @@ public final class ChangelogDaggerModule {
     @Singleton
     @ChangelogSlideStage
     static SlideStage provideChangelogSlideStage(ScreenNavigationController screenNavigationController,
-                                                 @MenuViewport Viewport viewport, Insets insets,
+                                                 @MenuViewport Viewport viewport,
+                                                 PlatformInsetsProvider platformInsetsProvider,
                                                  @ChangelogText String changelogText,
                                                  @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
         final Slide changelogSlide = new Slide(skin, "Changelog").addLabel("Join the Feudal Tactics Community on " +
             "Matrix! " +
             "See Information menu.").addLabel(changelogText);
-        return new SlideStage(viewport, Collections.singletonList(changelogSlide), insets,
+        return new SlideStage(viewport, Collections.singletonList(changelogSlide), platformInsetsProvider,
             screenNavigationController::transitionToInformationMenuScreenPage2,
             camera, skin);
     }

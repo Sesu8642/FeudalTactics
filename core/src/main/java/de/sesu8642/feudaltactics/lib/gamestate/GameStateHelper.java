@@ -749,10 +749,21 @@ public class GameStateHelper {
     }
 
     private static void spreadTrees(GameState gameState) {
-        final Random random = new Random(gameState.hashCode());
+        final List<HexTile> tilesToGrowTreesOn = getTilesOakTreesWillSpreadTo(gameState);
+        tilesToGrowTreesOn.addAll(getTilesPalmTreesWillSpreadTo(gameState));
+        for (HexTile newTreeTile : tilesToGrowTreesOn) {
+            spawnTree(gameState, newTreeTile);
+        }
+    }
+
+    /**
+     * Returns the tiles new oak trees will grow on, if the spreading of trees was triggered on the given game state.
+     */
+    public static List<HexTile> getTilesOakTreesWillSpreadTo(GameState gameState) {
         // keep track of the tiles with trees that are new or have already participated
         // in spreading; those shouldn't spread again in that turn
-        final HashSet<HexTile> tileBlackList = new HashSet<>();
+        final Set<HexTile> tileBlackList = new HashSet<>();
+        final List<HexTile> tilesToGrowOakTreesOn = new ArrayList<>();
         for (HexTile tile : gameState.getMap().values()) {
             if (tileBlackList.contains(tile)) {
                 continue;
@@ -760,13 +771,14 @@ public class GameStateHelper {
             if (tile.getContent() != null
                 && ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())) {
                 // regular trees spread if they have another regular tree next to them
-                final ArrayList<HexTile> candidates = new ArrayList<>();
+                final List<HexTile> candidates = new ArrayList<>();
                 HexTile neighborTreeTile = null;
                 for (HexTile neighbor : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
                     if (neighbor == null) {
                         continue;
                     }
-                    if (neighbor.getContent() == null && !isCoastTile(gameState, neighbor)) {
+                    if (!tileBlackList.contains(neighbor) && neighbor.getContent() == null && !isCoastTile(gameState,
+                        neighbor)) {
                         candidates.add(neighbor);
                     } else if (neighbor.getContent() != null
                         && ClassReflection.isAssignableFrom(Tree.class, neighbor.getContent().getClass())
@@ -775,25 +787,43 @@ public class GameStateHelper {
                     }
                 }
                 if (neighborTreeTile != null && !candidates.isEmpty()) {
-                    final HexTile newTreeTile = candidates.get(random.nextInt(candidates.size()));
-                    spawnTree(gameState, newTreeTile);
+                    final HexTile newTreeTile = candidates.stream().sorted().findFirst().get();
+                    tilesToGrowOakTreesOn.add(newTreeTile);
                     tileBlackList.add(tile);
                     tileBlackList.add(newTreeTile);
                     tileBlackList.add(neighborTreeTile);
                     candidates.clear();
                 }
-            } else if (tile.getContent() != null
+            }
+        }
+        return tilesToGrowOakTreesOn;
+    }
+
+    /**
+     * Returns the tiles new palm trees will grow on, if the spreading of trees was triggered on the given game state.
+     */
+    public static List<HexTile> getTilesPalmTreesWillSpreadTo(GameState gameState) {
+        // keep track of the tiles with trees that are new or have already participated
+        // in spreading; those shouldn't spread again in that turn
+        final Set<HexTile> tileBlackList = new HashSet<>();
+        final List<HexTile> tilesToGrowPalmTreesOn = new ArrayList<>();
+        for (HexTile tile : gameState.getMap().values()) {
+            if (tileBlackList.contains(tile)) {
+                continue;
+            }
+            if (tile.getContent() != null
                 && ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())) {
                 // palm trees always spread to a neighboring coast tile, if any
                 HexMapHelper
                     .getNeighborTiles(gameState.getMap(), tile).stream().filter(neighbor -> neighbor != null
-                        && neighbor.getContent() == null && isCoastTile(gameState, neighbor))
-                    .limit(1).forEach(newTreeTile -> {
-                        spawnTree(gameState, newTreeTile);
+                        && !tileBlackList.contains(neighbor) && neighbor.getContent() == null && isCoastTile(gameState, neighbor))
+                    .sorted().limit(1).forEach(newTreeTile -> {
+                        tilesToGrowPalmTreesOn.add(newTreeTile);
                         tileBlackList.add(newTreeTile);
                     });
             }
         }
+        return tilesToGrowPalmTreesOn;
     }
 
     private static void progressBlockingObjects(GameState gameState, Player player) {

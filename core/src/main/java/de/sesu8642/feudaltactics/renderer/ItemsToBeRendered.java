@@ -40,6 +40,10 @@ public class ItemsToBeRendered {
      */
     final Map<Vector2, Boolean> semitransparentGraveStones = new HashMap<>();
 
+    final List<Vector2> semitransparentOakTrees = new ArrayList<>();
+
+    final List<Vector2> semitransparentPalmTrees = new ArrayList<>();
+
     final List<Vector2> whiteLineStartPoints = new ArrayList<>();
 
     final List<Vector2> whiteLineEndPoints = new ArrayList<>();

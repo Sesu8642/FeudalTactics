@@ -6,11 +6,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,10 +27,10 @@ public class DependencyDetailsStage extends SlideStage {
      * Constructor.
      */
     @Inject
-    public DependencyDetailsStage(EventBus eventBus, DependencyDetailsSlide dependencyDetailsSlide,
-                                  @MenuViewport Viewport viewport, Insets insets,
+    public DependencyDetailsStage(DependencyDetailsSlide dependencyDetailsSlide,
+                                  @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                                   @MenuCamera OrthographicCamera camera, Skin skin) {
-        super(viewport, Collections.singletonList(dependencyDetailsSlide), insets, camera, skin);
+        super(viewport, Collections.singletonList(dependencyDetailsSlide), platformInsetsProvider, camera, skin);
         this.dependencyDetailsSlide = dependencyDetailsSlide;
     }
 

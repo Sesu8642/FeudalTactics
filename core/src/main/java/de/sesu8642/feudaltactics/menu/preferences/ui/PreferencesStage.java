@@ -15,7 +15,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 public class PreferencesStage extends SlideStage {
 
     private final EventBus eventBus;
-    private final ScreenNavigationController screenNavigationController;
     private final PreferencesSlide preferencesSlide;
     private final MainPreferencesDao mainPrefsDao;
 
@@ -38,14 +37,14 @@ public class PreferencesStage extends SlideStage {
      */
     @Inject
     public PreferencesStage(EventBus eventBus, PreferencesSlide preferencesSlide, MainPreferencesDao mainPrefsDao,
-                            @MenuViewport Viewport viewport, Insets insets, @MenuCamera OrthographicCamera camera,
-                            Skin skin, ScreenNavigationController screenNavigationController) {
-        super(viewport, Collections.singletonList(preferencesSlide), insets,
+                            @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
+                            @MenuCamera OrthographicCamera camera, Skin skin,
+                            ScreenNavigationController screenNavigationController) {
+        super(viewport, Collections.singletonList(preferencesSlide), platformInsetsProvider,
             screenNavigationController::transitionToMainMenuScreen, camera, skin);
         this.eventBus = eventBus;
         this.preferencesSlide = preferencesSlide;
         this.mainPrefsDao = mainPrefsDao;
-        this.screenNavigationController = screenNavigationController;
         initUi();
     }
 
