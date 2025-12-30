@@ -15,7 +15,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
 /**
@@ -29,9 +29,9 @@ public class StatisticsStage extends SlideStage {
 
     @Inject
     public StatisticsStage(StatisticsDao statisticsDao, StatisticsSlide statisticsSlide,
-                            @MenuViewport Viewport viewport, Insets insets, @MenuCamera OrthographicCamera camera,
+                            @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider, @MenuCamera OrthographicCamera camera,
                             Skin skin, ScreenNavigationController screenNavigationController) {
-        super(viewport, Collections.singletonList(statisticsSlide), insets,
+        super(viewport, Collections.singletonList(statisticsSlide), platformInsetsProvider,
             screenNavigationController::transitionToMainMenuScreen, camera, skin);
         this.statisticsSlide = statisticsSlide;
     }
