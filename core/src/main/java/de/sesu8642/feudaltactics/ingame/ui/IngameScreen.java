@@ -27,7 +27,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 import lombok.Setter;
@@ -59,7 +59,7 @@ public class IngameScreen extends GameScreen {
     private final TextureAtlasHelper textureAtlasHelper;
 
     private final ParameterInputStage parameterInputStage;
-    private final Insets insets;
+    private final PlatformInsetsProvider platformInsetsProvider;
     private final IngameHudStage ingameHudStage;
     private final IngameMenuStage menuStage;
 
@@ -101,7 +101,8 @@ public class IngameScreen extends GameScreen {
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
                         IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper,
                         IngameHudStage ingameHudStage,
-                        IngameMenuStage menuStage, ParameterInputStage parameterInputStage, Insets insets) {
+                        IngameMenuStage menuStage, ParameterInputStage parameterInputStage,
+                        PlatformInsetsProvider platformInsetsProvider) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
         this.newGamePrefDao = newGamePrefDao;
@@ -119,7 +120,7 @@ public class IngameScreen extends GameScreen {
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
-        this.insets = insets;
+        this.platformInsetsProvider = platformInsetsProvider;
         // load before adding the listeners because they will trigger persisting the preferences on each update
         loadNewGameParameterValues();
         addIngameMenuListeners();
@@ -347,12 +348,14 @@ public class IngameScreen extends GameScreen {
         // calculate what is the bigger rectangular area for the map to fit: above the
         // inputs or to their right
         final float aboveArea = ingameCamera.viewportWidth
-            * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT - insets.getBottomInset());
+            * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT - platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         final float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
             * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX
             - ParameterInputStage.OUTER_PADDING_PX);
         if (aboveArea > rightArea) {
-            return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT + insets.getBottomInset(), 0, 0);
+            return new Margin(0,
+                ParameterInputStage.TOTAL_INPUT_HEIGHT + platformInsetsProvider.getInsets(Gdx.app).getBottomInset(),
+                0, 0);
         } else {
             return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
                 ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
@@ -469,6 +472,8 @@ public class IngameScreen extends GameScreen {
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                 parameterInputStage.densitySelect, parameterInputStage.pasteButton)
             .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(this::centerMap)));
+        parameterInputStage.backButton
+            .addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToPlayMenuScreen));
         parameterInputStage.playButton
             .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
     }

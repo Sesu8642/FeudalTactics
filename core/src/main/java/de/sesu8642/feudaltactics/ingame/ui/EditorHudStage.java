@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,7 +16,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
 import javax.inject.Inject;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 public class EditorHudStage extends ResizableResettableStage {
 
     private final Skin skin;
+    private final PlatformInsetsProvider platformInsetsProvider;
     private final TextureAtlasHelper textureAtlasHelper;
     Label infoTextLabel;
     ImageButton menuButton;
@@ -40,15 +42,16 @@ public class EditorHudStage extends ResizableResettableStage {
      * Constructor.
      */
     @Inject
-    public EditorHudStage(@MenuViewport Viewport viewport, Insets insets, Skin skin,
+    public EditorHudStage(@MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider, Skin skin,
                           TextureAtlasHelper textureAtlasHelper) {
         super(viewport);
         this.skin = skin;
+        this.platformInsetsProvider = platformInsetsProvider;
         this.textureAtlasHelper = textureAtlasHelper;
-        initUi(insets);
+        initUi(platformInsetsProvider);
     }
 
-    private void initUi(Insets insets) {
+    private void initUi(PlatformInsetsProvider platformInsetsProvider) {
         final Table bottomTable;
         final Sprite tileSprite = textureAtlasHelper.getTileSprite();
         final SpriteDrawable tileSpriteDrawable = new SpriteDrawable(tileSprite);
@@ -78,8 +81,8 @@ public class EditorHudStage extends ResizableResettableStage {
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
 
         rootTable = new Table();
-        rootTable.padTop(insets.getTopInset());
-        rootTable.padBottom(insets.getBottomInset());
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.setFillParent(true);
         rootTable.add(infoTextLabel).left().top().pad(10).expandX();
         rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
@@ -109,6 +112,8 @@ public class EditorHudStage extends ResizableResettableStage {
 
     @Override
     public void updateOnResize(int width, int height) {
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.pack();
         handContentTable.pack();
     }

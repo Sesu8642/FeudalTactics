@@ -15,7 +15,7 @@ import de.sesu8642.feudaltactics.menu.crashreporting.GameCrasher;
 import de.sesu8642.feudaltactics.menu.crashreporting.dagger.CrashReportingDaggerModule;
 import de.sesu8642.feudaltactics.menu.information.dagger.InformationMenuDaggerModule;
 import de.sesu8642.feudaltactics.menu.preferences.dagger.PrefsDaggerModule;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 import de.sesu8642.feudaltactics.renderer.dagger.RendererDaggerModule;
 
@@ -44,7 +44,7 @@ public interface FeudalTacticsComponent {
         Builder platformSharing(PlatformSharing platformSharing);
 
         @BindsInstance
-        Builder screenInsets(Insets insets);
+        Builder platformInsetProvider(PlatformInsetsProvider platformInsetsProvider);
 
         @BindsInstance
         Builder gameInstance(FeudalTactics gameInstance);

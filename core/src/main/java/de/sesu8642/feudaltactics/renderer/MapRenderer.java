@@ -50,7 +50,7 @@ public class MapRenderer {
     private static final Color GRAVESTONE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.3F);
     private static final Color DARKENED_GRAVESTONE_INDICATOR_COLOR = new Color(GRAVESTONE_INDICATOR_COLOR).mul(0.5F,
         0.5F, 0.5F, 1);
-
+    private static final Color TREE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.5F);
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
      * The reason is that the stateTime must stay relatively small because of float limitations.
@@ -141,6 +141,10 @@ public class MapRenderer {
         drawDarkenedContents(itemsToBeRendered.getDarkenedNonAnimatedContents().entrySet());
 
         drawSemitransparentGraveStones();
+        drawSemitransparentTrees(textureAtlasHelper.getBlinkingOakTreeAnimation(),
+            itemsToBeRendered.getSemitransparentOakTrees());
+        drawSemitransparentTrees(textureAtlasHelper.getBlinkingPalmTreeAnimation(),
+            itemsToBeRendered.getSemitransparentPalmTrees());
 
         spriteBatch.end();
 
@@ -198,6 +202,20 @@ public class MapRenderer {
             }
             spriteBatch.draw(gravestoneRegion, gravestone.getKey().x - TILE_CONTENT_OFFSET_X,
                 gravestone.getKey().y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
+        }
+    }
+
+    private void drawSemitransparentTrees(Animation<TextureRegion> treeTypeAnimation, List<Vector2> mapCoordinates) {
+        final TextureRegion treeRegion =
+            treeTypeAnimation.getKeyFrame(stateTime, true);
+        if (treeRegion == treeTypeAnimation.getKeyFrames()[1]) {
+            // return on second frame for blinking effect (second frame would be a dark square otherwise)
+            return;
+        }
+        spriteBatch.setColor(TREE_INDICATOR_COLOR);
+        for (Vector2 treeCoordinates : mapCoordinates) {
+            spriteBatch.draw(treeRegion, treeCoordinates.x - TILE_CONTENT_OFFSET_X,
+                treeCoordinates.y - TILE_CONTENT_OFFSET_Y, HEXTILE_WIDTH, HEXTILE_HEIGHT);
         }
     }
 

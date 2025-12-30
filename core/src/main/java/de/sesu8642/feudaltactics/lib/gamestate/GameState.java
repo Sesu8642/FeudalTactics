@@ -79,8 +79,9 @@ public class GameState {
 
     @Override
     public int hashCode() {
+        // calculating with enum strings because the hashcode must be consistent across runs
         return Objects.hash(players, winner, winningRound, playerTurn, map, kingdoms, activeKingdom, heldObject,
-            botIntelligence, seed, objectiveProgress, scenarioMap, round);
+            botIntelligence.toString(), seed, objectiveProgress, scenarioMap.toString(), round);
     }
 
 }

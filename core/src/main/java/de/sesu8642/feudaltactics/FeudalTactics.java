@@ -1,7 +1,6 @@
 package de.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
 import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
@@ -36,7 +35,7 @@ public class FeudalTactics extends Game {
         component = DaggerFeudalTacticsComponent.builder()
             .gameInstance(this)
             .platformSharing(platformSharing)
-            .screenInsets(platformInsetsProvider.getInsets(Gdx.app))
+            .platformInsetProvider(platformInsetsProvider)
             .build();
 
         final GameInitializer gameInitializer = component.getGameInitializer();

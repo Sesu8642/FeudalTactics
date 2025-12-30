@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -16,7 +17,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +31,7 @@ import java.util.List;
 public class IngameHudStage extends ResizableResettableStage {
 
     private final Skin skin;
+    private final PlatformInsetsProvider platformInsetsProvider;
     private final List<ImageButton> playerTurnButtons = new ArrayList<>();
     private final List<ImageButton> enemyTurnButtons = new ArrayList<>();
     Label infoHexagonLabel;
@@ -49,6 +51,7 @@ public class IngameHudStage extends ResizableResettableStage {
     private Stack handStack;
     private Table handContentTable;
     private Image handContent;
+    private Table bottomInsetTable;
     private Table bottomTable;
     @Getter
     @Setter
@@ -58,13 +61,14 @@ public class IngameHudStage extends ResizableResettableStage {
      * Constructor.
      */
     @Inject
-    public IngameHudStage(@MenuViewport Viewport viewport, Insets insets, Skin skin) {
+    public IngameHudStage(@MenuViewport Viewport viewport, Skin skin, PlatformInsetsProvider platformInsetsProvider) {
         super(viewport);
         this.skin = skin;
-        initUi(insets);
+        this.platformInsetsProvider = platformInsetsProvider;
+        initUi();
     }
 
-    private void initUi(Insets insets) {
+    private void initUi() {
         halfSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_HALF, ImageButtonStyle.class);
         ButtonFactory.createImageButton(SkinConstants.BUTTON_PAUSE, skin);
         regularSpeedButtonStyle = skin.get(SkinConstants.BUTTON_SPEED_REGULAR, ImageButtonStyle.class);
@@ -119,7 +123,7 @@ public class IngameHudStage extends ResizableResettableStage {
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
 
         rootTable = new Table();
-        rootTable.padTop(insets.getTopInset());
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.setFillParent(true);
         rootTable.add(infoHexagonLabel).left().top().pad(10);
         rootTable.add(infoTextLabel).left().top().pad(10).expandX();
@@ -149,9 +153,9 @@ public class IngameHudStage extends ResizableResettableStage {
             .height(ValueWithSize.percentSizeDensityMin(0.1F, rootTable, 100));
         rootTable.row();
 
-        final Table bottomInsetTable = new Table(skin);
+        bottomInsetTable = new Table(skin);
         bottomInsetTable.background(SkinConstants.SEMI_TRANSPARENT_BACKGROUND_DRAWABLE);
-        rootTable.add(bottomInsetTable).height(insets.getBottomInset()).colspan(3).fill();
+        rootTable.add(bottomInsetTable).height(platformInsetsProvider.getInsets(Gdx.app).getBottomInset()).colspan(3).fill();
 
 
         handStack.add(handImage);
@@ -166,6 +170,8 @@ public class IngameHudStage extends ResizableResettableStage {
 
     @Override
     public void updateOnResize(int width, int height) {
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
+        bottomInsetTable.setHeight(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.pack();
         handContentTable.pack();
     }

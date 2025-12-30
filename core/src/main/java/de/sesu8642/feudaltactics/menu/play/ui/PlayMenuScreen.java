@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
+import de.sesu8642.feudaltactics.dagger.EnableCampaignProperty;
 import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
@@ -31,6 +32,7 @@ public class PlayMenuScreen extends GameScreen {
     private final NewGamePreferencesDao newGamePreferencesDao;
     private final EventBus eventBus;
     private final ScreenNavigationController screenNavigationController;
+    private final boolean campaignEnabled;
 
     /**
      * Constructor.
@@ -39,18 +41,27 @@ public class PlayMenuScreen extends GameScreen {
     public PlayMenuScreen(NewGamePreferencesDao newGamePreferencesDao,
                           @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
                           PlayMenuStage playMenuStage, EventBus eventBus,
-                          ScreenNavigationController screenNavigationController) {
+                          ScreenNavigationController screenNavigationController,
+                          @EnableCampaignProperty boolean campaignEnabled) {
         super(camera, viewport, playMenuStage);
         this.newGamePreferencesDao = newGamePreferencesDao;
         this.eventBus = eventBus;
         this.screenNavigationController = screenNavigationController;
+        this.campaignEnabled = campaignEnabled;
         initUi(playMenuStage);
     }
 
     private void initUi(MenuStage stage) {
         final List<TextButton> buttons = stage.getButtons();
+        int i = 0;
         // sandbox game button
-        buttons.get(0).addListener(new ExceptionLoggingChangeListener(this::initSandboxGame));
+        buttons.get(i).addListener(new ExceptionLoggingChangeListener(this::initSandboxGame));
+        if (campaignEnabled) {
+            // campaign button
+            buttons.get(++i).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToCampaignLevelSelectionScreen));
+        }
+        // back button
+        buttons.get(++i).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToMainMenuScreen));
     }
 
     private void initSandboxGame() {

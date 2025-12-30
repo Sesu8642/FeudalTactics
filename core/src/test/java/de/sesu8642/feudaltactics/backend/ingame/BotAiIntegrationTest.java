@@ -27,7 +27,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,6 +73,21 @@ class BotAiIntegrationTest {
             Arguments.of(Intelligence.LEVEL_4, 12F, 0F, 11L), Arguments.of(Intelligence.LEVEL_4, 100F, -3F, 12L),
             Arguments.of(Intelligence.LEVEL_4, 200F, 3F, 13L), Arguments.of(Intelligence.LEVEL_4, 250F, 1F, 14L),
             Arguments.of(Intelligence.LEVEL_4, 250F, -3F, 15L));
+    }
+
+    static List<Arguments> provideMapParametersAndHashes() {
+        final List<List<Integer>> gameProgessHashes = GameStateHashes.get();
+
+        // add the hashes to the existing arguments
+        final List<Arguments> existingMapParameterArgs = provideMapParameters().collect(Collectors.toList());
+        final List<Arguments> result = new ArrayList<>();
+        for (int mapParameterArgsIndex = 0; mapParameterArgsIndex < existingMapParameterArgs.size(); mapParameterArgsIndex++) {
+            final List<Object> newArguments =
+                Arrays.stream(existingMapParameterArgs.get(mapParameterArgsIndex).get()).collect(Collectors.toList());
+            newArguments.add(gameProgessHashes.get(mapParameterArgsIndex));
+            result.add(Arguments.of(newArguments.toArray()));
+        }
+        return result;
     }
 
     static void assertIntegreKingdomTileLinks(GameState gameState) {
@@ -143,30 +160,33 @@ class BotAiIntegrationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideMapParameters")
-    void botsActConsistentWithTheSameSeed(Intelligence botIntelligence, Float landMass, Float density, Long seed)
+    @MethodSource("provideMapParametersAndHashes")
+    void botsActConsistentWithTheSameGame(Intelligence botIntelligence, Float landMass, Float density, Long seed,
+                                          List<Integer> expectedHashes)
         throws Exception {
-        GameState gameState1 = createGameState(landMass, density, seed);
-        GameState gameState2 = createGameState(landMass, density, seed);
+        final GameState gameState = createGameState(landMass, density, seed);
+        final List<Integer> actualHashes = new ArrayList<>();
+        boolean mismatchDetected = false;
 
-        for (int i = 1; i <= 1000; i++) {
-            if (gameState1.getKingdoms().size() == 1) {
-                return;
+        for (int i = 0; i <= 1000; i++) {
+            if (gameState.getKingdoms().size() == 1) {
+                break;
             }
-            systemUnderTest.doTurn(gameState1, botIntelligence);
-            gameState1 = resultingGameState;
-            systemUnderTest.doTurn(gameState2, botIntelligence);
-            gameState2 = resultingGameState;
-            assertEquals(gameState1, gameState2);
-
-            GameStateHelper.endTurn(gameState1);
-            GameStateHelper.endTurn(gameState2);
+            systemUnderTest.doTurn(gameState, botIntelligence);
+            actualHashes.add(gameState.hashCode());
+            if (!mismatchDetected && (expectedHashes.size() <= i || !expectedHashes.get(i).equals(gameState.hashCode()))) {
+                mismatchDetected = true;
+                System.out.println("Mismatching gameState as JSON is " + gameStateToJson(gameState));
+            }
+            GameStateHelper.endTurn(gameState);
         }
+        assertEquals(expectedHashes, actualHashes, "GameState hashes are not as expected. This means that either " +
+            "there was a code change and the hashes need to be updated or there is some inconsistency across devices.");
     }
 
     @ParameterizedTest
     @MethodSource("provideMapParameters")
-    void gameStateStaysConsistent(Intelligence botIntelligence, Float landMass, Float density, Long seed)
+    void gameStateStaysIntegre(Intelligence botIntelligence, Float landMass, Float density, Long seed)
         throws Exception {
         final GameState gameState = createGameState(landMass, density, seed);
 
@@ -213,7 +233,7 @@ class BotAiIntegrationTest {
         // add cash savings
         result += gameState.getKingdoms().stream()
             .filter(kingdom -> kingdom.getPlayer().equals(gameState.getActivePlayer()))
-            .mapToInt(kingdom -> kingdom.getSavings()).sum();
+            .mapToInt(Kingdom::getSavings).sum();
         return result;
     }
 

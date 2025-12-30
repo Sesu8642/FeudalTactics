@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -33,9 +33,9 @@ public class CrashReportStage extends SlideStage {
      * @param skin     game skin
      */
     @Inject
-    public CrashReportStage(CrashReportSlide crashReportSlide, Insets insets, @MenuViewport Viewport viewport,
-                            @MenuCamera OrthographicCamera camera, Skin skin) {
-        super(viewport, Collections.singletonList(crashReportSlide), insets, camera, skin);
+    public CrashReportStage(CrashReportSlide crashReportSlide, PlatformInsetsProvider platformInsetsProvider,
+                            @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
+        super(viewport, Collections.singletonList(crashReportSlide), platformInsetsProvider, camera, skin);
         this.crashReportSlide = crashReportSlide;
     }
 

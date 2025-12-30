@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.sesu8642.feudaltactics.platformspecific.Insets;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,7 +27,7 @@ public class MenuStage extends ResizableResettableStage {
     @Getter
     private final List<TextButton> buttons = new ArrayList<>();
     private final MapRenderer mapRenderer;
-    private final Insets insets;
+    private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
     private final OrthographicCamera camera;
     Set<Disposable> disposables = new HashSet<>();
@@ -45,11 +45,12 @@ public class MenuStage extends ResizableResettableStage {
      * @param mapRenderer renderer for the sea background
      * @param skin        game skin
      */
-    public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera, Insets insets,
+    public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera,
+                     PlatformInsetsProvider platformInsetsProvider,
                      MapRenderer mapRenderer, Skin skin) {
         super(viewport);
         this.camera = camera;
-        this.insets = insets;
+        this.platformInsetsProvider = platformInsetsProvider;
         this.mapRenderer = mapRenderer;
         this.skin = skin;
         initUi(buttonTexts);
@@ -66,8 +67,8 @@ public class MenuStage extends ResizableResettableStage {
         bottomRightTable = new Table();
 
         rootTable = new Table();
-        rootTable.padBottom(insets.getBottomInset());
-        rootTable.padTop(insets.getTopInset());
+        rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
+        rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.setFillParent(true);
         rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
         final Image logo = new Image(logoTexture);

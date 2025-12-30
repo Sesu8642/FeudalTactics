@@ -30,7 +30,7 @@ public class TextureAtlasHelper {
     private static final String BEACH_SAND_TEXTURE_NAME = "beach_sand";
     private static final String BEACH_WATER_TEXTURE_NAME = "beach_water";
     private static final String CAPITAL_TEXTURE_NAME = "capital";
-    private static final String TREE_TEXTURE_NAME = "tree";
+    private static final String OAK_TREE_TEXTURE_NAME = "tree";
     private static final String PALM_TREE_TEXTURE_NAME = "palm_tree";
     private static final String CASTLE_TEXTURE_NAME = "castle";
     private static final String GRAVESTONE_TEXTURE_NAME = "gravestone";
@@ -56,6 +56,10 @@ public class TextureAtlasHelper {
     @Getter
     private final Animation<TextureRegion> blinkingGravestoneAnimation;
     @Getter
+    private final Animation<TextureRegion> blinkingOakTreeAnimation;
+    @Getter
+    private final Animation<TextureRegion> blinkingPalmTreeAnimation;
+    @Getter
     private final Animation<TextureRegion> waterAnimation;
     @Getter
     private final Animation<TextureRegion> beachSandAnimation;
@@ -78,7 +82,15 @@ public class TextureAtlasHelper {
         blinkingGravestoneAnimation = new Animation<>(1F,
             ImmutableList.of(textureAtlas.findRegion(GRAVESTONE_TEXTURE_NAME),
                 new TextureAtlas.AtlasRegion(new Texture(0, 0,
-                Pixmap.Format.Alpha), 0, 0, 0, 0)).toArray(new TextureAtlas.AtlasRegion[0]));
+                    Pixmap.Format.Alpha), 0, 0, 0, 0)).toArray(new TextureAtlas.AtlasRegion[0]));
+        blinkingOakTreeAnimation = new Animation<>(1F,
+            ImmutableList.of(textureAtlas.findRegion(OAK_TREE_TEXTURE_NAME),
+                new TextureAtlas.AtlasRegion(new Texture(0, 0,
+                    Pixmap.Format.Alpha), 0, 0, 0, 0)).toArray(new TextureAtlas.AtlasRegion[0]));
+        blinkingPalmTreeAnimation = new Animation<>(1F,
+            ImmutableList.of(textureAtlas.findRegion(PALM_TREE_TEXTURE_NAME),
+                new TextureAtlas.AtlasRegion(new Texture(0, 0,
+                    Pixmap.Format.Alpha), 0, 0, 0, 0)).toArray(new TextureAtlas.AtlasRegion[0]));
         waterAnimation = new Animation<>(1F,
             textureAtlas.findRegions(WATER_TEXTURE_NAME));
         beachSandAnimation = new Animation<>(1F,
@@ -118,7 +130,7 @@ public class TextureAtlasHelper {
         } else if (Capital.class.isAssignableFrom(tileContentClass)) {
             return CAPITAL_TEXTURE_NAME;
         } else if (Tree.class.isAssignableFrom(tileContentClass)) {
-            return TREE_TEXTURE_NAME;
+            return OAK_TREE_TEXTURE_NAME;
         } else if (PalmTree.class.isAssignableFrom(tileContentClass)) {
             return PALM_TREE_TEXTURE_NAME;
         } else if (Castle.class.isAssignableFrom(tileContentClass)) {

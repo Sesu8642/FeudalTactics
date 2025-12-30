@@ -8,10 +8,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.sesu8642.feudaltactics.renderer.MapRenderer.*;
 
@@ -148,8 +146,8 @@ public class GameStateConverter {
         return gameState.getHeldObject() != null || (gameState.getActiveKingdom() != null && tile.getKingdom() == gameState.getActiveKingdom());
     }
 
-    private static boolean shoudldTileContentBeDarkened(GameState gameState, HexTile tile,
-                                                        ItemsToBeRendered.DrawTile drawTile, TileContent tileContent) {
+    private static boolean shouldTileContentBeDarkened(GameState gameState, HexTile tile,
+                                                       ItemsToBeRendered.DrawTile drawTile, TileContent tileContent) {
         return drawTile.darken
             // darken own units that have already acted
             || (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
@@ -167,14 +165,25 @@ public class GameStateConverter {
         final ItemsToBeRendered result = new ItemsToBeRendered();
         result.setDarkenBeaches(gameState.getHeldObject() != null);
 
+        final List<HexTile> tilesOakTreesWillSpreadTo = GameStateHelper.getTilesOakTreesWillSpreadTo(gameState);
+        final Set<Vector2> hexCoordinatesOakTreesWillSpreadTo =
+            tilesOakTreesWillSpreadTo.stream().map(HexTile::getPosition).collect(Collectors.toSet());
+
+        final List<HexTile> tilesPalmTreesWillSpreadTo = GameStateHelper.getTilesPalmTreesWillSpreadTo(gameState);
+        final Set<Vector2> hexCoordinatesPalmTreesWillSpreadTo =
+            tilesPalmTreesWillSpreadTo.stream().map(HexTile::getPosition).collect(Collectors.toSet());
+
         // create tiles
         for (Map.Entry<Vector2, HexTile> hexTileEntry : gameState.getMap().entrySet()) {
-            createTileAndContent(gameState, hexTileEntry, result);
+            createTileAndContent(gameState, hexTileEntry, hexCoordinatesOakTreesWillSpreadTo,
+                hexCoordinatesPalmTreesWillSpreadTo, result);
         }
         return result;
     }
 
     private void createTileAndContent(GameState gameState, Map.Entry<Vector2, HexTile> hexTileEntry,
+                                      Collection<Vector2> hexCoordinatesOakTreesWillSpreadTo,
+                                      Collection<Vector2> hexCoordinatesPalmTreesWillSpreadTo,
                                       ItemsToBeRendered result) {
         final Vector2 hexCoords = hexTileEntry.getKey();
         final Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
@@ -203,6 +212,11 @@ public class GameStateConverter {
 
         createTileContents(gameState, tile, drawTile, result, mapCoords);
 
+        createTreeSpreadIndicator(gameState, tile, mapCoords, hexCoordinatesOakTreesWillSpreadTo,
+            result.getSemitransparentOakTrees());
+        createTreeSpreadIndicator(gameState, tile, mapCoords, hexCoordinatesPalmTreesWillSpreadTo,
+            result.getSemitransparentPalmTrees());
+
         createProtectionIndicators(gameState, tile, result, mapCoords, drawTile);
     }
 
@@ -224,6 +238,16 @@ public class GameStateConverter {
         }
     }
 
+    private void createTreeSpreadIndicator(GameState gameState, HexTile tile, Vector2 mapCoords,
+                                           Collection<Vector2> hexCoordinatesTreesWillSpreadTo,
+                                           List<Vector2> resultList) {
+        if (gameState.getActiveKingdom() != null && tile.getKingdom() == gameState.getActiveKingdom() && hexCoordinatesTreesWillSpreadTo.contains(tile.getPosition())) {
+            resultList.add(new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
+                mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS));
+        }
+
+    }
+
     private boolean isUnitAboutToDie(GameState gameState, HexTile tile, TileContent tileContent) {
         return tile.getPlayer().getType() == Player.Type.LOCAL_PLAYER && tile.getKingdom() != null && !canKingdomSustainUnitsForOneTurn(gameState, tile.getKingdom()) && ClassReflection.isAssignableFrom(Unit.class, tileContent.getClass());
     }
@@ -238,7 +262,7 @@ public class GameStateConverter {
 
     private void createNonAnimatedTileContent(GameState gameState, HexTile tile, ItemsToBeRendered.DrawTile drawTile,
                                               ItemsToBeRendered result, Vector2 mapCoords, TileContent tileContent) {
-        if (shoudldTileContentBeDarkened(gameState, tile, drawTile, tileContent)) {
+        if (shouldTileContentBeDarkened(gameState, tile, drawTile, tileContent)) {
             // darkened content
             result.getDarkenedNonAnimatedContents().put(
                 new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
@@ -368,7 +392,7 @@ public class GameStateConverter {
      * @param hexCoords hex coords
      * @return map coords
      */
-    public Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
+    private Vector2 getMapCoordinatesFromHexCoordinates(Vector2 hexCoords) {
         final float x = 0.75F * HEXTILE_WIDTH * hexCoords.x;
         final float y = (float) (HexMapHelper.HEX_OUTER_RADIUS
             * (Math.sqrt(3) / 2 * hexCoords.x + Math.sqrt(3) * (-hexCoords.y - hexCoords.x)));
