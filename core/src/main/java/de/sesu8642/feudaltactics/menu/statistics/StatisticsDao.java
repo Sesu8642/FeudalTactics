@@ -25,11 +25,6 @@ public class StatisticsDao {
     private static final String GAMES_ABORTED_NAME = "GamesAborted";
     private static final String MAPS_GENERATED_NAME = "MapsGenerated";
     // This is the seed that has been played the most times in a row
-    private static final String RECORD_SEED_NAME = "RecordSeed";
-    private static final String RECORD_SEED_COUNT_NAME = "RecordSeedCount";
-    // We track the last seed played to count consecutive plays of the same seed
-    private static final String LAST_SEED_NAME = "LastSeed";
-    private static final String LAST_SEED_COUNT_NAME = "LastSeedCount";
 
     private final Preferences prefStore;
 
@@ -63,44 +58,7 @@ public class StatisticsDao {
         prefStore.flush();
     }
 
-    /**
-     * Registers that a seed has been played, updating the record if necessary.
-     * Usually only consecutive plays of the same seed count towards the record, so we don't have to track all seeds ever played.
-     *
-     * @param seed the seed that was played
-     */
-    public void registerSeedPlayed(long seed) {
-            // Track consecutive plays of the same seed
-        final long lastSeed = prefStore.getLong(LAST_SEED_NAME, Long.MAX_VALUE);
-        int lastSeedCount;
-        if (seed != lastSeed) {
-            prefStore.putLong(LAST_SEED_NAME, seed);
-            lastSeedCount = 0;
-        } else {
-            lastSeedCount = prefStore.getInteger(LAST_SEED_COUNT_NAME, 0);
-        }
-        prefStore.putInteger(LAST_SEED_COUNT_NAME, ++lastSeedCount);
-
-            // Is this a new record?
-        int recordSeedCount = prefStore.getInteger(RECORD_SEED_COUNT_NAME, 0);
-        if (lastSeedCount > recordSeedCount) {
-            prefStore.putLong(RECORD_SEED_NAME, seed);
-            prefStore.putInteger(RECORD_SEED_COUNT_NAME, lastSeedCount);
-        } else {
-            // No new record ... but wait, maybe it is the same seed as the record seed? Then we'll make an exception and update the count
-            long recordSeed = prefStore.getLong(RECORD_SEED_NAME, Long.MAX_VALUE);
-            if (seed == recordSeed) {
-                    // lastSeedCount must be 1 here, because it must be a new play of the same seed
-                lastSeedCount = recordSeedCount + 1;    // the recordSeedCount must therefore be greater
-                prefStore.putInteger(RECORD_SEED_COUNT_NAME, lastSeedCount);
-                prefStore.putInteger(LAST_SEED_COUNT_NAME, lastSeedCount);
-            }
-        }
-
-        prefStore.flush();
-    }
-
-    private CountByAiLevel loadCountByAiLevel(String baseStatName) {
+     private CountByAiLevel loadCountByAiLevel(String baseStatName) {
         int totalCount = prefStore.getInteger(baseStatName, 0);
         Map<Intelligence, Integer> countByAiLevel = new HashMap<>();
         for (Intelligence level : Intelligence.values()) {
@@ -121,8 +79,6 @@ public class StatisticsDao {
         final CountByAiLevel gamesWon = loadCountByAiLevel(GAMES_WON_NAME);
         final CountByAiLevel gamesLost = loadCountByAiLevel(GAMES_LOST_NAME);
         final CountByAiLevel gamesAborted = loadCountByAiLevel(GAMES_ABORTED_NAME);
-        final long recordSeed = prefStore.getLong(RECORD_SEED_NAME, Long.MAX_VALUE);
-        final int recordSeedCount = prefStore.getInteger(RECORD_SEED_COUNT_NAME, 0);
-        return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted, recordSeed, recordSeedCount);
+        return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
     }
 }

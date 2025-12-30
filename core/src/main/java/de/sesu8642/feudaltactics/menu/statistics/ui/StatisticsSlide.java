@@ -60,23 +60,6 @@ public class StatisticsSlide extends Slide {
         statisticsTable.row();
     }
 
-    private void placeSeedWithLabel(String labelText, long seed) {
-        final Label newLabel = new Label(labelText, skin);
-        newLabel.setWrap(true);
-        statisticsTable.add(newLabel).left().fill().expandX().prefWidth(200);
-
-        final String seedAsString = Long.toString(seed);
-        final Label valueLabel = new Label(seedAsString, skin);
-        final CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
-        copyButton.addListener(new ExceptionLoggingChangeListener(
-            () -> Gdx.app.getClipboard().setContents(seedAsString)));
-        statisticsTable.add(valueLabel).center().fillX().expandX();
-        statisticsTable.add(copyButton);
-        statisticsTable.row();
-        statisticsTable.add().height(20);
-        statisticsTable.row();
-    }
-    
     private void placeHeading(String headingText) {
         statisticsTable.row();
         statisticsTable.add().height(10);
@@ -110,16 +93,11 @@ public class StatisticsSlide extends Slide {
             placeHeading(EnumDisplayNameConverter.getDisplayName(level) + " AI Statistics");
             placeIntegerWithLabel("  Games won",
                 gamesWon.getCountByAiLevel().get(level));
-            placeIntegerWithLabel("  Games lost", 
+            placeIntegerWithLabel("  Games lost",
                 gamesLost.getCountByAiLevel().get(level));
-            placeIntegerWithLabel("  Games aborted", 
+            placeIntegerWithLabel("  Games aborted",
                 gamesAborted.getCountByAiLevel().get(level));
             statisticsTable.row();
         }
-
-        placeHeading("Favorite Seed");
-        placeSeedWithLabel("  Seed played most", statistics.getRecordSeed());
-        placeIntegerWithLabel("  Number of games", statistics.getRecordSeedCount());
-        statisticsTable.add().fill().expand();
     }
 }

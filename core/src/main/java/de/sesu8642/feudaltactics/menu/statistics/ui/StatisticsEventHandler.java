@@ -55,10 +55,5 @@ public class StatisticsEventHandler {
                 throw new IllegalStateException("Unknown Player Type " + winnerOfTheGame.getType());
         }
         statisticsDao.incrementGamesPlayed();
-
-        Long seed = gameState.getSeed();
-        if (seed != null) {
-            statisticsDao.registerSeedPlayed(seed);
-        }
     }
 }

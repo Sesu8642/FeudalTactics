@@ -23,10 +23,6 @@ public class Statistics {
     private final CountByAiLevel gamesLost;
     @Getter
     private final CountByAiLevel gamesAborted;
-    @Getter
-    private final long recordSeed;
-    @Getter
-    private final int recordSeedCount;
 
     /**
      * Constructor.
@@ -36,16 +32,12 @@ public class Statistics {
      * @param gamesWon       number of games won
      * @param gamesLost      number of games lost
      * @param gamesAborted   number of games aborted
-     * @param recordSeedCount 
-     * @param recordSeed 
      */
-    public Statistics(int gamesPlayed, int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost, CountByAiLevel gamesAborted, long recordSeed, int recordSeedCount) {
+    public Statistics(int gamesPlayed, int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost, CountByAiLevel gamesAborted) {
         this.gamesPlayed = gamesPlayed;
         this.mapsGenerated = mapsGenerated;
         this.gamesWon = gamesWon;
         this.gamesLost = gamesLost;
         this.gamesAborted = gamesAborted;
-        this.recordSeed = recordSeed;
-        this.recordSeedCount = recordSeedCount;
     }
 }
