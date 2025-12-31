@@ -12,6 +12,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
+import jakarta.inject.Inject;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 
 import javax.inject.Singleton;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data access object for the statistics. Stores Game History sd local files.
+ * Data access object for the statistics. Stores Game History as local files.
  */
 @Singleton
 public class HistoryDao {
@@ -32,6 +33,7 @@ public class HistoryDao {
     
     private final Json json = new Json();
 
+    @Inject
     public HistoryDao() {
         json.setOutputType(JsonWriter.OutputType.json);
         loadHistory();

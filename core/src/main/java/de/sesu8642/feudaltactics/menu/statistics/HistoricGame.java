@@ -5,18 +5,20 @@ package de.sesu8642.feudaltactics.menu.statistics;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Value object: game history.
  */
 @EqualsAndHashCode
+@NoArgsConstructor
 public class HistoricGame {
 
     @Getter
-    private final NewGamePreferences gameSettings;
+    private NewGamePreferences gameSettings;
 
     @Getter
-    private final GameResult gameResult;
+    private GameResult gameResult;
 
     /**
      * Constructor.
