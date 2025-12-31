@@ -8,6 +8,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
+import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
+import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 
 import javax.inject.Inject;
@@ -18,10 +21,12 @@ import javax.inject.Inject;
 public class StatisticsEventHandler {
 
     private final StatisticsDao statisticsDao;
+    private final HistoryDao historyDao;
 
     @Inject
-    public StatisticsEventHandler(StatisticsDao statisticsDao) {
+    public StatisticsEventHandler(StatisticsDao statisticsDao, HistoryDao historyDao) {
         this.statisticsDao = statisticsDao;
+        this.historyDao = historyDao;
     }
 
     @Subscribe
@@ -32,27 +37,33 @@ public class StatisticsEventHandler {
         }
 
         final Intelligence aiDifficulty = gameState.getBotIntelligence();
+        HistoricGame.GameResult gameResult = evaluateGameResult(gameState);
 
-        final Player winnerOfTheGame = gameState.getWinner();
-        if (winnerOfTheGame == null) {
-            // Game exited without a winner
-            if (gameState.getPlayers().stream().anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated())) {
-                statisticsDao.incrementGamesLost(aiDifficulty);
-            } else {
-                statisticsDao.incrementGamesAborted(aiDifficulty);
-            }
-        } else {
-            switch (winnerOfTheGame.getType()) {
+        statisticsDao.registerPlayedGame(aiDifficulty, gameResult);
+        historyDao.registerPlayedGame(gameState, gameResult);
+    }
+
+    private GameResult evaluateGameResult(GameState gameState) {
+        final Player winner = gameState.getWinner();
+        if (null != winner) {
+            switch (winner.getType()) {
                 case LOCAL_PLAYER:
-                    statisticsDao.incrementGamesWon(aiDifficulty);
-                    break;
+                    return GameResult.WIN;
                 case LOCAL_BOT:
                 case REMOTE:
-                    statisticsDao.incrementGamesLost(aiDifficulty);
-                    break;
+                    return GameResult.LOSS;
                 default:    // Some unexpected player type
-                    throw new IllegalStateException("Unknown Player Type " + winnerOfTheGame.getType());
+                    throw new IllegalStateException("Unknown Player Type " + winner.getType());
             }
+        } else {
+            boolean localPlayerDefeated = gameState.getPlayers().stream()
+                .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated());
+            if (localPlayerDefeated) {
+                return GameResult.LOSS;
+            } else {
+                return GameResult.ABORTED;
+            }
+         } else switch (winnerOfTheGame.getType()) {
         }
     }
 
