@@ -120,8 +120,6 @@ public class GameStateHelper {
                                      Float vegetationDensity, Long mapSeed) {
         if (mapSeed == null) {
             mapSeed = System.currentTimeMillis();
-            // We don't send a SeedGeneratedEvent here, as this should be null only when this is called from the
-            // Editor, which is not really generating a new seed. Probably the value is just a dummy in this case?
         }
         if (vegetationDensity == null) {
             vegetationDensity = DEAFULT_INITIAL_TREE_DENSITY;
