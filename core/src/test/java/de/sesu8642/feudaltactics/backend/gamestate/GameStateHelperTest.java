@@ -6,6 +6,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -58,6 +59,7 @@ class GameStateHelperTest {
     @Test
     void copiedGameStateEqualsOriginal() {
         final GameState original = new GameState();
+        original.setBotIntelligence(Intelligence.LEVEL_3);
         GameStateHelper.initializeMap(original, players, 500, 2, 0.2F, 12345L);
         original.setActiveKingdom(original.getKingdoms().get(0));
 
@@ -124,7 +126,7 @@ class GameStateHelperTest {
             final Player prevPlayer = gameState.getPlayers().get(i - 1);
             final int playerIncome =
                 gameState.getKingdoms().stream().filter(kingdom -> kingdom.getPlayer().equals(playerI))
-                .mapToInt(GameStateHelper::getKingdomIncome).sum();
+                    .mapToInt(GameStateHelper::getKingdomIncome).sum();
             final int prevPlayerIncome = gameState.getKingdoms().stream()
                 .filter(kingdom -> kingdom.getPlayer().equals(prevPlayer))
                 .mapToInt(GameStateHelper::getKingdomIncome).sum();
