@@ -4,6 +4,7 @@ import com.badlogic.gdx.Preferences;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,8 @@ public class StatisticsEventHandlerTest {
     @Test
     void handleGameExited_handlesAllPlayerTypes() {
         final Preferences mockPrefs = new MockPreferences();
-        final StatisticsDao mockDao = new StatisticsDao(mockPrefs);
+        final StatisticsDao mockStatisticsDao = new StatisticsDao(mockPrefs);
+        HistoryDao mockHistoryDao = new HistoryDao();
 
         final StatisticsEventHandler handler = new StatisticsEventHandler(mockDao);
 

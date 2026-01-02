@@ -6,11 +6,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
+import com.badlogic.gdx.utils.JsonValue;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import jakarta.inject.Inject;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
@@ -30,17 +32,40 @@ public class HistoryDao {
     private final FileHandle historyFileHandle = Gdx.files.local(STATISTICS_FILE_NAME);
 
     private List<HistoricGame> gameHistoryList = new ArrayList<HistoricGame>();
-    
+
     private final Json json = new Json();
 
     @Inject
     public HistoryDao() {
         json.setOutputType(JsonWriter.OutputType.json);
+        registerSerializers();
         loadHistory();
     }
 
+    /**
+     * Teach the LibGDX Json mapper how to handle NewGamePreferences that lacks a zero-arg constructor.
+     * We serialize NewGamePreferences as its existing sharable string format to avoid
+     * adding a dummy constructor just for deserialization.
+     */
+    private void registerSerializers() {
+        json.setSerializer(NewGamePreferences.class, new Json.Serializer<NewGamePreferences>() {
+            @Override
+            @SuppressWarnings("rawtypes")
+            public void write(Json json, NewGamePreferences prefs, Class knownType) {
+                json.writeValue(prefs.toSharableString());
+            }
+
+            @Override
+            @SuppressWarnings("rawtypes")
+            public NewGamePreferences read(Json json, JsonValue jsonData, Class type) {
+                String sharedString = jsonData == null ? "" : jsonData.asString();
+                return NewGamePreferences.fromSharableString(sharedString);
+            }
+        });
+    }
+
     public void registerPlayedGame(GameState gameState, GameResult gameResult) {
-        if (gameState == null || gameState.getScenarioMap() != null) {
+        if (gameState == null || gameState.getScenarioMap() != ScenarioMap.NONE) {
             return; // only record generated maps for now. We must treat ScenarioMaps differently.
         }
 
@@ -67,27 +92,19 @@ public class HistoryDao {
     }
 
     private void persistHistory() {
-        try {
-            String jsonData = json.toJson(gameHistoryList);
-            historyFileHandle.writeString(jsonData, false);
-        } catch (Exception e) {
-            Gdx.app.error("HistoryDao", "Failed to persist game history", e);
-        }
+        String jsonData = json.toJson(gameHistoryList);
+        historyFileHandle.writeString(jsonData, false);
     }
 
     private void loadHistory() {
         if (!historyFileHandle.exists()) {
             return;
         }
-        
-        try {
-            String jsonData = historyFileHandle.readString();
-            HistoricGame[] loadedGames = json.fromJson(HistoricGame[].class, jsonData);
-            if (loadedGames != null) {
-                gameHistoryList = List.of(loadedGames);
-            }
-        } catch (Exception e) {
-            Gdx.app.error("HistoryDao", "Failed to load game history", e);
+
+        String jsonData = historyFileHandle.readString();
+        HistoricGame[] loadedGames = json.fromJson(HistoricGame[].class, jsonData);
+        if (loadedGames != null) {
+            gameHistoryList = List.of(loadedGames);
         }
     }
 

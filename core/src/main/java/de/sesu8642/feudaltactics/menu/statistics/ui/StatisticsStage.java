@@ -30,7 +30,7 @@ import java.util.Collections;
 @Singleton
 public class StatisticsStage extends TabbedSlideStage {
 
-    private static final List<String> TAB_NAMES = Arrays.asList("Stats", "History", "Achieve", "Back");
+    private static final List<String> TAB_NAMES = Arrays.asList("Stats", "History", "Achievements", "Back");
 
     @Getter
     private final StatisticsSlide statisticsSlide;
