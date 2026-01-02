@@ -1,9 +1,9 @@
 package de.ui.statistics;
 
+import com.badlogic.gdx.Preferences;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import com.badlogic.gdx.Preferences;
 
 /**
  * Simple in-memory mock for libGDX Preferences.
@@ -12,7 +12,8 @@ import com.badlogic.gdx.Preferences;
 public class MockPreferences implements Preferences {
     private final Map<String, Object> values = new HashMap<>();
 
-    MockPreferences() {}
+    MockPreferences() {
+    }
 
     @Override
     public Preferences putInteger(String key, int val) {

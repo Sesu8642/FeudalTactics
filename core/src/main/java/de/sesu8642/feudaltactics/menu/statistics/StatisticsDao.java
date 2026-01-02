@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.Preferences;
-
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.dagger.StatisticsPrefsPrefStore;
 
@@ -45,16 +44,16 @@ public class StatisticsDao {
     }
 
     private void incrementCountingStat(String statName) {
-        int currentValue = prefStore.getInteger(statName, 0);
+        final int currentValue = prefStore.getInteger(statName, 0);
         prefStore.putInteger(statName, currentValue + 1);
         prefStore.flush();
     }
 
-     private CountByAiLevel loadCountByAiLevel(String baseStatName) {
+    private CountByAiLevel loadCountByAiLevel(String baseStatName) {
         int totalCount = 0;
-        Map<Intelligence, Integer> countByAiLevel = new HashMap<>();
+        final Map<Intelligence, Integer> countByAiLevel = new HashMap<>();
         for (Intelligence level : Intelligence.values()) {
-            int count = prefStore.getInteger(baseStatName + "-AI" + level.name(), 0);
+            final int count = prefStore.getInteger(baseStatName + "-AI" + level.name(), 0);
             totalCount += count;
             countByAiLevel.put(level, count);
         }

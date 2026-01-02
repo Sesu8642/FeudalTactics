@@ -26,8 +26,8 @@ import de.sesu8642.feudaltactics.menu.play.ui.PlayMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
-import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsScreen;
 import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
+import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsScreen;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -231,7 +231,7 @@ public class ScreenNavigationController {
     }
 
 
-        /**
+    /**
      * Transitions to the statistics screen.
      */
     public void transitionToStatisticsScreen() {

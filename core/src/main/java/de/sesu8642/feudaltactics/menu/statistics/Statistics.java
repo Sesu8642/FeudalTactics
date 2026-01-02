@@ -5,8 +5,6 @@ package de.sesu8642.feudaltactics.menu.statistics;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
-
 /**
  * Value object: game statistics.
  */
@@ -27,17 +25,18 @@ public class Statistics {
     /**
      * Constructor.
      *
-     * @param gamesPlayed    number of games played
-     * @param mapsGenerated  number of maps generated
-     * @param gamesWon       number of games won
-     * @param gamesLost      number of games lost
-     * @param gamesAborted   number of games aborted
+     * @param gamesPlayed   number of games played
+     * @param mapsGenerated number of maps generated
+     * @param gamesWon      number of games won
+     * @param gamesLost     number of games lost
+     * @param gamesAborted  number of games aborted
      */
-    public Statistics(int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost, CountByAiLevel gamesAborted) {
+    public Statistics(int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost,
+                      CountByAiLevel gamesAborted) {
         this.mapsGenerated = mapsGenerated;
         this.gamesWon = gamesWon;
         this.gamesLost = gamesLost;
         this.gamesAborted = gamesAborted;
-        this.gamesPlayed = gamesWon.getTotalCount() + gamesLost.getTotalCount() + gamesAborted.getTotalCount();
+        gamesPlayed = gamesWon.getTotalCount() + gamesLost.getTotalCount() + gamesAborted.getTotalCount();
     }
 }

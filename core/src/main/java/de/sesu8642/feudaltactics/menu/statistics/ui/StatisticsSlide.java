@@ -2,24 +2,18 @@
 
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
-import de.sesu8642.feudaltactics.menu.common.ui.CopyButton;
-import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
 import de.sesu8642.feudaltactics.menu.statistics.Statistics;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Represents the slide in the statistics screen.
@@ -43,7 +37,7 @@ public class StatisticsSlide extends Slide {
         super(skin, "Statistics");
         this.statisticsDao = statisticsDao;
         this.skin = skin;
-        this.statisticsTable = new Table();
+        statisticsTable = new Table();
         getTable().add(statisticsTable).fill().expand();
         refreshStatistics();
     }
@@ -77,19 +71,19 @@ public class StatisticsSlide extends Slide {
      */
     public void refreshStatistics() {
         statisticsTable.clear();
-        Statistics statistics = statisticsDao.getStatistics();
+        final Statistics statistics = statisticsDao.getStatistics();
         placeIntegerWithLabel("Total games played", statistics.getGamesPlayed());
-        CountByAiLevel gamesWon = statistics.getGamesWon();
+        final CountByAiLevel gamesWon = statistics.getGamesWon();
         placeIntegerWithLabel("Total games won", gamesWon.getTotalCount());
-        CountByAiLevel gamesLost = statistics.getGamesLost();
+        final CountByAiLevel gamesLost = statistics.getGamesLost();
         placeIntegerWithLabel("Total games lost", gamesLost.getTotalCount());
-        CountByAiLevel gamesAborted = statistics.getGamesAborted();
+        final CountByAiLevel gamesAborted = statistics.getGamesAborted();
         placeIntegerWithLabel("Total games aborted", gamesAborted.getTotalCount());
         placeIntegerWithLabel("Total maps generated", statistics.getMapsGenerated());
 
         statisticsTable.row();
 
-        Intelligence[] aiLevels = Intelligence.values();
+        final Intelligence[] aiLevels = Intelligence.values();
         for (Intelligence level : aiLevels) {
             placeHeading(EnumDisplayNameConverter.getDisplayName(level) + " AI Statistics");
             placeIntegerWithLabel("  Games won",

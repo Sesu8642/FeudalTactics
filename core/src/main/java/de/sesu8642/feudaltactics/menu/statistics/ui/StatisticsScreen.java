@@ -2,15 +2,14 @@
 
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Represents the UI screen for displaying statistics.
@@ -18,7 +17,8 @@ import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 @Singleton
 public class StatisticsScreen extends GameScreen {
     @Inject
-    public StatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport, StatisticsStage stage) {
+    public StatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+                            StatisticsStage stage) {
         super(camera, viewport, stage);
     }
 
@@ -26,7 +26,7 @@ public class StatisticsScreen extends GameScreen {
     public void show() {
         super.show();
 
-        StatisticsStage statisticsStage = (StatisticsStage) getActiveStage();
+        final StatisticsStage statisticsStage = (StatisticsStage) getActiveStage();
         statisticsStage.getStatisticsSlide().refreshStatistics();
     }
 }

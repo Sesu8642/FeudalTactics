@@ -2,10 +2,10 @@
 
 package de.sesu8642.feudaltactics.menu.statistics;
 
-import java.util.Map;
-
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import lombok.Getter;
+
+import java.util.Map;
 
 /**
  * Value object: count of events categorized by AI difficulty level.

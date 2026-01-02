@@ -2,11 +2,6 @@
 
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
-import java.util.Collections;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -18,6 +13,10 @@ import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Collections;
+
 /**
  * Represents the stage for the statistics screen.
  */
@@ -25,12 +24,13 @@ import lombok.Getter;
 public class StatisticsStage extends SlideStage {
 
     @Getter
-    private StatisticsSlide statisticsSlide;
+    private final StatisticsSlide statisticsSlide;
 
     @Inject
     public StatisticsStage(StatisticsDao statisticsDao, StatisticsSlide statisticsSlide,
-                            @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider, @MenuCamera OrthographicCamera camera,
-                            Skin skin, ScreenNavigationController screenNavigationController) {
+                           @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
+                           @MenuCamera OrthographicCamera camera,
+                           Skin skin, ScreenNavigationController screenNavigationController) {
         super(viewport, Collections.singletonList(statisticsSlide), platformInsetsProvider,
             screenNavigationController::transitionToMainMenuScreen, camera, skin);
         this.statisticsSlide = statisticsSlide;
