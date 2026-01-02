@@ -54,7 +54,6 @@ public class StatisticsEventHandler {
             default:    // Some unexpected player type
                 throw new IllegalStateException("Unknown Player Type " + winnerOfTheGame.getType());
         }
-        statisticsDao.incrementGamesPlayed();
     }
 
     @Subscribe

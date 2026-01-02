@@ -19,7 +19,6 @@ import java.util.Map;
 public class StatisticsDao {
 
     public static final String STATISTICS_NAME = "statistics";
-    private static final String GAMES_PLAYED_NAME = "GamesPlayed";
     private static final String GAMES_WON_NAME = "GamesWon";
     private static final String GAMES_LOST_NAME = "GamesLost";
     private static final String GAMES_ABORTED_NAME = "GamesAborted";
@@ -33,22 +32,15 @@ public class StatisticsDao {
         prefStore = statisticsPrefs;
     }
 
-    public void incrementGamesPlayed() {
-        incrementCountingStat(GAMES_PLAYED_NAME);
-    }
-
     public void incrementGamesWon(Intelligence aiDifficulty) {
-        incrementCountingStat(GAMES_WON_NAME);
         incrementCountingStat(GAMES_WON_NAME + "-AI" + aiDifficulty.name());
     }
 
     public void incrementGamesLost(Intelligence aiDifficulty) {
-        incrementCountingStat(GAMES_LOST_NAME);
         incrementCountingStat(GAMES_LOST_NAME + "-AI" + aiDifficulty.name());
     }
 
     public void incrementGamesAborted(Intelligence aiDifficulty) {
-        incrementCountingStat(GAMES_ABORTED_NAME);
         incrementCountingStat(GAMES_ABORTED_NAME + "-AI" + aiDifficulty.name());
     }
 
@@ -59,10 +51,11 @@ public class StatisticsDao {
     }
 
      private CountByAiLevel loadCountByAiLevel(String baseStatName) {
-        int totalCount = prefStore.getInteger(baseStatName, 0);
+        int totalCount = 0;
         Map<Intelligence, Integer> countByAiLevel = new HashMap<>();
         for (Intelligence level : Intelligence.values()) {
             int count = prefStore.getInteger(baseStatName + "-AI" + level.name(), 0);
+            totalCount += count;
             countByAiLevel.put(level, count);
         }
         return new CountByAiLevel(totalCount, countByAiLevel);
@@ -74,12 +67,11 @@ public class StatisticsDao {
      * @return the loaded statistics
      */
     public Statistics getStatistics() {
-        final int gamesPlayed = prefStore.getInteger(GAMES_PLAYED_NAME, 0);
         final int mapsGenerated = prefStore.getInteger(MAPS_GENERATED_NAME, 0);
         final CountByAiLevel gamesWon = loadCountByAiLevel(GAMES_WON_NAME);
         final CountByAiLevel gamesLost = loadCountByAiLevel(GAMES_LOST_NAME);
         final CountByAiLevel gamesAborted = loadCountByAiLevel(GAMES_ABORTED_NAME);
-        return new Statistics(gamesPlayed, mapsGenerated, gamesWon, gamesLost, gamesAborted);
+        return new Statistics(mapsGenerated, gamesWon, gamesLost, gamesAborted);
     }
 
     public void incrementSeedsGenerated() {

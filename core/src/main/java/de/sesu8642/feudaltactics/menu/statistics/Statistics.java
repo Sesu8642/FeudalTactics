@@ -33,11 +33,11 @@ public class Statistics {
      * @param gamesLost      number of games lost
      * @param gamesAborted   number of games aborted
      */
-    public Statistics(int gamesPlayed, int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost, CountByAiLevel gamesAborted) {
-        this.gamesPlayed = gamesPlayed;
+    public Statistics(int mapsGenerated, CountByAiLevel gamesWon, CountByAiLevel gamesLost, CountByAiLevel gamesAborted) {
         this.mapsGenerated = mapsGenerated;
         this.gamesWon = gamesWon;
         this.gamesLost = gamesLost;
         this.gamesAborted = gamesAborted;
+        this.gamesPlayed = gamesWon.getTotalCount() + gamesLost.getTotalCount() + gamesAborted.getTotalCount();
     }
 }
