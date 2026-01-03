@@ -19,6 +19,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -104,7 +105,7 @@ public class HistoryDao {
         String jsonData = historyFileHandle.readString();
         HistoricGame[] loadedGames = json.fromJson(HistoricGame[].class, jsonData);
         if (loadedGames != null) {
-            gameHistoryList = List.of(loadedGames);
+            gameHistoryList = new ArrayList<HistoricGame>(Arrays.asList(loadedGames));
         }
     }
 
