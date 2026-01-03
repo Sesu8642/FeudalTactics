@@ -5,9 +5,14 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.util.EnumMap;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
@@ -23,6 +28,7 @@ public class HistorySlide extends Slide {
     private final HistoryDao historyDao;
     private final Skin skin;
     private final Table historyTable;
+    private final EnumMap<HistoricGame.GameResult, Drawable> resultBackgrounds;
 
     /**
      * Constructor.
@@ -36,6 +42,7 @@ public class HistorySlide extends Slide {
         this.historyDao = historyDao;
         this.skin = skin;
         this.historyTable = new Table();
+        this.resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
         getTable().add(historyTable).fill().expand();
         refreshHistory();
     }
@@ -46,8 +53,8 @@ public class HistorySlide extends Slide {
         historyTable.add(indexLabel).left().padRight(10);
 
         // Result
-        final Label resultLabel = new Label(game.getGameResult().toString(), skin);
-        historyTable.add(resultLabel).left().padRight(10);
+        final Container<Label> resultCell = createResultCell(game.getGameResult());
+        historyTable.add(resultCell).left().padRight(10);
 
         // AI Difficulty
         String difficulty = game.getGameSettings() != null && game.getGameSettings().getBotIntelligence() != null
@@ -59,6 +66,39 @@ public class HistorySlide extends Slide {
         historyTable.row();
         historyTable.add().height(10).colspan(3);
         historyTable.row();
+    }
+
+    private Container<Label> createResultCell(HistoricGame.GameResult result) {
+        final Label resultLabel = new Label(result.toString(), skin);
+        resultLabel.setColor(Color.BLACK);
+
+        final Container<Label> container = new Container<>(resultLabel);
+        container.background(getResultBackground(result));
+        container.pad(4f, 8f, 4f, 8f);
+        return container;
+    }
+
+    private Drawable getResultBackground(HistoricGame.GameResult result) {
+        return resultBackgrounds.computeIfAbsent(result,
+                r -> skin.newDrawable("white", gameResult2BackgroundColor(r)));
+    }
+
+    static private Color gameResult2BackgroundColor(HistoricGame.GameResult result)
+    {
+        switch (result) {
+            case WIN: {
+                return Color.GREEN;
+            }
+            case LOSS: {
+                return Color.RED;
+            }
+            case ABORTED: {
+                return Color.YELLOW;
+            }
+            default: {
+                return Color.DARK_GRAY;
+            }
+        }
     }
 
     private void placeHeading() {
