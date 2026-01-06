@@ -2,7 +2,6 @@
 
 package de.sesu8642.feudaltactics.menu.information.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -33,18 +32,10 @@ public class InformationMenuPage1Screen extends GameScreen {
         super(camera, viewport, menuStage);
         final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToAboutScreen));
-        buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            // Java thinks that this is not a valid URI. Android disagrees. So there's a fallback that redirects to
-            // the actual site.
-            final boolean success = Gdx.net.openURI("https://matrix.to/#/#feudal-tactics-community:matrix.org");
-            if (!success) {
-                Gdx.net.openURI("https://sesu8642.github.io/FeudalTacticsCommunityRedirect/");
-            }
-        }));
-        buttons.get(2).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToCrashReportScreenInMainMenu));
-        buttons.get(3).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToStatisticsScreen));
-        buttons.get(4).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToInformationMenuScreenPage2));
-        buttons.get(5).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToMainMenuScreen));
+        buttons.get(1).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToCrashReportScreenInMainMenu));
+        buttons.get(2).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToStatisticsScreen));
+        buttons.get(3).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToInformationMenuScreenPage2));
+        buttons.get(4).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToMainMenuScreen));
     }
 
 }

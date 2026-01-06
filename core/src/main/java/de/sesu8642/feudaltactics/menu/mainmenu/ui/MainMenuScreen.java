@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.mainmenu.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -85,6 +86,15 @@ public class MainMenuScreen extends GameScreen {
         // information button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
             screenNavigationController::transitionToInformationMenuScreenPage1));
+        // community button
+        buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
+            // Java thinks that this is not a valid URI. Android disagrees. So there's a fallback that redirects to
+            // the actual site.
+            final boolean success = Gdx.net.openURI("https://matrix.to/#/#feudal-tactics-community:matrix.org");
+            if (!success) {
+                Gdx.net.openURI("https://sesu8642.github.io/FeudalTacticsCommunityRedirect/");
+            }
+        }));
     }
 
     private void initTutorial() {

@@ -29,9 +29,9 @@ import java.util.List;
 public class MainMenuStage extends MenuStage {
 
     private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Level Editor", "Preferences",
-        "Information");
+        "Information", "Community (Matrix) ↗");
     private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("Play", "Preferences",
-        "Information");
+        "Information", "Community (Matrix) ↗");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
