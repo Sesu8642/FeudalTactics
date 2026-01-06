@@ -48,11 +48,17 @@ public class AboutSlideFactory {
             " A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received" +
             " a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu" +
             ".org/licenses/>.";
+        final String text3 = "\nAcknowledgements:" +
+            "\nMany thanks to Sean O'Connor for his game Slay which this game is heavily inspired " +
+            "by!\n" +
+            "\n" +
+            "Many thanks to Amit Patel for his guide to hexagonal grids on redblobgames.com!";
         final String imagePath = "square_logo_64.png";
         final Slide slide = new Slide(skin, "About FeudalTactics");
         slide.getTable().add(new Image(new Texture(imagePath))).row();
         slide.getTable().add(new Label(text1, skin)).center().row();
         slide.addLabel(text2);
+        slide.addLabel(text3);
         return slide;
     }
 
