@@ -47,6 +47,9 @@ No data is collected at all.
 See [privacy policy](https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt). It is based
 on [the one from the Catima Website](https://github.com/CatimaLoyalty/Website/blob/98018f63d0f69331de70054db61c699b9c316c2c/_pages/privacy-policy.md).
 
+## Language Support
+The game is currently available only in English.
+
 ## Platforms
 
 - `core`: Main module with the application logic shared by all platforms.

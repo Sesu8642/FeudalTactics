@@ -1,3 +1,5 @@
 Ein mittelalterliches Strategiespiel mit unzähligen einzigartigen und herausfordernden Leveln.
 
 Du spielst auf einer zufällig generierten Insel aus Hexagons. Dein Ziel ist es, diese komplett zu erobern. Dazu greifst Du Feinde mit deinen Einheiten an, während Du Deine eigenen Königreiche verteidigst.
+
+Das Spiel ist aktuell nur in englischer Sprache verfügbar.
