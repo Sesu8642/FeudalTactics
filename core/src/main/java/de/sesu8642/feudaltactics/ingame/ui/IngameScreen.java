@@ -133,7 +133,14 @@ public class IngameScreen extends GameScreen {
      * displays it and then ends the turn if confirmed.
      */
     public void handleEndTurnAttempt() {
-        if (mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
+        final Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(cachedGameState);
+        if (!playerOptional.isPresent()) {
+            return;
+        }
+        final boolean canEndTurn = InputValidationHelper.checkEndTurn(cachedGameState, playerOptional.get());
+        if (!canEndTurn) {
+            ingameScreenDialogHelper.showCannotEndTurnMessage(getActiveStage());
+        } else if (mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
             final Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
             if (forgottenKingdom.isPresent()) {
                 final Dialog confirmDialog = dialogFactory.createConfirmDialog(

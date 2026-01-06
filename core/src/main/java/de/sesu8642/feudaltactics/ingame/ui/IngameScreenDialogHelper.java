@@ -182,6 +182,13 @@ public class IngameScreenDialogHelper {
         dialog.show(stage);
     }
 
+    void showCannotEndTurnMessage(Stage stage) {
+        final Dialog dialog = dialogFactory.createInformationDialog("You cannot end your turn because you are holding" +
+            " something in your hand. Place it on the map first.", () -> {
+        });
+        dialog.show(stage);
+    }
+
     void showGameOrObjectiveInfo(Stage stage, int currentRound, ScenarioMap scenarioMap, int objectiveProgress,
                                  NewGamePreferences newGamePreferences) {
         if (scenarioMap == ScenarioMap.NONE) {

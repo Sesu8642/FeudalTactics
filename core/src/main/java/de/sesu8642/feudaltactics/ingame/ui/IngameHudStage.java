@@ -205,6 +205,8 @@ public class IngameHudStage extends ResizableResettableStage {
         setButtonEnabledStatus(buyPeasantButtonState, buyPeasantButton);
         setButtonEnabledStatus(buyCastleButtonState, buyCastleButton);
         setButtonEnabledStatus(endTurnButtonState, endTurnButton);
+        // endButton needs to be always touchable to display a hint text
+        endTurnButton.setTouchable(Touchable.enabled);
     }
 
     private void setButtonEnabledStatus(boolean enabled, ImageButton button) {
