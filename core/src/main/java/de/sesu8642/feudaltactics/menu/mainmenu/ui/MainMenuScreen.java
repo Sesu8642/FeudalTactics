@@ -79,13 +79,6 @@ public class MainMenuScreen extends GameScreen {
                 eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
             }));
         }
-        // tutorial button
-        buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
-            initTutorial();
-            if (nagPreferencesDao.getShowTutorialNag()) {
-                nagPreferencesDao.setShowTutorialNag(false);
-            }
-        }));
         // preferences button
         buttons.get(++i).addListener(new ExceptionLoggingChangeListener(
             screenNavigationController::transitionToPreferencesScreen));

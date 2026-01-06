@@ -28,10 +28,10 @@ import java.util.List;
 @Singleton
 public class MainMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Level Editor",
-        "Tutorial", "Preferences", "Information");
-    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("Play", "Tutorial",
-        "Preferences", "Information");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Level Editor", "Preferences",
+        "Information");
+    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("Play", "Preferences",
+        "Information");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
