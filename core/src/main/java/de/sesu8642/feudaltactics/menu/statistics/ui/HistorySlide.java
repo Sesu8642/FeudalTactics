@@ -7,14 +7,18 @@ import javax.inject.Singleton;
 
 import java.util.EnumMap;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
+import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
@@ -67,6 +71,17 @@ public class HistorySlide extends Slide {
         final Label difficultyLabel = new Label(difficulty, skin);
         historyTable.add(difficultyLabel).left().expandX();
 
+        // Copy settings button
+        final ImageTextButton copyButton = ButtonFactory.createCopyButton("", skin, true);
+        copyButton.getImageCell().expand().fill();
+        if (game.getGameSettings() != null) {
+            copyButton.addListener(new ExceptionLoggingChangeListener(() -> 
+                Gdx.app.getClipboard().setContents(game.getGameSettings().toSharableString())));
+        } else {
+            copyButton.setDisabled(true);
+        }
+        historyTable.add(copyButton).left().height(74).width(74);
+
         historyTable.row();
         historyTable.add().height(10).colspan(3);
         historyTable.row();
@@ -117,6 +132,9 @@ public class HistorySlide extends Slide {
 
         final Label difficultyHeading = new Label("Difficulty", skin);
         historyTable.add(difficultyHeading).left().expandX();
+
+        final Label copyHeading = new Label("Copy", skin);
+        historyTable.add(copyHeading).left().expandX();
 
         historyTable.row();
         historyTable.add().height(20).colspan(3);
