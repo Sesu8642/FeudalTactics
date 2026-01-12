@@ -56,6 +56,10 @@ public class HistorySlide extends Slide {
         final Container<Label> resultCell = createResultCell(game.getGameResult());
         historyTable.add(resultCell).left().padRight(10);
 
+        // Turns played
+        final Label turnsLabel = new Label(String.valueOf(game.getTurnsPlayed()), skin);
+        historyTable.add(turnsLabel).left().padRight(10);
+
         // AI Difficulty
         String difficulty = game.getGameSettings() != null && game.getGameSettings().getBotIntelligence() != null
                 ? EnumDisplayNameConverter.getDisplayName(game.getGameSettings().getBotIntelligence())
@@ -107,6 +111,9 @@ public class HistorySlide extends Slide {
 
         final Label resultHeading = new Label("Result", skin);
         historyTable.add(resultHeading).left().padRight(10);
+
+        final Label turnsHeading = new Label("Turns", skin);
+        historyTable.add(turnsHeading).left().padRight(10);
 
         final Label difficultyHeading = new Label("Difficulty", skin);
         historyTable.add(difficultyHeading).left().expandX();

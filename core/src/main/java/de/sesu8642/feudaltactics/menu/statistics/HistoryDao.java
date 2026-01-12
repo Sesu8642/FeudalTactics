@@ -30,7 +30,7 @@ public class HistoryDao {
 
     public static final String STATISTICS_FILE_NAME = "gamehistory.json";
 
-    private final FileHandle historyFileHandle = Gdx.files.local(STATISTICS_FILE_NAME);
+    private final FileHandle historyFileHandle;
 
     private List<HistoricGame> gameHistoryList = new ArrayList<HistoricGame>();
 
@@ -38,6 +38,12 @@ public class HistoryDao {
 
     @Inject
     public HistoryDao() {
+        this(Gdx.files.local(STATISTICS_FILE_NAME));
+    }
+
+    // Constructor for testing
+    public HistoryDao(FileHandle fileHandle) {
+        this.historyFileHandle = fileHandle;
         json.setOutputType(JsonWriter.OutputType.json);
         registerSerializers();
         loadHistory();
@@ -85,7 +91,9 @@ public class HistoryDao {
             gameState.getPlayers().size() - 1 // exclude human player
         );
 
-        HistoricGame historicGame = new HistoricGame(prefs, gameResult);
+        int roundsPlayed = gameState.getRound();
+
+        HistoricGame historicGame = new HistoricGame(prefs, gameResult, roundsPlayed);
 
         gameHistoryList.add(historicGame);
 

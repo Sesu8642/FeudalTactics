@@ -20,15 +20,20 @@ public class HistoricGame {
     @Getter
     private GameResult gameResult;
 
+    @Getter
+    private int turnsPlayed;
+
     /**
      * Constructor.
      *
      * @param gameSettings settings used for the game
      * @param gameResult   result of the game
+     * @param turnsPlayed number of turns played in the game
      */
-    public HistoricGame(NewGamePreferences gameSettings, GameResult gameResult) {
+    public HistoricGame(NewGamePreferences gameSettings, GameResult gameResult, int turnsPlayed) {
         this.gameSettings = gameSettings;
         this.gameResult = gameResult;
+        this.turnsPlayed = turnsPlayed;
     }
 
     public enum GameResult {

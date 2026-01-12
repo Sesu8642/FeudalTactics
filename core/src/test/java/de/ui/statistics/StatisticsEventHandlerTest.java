@@ -1,6 +1,7 @@
 package de.ui.statistics;
 
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.files.FileHandle;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
@@ -17,10 +18,24 @@ public class StatisticsEventHandlerTest {
     @Test
     void handleGameExited_handlesAllPlayerTypes() {
         final Preferences mockPrefs = new MockPreferences();
-        final StatisticsDao mockStatisticsDao = new StatisticsDao(mockPrefs);
-        HistoryDao mockHistoryDao = new HistoryDao();
+        final StatisticsDao statisticsDao = new StatisticsDao(mockPrefs);
+        
+        // Create a mock FileHandle that doesn't require real file I/O
+        FileHandle mockFileHandle = new FileHandle("test.json") {
+            @Override
+            public boolean exists() {
+                return false;
+            }
+            
+            @Override
+            public void writeString(String string, boolean append) {
+                // Do nothing in tests
+            }
+        };
+        
+        HistoryDao historyDao = new HistoryDao(mockFileHandle);
 
-        final StatisticsEventHandler handler = new StatisticsEventHandler(mockStatisticsDao, mockHistoryDao);
+        final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
 
         final GameState gameState = new GameState();
         for (Player.Type playerType : Player.Type.values()) {
