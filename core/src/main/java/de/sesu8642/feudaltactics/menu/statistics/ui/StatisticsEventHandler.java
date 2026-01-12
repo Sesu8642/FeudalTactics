@@ -63,7 +63,6 @@ public class StatisticsEventHandler {
             } else {
                 return GameResult.ABORTED;
             }
-         } else switch (winnerOfTheGame.getType()) {
         }
     }
 

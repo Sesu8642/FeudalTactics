@@ -20,7 +20,7 @@ public class StatisticsEventHandlerTest {
         final StatisticsDao mockStatisticsDao = new StatisticsDao(mockPrefs);
         HistoryDao mockHistoryDao = new HistoryDao();
 
-        final StatisticsEventHandler handler = new StatisticsEventHandler(mockDao);
+        final StatisticsEventHandler handler = new StatisticsEventHandler(mockStatisticsDao, mockHistoryDao);
 
         final GameState gameState = new GameState();
         for (Player.Type playerType : Player.Type.values()) {
