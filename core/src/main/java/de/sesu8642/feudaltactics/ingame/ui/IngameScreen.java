@@ -201,22 +201,21 @@ public class IngameScreen extends GameScreen {
      * Adjusts all the UI elements that need to be adjusted and displays dialogs if
      * appropriate.
      *
-     * @param gameState new game state
+     * @param newGameState new game state
      */
-    public void handleGameStateChange(GameState gameState) {
-        final boolean isLocalPlayerTurnNew = gameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
+    public void handleGameStateChange(GameState newGameState) {
+        final boolean isLocalPlayerTurnNew = newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
         final boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
         isLocalPlayerTurn = isLocalPlayerTurnNew;
         final boolean winnerChanged =
-            gameState.getWinner() != null
-                && winnerBeforeBotTurnPlayerIndex != gameState.getWinner().getPlayerIndex();
+            newGameState.getWinner() != null
+                && winnerBeforeBotTurnPlayerIndex != newGameState.getWinner().getPlayerIndex();
 
         final boolean objectiveProgressed = cachedGameState != null
-            && gameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
+            && newGameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
 
-        cachedGameState = GameStateHelper.getCopy(gameState);
+        cachedGameState = newGameState;
         // update the UI
-        final GameState newGameState = gameState;
         // hand content
         if (newGameState.getHeldObject() != null) {
             ingameHudStage.updateHandContent(textureAtlasHelper.createSpriteForTileContent(newGameState.getHeldObject()));
@@ -236,7 +235,7 @@ public class IngameScreen extends GameScreen {
         }
         ingameHudStage.infoTextLabel.setText(hudStageInfoText);
         ingameHudStage.infoHexagonLabel.setText(String.format("[#%s]h",
-            MapRenderer.PLAYER_COLOR_PALETTE.get(gameState.getActivePlayer().getPlayerIndex())));
+            MapRenderer.PLAYER_COLOR_PALETTE.get(newGameState.getActivePlayer().getPlayerIndex())));
         parameterInputStage.updateSeed(newGameState.getSeed());
 
         if (objectiveProgressed) {
