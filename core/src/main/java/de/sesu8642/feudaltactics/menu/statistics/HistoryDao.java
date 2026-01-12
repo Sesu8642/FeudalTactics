@@ -79,8 +79,8 @@ public class HistoryDao {
         int humanPlayerIndex = gameState.getPlayers().stream()
             .filter(p -> p.getType() == Player.Type.LOCAL_PLAYER)
             .findFirst()
-            .map(p -> gameState.getPlayers().indexOf(p))
-            .orElse(-1);
+            .orElseThrow(() -> new IllegalStateException("No local player found"))
+            .getPlayerIndex();
 
         NewGamePreferences prefs = new NewGamePreferences(
             gameState.getSeed(),
