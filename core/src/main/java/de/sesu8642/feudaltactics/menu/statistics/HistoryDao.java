@@ -82,10 +82,16 @@ public class HistoryDao {
             .orElseThrow(() -> new IllegalStateException("No local player found"))
             .getPlayerIndex();
 
+        int tileCount = gameState.getMap().values().size();
+        MapSizes mapSize = Arrays.stream(MapSizes.values())
+            .filter(ms -> ms.getAmountOfTiles() == tileCount)
+            .findFirst()
+            .orElseThrow();
+
         NewGamePreferences prefs = new NewGamePreferences(
             gameState.getSeed(),
             gameState.getBotIntelligence(),
-            MapSizes.LARGE, // TODO: figure out map size from game state
+            mapSize,
             Densities.MEDIUM, // TODO: figure out density from game state
             humanPlayerIndex,
             gameState.getPlayers().size() - 1 // exclude human player
