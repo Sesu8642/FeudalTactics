@@ -86,7 +86,7 @@ public class HistoryDao {
         MapSizes mapSize = Arrays.stream(MapSizes.values())
             .filter(ms -> ms.getAmountOfTiles() == tileCount)
             .findFirst()
-            .orElseThrow();
+            .orElseThrow(() -> new IllegalStateException("No matching map size found for tile count " + tileCount));
 
         NewGamePreferences prefs = new NewGamePreferences(
             gameState.getSeed(),
