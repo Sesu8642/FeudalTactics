@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Represents the UI screen for displaying statistics.
+ * Represents the UI screen for displaying statistics, history, and achievements.
  */
 @Singleton
 public class StatisticsScreen extends GameScreen {
@@ -27,6 +27,9 @@ public class StatisticsScreen extends GameScreen {
         super.show();
 
         final StatisticsStage statisticsStage = (StatisticsStage) getActiveStage();
+        // Refresh all slides when screen is shown
         statisticsStage.getStatisticsSlide().refreshStatistics();
+        statisticsStage.getHistorySlide().refreshHistory();
+        statisticsStage.getAchievementsSlide().refreshAchievements();
     }
 }
