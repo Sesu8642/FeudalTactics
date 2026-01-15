@@ -16,12 +16,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
+import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
  * Represents the slide for displaying game history.
@@ -58,25 +61,49 @@ public class HistorySlide extends Slide {
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
-        historyTable.add(resultCell).left().padRight(10);
+        final Label turnsLabel = new Label("in turn " +String.valueOf(game.getTurnsPlayed()), skin);
+        final Table resultTable = new Table();
+        resultTable.add(resultCell).left();
+        resultTable.row();
+        resultTable.add(turnsLabel).left();
+        historyTable.add(resultTable).left().padRight(10);
 
-        // Turns played
-        final Label turnsLabel = new Label(String.valueOf(game.getTurnsPlayed()), skin);
-        historyTable.add(turnsLabel).left().padRight(10);
+        // Settings
+        String settingsString = "Unknown settings";
+        String hexagonString = "[#808080]h"; // Gray hexagon for unknown
+        NewGamePreferences gamePreferences = game.getGameSettings();
+        if (gamePreferences != null) {
+            String difficulty = gamePreferences.getBotIntelligence() != null
+                    ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getBotIntelligence())
+                    : "Unknown";
+            String mapSize = gamePreferences.getMapSize() != null
+                    ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getMapSize())
+                    : "Unknown";
+            String mapDensity = gamePreferences.getDensity() != null
+                    ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getDensity())
+                    : "Unknown";
+            settingsString = String.format("%s AI\n%s map, %s density",
+                difficulty, mapSize, mapDensity);
 
-        // AI Difficulty
-        String difficulty = game.getGameSettings() != null && game.getGameSettings().getBotIntelligence() != null
-                ? EnumDisplayNameConverter.getDisplayName(game.getGameSettings().getBotIntelligence())
-                : "Unknown";
-        final Label difficultyLabel = new Label(difficulty, skin);
-        historyTable.add(difficultyLabel).left().expandX();
+            Color playerColor = MapRenderer.PLAYER_COLOR_PALETTE.get(gamePreferences.getStartingPosition());
+
+                // markup must be enabled in the font for this coloring to work
+                // h is a hexagon character in the font
+            hexagonString = String.format("[#%s]h", playerColor.toString());
+        }
+        final Label settingsLabel = new Label(settingsString, skin);
+        historyTable.add(settingsLabel).left().expandX();
+
+
+        final Label startingPositionLabel = new Label(hexagonString, skin, SkinConstants.FONT_HEXAGON);
+        historyTable.add(startingPositionLabel).left().expandX();
 
         // Copy settings button
         final ImageTextButton copyButton = ButtonFactory.createCopyButton("", skin, true);
         copyButton.getImageCell().expand().fill();
-        if (game.getGameSettings() != null) {
-            copyButton.addListener(new ExceptionLoggingChangeListener(() -> 
-                Gdx.app.getClipboard().setContents(game.getGameSettings().toSharableString())));
+        if (gamePreferences != null) {
+            copyButton.addListener(new ExceptionLoggingChangeListener(() ->
+                Gdx.app.getClipboard().setContents(gamePreferences.toSharableString())));
         } else {
             copyButton.setDisabled(true);
         }
@@ -127,11 +154,11 @@ public class HistorySlide extends Slide {
         final Label resultHeading = new Label("Result", skin);
         historyTable.add(resultHeading).left().padRight(10);
 
-        final Label turnsHeading = new Label("Turns", skin);
-        historyTable.add(turnsHeading).left().padRight(10);
-
-        final Label difficultyHeading = new Label("Difficulty", skin);
+        final Label difficultyHeading = new Label("Settings", skin);
         historyTable.add(difficultyHeading).left().expandX();
+
+        final Label positionHeading = new Label("Pos.", skin);
+        historyTable.add(positionHeading).left().expandX();
 
         final Label copyHeading = new Label("Copy", skin);
         historyTable.add(copyHeading).left().expandX();
