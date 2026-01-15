@@ -175,7 +175,7 @@ public class ParameterInputStage extends ResizableResettableStage {
      */
     public void updateNumberOfStartingPositions(int numberOfStartingPositions) {
         // markup must be enabled in the font for this coloring to work
-        // h is a hexagon chraracter in the font
+        // h is a hexagon character in the font
         final List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
             .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
         final List<String> limitedStartingPositions = startingPositions.subList(0, numberOfStartingPositions);
