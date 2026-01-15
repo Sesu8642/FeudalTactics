@@ -5,6 +5,8 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
@@ -46,12 +48,13 @@ public class StatisticsEventHandlerTest {
         final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
 
         final GameState gameState = generateGameState();
+        final NewGamePreferences newGamePreferences = new NewGamePreferences(12345L, Intelligence.LEVEL_2, MapSizes.SMALL, Densities.LOOSE, 3);
 
         for (Player.Type playerType : Player.Type.values()) {
             final Player winnerPlayer = new Player(0, playerType);
             gameState.setWinner(winnerPlayer);
 
-            final GameExitedEvent event = new GameExitedEvent(gameState);
+            final GameExitedEvent event = new GameExitedEvent(gameState, newGamePreferences);
             handler.handleGameExited(event);
 
             // No assertions ... we are happy that no exception was thrown

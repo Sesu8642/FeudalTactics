@@ -71,35 +71,14 @@ public class HistoryDao {
         });
     }
 
-    public void registerPlayedGame(GameState gameState, GameResult gameResult) {
+    public void registerPlayedGame(GameState gameState, NewGamePreferences gamePreferences, GameResult gameResult) {
         if (gameState == null || gameState.getScenarioMap() != ScenarioMap.NONE) {
             return; // only record generated maps for now. We must treat ScenarioMaps differently.
         }
 
-        int humanPlayerIndex = gameState.getPlayers().stream()
-            .filter(p -> p.getType() == Player.Type.LOCAL_PLAYER)
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No local player found"))
-            .getPlayerIndex();
-
-        int tileCount = gameState.getMap().values().size();
-        MapSizes mapSize = Arrays.stream(MapSizes.values())
-            .filter(ms -> ms.getAmountOfTiles() == tileCount)
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("No matching map size found for tile count " + tileCount));
-
-        NewGamePreferences prefs = new NewGamePreferences(
-            gameState.getSeed(),
-            gameState.getBotIntelligence(),
-            mapSize,
-            Densities.MEDIUM, // TODO: figure out density from game state
-            humanPlayerIndex,
-            gameState.getPlayers().size() - 1 // exclude human player
-        );
-
         int roundsPlayed = gameState.getRound();
 
-        HistoricGame historicGame = new HistoricGame(prefs, gameResult, roundsPlayed);
+        HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed);
 
         gameHistoryList.add(historicGame);
 

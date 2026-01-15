@@ -85,7 +85,7 @@ public class EditorScreen extends GameScreen {
     }
 
     private void exitToMenu() {
-        eventBus.post(new GameExitedEvent(null));   // Passing null makes sure no statistics are recorded
+        eventBus.post(new GameExitedEvent(null, null));   // Passing null makes sure no statistics are recorded
         screenNavigationController.transitionToMainMenuScreen();
         clearCache();
     }

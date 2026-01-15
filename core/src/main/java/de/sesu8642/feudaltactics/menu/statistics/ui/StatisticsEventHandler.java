@@ -40,7 +40,7 @@ public class StatisticsEventHandler {
         HistoricGame.GameResult gameResult = evaluateGameResult(gameState);
 
         statisticsDao.registerPlayedGame(aiDifficulty, gameResult);
-        historyDao.registerPlayedGame(gameState, gameResult);
+        historyDao.registerPlayedGame(gameState, event.getGamePreferences(), gameResult);
     }
 
     private GameResult evaluateGameResult(GameState gameState) {
