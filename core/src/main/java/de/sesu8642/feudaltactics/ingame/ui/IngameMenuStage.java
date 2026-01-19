@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
@@ -39,8 +40,9 @@ public class IngameMenuStage extends MenuStage {
                            PlatformInsetsProvider platformInsetsProvider,
                            @MenuBackgroundRenderer MapRenderer mapRenderer,
                            Skin skin,
-                           @VersionProperty String gameVersion) {
-        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin);
+                           @VersionProperty String gameVersion,
+                           LocalizationManager localizationManager) {
+        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
         bottomRightLabel = new Label(String.format("Version %s", gameVersion), skin.get(SkinConstants.FONT_OVERLAY,
             LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);

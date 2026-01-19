@@ -49,15 +49,19 @@ public class PreferencesStage extends SlideStage {
     }
 
     private void initUi() {
-        Stream.of(preferencesSlide.getForgottenKingdomSelectBox(), preferencesSlide.getShowEnemyTurnsSelectBox())
+        Stream.of(preferencesSlide.getForgottenKingdomSelectBox(),
+                preferencesSlide.getShowEnemyTurnsSelectBox(),
+                preferencesSlide.getLanguageSelectBox())
             .forEach(actor -> actor
                 .addListener(new ExceptionLoggingChangeListener(this::sendPreferencesChangedEvent)));
     }
 
     private void sendPreferencesChangedEvent() {
         eventBus.post(new MainPreferencesChangeEvent(
-            new MainGamePreferences(preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
-                preferencesSlide.getShowEnemyTurnsSelectBox().getSelected())));
+            new MainGamePreferences(
+                preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
+                preferencesSlide.getShowEnemyTurnsSelectBox().getSelected(),
+                preferencesSlide.getLanguageSelectBox().getSelected())));
     }
 
     @Override
@@ -67,6 +71,6 @@ public class PreferencesStage extends SlideStage {
         final MainGamePreferences currentPreferences = mainPrefsDao.getMainPreferences();
         preferencesSlide.getForgottenKingdomSelectBox().setSelected(currentPreferences.isWarnAboutForgottenKingdoms());
         preferencesSlide.getShowEnemyTurnsSelectBox().setSelected(currentPreferences.isShowEnemyTurns());
+        preferencesSlide.getLanguageSelectBox().setSelected(currentPreferences.getLanguage());
     }
-
 }

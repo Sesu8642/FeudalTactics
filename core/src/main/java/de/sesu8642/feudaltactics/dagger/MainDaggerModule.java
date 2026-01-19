@@ -11,7 +11,9 @@ import com.google.common.eventbus.SubscriberExceptionHandler;
 import com.ray3k.stripe.FreeTypeSkin;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
+import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,4 +56,9 @@ public class MainDaggerModule {
         return new InputMultiplexer();
     }
 
+    @Provides
+    @Singleton
+    static LocalizationManager provideTextLocalizer(MainPreferencesDao preferencesDao) {
+        return new LocalizationManager(preferencesDao.getMainPreferences().getLanguage());
+    }
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
+import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -26,6 +27,8 @@ public class PreferencesSlide extends Slide {
     private final SelectBox<Boolean> forgottenKingdomSelectBox;
     @Getter
     private final SelectBox<Boolean> showEnemyTurnsSelectBox;
+    @Getter
+    private final SelectBox<String> languageSelectBox;
 
     /**
      * Constructor.
@@ -42,12 +45,28 @@ public class PreferencesSlide extends Slide {
             skin);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Show enemy turns", skin);
 
+        languageSelectBox = placeStringSelectWithLabel(preferencesTable,
+            "Select language", skin, SupportedLanguages.getSupportedLanguages());
+
         // add a row to fill the rest of the space in order for the other options to be
         // at the top of the page
         preferencesTable.row();
         preferencesTable.add().fill().expand();
 
         getTable().add(preferencesTable).fill().expand();
+    }
+
+    private SelectBox<String> placeStringSelectWithLabel(Table preferencesTable, String labelText, Skin skin, String[] options) {
+        final Label newLabel = new Label(labelText, skin);
+        newLabel.setWrap(true);
+        preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
+        final SelectBox<String> newSelectBox = new SelectBox<>(skin);
+        newSelectBox.setItems(options);
+        preferencesTable.add(newSelectBox).center().fillX().expandX();
+        preferencesTable.row();
+        preferencesTable.add().height(20);
+        preferencesTable.row();
+        return newSelectBox;
     }
 
     private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin) {

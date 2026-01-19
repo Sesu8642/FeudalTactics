@@ -17,6 +17,7 @@ public class MainPreferencesDao {
     public static final String MAIN_PREFERENCES_NAME = "gamePreferences";
     private static final String WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME = "warnAboutForgottenKingdoms";
     private static final String SHOW_ENEMY_TURNS_NAME = "showEnemyTurns";
+    private static final String LANGUAGE = "language";
 
     private final Preferences prefStore;
 
@@ -33,6 +34,7 @@ public class MainPreferencesDao {
     public void saveMainPreferences(MainGamePreferences prefs) {
         prefStore.putBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, prefs.isWarnAboutForgottenKingdoms());
         prefStore.putBoolean(SHOW_ENEMY_TURNS_NAME, prefs.isShowEnemyTurns());
+        prefStore.putString(LANGUAGE, prefs.getLanguage());
         prefStore.flush();
     }
 
@@ -44,7 +46,7 @@ public class MainPreferencesDao {
     public MainGamePreferences getMainPreferences() {
         final boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, true);
         final boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME, true);
-        return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns);
+        final String language = prefStore.getString(LANGUAGE, "English");
+        return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns, language);
     }
-
 }
