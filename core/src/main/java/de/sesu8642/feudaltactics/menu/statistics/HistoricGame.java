@@ -23,17 +23,22 @@ public class HistoricGame {
     @Getter
     private int turnsPlayed;
 
+    @Getter
+    private long timestamp;
+
     /**
      * Constructor.
      *
      * @param gameSettings settings used for the game
      * @param gameResult   result of the game
      * @param turnsPlayed number of turns played in the game
+     * @param timestamp   timestamp when the game was played
      */
-    public HistoricGame(NewGamePreferences gameSettings, GameResult gameResult, int turnsPlayed) {
+    public HistoricGame(NewGamePreferences gameSettings, GameResult gameResult, int turnsPlayed, long timestamp) {
         this.gameSettings = gameSettings;
         this.gameResult = gameResult;
         this.turnsPlayed = turnsPlayed;
+        this.timestamp = timestamp;
     }
 
     public enum GameResult {

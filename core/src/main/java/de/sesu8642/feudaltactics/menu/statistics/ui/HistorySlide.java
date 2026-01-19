@@ -24,6 +24,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
+import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
@@ -54,6 +55,9 @@ public class HistorySlide extends Slide {
         refreshHistory();
     }
 
+    /*
+     * Places a single history entry into the history table.
+     */
     private void placeHistoryEntry(HistoricGame game, int index) {
         // Game number
         final Label indexLabel = new Label(String.format("#%d", index + 1), skin);
@@ -147,27 +151,6 @@ public class HistorySlide extends Slide {
         }
     }
 
-    private void placeHeading() {
-        final Label indexHeading = new Label("Game", skin);
-        historyTable.add(indexHeading).left().padRight(10);
-
-        final Label resultHeading = new Label("Result", skin);
-        historyTable.add(resultHeading).left().padRight(10);
-
-        final Label difficultyHeading = new Label("Settings", skin);
-        historyTable.add(difficultyHeading).left().expandX();
-
-        final Label positionHeading = new Label("Pos.", skin);
-        historyTable.add(positionHeading).left().expandX();
-
-        final Label copyHeading = new Label("Copy", skin);
-        historyTable.add(copyHeading).left().expandX();
-
-        historyTable.row();
-        historyTable.add().height(20).colspan(3);
-        historyTable.row();
-    }
-
     /**
      * Refreshes the history UI with the latest values.
      */
@@ -182,11 +165,22 @@ public class HistorySlide extends Slide {
             return;
         }
 
-        placeHeading();
+        // placeHeading();
+        long lastDateHeadingTimestamp = Long.MAX_VALUE;
 
         // Show most recent games first
         for (int i = history.length - 1; i >= 0; i--) {
-            placeHistoryEntry(history[i], i);
+            HistoricGame game = history[i];
+            if (game.getTimestamp() / (1000L * 60L * 60L * 24L) < lastDateHeadingTimestamp / (1000L * 60L * 60L * 24L)) {
+                // New day, add a heading
+                lastDateHeadingTimestamp = game.getTimestamp();
+                final Label dateHeading = new Label(
+                        new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(lastDateHeadingTimestamp)),
+                        skin, SkinConstants.FONT_HEADLINE);
+                historyTable.add(dateHeading).colspan(5).left().padTop(10).padBottom(5);
+                historyTable.row();
+            }
+            placeHistoryEntry(game, i);
         }
     }
 }

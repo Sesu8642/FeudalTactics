@@ -9,13 +9,10 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.JsonValue;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import jakarta.inject.Inject;
-import de.sesu8642.feudaltactics.lib.gamestate.Player;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -78,7 +75,7 @@ public class HistoryDao {
 
         int roundsPlayed = gameState.getRound();
 
-        HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed);
+        HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed, System.currentTimeMillis());
 
         gameHistoryList.add(historicGame);
 
