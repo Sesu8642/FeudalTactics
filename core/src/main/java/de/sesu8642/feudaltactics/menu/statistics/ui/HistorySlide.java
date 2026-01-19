@@ -9,6 +9,7 @@ import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -24,7 +25,6 @@ import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
-import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 
 /**
@@ -37,6 +37,8 @@ public class HistorySlide extends Slide {
     private final Skin skin;
     private final Table historyTable;
     private final EnumMap<HistoricGame.GameResult, Drawable> resultBackgrounds;
+    private final Drawable rowBorderDrawable;
+    private final Drawable rowBackgroundDrawable;
 
     /**
      * Constructor.
@@ -51,6 +53,8 @@ public class HistorySlide extends Slide {
         this.skin = skin;
         this.historyTable = new Table();
         this.resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
+        this.rowBorderDrawable = skin.newDrawable("white", Color.BLACK);
+        this.rowBackgroundDrawable = skin.newDrawable("white", skin.getColor("field"));
         getTable().add(historyTable).fill().expand();
         refreshHistory();
     }
@@ -59,18 +63,23 @@ public class HistorySlide extends Slide {
      * Places a single history entry into the history table.
      */
     private void placeHistoryEntry(HistoricGame game, int index) {
+        // Create table for the actual content
+        final Table contentTable = new Table();
+        contentTable.pad(10);
+        contentTable.background(rowBackgroundDrawable);
+
         // Game number
         final Label indexLabel = new Label(String.format("#%d", index + 1), skin);
-        historyTable.add(indexLabel).left().padRight(10);
+        contentTable.add(indexLabel).left().padRight(10);
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
-        final Label turnsLabel = new Label("in turn " +String.valueOf(game.getTurnsPlayed()), skin);
+        final Label turnsLabel = new Label("in round " +String.valueOf(game.getTurnsPlayed()), skin);
         final Table resultTable = new Table();
         resultTable.add(resultCell).left();
         resultTable.row();
         resultTable.add(turnsLabel).left();
-        historyTable.add(resultTable).left().padRight(10);
+        contentTable.add(resultTable).left().width(200f).padRight(10);
 
         // Settings
         String settingsString = "Unknown settings";
@@ -86,7 +95,7 @@ public class HistorySlide extends Slide {
             String mapDensity = gamePreferences.getDensity() != null
                     ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getDensity())
                     : "Unknown";
-            settingsString = String.format("%s AI\n%s map, %s density",
+            settingsString = String.format("%s AI\n%s map\n%s density",
                 difficulty, mapSize, mapDensity);
 
             Color playerColor = MapRenderer.PLAYER_COLOR_PALETTE.get(gamePreferences.getStartingPosition());
@@ -96,11 +105,12 @@ public class HistorySlide extends Slide {
             hexagonString = String.format("[#%s]h", playerColor.toString());
         }
         final Label settingsLabel = new Label(settingsString, skin);
-        historyTable.add(settingsLabel).left().expandX();
+        contentTable.add(settingsLabel).left().expandX();
 
 
         final Label startingPositionLabel = new Label(hexagonString, skin, SkinConstants.FONT_HEXAGON);
-        historyTable.add(startingPositionLabel).left().expandX();
+        startingPositionLabel.setFontScale(1.5f);
+        contentTable.add(startingPositionLabel).left().padRight(20f);
 
         // Copy settings button
         final ImageTextButton copyButton = ButtonFactory.createCopyButton("", skin, true);
@@ -111,11 +121,21 @@ public class HistorySlide extends Slide {
         } else {
             copyButton.setDisabled(true);
         }
-        historyTable.add(copyButton).left().height(74).width(74);
+        contentTable.add(copyButton).left().height(74).width(74);
 
-        historyTable.row();
-        historyTable.add().height(10).colspan(3);
-        historyTable.row();
+        final Actor borderedRow = wrapInBorder(contentTable);
+
+        // Add the container to the history table
+        historyTable.row().padBottom(10f).padTop(10f);
+        historyTable.add(borderedRow).fill().expandX().colspan(5);
+    }
+
+    private Actor wrapInBorder(Actor innerContent) {
+        final Container<Actor> container = new Container<>(innerContent);
+        container.background(rowBorderDrawable);
+        container.pad(3); // Border width
+        container.fill();
+        return container;
     }
 
     private Container<Label> createResultCell(HistoricGame.GameResult result) {
@@ -177,8 +197,8 @@ public class HistorySlide extends Slide {
                 final Label dateHeading = new Label(
                         new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(lastDateHeadingTimestamp)),
                         skin, SkinConstants.FONT_HEADLINE);
-                historyTable.add(dateHeading).colspan(5).left().padTop(10).padBottom(5);
                 historyTable.row();
+                historyTable.add(dateHeading).colspan(5).left().padTop(10).padBottom(5);
             }
             placeHistoryEntry(game, i);
         }
