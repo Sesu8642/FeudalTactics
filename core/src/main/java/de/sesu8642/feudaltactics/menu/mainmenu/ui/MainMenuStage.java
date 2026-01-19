@@ -45,7 +45,8 @@ public class MainMenuStage extends MenuStage {
                          LocalizationManager localizationManager) {
         super(viewport, levelEditorEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR, camera,
             platformInsetsProvider, mapRenderer, skin, localizationManager);
-        final Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
+        final Label bottomRightLabel = new Label(String.format("%s %s",
+            localizationManager.localizeText("version"), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }

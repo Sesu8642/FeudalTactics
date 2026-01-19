@@ -25,9 +25,9 @@ import java.util.List;
 @Singleton
 public class PlayMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Sandbox Game", "Campaign", "Tutorial", "Back");
-    private static final List<String> BUTTON_TEXTS_WITHOUT_CAMPAIGN = ImmutableList.of("Sandbox Game", "Tutorial",
-        "Back");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("sandbox-game", "campaign", "tutorial", "back");
+    private static final List<String> BUTTON_TEXTS_WITHOUT_CAMPAIGN = ImmutableList.of("sandbox-game", "tutorial",
+        "back");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}

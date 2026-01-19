@@ -28,7 +28,7 @@ import java.util.List;
 @Singleton
 public class IngameMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Exit", "Retry", "Continue");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("exit", "retry", "continue");
     public Label bottomRightLabel;
 
     /**
@@ -43,7 +43,8 @@ public class IngameMenuStage extends MenuStage {
                            @VersionProperty String gameVersion,
                            LocalizationManager localizationManager) {
         super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
-        bottomRightLabel = new Label(String.format("Version %s", gameVersion), skin.get(SkinConstants.FONT_OVERLAY,
+        bottomRightLabel = new Label(String.format("%s %s",
+            localizationManager.localizeText("version"), gameVersion), skin.get(SkinConstants.FONT_OVERLAY,
             LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }
