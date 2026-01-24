@@ -5,6 +5,11 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.EnumMap;
 
 import com.badlogic.gdx.Gdx;
@@ -171,6 +176,8 @@ public class HistorySlide extends Slide {
         }
     }
 
+    private final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+
     /**
      * Refreshes the history UI with the latest values.
      */
@@ -185,21 +192,26 @@ public class HistorySlide extends Slide {
             return;
         }
 
-        // placeHeading();
-        long lastDateHeadingTimestamp = Long.MAX_VALUE;
+        // Group by LocalDate instead of millis math
+        LocalDate lastDateHeading = null;
 
         // Show most recent games first
         for (int i = history.length - 1; i >= 0; i--) {
             HistoricGame game = history[i];
-            if (game.getTimestamp() / (1000L * 60L * 60L * 24L) < lastDateHeadingTimestamp / (1000L * 60L * 60L * 24L)) {
-                // New day, add a heading
-                lastDateHeadingTimestamp = game.getTimestamp();
+
+            LocalDate gameDate = Instant.ofEpochMilli(game.getTimestamp())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+
+            if (!gameDate.equals(lastDateHeading)) {
+                lastDateHeading = gameDate;
                 final Label dateHeading = new Label(
-                        new java.text.SimpleDateFormat("yyyy-MM-dd").format(new java.util.Date(lastDateHeadingTimestamp)),
+                        localDateTimeFormatter.format(gameDate),
                         skin, SkinConstants.FONT_HEADLINE);
                 historyTable.row();
                 historyTable.add(dateHeading).colspan(5).left().padTop(10).padBottom(5);
             }
+
             placeHistoryEntry(game, i);
         }
     }
