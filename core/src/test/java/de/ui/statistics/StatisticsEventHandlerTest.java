@@ -43,7 +43,7 @@ public class StatisticsEventHandlerTest {
             }
         };
         
-        HistoryDao historyDao = new HistoryDao(mockFileHandle);
+        HistoryDao historyDao = new HistoryDao(mockPrefs);
 
         final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
 

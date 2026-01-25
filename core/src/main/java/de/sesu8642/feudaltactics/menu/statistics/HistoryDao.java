@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter;
@@ -12,6 +13,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
+import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefsPrefStore;
 import jakarta.inject.Inject;
 
 import javax.inject.Singleton;
@@ -25,25 +27,20 @@ import java.util.List;
 @Singleton
 public class HistoryDao {
 
-    public static final String STATISTICS_FILE_NAME = "gamehistory.json";
+    public static final String HISTORY_NAME = "history";
+    public static final String GAME_HISTORY_NAME = "HistoricGames";
 
-    private final FileHandle historyFileHandle;
+    public static final int MAX_STORED_GAMES = 500;
 
-    private List<HistoricGame> gameHistoryList = new ArrayList<HistoricGame>();
+    private final Preferences prefStore;
 
     private final Json json = new Json();
 
     @Inject
-    public HistoryDao() {
-        this(Gdx.files.local(STATISTICS_FILE_NAME));
-    }
-
-    // Constructor for testing
-    public HistoryDao(FileHandle fileHandle) {
-        this.historyFileHandle = fileHandle;
+    public HistoryDao(@HistoryPrefsPrefStore Preferences historyPrefs) {
+        this.prefStore = historyPrefs;
         json.setOutputType(JsonWriter.OutputType.json);
         registerSerializers();
-        loadHistory();
     }
 
     /**
@@ -77,26 +74,20 @@ public class HistoryDao {
 
         HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed, System.currentTimeMillis());
 
+        List<HistoricGame> gameHistoryList = new ArrayList<>(Arrays.asList(getGameHistory()));
         gameHistoryList.add(historicGame);
 
-        persistHistory();
+        if (gameHistoryList.size() > MAX_STORED_GAMES) {
+            gameHistoryList = gameHistoryList.subList(gameHistoryList.size() - MAX_STORED_GAMES, gameHistoryList.size());
+        }
+
+        persistHistory(gameHistoryList);
     }
 
-    private void persistHistory() {
+    private void persistHistory(List<HistoricGame> gameHistoryList) {
         String jsonData = json.toJson(gameHistoryList);
-        historyFileHandle.writeString(jsonData, false);
-    }
-
-    private void loadHistory() {
-        if (!historyFileHandle.exists()) {
-            return;
-        }
-
-        String jsonData = historyFileHandle.readString();
-        HistoricGame[] loadedGames = json.fromJson(HistoricGame[].class, jsonData);
-        if (loadedGames != null) {
-            gameHistoryList = new ArrayList<HistoricGame>(Arrays.asList(loadedGames));
-        }
+        prefStore.putString(GAME_HISTORY_NAME, jsonData);
+        prefStore.flush();
     }
 
     /**
@@ -105,6 +96,11 @@ public class HistoryDao {
      * @return the loaded GameHistory
      */
     public HistoricGame[] getGameHistory() {
-        return gameHistoryList.toArray(new HistoricGame[0]);
+        String jsonData = prefStore.getString(GAME_HISTORY_NAME, "");
+        if (jsonData.isEmpty()) {
+            return new HistoricGame[0];
+        }
+
+        return json.fromJson(HistoricGame[].class, jsonData);
     }
 }
