@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -30,9 +31,10 @@ public class StatisticsStage extends SlideStage {
     public StatisticsStage(StatisticsDao statisticsDao, StatisticsSlide statisticsSlide,
                            @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                            @MenuCamera OrthographicCamera camera,
-                           Skin skin, ScreenNavigationController screenNavigationController) {
+                           Skin skin, ScreenNavigationController screenNavigationController,
+                           LocalizationManager localizationManager) {
         super(viewport, Collections.singletonList(statisticsSlide), platformInsetsProvider,
-            screenNavigationController::transitionToMainMenuScreen, camera, skin);
+            screenNavigationController::transitionToMainMenuScreen, camera, skin, localizationManager);
         this.statisticsSlide = statisticsSlide;
     }
 }

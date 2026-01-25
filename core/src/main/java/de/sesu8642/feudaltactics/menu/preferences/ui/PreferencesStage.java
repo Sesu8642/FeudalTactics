@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -39,9 +40,10 @@ public class PreferencesStage extends SlideStage {
     public PreferencesStage(EventBus eventBus, PreferencesSlide preferencesSlide, MainPreferencesDao mainPrefsDao,
                             @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                             @MenuCamera OrthographicCamera camera, Skin skin,
-                            ScreenNavigationController screenNavigationController) {
+                            ScreenNavigationController screenNavigationController,
+                            LocalizationManager localizationManager) {
         super(viewport, Collections.singletonList(preferencesSlide), platformInsetsProvider,
-            screenNavigationController::transitionToMainMenuScreen, camera, skin);
+            screenNavigationController::transitionToMainMenuScreen, camera, skin, localizationManager);
         this.eventBus = eventBus;
         this.preferencesSlide = preferencesSlide;
         this.mainPrefsDao = mainPrefsDao;

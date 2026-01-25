@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import lombok.Getter;
@@ -161,16 +162,16 @@ public class NewGamePreferences {
     /**
      * Converts the preferences to a sharable string.
      */
-    public String toSharableString() {
-        return String.format(PARAMETER_DISPLAY_FORMAT, SEED_DISPLAY_NAME, seed)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_NAME,
+    public String toSharableString(LocalizationManager localizationManager) {
+        return String.format(PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("seed"), seed)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("starting-position"),
             startingPosition + 1)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_NAME,
-            EnumDisplayNameConverter.getDisplayName(botIntelligence))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_NAME,
-            EnumDisplayNameConverter.getDisplayName(mapSize))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_NAME,
-            EnumDisplayNameConverter.getDisplayName(density));
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("cpu-difficulty"),
+            EnumDisplayNameConverter.getLocalizedDisplayName(botIntelligence, localizationManager))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("map-size"),
+            EnumDisplayNameConverter.getLocalizedDisplayName(mapSize, localizationManager))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("map-density"),
+            EnumDisplayNameConverter.getLocalizedDisplayName(density, localizationManager));
     }
 
     /**

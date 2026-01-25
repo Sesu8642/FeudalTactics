@@ -1,28 +1,58 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Class to convert enums to their display names and the other way around.
  */
 public class EnumDisplayNameConverter {
 
-    public static final List<String> DIFFICULTIES = ImmutableList.of("Easy", "Medium", "Hard", "Very hard");
-    public static final List<String> MAP_SIZES = ImmutableList.of("Small", "Medium", "Large", "XLarge", "XXLarge");
-    public static final List<String> DENSITIES = ImmutableList.of("Dense", "Medium", "Loose");
-    public static final List<String> UNITS = ImmutableList.of("Peasant", "Spearman", "Knight", "Baron");
+    public static final List<String> DIFFICULTIES = ImmutableList.of("easy", "medium", "hard", "very-hard");
+    public static final List<String> MAP_SIZES = ImmutableList.of("small", "medium", "large", "xlarge", "xxlarge");
+    public static final List<String> DENSITIES = ImmutableList.of("dense", "medium", "loose");
+    public static final List<String> UNITS = ImmutableList.of("peasant", "spearman", "knight", "baron");
+
+    /**
+     * Returns the localized display names for bot intelligence.
+     */
+    public static List<String> getLocalizedDifficulties(LocalizationManager localizationManager) {
+        return DIFFICULTIES.stream().map(localizationManager::localizeText).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the localized display names for map sizes.
+     */
+    public static List<String> getLocalizedMapSizes(LocalizationManager localizationManager) {
+        return MAP_SIZES.stream().map(localizationManager::localizeText).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the localized display names for map densities.
+     */
+    public static List<String> getLocalizedDensities(LocalizationManager localizationManager) {
+        return DENSITIES.stream().map(localizationManager::localizeText).collect(Collectors.toList());
+    }
 
     /**
      * Returns the display name for bot intelligence.
      */
     public static String getDisplayName(Intelligence intelligence) {
         return DIFFICULTIES.get(intelligence.ordinal());
+    }
+
+    /**
+     * Returns the localized display name for bot intelligence.
+     */
+    public static String getLocalizedDisplayName(Intelligence intelligence, LocalizationManager localizationManager) {
+        return localizationManager.localizeText(getDisplayName(intelligence));
     }
 
     /**
@@ -41,6 +71,13 @@ public class EnumDisplayNameConverter {
     }
 
     /**
+     * Returns the localized display name for map size.
+     */
+    public static String getLocalizedDisplayName(MapSizes mapSize, LocalizationManager localizationManager) {
+        return localizationManager.localizeText(getDisplayName(mapSize));
+    }
+
+    /**
      * Returns the map size from its display name.
      */
     public static MapSizes getMapSizeFromDisplayName(String displayName) {
@@ -55,6 +92,13 @@ public class EnumDisplayNameConverter {
     }
 
     /**
+     * Returns the localized display name for map density.
+     */
+    public static String getLocalizedDisplayName(Densities density, LocalizationManager localizationManager) {
+        return localizationManager.localizeText(getDisplayName(density));
+    }
+
+    /**
      * Returns the map density from its display name.
      */
     public static Densities getMapDensityFromDisplayName(String displayName) {
@@ -66,6 +110,13 @@ public class EnumDisplayNameConverter {
      */
     public static String getDisplayName(Unit.UnitTypes unitType) {
         return UNITS.get(unitType.ordinal());
+    }
+
+    /**
+     * Returns the localized display name for unit types.
+     */
+    public static String getLocalizedDisplayName(Unit.UnitTypes unitType, LocalizationManager localizationManager) {
+        return localizationManager.localizeText(getDisplayName(unitType));
     }
 
     /**
