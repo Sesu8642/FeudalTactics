@@ -21,7 +21,7 @@ public class HistoricGame {
     private GameResult gameResult;
 
     @Getter
-    private int turnsPlayed;
+    private int roundsPlayed;
 
     @Getter
     private long timestamp;
@@ -31,13 +31,13 @@ public class HistoricGame {
      *
      * @param gameSettings settings used for the game
      * @param gameResult   result of the game
-     * @param turnsPlayed number of turns played in the game
+     * @param roundsPlayed number of rounds played in the game
      * @param timestamp   timestamp when the game was played
      */
-    public HistoricGame(NewGamePreferences gameSettings, GameResult gameResult, int turnsPlayed, long timestamp) {
+    public HistoricGame(NewGamePreferences gameSettings, GameResult gameResult, int roundsPlayed, long timestamp) {
         this.gameSettings = gameSettings;
         this.gameResult = gameResult;
-        this.turnsPlayed = turnsPlayed;
+        this.roundsPlayed = roundsPlayed;
         this.timestamp = timestamp;
     }
 

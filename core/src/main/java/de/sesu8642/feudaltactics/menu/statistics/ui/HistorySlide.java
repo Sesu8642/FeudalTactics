@@ -79,11 +79,11 @@ public class HistorySlide extends Slide {
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
-        final Label turnsLabel = new Label("in round " +String.valueOf(game.getTurnsPlayed()), skin);
+        final Label roundsLabel = new Label("in round " +String.valueOf(game.getRoundsPlayed()), skin);
         final Table resultTable = new Table();
         resultTable.add(resultCell).left();
         resultTable.row();
-        resultTable.add(turnsLabel).left();
+        resultTable.add(roundsLabel).left();
         contentTable.add(resultTable).left().width(200f).padRight(10);
 
         // Settings
