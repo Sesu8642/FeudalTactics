@@ -30,6 +30,5 @@ public class StatisticsScreen extends GameScreen {
         // Refresh all slides when screen is shown
         statisticsStage.getStatisticsSlide().refreshStatistics();
         statisticsStage.getHistorySlide().refreshHistory();
-        statisticsStage.getAchievementsSlide().refreshAchievements();
     }
 }
