@@ -70,7 +70,12 @@ public class HistoryDao {
             return; // only record generated maps for now. We must treat ScenarioMaps differently.
         }
 
-        int roundsPlayed = gameState.getRound();
+        Integer roundsPlayed = gameState.getWinningRound();
+        if (null == roundsPlayed)
+            // game was aborted, so return the current round. 
+            // In other cases, winningRound is one lower than round, because round is incremented at the start of a round after evaluating victory conditions,
+            // but before invoking this method.
+            roundsPlayed = gameState.getRound();
 
         HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed, System.currentTimeMillis());
 
