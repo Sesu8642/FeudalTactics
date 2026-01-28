@@ -56,8 +56,6 @@ public class TabbedSlideStage extends AbstractSlideStage {
     }
 
     private void initUi() {
-        initCommonUi(tabNames.size());
-
         currentSlide = slides.get(0);
         slideContainer.setActor(currentSlide.getTable());
 
@@ -65,7 +63,6 @@ public class TabbedSlideStage extends AbstractSlideStage {
         for (int i = 0; i < tabNames.size(); i++) {
             final TextButton tabButton = ButtonFactory.createTextButton(tabNames.get(i), skin);
             tabButtons.add(tabButton);
-            rootTable.add(tabButton);
 
             final int index = i;
             if (i < slides.size()) {
@@ -75,8 +72,9 @@ public class TabbedSlideStage extends AbstractSlideStage {
             }
         }
 
+        initCommonUi(tabButtons.toArray(new TextButton[0]));
+
         updateTabButtonStates();
-        finalizeUi();
     }
 
     /**

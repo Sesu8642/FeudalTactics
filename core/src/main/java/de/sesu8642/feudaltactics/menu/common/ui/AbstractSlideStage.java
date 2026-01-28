@@ -38,9 +38,9 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
     /**
      * Initializes the common UI elements. Subclasses should call this and then add their buttons.
      *
-     * @param buttonCount the number of buttons that will be added at the bottom
+     * @param buttons the buttons that will be added at the bottom
      */
-    protected void initCommonUi(int buttonCount) {
+    protected void initCommonUi(TextButton... buttons) {
         final TextArea backgroundArea = new TextArea(null, skin);
         backgroundArea.setDisabled(true);
 
@@ -58,16 +58,14 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.setFillParent(true);
         rootTable.defaults().minSize(0);
-        rootTable.add(scrollPane).expand().fill().colspan(buttonCount);
+        rootTable.add(scrollPane).expand().fill().colspan(buttons.length);
         rootTable.row();
         rootTable.defaults().minHeight(100).pad(0).expandX().bottom().fillX();
-    }
+                
+        for (TextButton button : buttons) {
+            rootTable.add(button);
+        }
 
-    /**
-     * Completes UI initialization by adding the root table to the stage.
-     * Call this after adding buttons to rootTable.
-     */
-    protected void finalizeUi() {
         addActor(rootTable);
     }
 

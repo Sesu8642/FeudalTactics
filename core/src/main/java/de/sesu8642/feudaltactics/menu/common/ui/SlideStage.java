@@ -49,21 +49,16 @@ public class SlideStage extends AbstractSlideStage {
     }
 
     private void initUi() {
-        initCommonUi(2);
-
         backButton = ButtonFactory.createTextButton("", skin);
         backButton.setDisabled(true);
         backButton.setTouchable(Touchable.disabled);
 
         nextButton = ButtonFactory.createTextButton("", skin);
 
+        initCommonUi(backButton, nextButton);
+
         currentSlide = slides.get(0);
         slideContainer.setActor(currentSlide);
-
-        rootTable.add(backButton);
-        rootTable.add(nextButton);
-
-        finalizeUi();
 
         nextButton.addListener(new ExceptionLoggingChangeListener(() -> {
             final int currentSlideIndex = slides.indexOf(currentSlide);
