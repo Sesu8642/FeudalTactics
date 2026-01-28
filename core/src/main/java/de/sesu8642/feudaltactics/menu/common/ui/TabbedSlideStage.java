@@ -8,10 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * {@link com.badlogic.gdx.scenes.scene2d.Stage} that can display multiple slides with tab-like navigation.
@@ -20,13 +20,11 @@ import java.util.stream.Collectors;
  */
 public class TabbedSlideStage extends AbstractSlideStage {
 
-    private final List<Slide> slides;
     private final List<String> tabNames;
     @Getter
     private final List<TextButton> tabButtons = new ArrayList<>();
-    private Slide currentSlide;
-    private final Runnable backCallback;
-    private int currentSlideIndex = 0;
+    @Setter
+    private Runnable finishedCallback;
 
     /**
      * Constructor.
@@ -40,18 +38,14 @@ public class TabbedSlideStage extends AbstractSlideStage {
      * @param skin                    game skin
      */
     public TabbedSlideStage(Viewport viewport, List<Slide> slides, List<String> tabNames,
-                            PlatformInsetsProvider platformInsetsProvider,
-                            Runnable backCallback, OrthographicCamera camera, Skin skin) {
-        super(viewport, platformInsetsProvider, camera, skin);
-        if (slides.isEmpty()) {
-            throw new IllegalArgumentException("at least one slide is required");
-        }
+                            PlatformInsetsProvider platformInsetsProvider, Runnable finishedCallback, 
+                            OrthographicCamera camera, Skin skin) {
+        super(viewport, slides, platformInsetsProvider, camera, skin);
         if (tabNames.size() != slides.size() + 1) {
             throw new IllegalArgumentException("tabNames size must be slides size + 1 (for back button)");
         }
-        this.slides = slides;
         this.tabNames = tabNames;
-        this.backCallback = backCallback;
+        this.finishedCallback = finishedCallback;
         initUi();
     }
 
@@ -68,33 +62,17 @@ public class TabbedSlideStage extends AbstractSlideStage {
             if (i < slides.size()) {
                 tabButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(index)));
             } else {
-                tabButton.addListener(new ExceptionLoggingChangeListener(() -> backCallback.run()));
+                tabButton.addListener(new ExceptionLoggingChangeListener(() -> finishedCallback.run()));
             }
         }
 
         initCommonUi(tabButtons.toArray(new TextButton[0]));
 
-        updateTabButtonStates();
+        switchToSlide(0);
     }
 
-    /**
-     * Switches to the slide at the given index.
-     *
-     * @param index index of the slide to switch to
-     */
-    public void switchToSlide(int index) {
-        if (index < 0 || index >= slides.size()) {
-            return;
-        }
-        currentSlideIndex = index;
-        currentSlide = slides.get(index);
-        slideContainer.setActor(currentSlide.getTable());
-        scrollPane.setScrollY(0);
-        updateTabButtonStates();
-        camera.update();
-    }
-
-    private void updateTabButtonStates() {
+    @Override
+    protected void updateNavigationButtonStates() {
         for (int i = 0; i < tabButtons.size() - 1; i++) {
             TextButton button = tabButtons.get(i);
             if (i == currentSlideIndex) {
@@ -105,34 +83,5 @@ public class TabbedSlideStage extends AbstractSlideStage {
                 button.setTouchable(Touchable.enabled);
             }
         }
-    }
-
-    /**
-     * Gets the currently displayed slide.
-     *
-     * @return the current slide
-     */
-    public Slide getCurrentSlide() {
-        return currentSlide;
-    }
-
-    /**
-     * Gets the slide at the given index.
-     *
-     * @param index index of the slide
-     * @return the slide at the given index
-     */
-    public Slide getSlide(int index) {
-        return slides.get(index);
-    }
-
-    @Override
-    public void reset() {
-        switchToSlide(0);
-    }
-
-    @Override
-    public void updateOnResize(int width, int height) {
-        updateSlidesOnResize(slides.stream().map(Slide::getTable).collect(Collectors.toList()));
     }
 }

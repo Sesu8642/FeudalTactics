@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
+import de.sesu8642.feudaltactics.menu.common.ui.CyclingSlideStage;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
@@ -22,7 +22,7 @@ import lombok.Getter;
  * Contains tabs for Statistics, History, Achievements, and a Back button.
  */
 @Singleton
-public class StatisticsStage extends SlideStage {
+public class StatisticsStage extends CyclingSlideStage {
 
     @Getter
     private final StatisticsSlide statisticsSlide;
@@ -39,6 +39,7 @@ public class StatisticsStage extends SlideStage {
                            ScreenNavigationController screenNavigationController) {
         super(viewport,
               Arrays.asList(historySlide, statisticsSlide),
+              Arrays.asList("History", "Statistics"),
               platformInsetsProvider,
               screenNavigationController::transitionToMainMenuScreen,
               camera,
