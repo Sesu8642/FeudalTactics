@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
 import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.TabbedSlideStage;
+import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
@@ -23,9 +22,7 @@ import lombok.Getter;
  * Contains tabs for Statistics, History, Achievements, and a Back button.
  */
 @Singleton
-public class StatisticsStage extends TabbedSlideStage {
-
-    private static final List<String> TAB_NAMES = Arrays.asList("Stats", "History", "Back");
+public class StatisticsStage extends SlideStage {
 
     @Getter
     private final StatisticsSlide statisticsSlide;
@@ -41,8 +38,7 @@ public class StatisticsStage extends TabbedSlideStage {
                            Skin skin,
                            ScreenNavigationController screenNavigationController) {
         super(viewport,
-              Arrays.asList(statisticsSlide, historySlide),
-              TAB_NAMES,
+              Arrays.asList(historySlide, statisticsSlide),
               platformInsetsProvider,
               screenNavigationController::transitionToMainMenuScreen,
               camera,

@@ -12,7 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Represents the UI screen for displaying statistics, history, and achievements.
+ * Represents the UI screen for displaying history and statistics.
  */
 @Singleton
 public class StatisticsScreen extends GameScreen {
