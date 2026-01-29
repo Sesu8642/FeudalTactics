@@ -2,19 +2,12 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.dagger;
 
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.ScreenNavigationController;
-import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsEventHandler;
-import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsScreen;
-import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsSlide;
-import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsStage;
-import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
-import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
+import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementsDao;
 
 import javax.inject.Singleton;
 
@@ -29,4 +22,10 @@ public final class AchievementsDaggerModule {
         throw new AssertionError();
     }
 
+    @Provides
+    @Singleton
+    @AchievementsPrefStore
+    static Preferences provideAchievementsPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
+        return Gdx.app.getPreferences(prefix + AchievementsDao.ACHIEVEMENTS_NAME);
+    }
 }
