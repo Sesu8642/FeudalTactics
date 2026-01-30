@@ -12,6 +12,7 @@ import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
@@ -32,6 +33,8 @@ public class PreferencesStage extends SlideStage {
     private final EventBus eventBus;
     private final PreferencesSlide preferencesSlide;
     private final MainPreferencesDao mainPrefsDao;
+    private final DialogFactory dialogFactory;
+    private final LocalizationManager localizationManager;
 
     /**
      * Constructor.
@@ -41,21 +44,34 @@ public class PreferencesStage extends SlideStage {
                             @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                             @MenuCamera OrthographicCamera camera, Skin skin,
                             ScreenNavigationController screenNavigationController,
-                            LocalizationManager localizationManager) {
+                            LocalizationManager localizationManager,
+                            DialogFactory dialogFactory) {
         super(viewport, Collections.singletonList(preferencesSlide), platformInsetsProvider,
             screenNavigationController::transitionToMainMenuScreen, camera, skin, localizationManager);
         this.eventBus = eventBus;
         this.preferencesSlide = preferencesSlide;
         this.mainPrefsDao = mainPrefsDao;
+        this.localizationManager = localizationManager;
+        this.dialogFactory = dialogFactory;
         initUi();
     }
 
     private void initUi() {
         Stream.of(preferencesSlide.getForgottenKingdomSelectBox(),
-                preferencesSlide.getShowEnemyTurnsSelectBox(),
-                preferencesSlide.getLanguageSelectBox())
+                preferencesSlide.getShowEnemyTurnsSelectBox())
             .forEach(actor -> actor
                 .addListener(new ExceptionLoggingChangeListener(this::sendPreferencesChangedEvent)));
+
+        preferencesSlide.getLanguageSelectBox().addListener(new ExceptionLoggingChangeListener(() -> {
+            String selectedLanguage = preferencesSlide.getLanguageSelectBox().getSelected();
+            if (selectedLanguage.equals(mainPrefsDao.getMainPreferences().getLanguage())) {
+                return;
+            }
+            sendPreferencesChangedEvent();
+            dialogFactory.createInformationDialog(
+                localizationManager.localizeText("restart-game-prompt"), () -> {
+                }).show(this);
+        }));
     }
 
     private void sendPreferencesChangedEvent() {
