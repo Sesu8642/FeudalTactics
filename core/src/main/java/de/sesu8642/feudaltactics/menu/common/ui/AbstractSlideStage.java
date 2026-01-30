@@ -80,7 +80,7 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
         rootTable.add(scrollPane).expand().fill().colspan(buttons.length);
         rootTable.row();
         rootTable.defaults().minHeight(100).pad(0).expandX().bottom().fillX();
-                
+
         for (TextButton button : buttons) {
             rootTable.add(button);
         }
@@ -116,15 +116,15 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
         camera.viewportHeight = getViewport().getWorldHeight();
         camera.viewportWidth = getViewport().getWorldWidth();
         camera.update();
-        rootTable.pack();
-        slides.forEach(slide -> {
-            slide.pack();
-            slide.getChildren().forEach(child -> {
-                if (ClassReflection.isAssignableFrom(Table.class, child.getClass())) {
-                    ((Table) child).pack();
-                }
-            });
-        });
+        // rootTable.pack();
+        // slides.forEach(slide -> {
+        //     slide.pack();
+        //     slide.getChildren().forEach(child -> {
+        //         if (ClassReflection.isAssignableFrom(Table.class, child.getClass())) {
+        //             ((Table) child).pack();
+        //         }
+        //     });
+        // });
     }
 
     @Override
