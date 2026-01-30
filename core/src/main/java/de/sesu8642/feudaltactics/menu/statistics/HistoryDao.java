@@ -8,8 +8,11 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.JsonValue;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefsPrefStore;
 import jakarta.inject.Inject;
@@ -83,6 +86,21 @@ public class HistoryDao {
         if (gameHistoryList.size() > MAX_STORED_GAMES) {
             gameHistoryList = gameHistoryList.subList(gameHistoryList.size() - MAX_STORED_GAMES, gameHistoryList.size());
         }
+
+        persistHistory(gameHistoryList);
+    }
+
+    /**
+     * Registers a dummy game for testing purposes.
+     */
+    public void registerDummyGames(int count) {
+        NewGamePreferences gameSettings = new NewGamePreferences(0, Intelligence.LEVEL_1, MapSizes.MEDIUM, Densities.DENSE, 2);
+
+        HistoricGame historicGame = new HistoricGame(gameSettings, GameResult.LOSS, 10, System.currentTimeMillis());
+
+        List<HistoricGame> gameHistoryList = new ArrayList<>(Arrays.asList(getGameHistory()));
+        for (int i = 0; i < count; i++)
+            gameHistoryList.add(historicGame);
 
         persistHistory(gameHistoryList);
     }

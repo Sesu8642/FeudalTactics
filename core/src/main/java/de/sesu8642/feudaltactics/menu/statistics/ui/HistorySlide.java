@@ -45,6 +45,8 @@ public class HistorySlide extends Slide {
     private final Drawable rowBorderDrawable;
     private final Drawable rowBackgroundDrawable;
 
+    private final boolean addDebugInsertButton = true;
+
     /**
      * Constructor.
      *
@@ -183,6 +185,18 @@ public class HistorySlide extends Slide {
      */
     public void refreshHistory() {
         historyTable.clear();
+
+        // Add test button to insert 200 games
+        if (addDebugInsertButton) {
+            final com.badlogic.gdx.scenes.scene2d.ui.TextButton insertGamesButton = ButtonFactory.createTextButton("Insert 200 games", skin);
+            insertGamesButton.addListener(new ExceptionLoggingChangeListener(() -> {
+                historyDao.registerDummyGames(200);
+                refreshHistory();
+            }));
+            historyTable.row().padBottom(10f);
+            historyTable.add(insertGamesButton).fill().expandX();
+        }
+
         HistoricGame[] history = historyDao.getGameHistory();
 
         if (history.length == 0) {
