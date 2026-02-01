@@ -30,20 +30,7 @@ public class StatisticsEventHandlerTest {
         final Preferences mockPrefs = new MockPreferences();
         final StatisticsDao statisticsDao = new StatisticsDao(mockPrefs);
         
-        // Create a mock FileHandle that doesn't require real file I/O
-        FileHandle mockFileHandle = new FileHandle("test.json") {
-            @Override
-            public boolean exists() {
-                return false;
-            }
-            
-            @Override
-            public void writeString(String string, boolean append) {
-                // Do nothing in tests
-            }
-        };
-        
-        HistoryDao historyDao = new HistoryDao(mockPrefs);
+        final HistoryDao historyDao = new HistoryDao(mockPrefs);
 
         final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
 
