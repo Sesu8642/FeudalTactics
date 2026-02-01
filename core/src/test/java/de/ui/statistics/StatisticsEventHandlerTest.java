@@ -1,7 +1,5 @@
 package de.ui.statistics;
 
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
@@ -19,6 +17,8 @@ import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 import java.util.LinkedHashMap;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for {@link de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler}.
@@ -27,16 +27,15 @@ public class StatisticsEventHandlerTest {
 
     @Test
     void handleGameExited_handlesAllPlayerTypes() {
-        final Preferences mockPrefs = new MockPreferences();
-        final StatisticsDao statisticsDao = new StatisticsDao(mockPrefs);
-        
-        final HistoryDao historyDao = new HistoryDao(mockPrefs);
+        final StatisticsDao statisticsDao = Mockito.mock(StatisticsDao.class);
+        final HistoryDao historyDao = Mockito.mock(HistoryDao.class);
 
         final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
 
         final GameState gameState = generateGameState();
         final NewGamePreferences newGamePreferences = new NewGamePreferences(12345L, Intelligence.LEVEL_2, MapSizes.SMALL, Densities.LOOSE, 3);
 
+        int cycle = 0;
         for (Player.Type playerType : Player.Type.values()) {
             final Player winnerPlayer = new Player(0, playerType);
             gameState.setWinner(winnerPlayer);
@@ -44,7 +43,13 @@ public class StatisticsEventHandlerTest {
             final GameExitedEvent event = new GameExitedEvent(gameState, newGamePreferences);
             handler.handleGameExited(event);
 
-            // No assertions ... we are happy that no exception was thrown
+            // we are happy that no exception was thrown
+            
+            // Verify historyDao was called to store the game history
+            verify(historyDao, Mockito.times(++cycle)).registerPlayedGame(Mockito.any(), Mockito.any(), Mockito.any());
+
+            // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty
+            verify(statisticsDao, Mockito.times(cycle)).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.any());
         }
     }
 
@@ -71,6 +76,6 @@ public class StatisticsEventHandlerTest {
 
       gameState.setSeed(12345L);
       gameState.setBotIntelligence(Intelligence.LEVEL_2);
-        return gameState;
+      return gameState;
     }
 }
