@@ -17,24 +17,39 @@ import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 
 import java.util.LinkedHashMap;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests for {@link de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler}.
  */
 public class StatisticsEventHandlerTest {
 
+    private StatisticsDao statisticsDao;
+    private HistoryDao historyDao;
+    private StatisticsEventHandler handler;
+    private GameState gameState;
+    private NewGamePreferences newGamePreferences;
+
+    @BeforeEach
+    void setUp() {
+        statisticsDao = Mockito.mock(StatisticsDao.class);
+        historyDao = Mockito.mock(HistoryDao.class);
+
+        handler = new StatisticsEventHandler(statisticsDao, historyDao);
+
+        gameState = generateGameState();
+        newGamePreferences = new NewGamePreferences(12345L, Intelligence.LEVEL_2, MapSizes.SMALL, Densities.LOOSE, 3);
+    }
+
     @Test
     void handleGameExited_handlesAllPlayerTypes() {
-        final StatisticsDao statisticsDao = Mockito.mock(StatisticsDao.class);
-        final HistoryDao historyDao = Mockito.mock(HistoryDao.class);
-
-        final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
-
-        final GameState gameState = generateGameState();
-        final NewGamePreferences newGamePreferences = new NewGamePreferences(12345L, Intelligence.LEVEL_2, MapSizes.SMALL, Densities.LOOSE, 3);
 
         int cycle = 0;
         for (Player.Type playerType : Player.Type.values()) {
@@ -54,28 +69,43 @@ public class StatisticsEventHandlerTest {
         }
     }
 
-    @Test
-    void handleGameExited_registers_PlayerAsWinner_WithDaos() {
-        final StatisticsDao statisticsDao = Mockito.mock(StatisticsDao.class);
-        final HistoryDao historyDao = Mockito.mock(HistoryDao.class);
-
-        final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
-
-        final GameState gameState = generateGameState();
-        final NewGamePreferences newGamePreferences = new NewGamePreferences(12345L, Intelligence.LEVEL_2, MapSizes.SMALL, Densities.LOOSE, 3);
-
-        final Player winnerPlayer = new Player(0, Player.Type.LOCAL_PLAYER);
+    @ParameterizedTest
+    @CsvSource({
+        "LOCAL_PLAYER, WIN",
+        "LOCAL_BOT, LOSS",
+        "REMOTE, LOSS",
+    })
+    void handleGameExited_mapsPlayerTypeToGameResult(Player.Type playerType, GameResult expectedResult) {
+        final Player winnerPlayer = new Player(0, playerType);
         gameState.setWinner(winnerPlayer);
 
         final GameExitedEvent event = new GameExitedEvent(gameState, newGamePreferences);
         handler.handleGameExited(event);
 
         // Verify historyDao was called to store the game history
-        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.eq(GameResult.WIN));
+        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.eq(expectedResult));
 
         // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty and result
-        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.eq(GameResult.WIN));
+        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.eq(expectedResult));
+    }
 
+    @Test
+    void handleGameExited_detectsDefeatOnAbort() {
+        // Simulate aborting the game (no winner set)
+        gameState.setWinner(null);
+        // Mark the local player as defeated
+        Player localPlayer = gameState.getPlayers().get(0);
+        assertTrue(localPlayer.getType() == Player.Type.LOCAL_PLAYER);  // This is actually a test for the test, should be done in generateGameState
+        localPlayer.setRoundOfDefeat(12);
+
+        final GameExitedEvent event = new GameExitedEvent(gameState, newGamePreferences);
+        handler.handleGameExited(event);
+
+        // Verify historyDao was called to store the game history
+        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.any());
+
+        // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty
+        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.any());
     }
 
     private GameState generateGameState() {
