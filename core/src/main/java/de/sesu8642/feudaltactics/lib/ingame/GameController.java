@@ -60,7 +60,7 @@ public class GameController {
         logger.info("starting game");
         if (gameState.getScenarioMap() != ScenarioMap.NONE) {
             progressObjective();
-            eventBus.post(new GameStateChangeEvent(gameState));
+            postGameStateChangeEvent();
         }
         // autosave before starting the AI thread, to avoid potential
         // ConcurrentModificationException
@@ -69,7 +69,7 @@ public class GameController {
         if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
             startBotTurn();
         }
-        eventBus.post(new GameStateChangeEvent(gameState));
+        postGameStateChangeEvent();
     }
 
     /**
@@ -81,7 +81,7 @@ public class GameController {
         // posting the event must happen before starting the AI thread cause the data
         // for the renderer will be updated and the AI must not change the gamestate
         // while it is
-        eventBus.post(new GameStateChangeEvent(gameState));
+        postGameStateChangeEvent();
         if (gameState.getActivePlayer().getType() == Type.LOCAL_BOT) {
             startBotTurn();
         }
@@ -97,7 +97,7 @@ public class GameController {
 
         GameStateHelper.initializeMap(gameState, gameParams.getPlayers(), gameParams.getLandMass(),
             gameParams.getDensity(), null, gameParams.getSeed());
-        eventBus.post(new GameStateChangeEvent(gameState));
+        postGameStateChangeEvent();
     }
 
     /**
@@ -114,7 +114,7 @@ public class GameController {
 
         gameState.setBotIntelligence(botIntelligence);
         gameState.setScenarioMap(scenarioMap);
-        eventBus.post(new GameStateChangeEvent(gameState));
+        postGameStateChangeEvent();
     }
 
     /**
@@ -145,7 +145,7 @@ public class GameController {
                 GameStateHelper.applyPlayerMove(gameState, move);
                 autoSaveRepo.autoSaveIncrementalPlayerMove(move);
                 // save first because is is relevant for the undo button status
-                eventBus.post(new GameStateChangeEvent(gameState));
+                postGameStateChangeEvent();
                 break;
             case UNDO_LAST_MOVE:
                 undoLastMove();
@@ -173,7 +173,7 @@ public class GameController {
             logger.info("human player turn begins");
             botAi.setSkipDisplayingTurn(false);
             autoSaveRepo.autoSaveFullGameState(gameState);
-            eventBus.post(new GameStateChangeEvent(gameState));
+            postGameStateChangeEvent();
         }
     }
 
@@ -214,7 +214,7 @@ public class GameController {
         autoSaveRepo.deleteLatestIncrementalSave();
         final GameState loaded = autoSaveRepo.getCombinedAutoSave();
         gameState = loaded;
-        eventBus.post(new GameStateChangeEvent(gameState));
+        postGameStateChangeEvent();
     }
 
     /**
@@ -222,7 +222,11 @@ public class GameController {
      */
     public void progressObjective() {
         gameState.setObjectiveProgress(gameState.getObjectiveProgress() + 1);
-        eventBus.post(new GameStateChangeEvent(gameState));
+        postGameStateChangeEvent();
+    }
+
+    private void postGameStateChangeEvent() {
+        eventBus.post(new GameStateChangeEvent(GameStateHelper.getCopy(gameState)));
     }
 
 }

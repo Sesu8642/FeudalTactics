@@ -125,7 +125,7 @@ public class BotAi {
         if (skipDisplayingTurn || !mainPrefsDao.getMainPreferences().isShowEnemyTurns()) {
             return;
         }
-        eventBus.post(new GameStateChangeEvent(gameState));
+        eventBus.post(new GameStateChangeEvent(GameStateHelper.getCopy(gameState)));
         Thread.sleep(currentSpeed.tickDelayMs);
     }
 
