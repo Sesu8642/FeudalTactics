@@ -68,8 +68,11 @@ public class PreferencesStage extends SlideStage {
                 return;
             }
             sendPreferencesChangedEvent();
+            String oldLanguageText = localizationManager.localizeText("restart-game-prompt");
+            localizationManager.changeLocale(selectedLanguage);
+            String newLanguageText = localizationManager.localizeText("restart-game-prompt");
             dialogFactory.createInformationDialog(
-                localizationManager.localizeText("restart-game-prompt"), () -> {
+                oldLanguageText + "\n\n" + newLanguageText, () -> {
                 }).show(this);
         }));
     }

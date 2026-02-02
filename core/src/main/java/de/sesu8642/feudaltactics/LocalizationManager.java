@@ -21,6 +21,10 @@ public class LocalizationManager {
         i18NBundle = I18NBundle.createBundle(LOCALISATION_FILE, locale, StandardCharsets.UTF_8.name());
     }
 
+    public void changeLocale(String locale){
+        i18NBundle = I18NBundle.createBundle(LOCALISATION_FILE, new Locale(SupportedLanguages.getEncoding(locale)), StandardCharsets.UTF_8.name());
+    }
+
     public String localizeText(String text, Object... args){
         if (i18NBundle.keys().contains(text)){
             return i18NBundle.format(text, args);
