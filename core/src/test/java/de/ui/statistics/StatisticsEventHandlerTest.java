@@ -12,6 +12,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
+import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 
 import java.util.LinkedHashMap;
@@ -51,6 +52,30 @@ public class StatisticsEventHandlerTest {
             // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty
             verify(statisticsDao, Mockito.times(cycle)).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.any());
         }
+    }
+
+    @Test
+    void handleGameExited_registers_PlayerAsWinner_WithDaos() {
+        final StatisticsDao statisticsDao = Mockito.mock(StatisticsDao.class);
+        final HistoryDao historyDao = Mockito.mock(HistoryDao.class);
+
+        final StatisticsEventHandler handler = new StatisticsEventHandler(statisticsDao, historyDao);
+
+        final GameState gameState = generateGameState();
+        final NewGamePreferences newGamePreferences = new NewGamePreferences(12345L, Intelligence.LEVEL_2, MapSizes.SMALL, Densities.LOOSE, 3);
+
+        final Player winnerPlayer = new Player(0, Player.Type.LOCAL_PLAYER);
+        gameState.setWinner(winnerPlayer);
+
+        final GameExitedEvent event = new GameExitedEvent(gameState, newGamePreferences);
+        handler.handleGameExited(event);
+
+        // Verify historyDao was called to store the game history
+        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.eq(GameResult.WIN));
+
+        // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty and result
+        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.eq(GameResult.WIN));
+
     }
 
     private GameState generateGameState() {
