@@ -1,25 +1,44 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-public class WinNGamesAchievement extends AbstractAchievement {
-    private final int gamesToWin;
+import com.google.common.eventbus.Subscribe;
 
-    public WinNGamesAchievement(int gamesToWin) {
-        this.gamesToWin = gamesToWin;
+import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+
+public class WinNGamesAchievement extends AbstractAchievement {
+
+    public WinNGamesAchievement(AchievementRepository achievementRepository, int gamesToWin) {
+        super(achievementRepository, gamesToWin);
     }
 
     @Override
     public String getId() {
-        return "win-" + gamesToWin + "-games";
+        return "win-" + getGoal() + "-games";
     }
 
     @Override
     public String getName() {
-        return "Win " + gamesToWin + " Games";
+        return "Win " + getGoal() + " Games";
     }
 
     @Override
     public String getDescription() {
-        return "Win " + gamesToWin + " games, either by defeating your enemies or them giving up. Any difficulty and map size is allowed.";
+        return "Win " + getGoal() + " games, either by defeating your enemies or them giving up. Any difficulty and map size is allowed.";
     }
     
+    @Subscribe
+    public void handleGameExited(GameExitedEvent event) {
+        final GameState gameState = event.getGameState();
+        if (gameState == null) {
+            return;     // Ignore exits from editor or similar
+        }   
+    
+        final Player winnerOfTheGame = gameState.getWinner();
+
+        if (winnerOfTheGame != null && winnerOfTheGame.getType() == Player.Type.LOCAL_PLAYER) {
+            storeProgress(getProgress() + 1);
+        }
+    }
 }

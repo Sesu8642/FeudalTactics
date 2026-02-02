@@ -5,7 +5,12 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
+import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,6 +23,7 @@ public class AchievementsSlide extends Slide {
 
     private final Skin skin;
     private final Table achievementsTable;
+    private final AchievementRepository achievementRepository;
 
     /**
      * Constructor.
@@ -25,9 +31,11 @@ public class AchievementsSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public AchievementsSlide(Skin skin) {
+    public AchievementsSlide(Skin skin, AchievementRepository achievementRepository) {
         super(skin, "Achievements");
         this.skin = skin;
+        this.achievementRepository = achievementRepository;
+
         achievementsTable = new Table();
         getTable().add(achievementsTable).fill().expand();
         refreshAchievements();
@@ -38,9 +46,21 @@ public class AchievementsSlide extends Slide {
      */
     public void refreshAchievements() {
         achievementsTable.clear();
-        // TODO: Add actual achievements here
-        final Label placeholder = new Label("Achievements coming soon", skin);
-        placeholder.setWrap(true);
-        achievementsTable.add(placeholder).left().fill().expandX();
+
+        List<AbstractAchievement> achievements = achievementRepository.getAchievements();
+
+        for (AbstractAchievement achievement : achievements) {
+            Label nameLabel = new Label(achievement.getName(), skin);
+            Label descLabel = new Label(achievement.getDescription(), skin);
+            String progressText = achievement.isUnlocked()
+                ? "Unlocked"
+                : String.format("Progress: %d / %d", achievement.getProgress(), achievement.getGoal());
+            Label progressLabel = new Label(progressText, skin);
+
+            achievementsTable.add(nameLabel).left().row();
+            achievementsTable.add(descLabel).left().row();
+            achievementsTable.add(progressLabel).left().row();
+            achievementsTable.add().height(10).row(); // Spacer
+        }
     }
 }

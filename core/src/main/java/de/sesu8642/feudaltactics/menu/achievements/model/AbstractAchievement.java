@@ -1,6 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.menu.achievements.AchievementsDao;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,17 +15,17 @@ public abstract class AbstractAchievement {
     @Setter
     private boolean unlocked;
 
-    protected AchievementsDao achievementsDao;
+    protected AchievementRepository achievementRepository;
 
-    protected AbstractAchievement(AchievementsDao achievementsDao, int goal) {
-        this.achievementsDao = achievementsDao;
+    protected AbstractAchievement(AchievementRepository achievementRepository, int goal) {
+        this.achievementRepository = achievementRepository;
         this.goal = goal;
     }
 
     protected void unlock() {
         if (!unlocked) {
             unlocked = true;
-            achievementsDao.unlockAchievement(getId());
+            achievementRepository.unlockAchievement(getId());
         }
     }
 
@@ -34,11 +34,12 @@ public abstract class AbstractAchievement {
 
     /* How much of this achievement has been completed? */
     @Getter
+    @Setter
     private int progress = 0;
 
-    protected void setProgress(int number) {
+    protected void storeProgress(int number) {
         this.progress = number;
-        achievementsDao.storeProgress(getId(), number);
+        achievementRepository.storeProgress(getId(), number);
         if (progress >= goal) {
             unlock();
         }

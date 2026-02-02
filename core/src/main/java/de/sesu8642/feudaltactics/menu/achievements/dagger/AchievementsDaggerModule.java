@@ -7,7 +7,7 @@ import com.badlogic.gdx.Preferences;
 import dagger.Module;
 import dagger.Provides;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementsDao;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 import javax.inject.Singleton;
 
@@ -26,6 +26,6 @@ public final class AchievementsDaggerModule {
     @Singleton
     @AchievementsPrefStore
     static Preferences provideAchievementsPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
-        return Gdx.app.getPreferences(prefix + AchievementsDao.ACHIEVEMENTS_NAME);
+        return Gdx.app.getPreferences(prefix + AchievementRepository.ACHIEVEMENTS_NAME);
     }
 }
