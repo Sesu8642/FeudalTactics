@@ -9,6 +9,7 @@ import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.MissingResourceException;
 
 public class LocalizationManager {
     private static final FileHandle LOCALISATION_FILE = Gdx.files.internal("i18n/strings");
@@ -24,8 +25,7 @@ public class LocalizationManager {
         if (i18NBundle.keys().contains(text)){
             return i18NBundle.format(text, args);
         }
-        // TODO: Once we put all the strings in localization properties,
-        //  we can throw exception instead of falling back to the passed text
-        return text;
+        throw new MissingResourceException("Can't find resource for bundle " + LOCALISATION_FILE.path() + ", key " + text,
+            i18NBundle.getClass().getName(), text);
     }
 }
