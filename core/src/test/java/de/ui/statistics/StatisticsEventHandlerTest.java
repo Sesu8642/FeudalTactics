@@ -102,10 +102,29 @@ public class StatisticsEventHandlerTest {
         handler.handleGameExited(event);
 
         // Verify historyDao was called to store the game history
-        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.any());
+        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.eq(GameResult.LOSS));
 
         // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty
-        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.any());
+        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.eq(GameResult.LOSS));
+    }
+
+    @Test
+    void handleGameExited_detectsRealAbort() {
+        // Simulate aborting the game (no winner set)
+        gameState.setWinner(null);
+        // Ensure the local player is not marked as defeated
+        Player localPlayer = gameState.getPlayers().get(0);
+        assertTrue(localPlayer.getType() == Player.Type.LOCAL_PLAYER);  // This is actually a test for the test, should be done in generateGameState
+        localPlayer.setRoundOfDefeat(null);
+
+        final GameExitedEvent event = new GameExitedEvent(gameState, newGamePreferences);
+        handler.handleGameExited(event);
+
+        // Verify historyDao was called to store the game history
+        verify(historyDao).registerPlayedGame(Mockito.eq(gameState), Mockito.eq(newGamePreferences), Mockito.eq(GameResult.ABORTED));
+
+        // Verify statisticsDao.registerPlayedGame was called with the correct AI difficulty
+        verify(statisticsDao).registerPlayedGame(Mockito.eq(Intelligence.LEVEL_2), Mockito.eq(GameResult.ABORTED));
     }
 
     private GameState generateGameState() {
