@@ -97,17 +97,17 @@ public class ParameterInputStage extends ResizableResettableStage {
             .replace(" ", "\n"), skin.get(SkinConstants.FONT_OVERLAY,
             LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
-        difficultySelect.setItems(EnumDisplayNameConverter.getLocalizedNames(EnumDisplayNameConverter.DIFFICULTIES, localizationManager).toArray(new String[0]));
+        difficultySelect.setItems(localizationManager.localizeTextBatch(EnumDisplayNameConverter.DIFFICULTIES).toArray(new String[0]));
 
         final Label sizeLabel = new Label(localizationManager.localizeText("map-size")
             .replace(" ", "\n"), skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
-        sizeSelect.setItems(EnumDisplayNameConverter.getLocalizedNames(EnumDisplayNameConverter.MAP_SIZES, localizationManager).toArray(new String[0]));
+        sizeSelect.setItems(localizationManager.localizeTextBatch(EnumDisplayNameConverter.MAP_SIZES).toArray(new String[0]));
 
         final Label densityLabel = new Label(localizationManager.localizeText("map-density")
             .replace(" ", "\n"), skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
-        densitySelect.setItems(EnumDisplayNameConverter.getLocalizedNames(EnumDisplayNameConverter.DENSITIES, localizationManager).toArray(new String[0]));
+        densitySelect.setItems(localizationManager.localizeTextBatch(EnumDisplayNameConverter.DENSITIES).toArray(new String[0]));
 
         final Label seedLabel = new Label(localizationManager.localizeText("seed"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));

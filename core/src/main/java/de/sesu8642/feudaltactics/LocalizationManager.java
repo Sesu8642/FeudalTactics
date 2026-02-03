@@ -10,8 +10,10 @@ import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.stream.Collectors;
 
 @Singleton
 public class LocalizationManager {
@@ -46,5 +48,9 @@ public class LocalizationManager {
             throw new MissingResourceException("Can't find resource for bundle " + LOCALISATION_FILE.path() + ", key " + text,
                 i18NBundle.getClass().getName(), text);
         }
+    }
+
+    public List<String> localizeTextBatch(List<String> keys) {
+        return keys.stream().map(this::localizeText).collect(Collectors.toList());
     }
 }

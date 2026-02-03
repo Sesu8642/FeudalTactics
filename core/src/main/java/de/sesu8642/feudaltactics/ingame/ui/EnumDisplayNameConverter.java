@@ -21,13 +21,6 @@ public class EnumDisplayNameConverter {
     public static final List<String> UNITS = ImmutableList.of("peasant", "spearman", "knight", "baron");
 
     /**
-     * Returns the localized display names for a given list of keys.
-     */
-    public static List<String> getLocalizedNames(List<String> keys, LocalizationManager localizationManager) {
-        return keys.stream().map(localizationManager::localizeText).collect(Collectors.toList());
-    }
-
-    /**
      * Returns the display name for bot intelligence.
      */
     public static String getDisplayName(Intelligence intelligence) {
