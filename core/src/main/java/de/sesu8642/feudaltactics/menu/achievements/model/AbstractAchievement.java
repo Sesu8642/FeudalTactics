@@ -44,4 +44,11 @@ public abstract class AbstractAchievement {
             unlock();
         }
     }
+
+    /**
+     * Called when a game is exited. Override to handle this event.
+     */
+    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+        // No-op by default
+    }
 }

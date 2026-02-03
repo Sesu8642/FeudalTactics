@@ -56,4 +56,10 @@ public class AchievementRepository {
         prefStore.putInteger("achievement-progress-" + id, number);
         prefStore.flush();
     }
+
+    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+        for (AbstractAchievement achievement : achievements) {
+            achievement.onGameExited(event);
+        }
+    }
 }

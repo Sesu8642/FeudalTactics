@@ -1,7 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.Subscribe;
-
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
@@ -28,8 +26,8 @@ public class WinNGamesAchievement extends AbstractAchievement {
         return "Win " + getGoal() + " games, either by defeating your enemies or them giving up. Any difficulty and map size is allowed.";
     }
     
-    @Subscribe
-    public void handleGameExited(GameExitedEvent event) {
+    @Override
+    public void onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
         if (gameState == null) {
             return;     // Ignore exits from editor or similar

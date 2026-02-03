@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 
 import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 import javax.inject.Inject;
 
@@ -12,12 +13,15 @@ import javax.inject.Inject;
  */
 public class AchievementsEventHandler {
 
+    private final AchievementRepository achievementRepository;
+
     @Inject
-    public AchievementsEventHandler() {
+    public AchievementsEventHandler(AchievementRepository achievementRepository) {
+        this.achievementRepository = achievementRepository;
     }
 
     @Subscribe
     public void handleGameExited(GameExitedEvent event) {
-        // TODO: Handle achievements based on game exit events
+        achievementRepository.onGameExited(event);
     }
 }

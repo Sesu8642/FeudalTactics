@@ -191,7 +191,8 @@ public class ScreenNavigationController {
     public void transitionToIngameScreen() {
         changeScreen(ingameScreenProvider.get());
         Stream.of(localIngameInputHandler, gameLogicEventHandler,
-                ingameScreenEventHandlerProvider.get(), rendererEventHandler, statisticsEventHandler)
+                ingameScreenEventHandlerProvider.get(), rendererEventHandler, 
+                statisticsEventHandler, achievementsEventHandler)
             .forEach(eventBus::register);
     }
 
