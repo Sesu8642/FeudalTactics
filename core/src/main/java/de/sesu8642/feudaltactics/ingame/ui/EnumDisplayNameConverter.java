@@ -21,24 +21,10 @@ public class EnumDisplayNameConverter {
     public static final List<String> UNITS = ImmutableList.of("peasant", "spearman", "knight", "baron");
 
     /**
-     * Returns the localized display names for bot intelligence.
+     * Returns the localized display names for a given list of keys.
      */
-    public static List<String> getLocalizedDifficulties(LocalizationManager localizationManager) {
-        return DIFFICULTIES.stream().map(localizationManager::localizeText).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the localized display names for map sizes.
-     */
-    public static List<String> getLocalizedMapSizes(LocalizationManager localizationManager) {
-        return MAP_SIZES.stream().map(localizationManager::localizeText).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the localized display names for map densities.
-     */
-    public static List<String> getLocalizedDensities(LocalizationManager localizationManager) {
-        return DENSITIES.stream().map(localizationManager::localizeText).collect(Collectors.toList());
+    public static List<String> getLocalizedNames(List<String> keys, LocalizationManager localizationManager) {
+        return keys.stream().map(localizationManager::localizeText).collect(Collectors.toList());
     }
 
     /**
