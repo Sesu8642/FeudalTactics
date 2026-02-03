@@ -68,9 +68,11 @@ public class PreferencesStage extends SlideStage {
                 return;
             }
             sendPreferencesChangedEvent();
+
+            // Show bilingual restart prompt
             String oldLanguageText = localizationManager.localizeText("restart-game-prompt");
-            localizationManager.changeLocale(selectedLanguage);
-            String newLanguageText = localizationManager.localizeText("restart-game-prompt");
+            String newLanguageText = localizationManager.localizeTextInLocale(selectedLanguage, "restart-game-prompt");
+
             dialogFactory.createInformationDialog(
                 oldLanguageText + "\n\n" + newLanguageText, () -> {
                 }).show(this);

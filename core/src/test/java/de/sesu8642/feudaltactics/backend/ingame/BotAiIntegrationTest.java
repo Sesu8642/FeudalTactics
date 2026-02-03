@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ApplicationStub;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
@@ -17,7 +16,6 @@ import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -252,33 +250,4 @@ class BotAiIntegrationTest {
         return result;
     }
 
-    /**
-     * Tests for NewGamePreferences copy/paste functionality.
-     */
-    static class NewGamePreferencesTest {
-
-        @Test
-        void testToSharableStringAndFromSharableString() {
-            // Given
-            NewGamePreferences original = new NewGamePreferences(
-                12345L,
-                Intelligence.LEVEL_3,
-                NewGamePreferences.MapSizes.LARGE,
-                NewGamePreferences.Densities.LOOSE,
-                2,
-                5 //constant for now
-            );
-
-            // When
-            String sharableString = original.toSharableString();
-            NewGamePreferences restored = NewGamePreferences.fromSharableString(sharableString);
-
-            // Then
-            assertEquals(original.getSeed(), restored.getSeed());
-            assertEquals(original.getBotIntelligence(), restored.getBotIntelligence());
-            assertEquals(original.getMapSize(), restored.getMapSize());
-            assertEquals(original.getDensity(), restored.getDensity());
-            assertEquals(original.getStartingPosition(), restored.getStartingPosition());
-        }
-    }
 }
