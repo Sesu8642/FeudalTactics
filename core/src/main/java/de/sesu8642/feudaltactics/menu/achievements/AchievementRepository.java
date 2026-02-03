@@ -3,12 +3,18 @@
 package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.badlogic.gdx.Preferences;
+
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
 import lombok.Getter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,12 +34,14 @@ public class AchievementRepository {
     public AchievementRepository(@AchievementsPrefStore Preferences achievementsPrefs) {
         this.prefStore = achievementsPrefs;
 
-        // Create all achievements once
-        this.achievements = List.of(
-            new de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement(this, 1),
-            new de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement(this, 10),
-            new de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement(this, 50)
-        );
+        List<AbstractAchievement> list = new ArrayList<>();
+        list.add(new WinNGamesAchievement(this, 1));
+        list.add(new WinNGamesAchievement(this, 10));
+        list.add(new WinNGamesAchievement(this, 50));
+        for (MapSizes mapSize : MapSizes.values()) {
+            list.add(new WinOnMapSizeAchievement(this, mapSize));
+        }
+        this.achievements = Collections.unmodifiableList(list);
 
         LoadPersistedAchievements();
     }
