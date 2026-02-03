@@ -2,12 +2,20 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.ui;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
 
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import java.util.List;
@@ -24,6 +32,7 @@ public class AchievementsSlide extends Slide {
     private final Skin skin;
     private final Table achievementsTable;
     private final AchievementRepository achievementRepository;
+    private final DialogFactory dialogFactory;
 
     /**
      * Constructor.
@@ -31,10 +40,11 @@ public class AchievementsSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public AchievementsSlide(Skin skin, AchievementRepository achievementRepository) {
+    public AchievementsSlide(Skin skin, AchievementRepository achievementRepository, DialogFactory dialogFactory) {
         super(skin, "Achievements");
         this.skin = skin;
         this.achievementRepository = achievementRepository;
+        this.dialogFactory = dialogFactory;
 
         achievementsTable = new Table();
         getTable().add(achievementsTable).fill().expand();
@@ -49,18 +59,74 @@ public class AchievementsSlide extends Slide {
 
         List<AbstractAchievement> achievements = achievementRepository.getAchievements();
 
-        for (AbstractAchievement achievement : achievements) {
-            Label nameLabel = new Label(achievement.getName(), skin);
-            Label descLabel = new Label(achievement.getDescription(), skin);
-            String progressText = achievement.isUnlocked()
-                ? "Unlocked"
-                : String.format("Progress: %d / %d", achievement.getProgress(), achievement.getGoal());
-            Label progressLabel = new Label(progressText, skin);
+        // Calculate how many achievements fit per row based on screen width
+        // Estimate achievement window width + padding: ~300px per achievement window
+        final float estimatedWindowWidth = 300f;
+        final float padding = 10f;
+        final float screenWidth = Gdx.graphics.getWidth();
+        final int achievementsPerRow = Math.max(1, (int) (screenWidth / (estimatedWindowWidth + 2 * padding)));
 
-            achievementsTable.add(nameLabel).left().row();
-            achievementsTable.add(descLabel).left().row();
-            achievementsTable.add(progressLabel).left().row();
-            achievementsTable.add().height(10).row(); // Spacer
+        int columnCount = 0;
+        for (AbstractAchievement achievement : achievements) {
+            Window achievementWindow = displayAchievement(achievement);
+            achievementsTable.add(achievementWindow).pad(padding);
+            
+            columnCount++;
+            if (columnCount >= achievementsPerRow) {
+                achievementsTable.row();
+                columnCount = 0;
+            }
         }
+    }
+
+    /**
+     * Displays a single achievement in a summarized for in the UI. Will be used as part of a table.
+     */
+    private Window displayAchievement(AbstractAchievement achievement) {
+        Window achievementWindow = new Window(achievement.getName(), skin);
+
+        if (achievement.isUnlocked()) {
+            achievementWindow.setColor(0.5f, 1f, 0.5f, 1f); // Greenish for unlocked
+            // Create a label with a white font color
+            LabelStyle whiteLabelStyle = new LabelStyle(skin.get(LabelStyle.class));
+            whiteLabelStyle.fontColor = Color.WHITE;
+            Label progressLabel = new Label("Unlocked", whiteLabelStyle);
+            achievementWindow.add(progressLabel).row();
+        } else {
+            ProgressBar progressBar = new ProgressBar(0, achievement.getGoal(), 1, false, skin);
+            progressBar.setValue(achievement.getProgress());
+            achievementWindow.add(progressBar).row();
+        }
+
+        // Add click listener to open detail dialog
+        achievementWindow.addListener(new ExceptionLoggingClickListener(() -> 
+            showAchievementDetails(achievement)
+        ));
+
+        return achievementWindow;
+    }
+
+    /**
+     * Shows a modal dialog with detailed information about the achievement.
+     */
+    private void showAchievementDetails(AbstractAchievement achievement) {
+        Dialog detailsDialog = dialogFactory.createDialog(result -> {
+            // Dialog closed
+        });
+
+        detailsDialog.text(achievement.getDescription());
+        detailsDialog.getContentTable().row();
+
+        // Show progress information
+        String progressText;
+        if (achievement.isUnlocked()) {
+            progressText = "Status: Unlocked";
+        } else {
+            progressText = String.format("Progress: %d / %d", achievement.getProgress(), achievement.getGoal());
+        }
+        detailsDialog.text(progressText);
+
+        detailsDialog.button("Close", true);
+        detailsDialog.show(getTable().getStage());
     }
 }
