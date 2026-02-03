@@ -51,6 +51,9 @@ public class AchievementsSlide extends Slide {
         refreshAchievements();
     }
 
+    private final static float ACHIEVEMENT_WINDOW_WIDTH = 300f;
+    private final static float ACHIEVEMENT_WINDOW_HEIGHT = 160f;
+
     /**
      * Refreshes the achievements UI with the latest values.
      */
@@ -61,16 +64,18 @@ public class AchievementsSlide extends Slide {
 
         // Calculate how many achievements fit per row based on screen width
         // Estimate achievement window width + padding: ~300px per achievement window
-        final float estimatedWindowWidth = 300f;
         final float padding = 10f;
         final float screenWidth = Gdx.graphics.getWidth();
-        final int achievementsPerRow = Math.max(1, (int) (screenWidth / (estimatedWindowWidth + 2 * padding)));
+        final int achievementsPerRow = Math.max(1, (int) (screenWidth / (ACHIEVEMENT_WINDOW_WIDTH + 2 * padding)));
 
         int columnCount = 0;
         for (AbstractAchievement achievement : achievements) {
             Window achievementWindow = displayAchievement(achievement);
-            achievementsTable.add(achievementWindow).pad(padding);
-            
+            achievementsTable.add(achievementWindow)
+                .width(ACHIEVEMENT_WINDOW_WIDTH)
+                .height(ACHIEVEMENT_WINDOW_HEIGHT)
+                .pad(padding);
+
             columnCount++;
             if (columnCount >= achievementsPerRow) {
                 achievementsTable.row();
@@ -84,6 +89,22 @@ public class AchievementsSlide extends Slide {
      */
     private Window displayAchievement(AbstractAchievement achievement) {
         Window achievementWindow = new Window(achievement.getName(), skin);
+
+        // Set fixed size for the achievement window
+        achievementWindow.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
+
+        // Enable title label wrapping with width constraint
+        Label titleLabel = achievementWindow.getTitleLabel();
+        if (titleLabel != null) {
+            titleLabel.setEllipsis(null); // Disable ellipsis (the "..." truncation)
+            titleLabel.setWrap(true);
+            titleLabel.setWidth(ACHIEVEMENT_WINDOW_WIDTH - 40); // Leave padding for window decorations
+            // Get the title table and set the width
+            Table titleTable = achievementWindow.getTitleTable();
+            if (titleTable != null) {
+                titleTable.getCell(titleLabel).width(ACHIEVEMENT_WINDOW_WIDTH - 40);
+            }
+        }
 
         if (achievement.isUnlocked()) {
             achievementWindow.setColor(0.5f, 1f, 0.5f, 1f); // Greenish for unlocked
@@ -99,7 +120,7 @@ public class AchievementsSlide extends Slide {
         }
 
         // Add click listener to open detail dialog
-        achievementWindow.addListener(new ExceptionLoggingClickListener(() -> 
+        achievementWindow.addListener(new ExceptionLoggingClickListener(() ->
             showAchievementDetails(achievement)
         ));
 
