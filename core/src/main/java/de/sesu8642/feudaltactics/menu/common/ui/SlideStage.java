@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
 
@@ -26,6 +27,7 @@ public class SlideStage extends ResizableResettableStage {
     private final List<Table> slides;
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
+    private final LocalizationManager localizationManager;
     private final OrthographicCamera camera;
     private final Container<Table> slideContainer = new Container<>();
     Set<Disposable> disposables = new HashSet<>();
@@ -41,16 +43,17 @@ public class SlideStage extends ResizableResettableStage {
      * Constructor.
      */
     public SlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
-                      OrthographicCamera camera, Skin skin) {
+                      OrthographicCamera camera, Skin skin, LocalizationManager localizationManager) {
         this(viewport, slides, platformInsetsProvider, () -> {
-        }, camera, skin);
+        }, camera, skin, localizationManager);
     }
 
     /**
      * Constructor.
      */
     public SlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
-                      Runnable finishedCallback, OrthographicCamera camera, Skin skin) {
+                      Runnable finishedCallback, OrthographicCamera camera, Skin skin,
+                      LocalizationManager localizationManager) {
         super(viewport);
         if (slides.isEmpty()) {
             throw new IllegalArgumentException("at least one slide is required");
@@ -58,6 +61,7 @@ public class SlideStage extends ResizableResettableStage {
         this.platformInsetsProvider = platformInsetsProvider;
         this.camera = camera;
         this.skin = skin;
+        this.localizationManager = localizationManager;
         this.slides = slides.stream().map(Slide::getTable).collect(Collectors.toList());
         this.finishedCallback = finishedCallback;
         initUi(this.slides);
@@ -105,11 +109,11 @@ public class SlideStage extends ResizableResettableStage {
                 slideContainer.setActor(newSlide);
                 currentSlide = newSlide;
                 if (slides.size() == currentSlideIndex + 2) {
-                    nextButton.setText("Finish");
+                    nextButton.setText(localizationManager.localizeText("finish"));
                 }
                 backButton.setTouchable(Touchable.enabled);
                 backButton.setDisabled(false);
-                backButton.setText("Back");
+                backButton.setText(localizationManager.localizeText("back"));
                 camera.update();
             } else {
                 finishedCallback.run();
@@ -122,7 +126,7 @@ public class SlideStage extends ResizableResettableStage {
                 final Table newSlide = slides.get(currentSlideIndex - 1);
                 slideContainer.setActor(newSlide);
                 currentSlide = newSlide;
-                nextButton.setText("Next");
+                nextButton.setText(localizationManager.localizeText("next"));
                 if (currentSlideIndex == 1) {
                     backButton.setTouchable(Touchable.disabled);
                     backButton.setDisabled(true);
@@ -137,7 +141,8 @@ public class SlideStage extends ResizableResettableStage {
         backButton.setTouchable(Touchable.disabled);
         backButton.setDisabled(true);
         backButton.setText("");
-        final String nextButtonText = slides.size() == 1 ? "Finish" : "Next";
+        final String nextButtonText = slides.size() == 1 ? localizationManager.localizeText("finish") :
+            localizationManager.localizeText("next");
         nextButton.setText(nextButtonText);
         currentSlide = slides.get(0);
         slideContainer.setActor(currentSlide);

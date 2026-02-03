@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.about.ui.AboutSlideFactory;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -37,11 +38,12 @@ public final class AboutDaggerModule {
                                              @MenuViewport Viewport viewport,
                                              AboutSlideFactory slideFactory,
                                              PlatformInsetsProvider platformInsetsProvider,
-                                             @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
+                                             @MenuBackgroundCamera OrthographicCamera camera, Skin skin,
+                                             LocalizationManager localizationManager) {
         return new SlideStage(viewport, Collections.singletonList(slideFactory.createAboutSlide()),
             platformInsetsProvider,
             screenNavigationController::transitionToInformationMenuScreenPage1,
-            camera, skin);
+            camera, skin, localizationManager);
     }
 
     @Provides

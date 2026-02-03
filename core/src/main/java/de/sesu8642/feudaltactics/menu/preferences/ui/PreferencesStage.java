@@ -7,10 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
@@ -31,6 +33,8 @@ public class PreferencesStage extends SlideStage {
     private final EventBus eventBus;
     private final PreferencesSlide preferencesSlide;
     private final MainPreferencesDao mainPrefsDao;
+    private final DialogFactory dialogFactory;
+    private final LocalizationManager localizationManager;
 
     /**
      * Constructor.
@@ -39,25 +43,48 @@ public class PreferencesStage extends SlideStage {
     public PreferencesStage(EventBus eventBus, PreferencesSlide preferencesSlide, MainPreferencesDao mainPrefsDao,
                             @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                             @MenuCamera OrthographicCamera camera, Skin skin,
-                            ScreenNavigationController screenNavigationController) {
+                            ScreenNavigationController screenNavigationController,
+                            LocalizationManager localizationManager,
+                            DialogFactory dialogFactory) {
         super(viewport, Collections.singletonList(preferencesSlide), platformInsetsProvider,
-            screenNavigationController::transitionToMainMenuScreen, camera, skin);
+            screenNavigationController::transitionToMainMenuScreen, camera, skin, localizationManager);
         this.eventBus = eventBus;
         this.preferencesSlide = preferencesSlide;
         this.mainPrefsDao = mainPrefsDao;
+        this.localizationManager = localizationManager;
+        this.dialogFactory = dialogFactory;
         initUi();
     }
 
     private void initUi() {
-        Stream.of(preferencesSlide.getForgottenKingdomSelectBox(), preferencesSlide.getShowEnemyTurnsSelectBox())
+        Stream.of(preferencesSlide.getForgottenKingdomSelectBox(),
+                preferencesSlide.getShowEnemyTurnsSelectBox())
             .forEach(actor -> actor
                 .addListener(new ExceptionLoggingChangeListener(this::sendPreferencesChangedEvent)));
+
+        preferencesSlide.getLanguageSelectBox().addListener(new ExceptionLoggingChangeListener(() -> {
+            String selectedLanguage = preferencesSlide.getLanguageSelectBox().getSelected();
+            if (selectedLanguage.equals(mainPrefsDao.getMainPreferences().getLanguage())) {
+                return;
+            }
+            sendPreferencesChangedEvent();
+
+            // Show bilingual restart prompt
+            String oldLanguageText = localizationManager.localizeText("restart-game-prompt");
+            String newLanguageText = localizationManager.localizeTextInLocale(selectedLanguage, "restart-game-prompt");
+
+            dialogFactory.createInformationDialog(
+                oldLanguageText + "\n\n" + newLanguageText, () -> {
+                }).show(this);
+        }));
     }
 
     private void sendPreferencesChangedEvent() {
         eventBus.post(new MainPreferencesChangeEvent(
-            new MainGamePreferences(preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
-                preferencesSlide.getShowEnemyTurnsSelectBox().getSelected())));
+            new MainGamePreferences(
+                preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
+                preferencesSlide.getShowEnemyTurnsSelectBox().getSelected(),
+                preferencesSlide.getLanguageSelectBox().getSelected())));
     }
 
     @Override
@@ -67,6 +94,6 @@ public class PreferencesStage extends SlideStage {
         final MainGamePreferences currentPreferences = mainPrefsDao.getMainPreferences();
         preferencesSlide.getForgottenKingdomSelectBox().setSelected(currentPreferences.isWarnAboutForgottenKingdoms());
         preferencesSlide.getShowEnemyTurnsSelectBox().setSelected(currentPreferences.isShowEnemyTurns());
+        preferencesSlide.getLanguageSelectBox().setSelected(currentPreferences.getLanguage());
     }
-
 }
