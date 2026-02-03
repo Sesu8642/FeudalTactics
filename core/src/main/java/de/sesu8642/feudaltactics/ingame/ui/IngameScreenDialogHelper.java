@@ -194,7 +194,7 @@ public class IngameScreenDialogHelper {
 
     private void showGameDetails(Stage stage, int currentRound, NewGamePreferences newGamePreferences) {
         final String gameDetails = localizationManager.localizeText("round") + ": " + currentRound + "\n"
-            + newGamePreferences.toSharableString(localizationManager);
+            + newGamePreferences.toDisplayString(localizationManager);
         final FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
         addShareOrCopyButtonToDialog(localizationManager.localizeText("sharing-preemble-ongoing"), dialog, newGamePreferences
@@ -208,7 +208,7 @@ public class IngameScreenDialogHelper {
             // dont offer the option in the tutorial
             return;
         }
-        final String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString(localizationManager);
+        final String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString();
         final String buttonText = localizationManager.localizeText("share");
         if (Gdx.app.getType() == Application.ApplicationType.Android) {
             dialogFactory.addNonClosingTextButtonToDialog(endDialog, buttonText,

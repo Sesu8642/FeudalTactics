@@ -20,12 +20,14 @@ import java.io.StringReader;
 public class NewGamePreferences {
 
     public static final String PARAMETER_DISPLAY_FORMAT = "%s: %s";
-    private static final String SEED_DISPLAY_NAME = "Seed";
-    private static final String BOT_INTELLIGENCE_DISPLAY_NAME = "CPU Difficulty";
-    private static final String MAP_SIZE_DISPLAY_NAME = "Map Size";
-    private static final String DENSITY_DISPLAY_NAME = "Map Density";
-    private static final String STARTING_POSITION_DISPLAY_NAME = "Starting Position";
-    private static final String NUMBER_OF_BOT_PLAYERS_DISPLAY_NAME = "Number of Bots";
+
+    private static final String SEED_KEY = "seed";
+    private static final String BOT_INTELLIGENCE_KEY = "cpu-difficulty";
+    private static final String MAP_SIZE_KEY = "map-size";
+    private static final String DENSITY_KEY = "map-density";
+    private static final String STARTING_POSITION_KEY = "starting-position";
+    private static final String NUMBER_OF_BOT_PLAYERS_KEY = "number-of-bots";
+
     @Getter
     @Setter
     private long seed;
@@ -106,31 +108,31 @@ public class NewGamePreferences {
                 final String firstStringPart = stringParts[0].trim();
                 final String secondStringPart = stringParts[1].trim();
                 switch (firstStringPart) {
-                    case SEED_DISPLAY_NAME:
+                    case SEED_KEY:
                         preferences.setSeed(Long.parseLong(secondStringPart));
                         break;
-                    case BOT_INTELLIGENCE_DISPLAY_NAME:
+                    case BOT_INTELLIGENCE_KEY:
                         final Intelligence botIntelligence =
                             EnumDisplayNameConverter.getBotIntelligenceFromDisplayName(secondStringPart);
                         preferences.setBotIntelligence(botIntelligence);
                         break;
-                    case MAP_SIZE_DISPLAY_NAME:
+                    case MAP_SIZE_KEY:
                         final MapSizes mapSize = EnumDisplayNameConverter.getMapSizeFromDisplayName(secondStringPart);
                         preferences.setMapSize(mapSize);
                         break;
-                    case DENSITY_DISPLAY_NAME:
+                    case DENSITY_KEY:
                         final Densities mapDensity =
                             EnumDisplayNameConverter.getMapDensityFromDisplayName(secondStringPart);
                         preferences.setDensity(mapDensity);
                         break;
-                    case STARTING_POSITION_DISPLAY_NAME:
+                    case STARTING_POSITION_KEY:
                         int startingPosition = Integer.parseInt(secondStringPart);
                         // compensate for displayed index starting at 1
                         startingPosition -= 1;
                         startingPosition = Math.min(5, Math.abs(startingPosition));
                         preferences.setStartingPosition(startingPosition);
                         break;
-                    case NUMBER_OF_BOT_PLAYERS_DISPLAY_NAME:
+                    case NUMBER_OF_BOT_PLAYERS_KEY:
                         int numberOfBotPlayers = Integer.parseInt(secondStringPart);
                         numberOfBotPlayers = Math.min(5, Math.abs(numberOfBotPlayers));
                         numberOfBotPlayers = Math.max(1, numberOfBotPlayers);
@@ -160,18 +162,31 @@ public class NewGamePreferences {
     }
 
     /**
+     * Converts the preferences to a string for display in the UI.
+     */
+    public String toDisplayString(LocalizationManager localizationManager) {
+        return String.format(PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(SEED_KEY), seed)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(STARTING_POSITION_KEY),
+            startingPosition + 1)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(BOT_INTELLIGENCE_KEY),
+            EnumDisplayNameConverter.getLocalizedDisplayName(botIntelligence, localizationManager))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(MAP_SIZE_KEY),
+            EnumDisplayNameConverter.getLocalizedDisplayName(mapSize, localizationManager))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(DENSITY_KEY),
+            EnumDisplayNameConverter.getLocalizedDisplayName(density, localizationManager));
+    }
+
+    /**
      * Converts the preferences to a sharable string.
      */
-    public String toSharableString(LocalizationManager localizationManager) {
-        return String.format(PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("seed"), seed)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("starting-position"),
-            startingPosition + 1)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("cpu-difficulty"),
-            EnumDisplayNameConverter.getLocalizedDisplayName(botIntelligence, localizationManager))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("map-size"),
-            EnumDisplayNameConverter.getLocalizedDisplayName(mapSize, localizationManager))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText("map-density"),
-            EnumDisplayNameConverter.getLocalizedDisplayName(density, localizationManager));
+    public String toSharableString() {
+        return String.format(PARAMETER_DISPLAY_FORMAT, SEED_KEY, seed)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_KEY, startingPosition + 1)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_KEY,
+            EnumDisplayNameConverter.getDisplayName(botIntelligence))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_KEY, EnumDisplayNameConverter.getDisplayName(mapSize))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_KEY,
+            EnumDisplayNameConverter.getDisplayName(density));
     }
 
     /**

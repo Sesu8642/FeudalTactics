@@ -463,7 +463,7 @@ public class IngameScreen extends GameScreen {
         }));
 
         parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
-            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString(localizationManager))));
+            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString())));
 
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                 parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
