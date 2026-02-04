@@ -6,11 +6,14 @@ import com.badlogic.gdx.Preferences;
 
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.BuyNCastlesAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinWithOnlyNCastlesAchievement;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -33,7 +36,10 @@ public class AchievementRepository {
     private final List<AbstractAchievement> achievements;
 
     @Inject
-    public AchievementRepository(@AchievementsPrefStore Preferences achievementsPrefs, AutoSaveRepository autoSaveRepository) {
+    public AchievementRepository(
+            @AchievementsPrefStore Preferences achievementsPrefs, 
+            AutoSaveRepository autoSaveRepository,
+            AchievementGameStateTracker gameStateTracker) {
         this.prefStore = achievementsPrefs;
 
         List<AbstractAchievement> list = new ArrayList<>();
@@ -43,8 +49,14 @@ public class AchievementRepository {
         list.add(new BuyNCastlesAchievement(this, 1, autoSaveRepository));
         list.add(new BuyNCastlesAchievement(this, 20, autoSaveRepository));
         list.add(new BuyNCastlesAchievement(this, 100, autoSaveRepository));
+        list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker));
+        list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
+        list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
         for (MapSizes mapSize : MapSizes.values()) {
             list.add(new WinOnMapSizeAchievement(this, mapSize));
+        }
+        for (Intelligence aiLevel : Intelligence.values()) {
+            list.add(new WinAgainstAiLevelAchievement(this, aiLevel));
         }
         this.achievements = Collections.unmodifiableList(list);
 

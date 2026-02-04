@@ -14,6 +14,7 @@ import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler;
 import de.sesu8642.feudaltactics.menu.about.dagger.AboutScreen;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementGameStateTracker;
 import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsEventHandler;
 import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsScreen;
 import de.sesu8642.feudaltactics.menu.campaign.ui.CampaignLevelSelectionScreen;
@@ -69,6 +70,7 @@ public class ScreenNavigationController {
     private final Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider;
     private final Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider;
     private final AchievementsEventHandler achievementsEventHandler;
+    private final AchievementGameStateTracker achievementGameStateTracker;
     private final StatisticsEventHandler statisticsEventHandler;
 
     /**
@@ -100,6 +102,7 @@ public class ScreenNavigationController {
         Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider,
         Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider,
         AchievementsEventHandler achievementsEventHandler,
+        AchievementGameStateTracker achievementGameStateTracker,
         StatisticsEventHandler statisticsEventHandler) {
 
         this.eventBus = eventBus;
@@ -126,6 +129,7 @@ public class ScreenNavigationController {
         this.ingameScreenEventHandlerProvider = ingameScreenEventHandlerProvider;
         this.preferencesScreenEventHandlerProvider = preferencesScreenEventHandlerProvider;
         this.achievementsEventHandler = achievementsEventHandler;
+        this.achievementGameStateTracker = achievementGameStateTracker;
         this.statisticsEventHandler = statisticsEventHandler;
     }
 
@@ -192,7 +196,7 @@ public class ScreenNavigationController {
         changeScreen(ingameScreenProvider.get());
         Stream.of(localIngameInputHandler, gameLogicEventHandler,
                 ingameScreenEventHandlerProvider.get(), rendererEventHandler, 
-                statisticsEventHandler, achievementsEventHandler)
+                statisticsEventHandler, achievementsEventHandler, achievementGameStateTracker)
             .forEach(eventBus::register);
     }
 
@@ -266,7 +270,7 @@ public class ScreenNavigationController {
 
     private void unregisterAllEventHandlers() {
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandlerProvider.get(),
-            rendererEventHandler, preferencesScreenEventHandlerProvider.get(), achievementsEventHandler, statisticsEventHandler).forEach(object -> {
+            rendererEventHandler, preferencesScreenEventHandlerProvider.get(), achievementsEventHandler, achievementGameStateTracker, statisticsEventHandler).forEach(object -> {
             try {
                 eventBus.unregister(object);
             } catch (IllegalArgumentException e) {
