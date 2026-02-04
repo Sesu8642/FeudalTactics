@@ -46,9 +46,9 @@ public class AchievementRepository {
         list.add(new WinNGamesAchievement(this, 1));
         list.add(new WinNGamesAchievement(this, 10));
         list.add(new WinNGamesAchievement(this, 50));
-        list.add(new BuyNCastlesAchievement(this, 1, autoSaveRepository));
-        list.add(new BuyNCastlesAchievement(this, 20, autoSaveRepository));
-        list.add(new BuyNCastlesAchievement(this, 100, autoSaveRepository));
+        list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
+        list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
+        list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
@@ -85,24 +85,6 @@ public class AchievementRepository {
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         for (AbstractAchievement achievement : achievements) {
             achievement.onGameExited(event);
-        }
-    }
-
-    public void onBuyCastle() {
-        for (AbstractAchievement achievement : achievements) {
-            achievement.onBuyCastle();
-        }
-    }
-
-    public void onBuyAndPlaceCastle() {
-        for (AbstractAchievement achievement : achievements) {
-            achievement.onBuyAndPlaceCastle();
-        }
-    }
-
-    public void onUndoMove() {
-        for (AbstractAchievement achievement : achievements) {
-            achievement.onUndoMove();
         }
     }
 }

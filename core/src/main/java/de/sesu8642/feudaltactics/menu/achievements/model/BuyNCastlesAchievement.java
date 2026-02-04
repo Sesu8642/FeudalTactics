@@ -1,17 +1,18 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
-import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
-import de.sesu8642.feudaltactics.lib.ingame.PlayerMove.PlayerMoveType;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementGameStateTracker;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 public class BuyNCastlesAchievement extends AbstractAchievement {
 
-    private final AutoSaveRepository autoSaveRepository;
+    private final AchievementGameStateTracker gameStateTracker;
 
-    public BuyNCastlesAchievement(AchievementRepository achievementRepository, int targetNumberOfCastles, AutoSaveRepository autoSaveRepository) {
+    public BuyNCastlesAchievement(
+        AchievementRepository achievementRepository,
+        int targetNumberOfCastles, 
+        AchievementGameStateTracker gameStateTracker) {
         super(achievementRepository, targetNumberOfCastles);
-        this.autoSaveRepository = autoSaveRepository;
+        this.gameStateTracker = gameStateTracker;
     }
 
     @Override
@@ -30,29 +31,9 @@ public class BuyNCastlesAchievement extends AbstractAchievement {
     }
 
     @Override
-    public void onBuyCastle() {
-        storeProgress(getProgress() + 1);
+    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+        int numberOfCastlesBuilt = gameStateTracker.getCastlesBuiltInCurrentGame();
+        storeProgress(getProgress() + numberOfCastlesBuilt);
     }
-
-    @Override
-    public void onBuyAndPlaceCastle() {
-        storeProgress(getProgress() + 1);
-    }
-
-    @Override
-    public void onUndoMove() {
-            // Check whether the last move was a castle purchase
-        if (autoSaveRepository.isUndoPossible()) {
-            final PlayerMove lastMove = autoSaveRepository.peekLastMove();
-            if (lastMove != null && (lastMove.getPlayerActionType() == PlayerMoveType.BUY_CASTLE ||
-                lastMove.getPlayerActionType() == PlayerMoveType.BUY_AND_PLACE_CASTLE)) {
-                    // User has undone a castle purchase. Decrease progress by 1.
-                int castlesBought = getProgress();
-                if (castlesBought > 0) {
-                    castlesBought--;
-                    storeProgress(castlesBought);
-                }
-            }
-        }
-    }
+ 
 }
