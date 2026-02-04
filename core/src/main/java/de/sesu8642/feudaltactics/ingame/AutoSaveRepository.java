@@ -283,4 +283,19 @@ public class AutoSaveRepository {
         }
     }
 
+    public PlayerMove peekLastMove() {
+        lock.lock();
+        try {
+            final Optional<String> latestSaveKeyOptional = getLatestIncrementalSaveKey();
+            if (latestSaveKeyOptional.isPresent()) {
+                final String latestMoveJson = incrementalAutoSavePrefStore.getString(latestSaveKeyOptional.get());
+                return incrementalSaveJson.fromJson(PlayerMove.class, latestMoveJson);
+            } else {
+                return null;
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
 }

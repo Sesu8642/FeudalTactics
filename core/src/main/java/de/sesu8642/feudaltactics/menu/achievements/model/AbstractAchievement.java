@@ -51,4 +51,16 @@ public abstract class AbstractAchievement {
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         // No-op by default
     }
+
+    public void onBuyCastle() {
+        // No-op by default
+    }
+
+    public void onBuyAndPlaceCastle() {
+        // No-op by default
+    }
+
+    public void onUndoMove() {
+        // No-op by default
+    }
 }
