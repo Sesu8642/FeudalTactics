@@ -354,10 +354,12 @@ public class MapRenderer {
         final float waterOffsetForMovementX = camera.position.x % WATER_TILE_SIZE;
         final float waterOffsetForMovementY = camera.position.y % WATER_TILE_SIZE;
         // bottom left point from where the water is drawn
-        final Vector3 waterOriginPoint = camera
-            .unproject(new Vector3(-waterOffsetForZoomInPxX, camera.viewportHeight + waterOffsetForZoomInPxY, 0));
+        final Vector3 touchCoords = new Vector3(-waterOffsetForZoomInPxX,
+            Gdx.graphics.getHeight() + waterOffsetForZoomInPxY, 0);
+        final Vector3 waterOriginPoint = camera.unproject(touchCoords);
         waterOriginPoint.x -= waterOffsetForMovementX;
         waterOriginPoint.y -= waterOffsetForMovementY;
+        // result is world coords
         return new Vector2(waterOriginPoint.x, waterOriginPoint.y);
     }
 
