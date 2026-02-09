@@ -75,6 +75,9 @@ public class TutorialDialogFactory {
             case 11:
                 fillTutorialDialog11(dialog);
                 break;
+            case 12:
+                fillTutorialDialog12(dialog);
+                break;
             default:
                 throw new IllegalStateException("Tutorial objective index is higher than expected: " + objectiveProgress);
         }
@@ -117,12 +120,16 @@ public class TutorialDialogFactory {
     private void fillTutorialDialog4(FeudalTacticsDialog dialog) {
         final String text1 = "After conquering, units like your peasant can no longer be moved until the next turn" +
             ".\n\nPress this button to end your turn:";
-        final String text2 = "Your enemies will then do their turns.\n\nObjective: End your turn and re-select your " +
-            "kingdom.";
+        final String text2 = "Your enemies will then do their turns.\n\nObjective: End your turn.";
         dialog.text(text1).addButtonImage(SkinConstants.BUTTON_END_TURN).text(text2);
     }
 
     private void fillTutorialDialog5(FeudalTacticsDialog dialog) {
+        final String text = "It's your turn again. Select your kingdom once again.";
+        dialog.text(text);
+    }
+
+    private void fillTutorialDialog6(FeudalTacticsDialog dialog) {
         final String text1 = "The tiles of your enemy's adjacent kingdom are protected by the capital. Units, " +
             "capitals" +
             " and castles protect the tile they are placed on as well as all adjacent tiles. The protection level of " +
@@ -134,7 +141,7 @@ public class TutorialDialogFactory {
         dialog.text(text1).addSpriteImage(textureAtlasHelper.getShieldSprite()).text(text2);
     }
 
-    private void fillTutorialDialog6(FeudalTacticsDialog dialog) {
+    private void fillTutorialDialog7(FeudalTacticsDialog dialog) {
         final String text1 = "The spearman you created takes a higher salary than a peasant. Here is an overview of " +
             "all the units.";
         final List<List<String>> tableData = new ArrayList<>();
@@ -148,7 +155,7 @@ public class TutorialDialogFactory {
         dialog.text(text1).addTable(tableData).text(text2);
     }
 
-    private void fillTutorialDialog7(FeudalTacticsDialog dialog) {
+    private void fillTutorialDialog8(FeudalTacticsDialog dialog) {
         final String text = "Since you reduced the size of your enemy's kingdom to one tile, its capital was " +
             "destroyed and " +
             "turned into a tree.\n\nThere are two types of trees: palm trees and oak trees. Palm trees grow on " +
@@ -161,7 +168,7 @@ public class TutorialDialogFactory {
         dialog.text(text);
     }
 
-    private void fillTutorialDialog8(FeudalTacticsDialog dialog) {
+    private void fillTutorialDialog9(FeudalTacticsDialog dialog) {
         final String text = "It's now time to buy a castle. Since they don't need salary, they are ideal for long " +
             "term defense. Only knights and barons can destroy castles.\n\nUse this button to buy a castle for 15 " +
             "coins:";
@@ -171,23 +178,23 @@ public class TutorialDialogFactory {
         dialog.text(text).addButtonImage(SkinConstants.BUTTON_BUY_CASTLE).text(text2);
     }
 
-    private void fillTutorialDialog9(FeudalTacticsDialog dialog) {
+    private void fillTutorialDialog10(FeudalTacticsDialog dialog) {
         final String text = "Now you know the basics.\n\nBeware of your " +
-            "capital being destroyed, as you will then lose all your money.\nAlso make sure your enemy doesn't " +
-            "split your kingdom into two, as only the part with the capital will keep your money and the other " +
-            "part will start from 0.\n\nIf you cannot pay your units at the start of your turn for one reason or " +
-            "another, they will die and leave gravestones. They, in turn, will become trees after one turn" +
+            "capital being destroyed, as you will then lose all the kingdom's savings.\nMake sure your enemy " +
+            "doesn't split your kingdom into two, as only the part with the capital will keep your money and the " +
+            "other part will start from 0.\n\nIf you cannot pay your units at the start of your turn for one reason " +
+            "or another, they will die and leave gravestones. They, in turn, will become trees after one turn" +
             ".\n\nObjective: conquer the whole island to win the game.\n";
         dialog.text(text);
     }
 
-    private void fillTutorialDialog10(FeudalTacticsDialog dialog) {
+    private void fillTutorialDialog11(FeudalTacticsDialog dialog) {
         final String text1 = "You can use this button to undo moves, but only within the current turn:";
         final String text2 = "Objective: conquer the whole island to win the game.\n";
         dialog.text(text1).addButtonImage(SkinConstants.BUTTON_UNDO).text(text2);
     }
 
-    private void fillTutorialDialog11(FeudalTacticsDialog dialog) {
+    private void fillTutorialDialog12(FeudalTacticsDialog dialog) {
         final String text = "There are several shortcuts available:\n- undo move: Android or mouse back button\n- buy" +
             " peasant: right mouse button click\n- buy and place peasant in own kingdom: double tap/click\n- buy " +
             "castle: middle mouse button click\n- buy and place castle: long press/click\n\nObjective: conquer " +
