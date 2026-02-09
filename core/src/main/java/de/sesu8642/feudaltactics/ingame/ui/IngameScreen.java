@@ -25,7 +25,10 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.*;
+import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
+import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
+import de.sesu8642.feudaltactics.menu.common.ui.Margin;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -278,7 +281,13 @@ public class IngameScreen extends GameScreen {
             final boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
             ingameHudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
         }
-        // display messages
+        if (humanPlayerTurnJustStarted) {
+            displayMessagesOnPlayerTurnStart(winnerChanged, newGameState, localPlayer);
+        }
+        return infoText;
+    }
+
+    private void displayMessagesOnPlayerTurnStart(boolean winnerChanged, GameState newGameState, Player localPlayer) {
         if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
             if (localPlayer.isDefeated()) {
                 // Game is over; player lost
@@ -289,7 +298,7 @@ public class IngameScreen extends GameScreen {
                 // Game is over; player won
                 final boolean botsGaveUpPreviously =
                     cachedGameState.getWinner() != null
-                        && cachedGameState.getWinner().getType() == Player.Type.LOCAL_PLAYER;
+                        && cachedGameState.getWinner().getType() == Type.LOCAL_PLAYER;
                 Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
                     botsGaveUpPreviously, getEarliestRoundOfGameEnd(cachedGameState),
                     cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame));
@@ -299,14 +308,13 @@ public class IngameScreen extends GameScreen {
             Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showPlayerDefeatedMessage(ingameHudStage,
                 cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
                 this::exitToMenu, this::resetGame, () -> isSpectateMode = true));
-        } else if (humanPlayerTurnJustStarted && winnerChanged && !isSpectateMode) {
+        } else if (winnerChanged && !isSpectateMode) {
             // winner changed
             final boolean humanWins = newGameState.getWinner().getType() == Type.LOCAL_PLAYER;
             Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGiveUpGameMessage(ingameHudStage, humanWins,
                 cachedGameState.getWinningRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
                 this::exitToMenu, this::resetGame));
         }
-        return infoText;
     }
 
     /**
@@ -556,14 +564,6 @@ public class IngameScreen extends GameScreen {
 
     public OrthographicCamera getCamera() {
         return ingameCamera;
-    }
-
-    public IngameHudStage getHudStage() {
-        return ingameHudStage;
-    }
-
-    public MenuStage getMenuStage() {
-        return menuStage;
     }
 
     /**
