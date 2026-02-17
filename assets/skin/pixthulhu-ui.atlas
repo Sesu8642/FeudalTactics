@@ -2,7 +2,7 @@
 pixthulhu-ui.png
 size: 1024, 1024
 format: RGBA8888
-filter: Linear, Linear
+filter: Nearest, Nearest
 repeat: none
 0.5x
   rotate: false

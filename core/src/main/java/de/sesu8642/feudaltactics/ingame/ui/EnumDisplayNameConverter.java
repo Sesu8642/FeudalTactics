@@ -8,7 +8,6 @@ import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Class to convert enums to their display names and the other way around.
@@ -97,12 +96,4 @@ public class EnumDisplayNameConverter {
     public static String getLocalizedDisplayName(Unit.UnitTypes unitType, LocalizationManager localizationManager) {
         return localizationManager.localizeText(getDisplayName(unitType));
     }
-
-    /**
-     * Returns the unit type from its display name.
-     */
-    public static Unit.UnitTypes getUnitTypeFromDisplayName(String displayName) {
-        return Unit.UnitTypes.values()[UNITS.indexOf(displayName)];
-    }
-
 }

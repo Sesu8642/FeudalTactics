@@ -48,7 +48,7 @@ See [privacy policy](https://raw.githubusercontent.com/Sesu8642/FeudalTactics/ma
 on [the one from the Catima Website](https://github.com/CatimaLoyalty/Website/blob/98018f63d0f69331de70054db61c699b9c316c2c/_pages/privacy-policy.md).
 
 ## Language Support
-The game is currently available in English and German.
+Localization is supported, see SupportedLanguages.java for the list of currently translated languages 
 
 ## Platforms
 
