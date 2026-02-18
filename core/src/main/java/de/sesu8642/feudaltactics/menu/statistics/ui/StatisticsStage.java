@@ -18,8 +18,8 @@ import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
 /**
- * Represents the stage for the statistics screen with tabbed navigation.
- * Contains tabs for Statistics, History, Achievements, and a Back button.
+ * Represents the stage for the statistics screen with a button to switch between Statistics and History,
+ * as well as a button to return to the main menu.
  */
 @Singleton
 public class StatisticsStage extends CyclingSlideStage {
