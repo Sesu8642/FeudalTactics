@@ -60,8 +60,8 @@ public class HistorySlide extends Slide {
         this.skin = skin;
         this.historyTable = new Table();
         this.resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
-        this.rowBorderDrawable = skin.newDrawable("white", Color.BLACK);
-        this.rowBackgroundDrawable = skin.newDrawable("white", skin.getColor("field"));
+        this.rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
+        this.rowBackgroundDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, skin.getColor(SkinConstants.COLOR_FIELD));
         getTable().add(historyTable).fill().expand();
         refreshHistory();
     }
@@ -157,7 +157,7 @@ public class HistorySlide extends Slide {
 
     private Drawable getResultBackground(HistoricGame.GameResult result) {
         return resultBackgrounds.computeIfAbsent(result,
-                r -> skin.newDrawable("white", gameResult2BackgroundColor(r)));
+                r -> skin.newDrawable(SkinConstants.DRAWABLE_WHITE, gameResult2BackgroundColor(r)));
     }
 
     static private Color gameResult2BackgroundColor(HistoricGame.GameResult result)
