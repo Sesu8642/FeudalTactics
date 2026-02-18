@@ -116,15 +116,6 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
         camera.viewportHeight = getViewport().getWorldHeight();
         camera.viewportWidth = getViewport().getWorldWidth();
         camera.update();
-        // rootTable.pack();
-        // slides.forEach(slide -> {
-        //     slide.pack();
-        //     slide.getChildren().forEach(child -> {
-        //         if (ClassReflection.isAssignableFrom(Table.class, child.getClass())) {
-        //             ((Table) child).pack();
-        //         }
-        //     });
-        // });
     }
 
     @Override
