@@ -31,7 +31,7 @@ public class HistoryDao {
     public static final String HISTORY_NAME = "history";
     public static final String GAME_HISTORY_NAME = "HistoricGames";
 
-    public static final int MAX_STORED_GAMES = 500;
+    public static final int MAX_STORED_GAMES = 200;
 
     private final Preferences prefStore;
 
@@ -86,21 +86,6 @@ public class HistoryDao {
         if (gameHistoryList.size() > MAX_STORED_GAMES) {
             gameHistoryList = gameHistoryList.subList(gameHistoryList.size() - MAX_STORED_GAMES, gameHistoryList.size());
         }
-
-        persistHistory(gameHistoryList);
-    }
-
-    /**
-     * Registers a dummy game for testing purposes.
-     */
-    public void registerDummyGames(int count) {
-        NewGamePreferences gameSettings = new NewGamePreferences(0, Intelligence.LEVEL_1, MapSizes.MEDIUM, Densities.DENSE, 2);
-
-        HistoricGame historicGame = new HistoricGame(gameSettings, GameResult.LOSS, 10, System.currentTimeMillis());
-
-        List<HistoricGame> gameHistoryList = new ArrayList<>(Arrays.asList(getGameHistory()));
-        for (int i = 0; i < count; i++)
-            gameHistoryList.add(historicGame);
 
         persistHistory(gameHistoryList);
     }
