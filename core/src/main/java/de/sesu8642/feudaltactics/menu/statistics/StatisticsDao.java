@@ -5,7 +5,7 @@ package de.sesu8642.feudaltactics.menu.statistics;
 import com.badlogic.gdx.Preferences;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
-import de.sesu8642.feudaltactics.menu.statistics.dagger.StatisticsPrefsPrefStore;
+import de.sesu8642.feudaltactics.menu.statistics.dagger.StatisticsPrefStore;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +28,7 @@ public class StatisticsDao {
     private final Preferences prefStore;
 
     @Inject
-    public StatisticsDao(@StatisticsPrefsPrefStore Preferences statisticsPrefs) {
+    public StatisticsDao(@StatisticsPrefStore Preferences statisticsPrefs) {
         prefStore = statisticsPrefs;
     }
 

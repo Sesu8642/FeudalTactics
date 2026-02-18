@@ -7,9 +7,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Qualifier for the statistics preferences.
+ * Qualifier for the history preferences.
  */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HistoryPrefsPrefStore {
+public @interface HistoryPrefStore {
 }

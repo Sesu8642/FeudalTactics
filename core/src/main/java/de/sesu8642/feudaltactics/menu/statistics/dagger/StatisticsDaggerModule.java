@@ -25,14 +25,14 @@ public class StatisticsDaggerModule {
 
     @Provides
     @Singleton
-    @StatisticsPrefsPrefStore
+    @StatisticsPrefStore
     static Preferences provideStatisticsPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
         return Gdx.app.getPreferences(prefix + StatisticsDao.STATISTICS_NAME);
     }
 
     @Provides
     @Singleton
-    @HistoryPrefsPrefStore
+    @HistoryPrefStore
     static Preferences provideHistoryPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
         return Gdx.app.getPreferences(prefix + HistoryDao.HISTORY_NAME);
     }

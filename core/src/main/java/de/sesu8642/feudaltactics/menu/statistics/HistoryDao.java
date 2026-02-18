@@ -11,7 +11,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
-import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefsPrefStore;
+import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefStore;
 import jakarta.inject.Inject;
 
 import javax.inject.Singleton;
@@ -35,7 +35,7 @@ public class HistoryDao {
     private final Json json = new Json();
 
     @Inject
-    public HistoryDao(@HistoryPrefsPrefStore Preferences historyPrefs) {
+    public HistoryDao(@HistoryPrefStore Preferences historyPrefs) {
         this.prefStore = historyPrefs;
         json.setOutputType(JsonWriter.OutputType.json);
         registerSerializers();
