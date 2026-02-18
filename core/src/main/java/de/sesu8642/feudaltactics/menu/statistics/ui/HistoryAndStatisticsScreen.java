@@ -15,10 +15,10 @@ import javax.inject.Singleton;
  * Represents the UI screen for displaying history and statistics.
  */
 @Singleton
-public class StatisticsScreen extends GameScreen {
+public class HistoryAndStatisticsScreen extends GameScreen {
     @Inject
-    public StatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                            StatisticsStage stage) {
+    public HistoryAndStatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+                            HistoryAndStatisticsStage stage) {
         super(camera, viewport, stage);
     }
 
@@ -26,7 +26,7 @@ public class StatisticsScreen extends GameScreen {
     public void show() {
         super.show();
 
-        final StatisticsStage statisticsStage = (StatisticsStage) getActiveStage();
+        final HistoryAndStatisticsStage statisticsStage = (HistoryAndStatisticsStage) getActiveStage();
         // Refresh all slides when screen is shown
         statisticsStage.getStatisticsSlide().refreshStatistics();
         statisticsStage.getHistorySlide().refreshHistory();

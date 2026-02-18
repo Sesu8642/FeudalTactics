@@ -18,11 +18,11 @@ import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
 /**
- * Represents the stage for the statistics screen with a button to switch between Statistics and History,
+ * Represents the stage for the history and statistics screen with a button to switch between Statistics and History,
  * as well as a button to return to the main menu.
  */
 @Singleton
-public class StatisticsStage extends CyclingSlideStage {
+public class HistoryAndStatisticsStage extends CyclingSlideStage {
 
     @Getter
     private final StatisticsSlide statisticsSlide;
@@ -30,7 +30,7 @@ public class StatisticsStage extends CyclingSlideStage {
     private final HistorySlide historySlide;
 
     @Inject
-    public StatisticsStage(StatisticsSlide statisticsSlide,
+    public HistoryAndStatisticsStage(StatisticsSlide statisticsSlide,
                            HistorySlide historySlide,
                            @MenuViewport Viewport viewport,
                            PlatformInsetsProvider platformInsetsProvider,
