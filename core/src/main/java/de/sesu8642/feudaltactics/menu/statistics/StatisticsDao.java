@@ -79,10 +79,6 @@ public class StatisticsDao {
     }
 
     public void registerPlayedGame(Intelligence aiDifficulty, GameResult gameResult) {
-        if (gameResult == GameResult.STARTED) {
-            return; // Do not register started games here
-        }
-
         switch (gameResult) {
             case WIN:
                 incrementGamesWon(aiDifficulty);

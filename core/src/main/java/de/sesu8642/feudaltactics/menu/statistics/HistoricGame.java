@@ -44,11 +44,6 @@ public class HistoricGame {
     public enum GameResult {
         WIN,
         LOSS,
-        ABORTED,
-        /**
-         * The game was started but has not yet been completed. It will be modified later to WIN, LOSS or ABORTED
-         * in a new instance of HistoricGame.
-         */
-        STARTED
+        ABORTED
     }
 }
