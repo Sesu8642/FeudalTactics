@@ -45,6 +45,8 @@ public class HistorySlide extends Slide {
     private final Drawable rowBorderDrawable;
     private final Drawable rowBackgroundDrawable;
 
+    private final int MAX_DISPLAYED_GAMES = 100;
+
     /**
      * Constructor.
      *
@@ -72,10 +74,6 @@ public class HistorySlide extends Slide {
         final Table contentTable = new Table();
         contentTable.pad(10);
         contentTable.background(rowBackgroundDrawable);
-
-        // Game number
-        final Label indexLabel = new Label(String.format("#%d", index + 1), skin);
-        contentTable.add(indexLabel).left().padRight(10);
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
@@ -193,6 +191,11 @@ public class HistorySlide extends Slide {
             return;
         }
 
+        if (history.length > MAX_DISPLAYED_GAMES) {
+            Gdx.app.log("HistorySlide", "Displaying only the most recent " + MAX_DISPLAYED_GAMES + " games out of " + history.length + " total games.");
+            history = java.util.Arrays.copyOfRange(history, history.length - MAX_DISPLAYED_GAMES, history.length);
+        }
+
         // Group by LocalDate instead of millis math
         LocalDate lastDateHeading = null;
 
@@ -210,7 +213,7 @@ public class HistorySlide extends Slide {
                         localDateTimeFormatter.format(gameDate),
                         skin, SkinConstants.FONT_HEADLINE);
                 historyTable.row();
-                historyTable.add(dateHeading).colspan(5).left().padTop(10).padBottom(5);
+                historyTable.add(dateHeading).colspan(4).left().padTop(10).padBottom(5);
             }
 
             placeHistoryEntry(game, i);

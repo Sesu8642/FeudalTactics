@@ -8,11 +8,8 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.JsonValue;
 
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
-import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefsPrefStore;
 import jakarta.inject.Inject;
@@ -31,7 +28,7 @@ public class HistoryDao {
     public static final String HISTORY_NAME = "history";
     public static final String GAME_HISTORY_NAME = "HistoricGames";
 
-    public static final int MAX_STORED_GAMES = 200;
+    public static final int MAX_STORED_GAMES = 1000;
 
     private final Preferences prefStore;
 
@@ -99,7 +96,7 @@ public class HistoryDao {
     /**
      * Loads the GameHistory data.
      *
-     * @return the loaded GameHistory
+     * @return the loaded GameHistory, with the oldest game at index 0 and the most recent game at the last index.
      */
     public HistoricGame[] getGameHistory() {
         String jsonData = prefStore.getString(GAME_HISTORY_NAME, "");
