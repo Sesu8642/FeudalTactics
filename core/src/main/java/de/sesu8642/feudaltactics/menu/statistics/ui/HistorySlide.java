@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
-import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
-import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
-import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
-import de.sesu8642.feudaltactics.menu.common.ui.Slide;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -32,14 +32,14 @@ import java.util.EnumMap;
 @Singleton
 public class HistorySlide extends Slide {
 
-    private final HistoryDao historyDao;
+    private static final int MAX_DISPLAYED_GAMES = 100;
     private final Skin skin;
+    private final HistoryDao historyDao;
+    private final MapPreviewFactory mapPreviewFactory;
     private final Table historyTable;
     private final EnumMap<HistoricGame.GameResult, Drawable> resultBackgrounds;
     private final Drawable rowBorderDrawable;
     private final Drawable rowBackgroundDrawable;
-
-    private final int MAX_DISPLAYED_GAMES = 100;
     private final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     /**
@@ -49,10 +49,11 @@ public class HistorySlide extends Slide {
      * @param historyDao data access object for game history
      */
     @Inject
-    public HistorySlide(Skin skin, HistoryDao historyDao) {
+    public HistorySlide(Skin skin, HistoryDao historyDao, MapPreviewFactory mapPreviewFactory) {
         super(skin, "Game History");
-        this.historyDao = historyDao;
         this.skin = skin;
+        this.historyDao = historyDao;
+        this.mapPreviewFactory = mapPreviewFactory;
         historyTable = new Table();
         resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
         rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
@@ -62,7 +63,7 @@ public class HistorySlide extends Slide {
         refreshHistory();
     }
 
-    static private Color gameResult2BackgroundColor(HistoricGame.GameResult result) {
+    private static Color gameResult2BackgroundColor(HistoricGame.GameResult result) {
         switch (result) {
             case WIN: {
                 return Color.GREEN;
@@ -82,11 +83,19 @@ public class HistorySlide extends Slide {
     /*
      * Places a single history entry into the history table.
      */
-    private void placeHistoryEntry(HistoricGame game, int index) {
+    private void placeHistoryEntry(HistoricGame game) {
         // Create table for the actual content
         final Table contentTable = new Table();
         contentTable.pad(10);
         contentTable.background(rowBackgroundDrawable);
+
+        // Map preview
+        final GameParameters gameParams = game.getGameSettings().toGameParameters();
+        final GameState gameStateToPreview = new GameState();
+        GameStateHelper.initializeMap(gameStateToPreview, gameParams.getPlayers(), gameParams.getLandMass(),
+            gameParams.getDensity(), null, gameParams.getSeed());
+        final MapPreviewWidget previewWidget = mapPreviewFactory.createPreviewWidget(gameStateToPreview);
+        contentTable.add(previewWidget).minSize(100).fill().prefWidth(Value.percentHeight(1));
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
@@ -95,7 +104,7 @@ public class HistorySlide extends Slide {
         resultTable.add(resultCell).left();
         resultTable.row();
         resultTable.add(roundsLabel).left();
-        contentTable.add(resultTable).left().width(200f).padRight(10);
+        contentTable.add(resultTable).left().width(200f).padRight(10).padLeft(10);
 
         // Settings
         String settingsString = "Unknown settings";
@@ -211,7 +220,7 @@ public class HistorySlide extends Slide {
                 historyTable.add(dateHeading).colspan(4).left().padTop(10).padBottom(5);
             }
 
-            placeHistoryEntry(game, i);
+            placeHistoryEntry(game);
         }
     }
 }
