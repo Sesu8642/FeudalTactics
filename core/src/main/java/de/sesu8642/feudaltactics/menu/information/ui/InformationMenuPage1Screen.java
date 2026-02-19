@@ -33,7 +33,7 @@ public class InformationMenuPage1Screen extends GameScreen {
         final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToAboutScreen));
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToCrashReportScreenInMainMenu));
-        buttons.get(2).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToStatisticsScreen));
+        buttons.get(2).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToHistoryAndStatisticsScreen));
         buttons.get(3).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToInformationMenuScreenPage2));
         buttons.get(4).addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToMainMenuScreen));
     }

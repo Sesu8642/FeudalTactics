@@ -173,7 +173,7 @@ public class IngameScreen extends GameScreen {
     }
 
     private void resetGame() {
-        eventBus.post(new GameExitedEvent(cachedGameState));
+        eventBus.post(new GameExitedEvent(cachedGameState, cachedNewGamePreferences));
         final GameState previousCachedGameState = cachedGameState;
         clearCache();
         if (previousCachedGameState.getScenarioMap() == ScenarioMap.NONE) {
@@ -189,7 +189,7 @@ public class IngameScreen extends GameScreen {
     }
 
     private void exitToMenu() {
-        eventBus.post(new GameExitedEvent(cachedGameState));
+        eventBus.post(new GameExitedEvent(cachedGameState, cachedNewGamePreferences));
         screenNavigationController.transitionToMainMenuScreen();
         clearCache();
     }
