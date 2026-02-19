@@ -224,9 +224,6 @@ public class ParameterInputStage extends ResizableResettableStage {
     public void updateOnResize(int width, int height) {
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
-        // VERY IMPORTANT!!! makes everything scale correctly on startup and going
-        // fullscreen etc.; took me hours to find out
-        rootTable.pack();
     }
 
     @Override

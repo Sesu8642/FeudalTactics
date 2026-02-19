@@ -172,8 +172,6 @@ public class IngameHudStage extends ResizableResettableStage {
     public void updateOnResize(int width, int height) {
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         bottomInsetTable.setHeight(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
-        rootTable.pack();
-        handContentTable.pack();
     }
 
     /**

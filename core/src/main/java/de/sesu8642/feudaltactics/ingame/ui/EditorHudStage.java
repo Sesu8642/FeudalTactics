@@ -114,8 +114,6 @@ public class EditorHudStage extends ResizableResettableStage {
     public void updateOnResize(int width, int height) {
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
-        rootTable.pack();
-        handContentTable.pack();
     }
 
     /**
