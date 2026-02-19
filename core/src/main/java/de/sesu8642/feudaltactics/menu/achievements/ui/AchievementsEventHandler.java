@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 
 import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 import javax.inject.Inject;
@@ -23,5 +24,10 @@ public class AchievementsEventHandler {
     @Subscribe
     public void handleGameExited(GameExitedEvent event) {
         achievementRepository.onGameExited(event);
+    }
+
+    @Subscribe
+    public void handleMapRegeneration(RegenerateMapEvent event) {
+        achievementRepository.onMapRegeneration(event);
     }
 }

@@ -1,5 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,6 +50,10 @@ public abstract class AbstractAchievement {
      * Called when a game is exited. Override to handle this event.
      */
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+        // No-op by default
+    }
+
+    public void onMapRegeneration(RegenerateMapEvent event) {
         // No-op by default
     }
 }

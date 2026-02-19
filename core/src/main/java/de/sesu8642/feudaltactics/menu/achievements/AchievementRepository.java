@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.badlogic.gdx.Preferences;
 
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -13,6 +14,7 @@ import de.sesu8642.feudaltactics.menu.achievements.model.BuyNCastlesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinWithOnlyNCastlesAchievement;
 import lombok.Getter;
 
@@ -52,6 +54,9 @@ public class AchievementRepository {
         list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20));
         for (MapSizes mapSize : MapSizes.values()) {
             list.add(new WinOnMapSizeAchievement(this, mapSize));
         }
@@ -85,6 +90,12 @@ public class AchievementRepository {
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         for (AbstractAchievement achievement : achievements) {
             achievement.onGameExited(event);
+        }
+    }
+
+    public void onMapRegeneration(RegenerateMapEvent event) {
+        for (AbstractAchievement achievement : achievements) {
+            achievement.onMapRegeneration(event);
         }
     }
 }
