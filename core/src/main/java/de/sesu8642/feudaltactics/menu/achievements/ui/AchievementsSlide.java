@@ -51,7 +51,9 @@ public class AchievementsSlide extends Slide {
         refreshAchievements();
     }
 
+    /* Width of a single achievement box */
     private final static float ACHIEVEMENT_WINDOW_WIDTH = 300f;
+    /* Height of a single achievement box */
     private final static float ACHIEVEMENT_WINDOW_HEIGHT = 160f;
 
     /**
