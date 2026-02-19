@@ -4,9 +4,8 @@ package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.JsonValue;
-
+import com.badlogic.gdx.utils.JsonWriter;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
@@ -36,7 +35,7 @@ public class HistoryDao {
 
     @Inject
     public HistoryDao(@HistoryPrefStore Preferences historyPrefs) {
-        this.prefStore = historyPrefs;
+        prefStore = historyPrefs;
         json.setOutputType(JsonWriter.OutputType.json);
         registerSerializers();
     }
@@ -57,7 +56,7 @@ public class HistoryDao {
             @Override
             @SuppressWarnings("rawtypes")
             public NewGamePreferences read(Json json, JsonValue jsonData, Class type) {
-                String sharedString = jsonData == null ? "" : jsonData.asString();
+                final String sharedString = jsonData == null ? "" : jsonData.asString();
                 return NewGamePreferences.fromSharableString(sharedString);
             }
         });
@@ -69,26 +68,31 @@ public class HistoryDao {
         }
 
         Integer roundsPlayed = gameState.getWinningRound();
-        if (null == roundsPlayed)
-            // game was aborted, so return the current round. 
-            // In other cases, winningRound is one lower than round, because round is incremented at the start of a round after evaluating victory conditions,
-            // but before invoking this method.
+        if (roundsPlayed == null)
+        // game was aborted, so return the current round.
+        // In other cases, winningRound is one lower than round, because round is incremented at the start of a
+        // round after evaluating victory conditions,
+        // but before invoking this method.
+        {
             roundsPlayed = gameState.getRound();
+        }
 
-        HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed, System.currentTimeMillis());
+        final HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed,
+            System.currentTimeMillis());
 
         List<HistoricGame> gameHistoryList = new ArrayList<>(Arrays.asList(getGameHistory()));
         gameHistoryList.add(historicGame);
 
         if (gameHistoryList.size() > MAX_STORED_GAMES) {
-            gameHistoryList = gameHistoryList.subList(gameHistoryList.size() - MAX_STORED_GAMES, gameHistoryList.size());
+            gameHistoryList = gameHistoryList.subList(gameHistoryList.size() - MAX_STORED_GAMES,
+                gameHistoryList.size());
         }
 
         persistHistory(gameHistoryList);
     }
 
     private void persistHistory(List<HistoricGame> gameHistoryList) {
-        String jsonData = json.toJson(gameHistoryList);
+        final String jsonData = json.toJson(gameHistoryList);
         prefStore.putString(GAME_HISTORY_NAME, jsonData);
         prefStore.flush();
     }
@@ -99,7 +103,7 @@ public class HistoryDao {
      * @return the loaded GameHistory, with the oldest game at index 0 and the most recent game at the last index.
      */
     public HistoricGame[] getGameHistory() {
-        String jsonData = prefStore.getString(GAME_HISTORY_NAME, "");
+        final String jsonData = prefStore.getString(GAME_HISTORY_NAME, "");
         if (jsonData.isEmpty()) {
             return new HistoricGame[0];
         }

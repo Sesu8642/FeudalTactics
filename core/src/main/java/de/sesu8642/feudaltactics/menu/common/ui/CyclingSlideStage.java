@@ -26,12 +26,12 @@ public class CyclingSlideStage extends AbstractSlideStage {
     /**
      * Constructor.
      *
-     * @param viewport                viewport for the stage
-     * @param slides                  list of slides to display (must have at least 1)
-     * @param slideNames              names for each slide (must match slides size)
-     * @param platformInsetsProvider  provider for platform-specific insets
-     * @param camera                  camera for the stage
-     * @param skin                    game skin
+     * @param viewport               viewport for the stage
+     * @param slides                 list of slides to display (must have at least 1)
+     * @param slideNames             names for each slide (must match slides size)
+     * @param platformInsetsProvider provider for platform-specific insets
+     * @param camera                 camera for the stage
+     * @param skin                   game skin
      */
     public CyclingSlideStage(Viewport viewport, List<Slide> slides, List<String> slideNames,
                              PlatformInsetsProvider platformInsetsProvider, Runnable finishedCallback,
@@ -50,7 +50,7 @@ public class CyclingSlideStage extends AbstractSlideStage {
         slideContainer.setActor(currentSlide.getTable());
 
         cyclingButton = ButtonFactory.createTextButton("", skin);   // Text will be set later on reset()
-        TextButton finishButton = ButtonFactory.createTextButton("Finish", skin);
+        final TextButton finishButton = ButtonFactory.createTextButton("Finish", skin);
 
         cyclingButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(getNextIndex())));
         finishButton.addListener(new ExceptionLoggingChangeListener(() -> finishedCallback.run()));
@@ -68,8 +68,7 @@ public class CyclingSlideStage extends AbstractSlideStage {
     }
 
     @Override
-    protected void updateNavigationButtonStates()
-    {
+    protected void updateNavigationButtonStates() {
         cyclingButton.setText(slideNames.get(getNextIndex()));  // show next slide name
     }
 }

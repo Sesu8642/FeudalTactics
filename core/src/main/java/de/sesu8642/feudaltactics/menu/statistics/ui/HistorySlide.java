@@ -2,26 +2,11 @@
 
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.EnumMap;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
@@ -31,6 +16,15 @@ import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.EnumMap;
 
 /**
  * Represents the slide for displaying game history.
@@ -46,6 +40,7 @@ public class HistorySlide extends Slide {
     private final Drawable rowBackgroundDrawable;
 
     private final int MAX_DISPLAYED_GAMES = 100;
+    private final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     /**
      * Constructor.
@@ -58,12 +53,30 @@ public class HistorySlide extends Slide {
         super(skin, "Game History");
         this.historyDao = historyDao;
         this.skin = skin;
-        this.historyTable = new Table();
-        this.resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
-        this.rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
-        this.rowBackgroundDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, skin.getColor(SkinConstants.COLOR_FIELD));
+        historyTable = new Table();
+        resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
+        rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
+        rowBackgroundDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE,
+            skin.getColor(SkinConstants.COLOR_FIELD));
         getTable().add(historyTable).fill().expand();
         refreshHistory();
+    }
+
+    static private Color gameResult2BackgroundColor(HistoricGame.GameResult result) {
+        switch (result) {
+            case WIN: {
+                return Color.GREEN;
+            }
+            case LOSS: {
+                return Color.RED;
+            }
+            case ABORTED: {
+                return Color.YELLOW;
+            }
+            default: {
+                return Color.DARK_GRAY;
+            }
+        }
     }
 
     /*
@@ -77,7 +90,7 @@ public class HistorySlide extends Slide {
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
-        final Label roundsLabel = new Label("in round " +String.valueOf(game.getRoundsPlayed()), skin);
+        final Label roundsLabel = new Label("in round " + game.getRoundsPlayed(), skin);
         final Table resultTable = new Table();
         resultTable.add(resultCell).left();
         resultTable.row();
@@ -87,24 +100,24 @@ public class HistorySlide extends Slide {
         // Settings
         String settingsString = "Unknown settings";
         String hexagonString = "[#808080]h"; // Gray hexagon for unknown
-        NewGamePreferences gamePreferences = game.getGameSettings();
+        final NewGamePreferences gamePreferences = game.getGameSettings();
         if (gamePreferences != null) {
-            String difficulty = gamePreferences.getBotIntelligence() != null
-                    ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getBotIntelligence())
-                    : "Unknown";
-            String mapSize = gamePreferences.getMapSize() != null
-                    ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getMapSize())
-                    : "Unknown";
-            String mapDensity = gamePreferences.getDensity() != null
-                    ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getDensity())
-                    : "Unknown";
+            final String difficulty = gamePreferences.getBotIntelligence() != null
+                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getBotIntelligence())
+                : "Unknown";
+            final String mapSize = gamePreferences.getMapSize() != null
+                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getMapSize())
+                : "Unknown";
+            final String mapDensity = gamePreferences.getDensity() != null
+                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getDensity())
+                : "Unknown";
             settingsString = String.format("%s AI\n%s map\n%s density",
                 difficulty, mapSize, mapDensity);
 
-            Color playerColor = MapRenderer.PLAYER_COLOR_PALETTE.get(gamePreferences.getStartingPosition());
+            final Color playerColor = MapRenderer.PLAYER_COLOR_PALETTE.get(gamePreferences.getStartingPosition());
 
-                // markup must be enabled in the font for this coloring to work
-                // h is a hexagon character in the font
+            // markup must be enabled in the font for this coloring to work
+            // h is a hexagon character in the font
             hexagonString = String.format("[#%s]h", playerColor.toString());
         }
         final Label settingsLabel = new Label(settingsString, skin);
@@ -153,28 +166,8 @@ public class HistorySlide extends Slide {
 
     private Drawable getResultBackground(HistoricGame.GameResult result) {
         return resultBackgrounds.computeIfAbsent(result,
-                r -> skin.newDrawable(SkinConstants.DRAWABLE_WHITE, gameResult2BackgroundColor(r)));
+            r -> skin.newDrawable(SkinConstants.DRAWABLE_WHITE, gameResult2BackgroundColor(r)));
     }
-
-    static private Color gameResult2BackgroundColor(HistoricGame.GameResult result)
-    {
-        switch (result) {
-            case WIN: {
-                return Color.GREEN;
-            }
-            case LOSS: {
-                return Color.RED;
-            }
-            case ABORTED: {
-                return Color.YELLOW;
-            }
-            default: {
-                return Color.DARK_GRAY;
-            }
-        }
-    }
-
-    private final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     /**
      * Refreshes the history UI with the latest values.
@@ -192,7 +185,9 @@ public class HistorySlide extends Slide {
         }
 
         if (history.length > MAX_DISPLAYED_GAMES) {
-            Gdx.app.log("HistorySlide", "Displaying only the most recent " + MAX_DISPLAYED_GAMES + " games out of " + history.length + " total games.");
+            Gdx.app.log("HistorySlide",
+                "Displaying only the most recent " + MAX_DISPLAYED_GAMES + " games out of " + history.length + " " +
+                    "total games.");
             history = java.util.Arrays.copyOfRange(history, history.length - MAX_DISPLAYED_GAMES, history.length);
         }
 
@@ -201,17 +196,17 @@ public class HistorySlide extends Slide {
 
         // Show most recent games first
         for (int i = history.length - 1; i >= 0; i--) {
-            HistoricGame game = history[i];
+            final HistoricGame game = history[i];
 
-            LocalDate gameDate = Instant.ofEpochMilli(game.getTimestamp())
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
+            final LocalDate gameDate = Instant.ofEpochMilli(game.getTimestamp())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
 
             if (!gameDate.equals(lastDateHeading)) {
                 lastDateHeading = gameDate;
                 final Label dateHeading = new Label(
-                        localDateTimeFormatter.format(gameDate),
-                        skin, SkinConstants.FONT_HEADLINE);
+                    localDateTimeFormatter.format(gameDate),
+                    skin, SkinConstants.FONT_HEADLINE);
                 historyTable.row();
                 historyTable.add(dateHeading).colspan(4).left().padTop(10).padBottom(5);
             }

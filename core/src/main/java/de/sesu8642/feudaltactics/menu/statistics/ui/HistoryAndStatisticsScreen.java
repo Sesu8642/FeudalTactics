@@ -16,9 +16,13 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class HistoryAndStatisticsScreen extends GameScreen {
+
+    /**
+     * Constructor.
+     */
     @Inject
     public HistoryAndStatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                            HistoryAndStatisticsStage stage) {
+                                      HistoryAndStatisticsStage stage) {
         super(camera, viewport, stage);
     }
 

@@ -4,7 +4,8 @@ package de.sesu8642.feudaltactics.menu.common.ui;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
@@ -29,16 +30,16 @@ public class TabbedSlideStage extends AbstractSlideStage {
     /**
      * Constructor.
      *
-     * @param viewport                viewport for the stage
-     * @param slides                  list of slides to display
-     * @param tabNames                names for each tab button (must match slides size + 1 for back button)
-     * @param platformInsetsProvider  provider for platform-specific insets
-     * @param backCallback            callback to run when back button is pressed
-     * @param camera                  camera for the stage
-     * @param skin                    game skin
+     * @param viewport               viewport for the stage
+     * @param slides                 list of slides to display
+     * @param tabNames               names for each tab button (must match slides size + 1 for back button)
+     * @param platformInsetsProvider provider for platform-specific insets
+     * @param backCallback           callback to run when back button is pressed
+     * @param camera                 camera for the stage
+     * @param skin                   game skin
      */
     public TabbedSlideStage(Viewport viewport, List<Slide> slides, List<String> tabNames,
-                            PlatformInsetsProvider platformInsetsProvider, Runnable finishedCallback, 
+                            PlatformInsetsProvider platformInsetsProvider, Runnable finishedCallback,
                             OrthographicCamera camera, Skin skin) {
         super(viewport, slides, platformInsetsProvider, camera, skin);
         if (tabNames.size() != slides.size() + 1) {
@@ -74,7 +75,7 @@ public class TabbedSlideStage extends AbstractSlideStage {
     @Override
     protected void updateNavigationButtonStates() {
         for (int i = 0; i < tabButtons.size() - 1; i++) {
-            TextButton button = tabButtons.get(i);
+            final TextButton button = tabButtons.get(i);
             if (i == currentSlideIndex) {
                 button.setDisabled(true);
                 button.setTouchable(Touchable.disabled);

@@ -26,8 +26,8 @@ import de.sesu8642.feudaltactics.menu.play.ui.PlayMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
-import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 import de.sesu8642.feudaltactics.menu.statistics.ui.HistoryAndStatisticsScreen;
+import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

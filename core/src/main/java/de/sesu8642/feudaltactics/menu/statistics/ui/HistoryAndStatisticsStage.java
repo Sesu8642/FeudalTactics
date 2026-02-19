@@ -2,11 +2,6 @@
 
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
-import java.util.Arrays;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -16,6 +11,10 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.CyclingSlideStage;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.Arrays;
 
 /**
  * Represents the stage for the history and statistics screen with a button to switch between Statistics and History,
@@ -31,19 +30,19 @@ public class HistoryAndStatisticsStage extends CyclingSlideStage {
 
     @Inject
     public HistoryAndStatisticsStage(StatisticsSlide statisticsSlide,
-                           HistorySlide historySlide,
-                           @MenuViewport Viewport viewport,
-                           PlatformInsetsProvider platformInsetsProvider,
-                           @MenuCamera OrthographicCamera camera,
-                           Skin skin,
-                           ScreenNavigationController screenNavigationController) {
+                                     HistorySlide historySlide,
+                                     @MenuViewport Viewport viewport,
+                                     PlatformInsetsProvider platformInsetsProvider,
+                                     @MenuCamera OrthographicCamera camera,
+                                     Skin skin,
+                                     ScreenNavigationController screenNavigationController) {
         super(viewport,
-              Arrays.asList(historySlide, statisticsSlide),
-              Arrays.asList("History", "Statistics"),
-              platformInsetsProvider,
-              screenNavigationController::transitionToMainMenuScreen,
-              camera,
-              skin);
+            Arrays.asList(historySlide, statisticsSlide),
+            Arrays.asList("History", "Statistics"),
+            platformInsetsProvider,
+            screenNavigationController::transitionToMainMenuScreen,
+            camera,
+            skin);
         this.statisticsSlide = statisticsSlide;
         this.historySlide = historySlide;
     }
