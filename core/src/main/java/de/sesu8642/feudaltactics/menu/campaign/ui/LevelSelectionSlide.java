@@ -42,10 +42,8 @@ public class LevelSelectionSlide extends Slide {
      * Constructor.
      */
     @Inject
-    public LevelSelectionSlide(Skin skin, LocalizationManager localizationManager) {
+    public LevelSelectionSlide(Skin skin, MapPreviewFactory mapPreviewFactory, LocalizationManager localizationManager) {
         super(skin, localizationManager.localizeText("level-selection"));
-    public LevelSelectionSlide(Skin skin, MapPreviewFactory mapPreviewFactory) {
-        super(skin, "Level Selection");
 
         descriptionLabel = new Label("Lorem Ipsum", skin);
         descriptionLabel.setWrap(true);

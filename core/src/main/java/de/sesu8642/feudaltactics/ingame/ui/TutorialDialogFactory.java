@@ -161,4 +161,8 @@ public class TutorialDialogFactory {
         dialog.text(text);
     }
 
+    private void fillTutorialDialog12(FeudalTacticsDialog dialog) {
+        final String text = localizationManager.localizeText("tutorial-objective-12");
+        dialog.text(text);
+    }
 }
