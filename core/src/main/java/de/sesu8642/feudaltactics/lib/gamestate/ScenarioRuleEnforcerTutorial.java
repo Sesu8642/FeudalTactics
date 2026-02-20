@@ -84,12 +84,18 @@ public class ScenarioRuleEnforcerTutorial {
     }
 
     private static void updateObjectiveProgressFrom4(GameState gameState) {
-        if (gameState.getRound() > 0 && gameState.getActiveKingdom() != null) {
+        if (gameState.getRound() > 0 && gameState.getActivePlayer().getType() == Player.Type.LOCAL_PLAYER) {
             incrementObjectiveProgress(gameState);
         }
     }
 
     private static void updateObjectiveProgressFrom5(GameState gameState) {
+        if (gameState.getRound() > 0 && gameState.getActiveKingdom() != null) {
+            incrementObjectiveProgress(gameState);
+        }
+    }
+
+    private static void updateObjectiveProgressFrom6(GameState gameState) {
         if (gameState.getHeldObject() != null && ClassReflection.isAssignableFrom(Unit.class,
             gameState.getHeldObject().getClass())
             && gameState.getHeldObject().getStrength() == Unit.UnitTypes.SPEARMAN.strength()) {
@@ -107,13 +113,13 @@ public class ScenarioRuleEnforcerTutorial {
         }
     }
 
-    private static void updateObjectiveProgressFrom6(GameState gameState) {
+    private static void updateObjectiveProgressFrom7(GameState gameState) {
         if (gameState.getMap().get(new Vector2(9, -2)).getPlayer().getType() == Player.Type.LOCAL_PLAYER) {
             incrementObjectiveProgress(gameState);
         }
     }
 
-    private static void updateObjectiveProgressFrom7(GameState gameState) {
+    private static void updateObjectiveProgressFrom8(GameState gameState) {
         final HexTile treeTile = gameState.getMap().get(new Vector2(8, -2));
         if (treeTile.getContent() == null || !ClassReflection.isAssignableFrom(PalmTree.class,
             treeTile.getContent().getClass())) {
@@ -121,7 +127,7 @@ public class ScenarioRuleEnforcerTutorial {
         }
     }
 
-    private static void updateObjectiveProgressFrom8(GameState gameState) {
+    private static void updateObjectiveProgressFrom9(GameState gameState) {
         for (HexTile tile : gameState.getMap().values()) {
             if (tile.getPlayer().getType() == Player.Type.LOCAL_PLAYER
                 && tile.getContent() != null && ClassReflection.isAssignableFrom(Castle.class,
@@ -132,7 +138,7 @@ public class ScenarioRuleEnforcerTutorial {
         }
     }
 
-    private static void updateObjectiveProgressFrom9(GameState gameState) {
+    private static void updateObjectiveProgressFrom10(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer().getType() == Player.Type.LOCAL_PLAYER && kingdom.getTiles().size() >= 20) {
                 incrementObjectiveProgress(gameState);
@@ -141,7 +147,7 @@ public class ScenarioRuleEnforcerTutorial {
         }
     }
 
-    private static void updateObjectiveProgressFrom10(GameState gameState) {
+    private static void updateObjectiveProgressFrom11(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer().getType() == Player.Type.LOCAL_PLAYER && kingdom.getTiles().size() >= 25) {
                 incrementObjectiveProgress(gameState);

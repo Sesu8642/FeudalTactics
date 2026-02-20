@@ -78,6 +78,9 @@ public class TutorialDialogFactory {
             case 11:
                 fillTutorialDialog11(dialog);
                 break;
+            case 12:
+                fillTutorialDialog12(dialog);
+                break;
             default:
                 throw new IllegalStateException("Tutorial objective index is higher than expected: " + objectiveProgress);
         }
