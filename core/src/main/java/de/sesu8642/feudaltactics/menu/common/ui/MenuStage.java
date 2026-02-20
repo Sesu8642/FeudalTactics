@@ -49,7 +49,6 @@ public class MenuStage extends ResizableResettableStage {
      * @param mapRenderer renderer for the sea background
      * @param skin        game skin
      */
-    @Inject
     public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera,
                      PlatformInsetsProvider platformInsetsProvider,
                      MapRenderer mapRenderer, Skin skin, LocalizationManager localizationManager) {

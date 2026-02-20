@@ -17,23 +17,24 @@ import java.util.stream.Collectors;
 
 @Singleton
 public class LocalizationManager {
-    public static final String DEFAULT_LANGUAGE = "en";
-    private static final FileHandle LOCALISATION_FILE = Gdx.files.internal("i18n/strings");
+    public static final String DEFAULT_LANGUAGE_CODE = "en";
+    public static final String DEFAULT_LANGUAGE = "English";
+    private static final FileHandle BASE_LOCALISATION_FILE = Gdx.files.internal("i18n/strings");
 
     I18NBundle i18NBundle;
 
     @Inject
     public LocalizationManager(String language) {
-        Locale locale = new Locale(SupportedLanguages.getEncoding(language));
-        i18NBundle = I18NBundle.createBundle(LOCALISATION_FILE, locale, StandardCharsets.UTF_8.name());
+        Locale locale = new Locale(SupportedLanguages.getCode(language));
+        i18NBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE, locale, StandardCharsets.UTF_8.name());
     }
 
     /**
      * Get localized text in a specific locale without changing the current locale.
      */
     public String localizeTextInLocale(String locale, String text, Object... args) {
-        I18NBundle tempBundle = I18NBundle.createBundle(LOCALISATION_FILE,
-            new Locale(SupportedLanguages.getEncoding(locale)), StandardCharsets.UTF_8.name());
+        I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE,
+            new Locale(SupportedLanguages.getCode(locale)), StandardCharsets.UTF_8.name());
         return tempBundle.format(text, args);
     }
 
@@ -41,7 +42,7 @@ public class LocalizationManager {
         try {
             return i18NBundle.format(text, args);
         } catch (MissingResourceException e) {
-            return localizeTextInLocale(DEFAULT_LANGUAGE, text, args);
+            return localizeTextInLocale(DEFAULT_LANGUAGE_CODE, text, args);
         }
     }
 

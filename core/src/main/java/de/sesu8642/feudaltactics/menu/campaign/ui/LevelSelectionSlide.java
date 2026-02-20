@@ -38,7 +38,7 @@ public class LevelSelectionSlide extends Slide {
         mapPreviewWidget.setPosition(300, 150);
 
         descriptionLabel = new Label(
-            "",
+            "Lorem Ipsum",
             skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
