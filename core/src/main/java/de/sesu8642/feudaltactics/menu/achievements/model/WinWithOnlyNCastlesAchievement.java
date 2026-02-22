@@ -1,5 +1,8 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementGameStateTracker;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
@@ -37,7 +40,9 @@ public class WinWithOnlyNCastlesAchievement extends AbstractAchievement {
 
     @Override
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
-        final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
+        final GameState gameState = event.getGameState();
+        final NewGamePreferences gamePreferences = event.getGamePreferences();
+        
         if (gameState == null) {
             return;     // Ignore exits from editor or similar
         }
@@ -48,11 +53,13 @@ public class WinWithOnlyNCastlesAchievement extends AbstractAchievement {
             return; // too many castles built
         }
 
-        // TODO: Check the map size
+        if (gamePreferences.getMapSize().getAmountOfTiles() < NewGamePreferences.MapSizes.LARGE.getAmountOfTiles()) {
+            return; // map size too small
+        }
 
-        final de.sesu8642.feudaltactics.lib.gamestate.Player winnerOfTheGame = gameState.getWinner();
+        final Player winnerOfTheGame = gameState.getWinner();
 
-        if (winnerOfTheGame != null && winnerOfTheGame.getType() == de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER
+        if (winnerOfTheGame != null && winnerOfTheGame.getType() == Player.Type.LOCAL_PLAYER
             && gameState.getBotIntelligence() == Intelligence.LEVEL_4){
             storeProgress(1); // unlock
         }

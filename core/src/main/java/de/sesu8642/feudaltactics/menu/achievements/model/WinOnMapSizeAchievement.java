@@ -43,8 +43,10 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
         final Player winnerOfTheGame = gameState.getWinner();
 
         if (winnerOfTheGame != null && winnerOfTheGame.getType() == Player.Type.LOCAL_PLAYER) {
-            // TODO: Check the map size. This is easy after merging PR #116
-            storeProgress(1);   // unlock
+            NewGamePreferences gamePreferences = event.getGamePreferences();
+            if (gamePreferences.getMapSize() == mapSize) {
+                storeProgress(1);   // unlock
+            }
         }
     }
 }
