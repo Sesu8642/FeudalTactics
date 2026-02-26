@@ -12,21 +12,29 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Represents the UI screen for displaying statistics.
+ * Represents the UI screen for displaying history and statistics.
  */
 @Singleton
-public class StatisticsScreen extends GameScreen {
+public class HistoryAndStatisticsScreen extends GameScreen {
+
+    HistoryAndStatisticsStage stage;
+
+    /**
+     * Constructor.
+     */
     @Inject
-    public StatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                            StatisticsStage stage) {
+    public HistoryAndStatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
+                                      HistoryAndStatisticsStage stage) {
         super(camera, viewport, stage);
+        this.stage = stage;
     }
 
     @Override
     public void show() {
         super.show();
 
-        final StatisticsStage statisticsStage = (StatisticsStage) getActiveStage();
-        statisticsStage.getStatisticsSlide().refreshStatistics();
+        // Refresh all slides when screen is shown
+        stage.getStatisticsSlide().refreshStatistics();
+        stage.getHistorySlide().refreshHistory();
     }
 }

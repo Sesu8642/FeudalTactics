@@ -26,8 +26,8 @@ import de.sesu8642.feudaltactics.menu.play.ui.PlayMenuScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreen;
 import de.sesu8642.feudaltactics.menu.preferences.ui.PreferencesScreenEventHandler;
 import de.sesu8642.feudaltactics.menu.splashscreen.ui.SplashScreen;
+import de.sesu8642.feudaltactics.menu.statistics.ui.HistoryAndStatisticsScreen;
 import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
-import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsScreen;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,7 +51,7 @@ public class ScreenNavigationController {
     private final Provider<PlayMenuScreen> playMenuScreenProvider;
     private final Provider<GameScreen> aboutScreenProvider;
     private final Provider<PreferencesScreen> preferencesScreenProvider;
-    private final Provider<StatisticsScreen> statisticsScreenProvider;
+    private final Provider<HistoryAndStatisticsScreen> historyAndStatisticsScreenProvider;
     private final Provider<InformationMenuPage1Screen> informationMenuScreenProvider;
     private final Provider<InformationMenuPage2Screen> informationMenuScreen2Provider;
     private final Provider<DependencyLicensesScreen> dependencyLicensesScreenProvider;
@@ -81,7 +81,7 @@ public class ScreenNavigationController {
         Provider<PlayMenuScreen> playMenuScreenProvider,
         @AboutScreen Provider<GameScreen> aboutScreenProvider,
         Provider<PreferencesScreen> preferencesScreenProvider,
-        Provider<StatisticsScreen> statisticsScreenProvider,
+        Provider<HistoryAndStatisticsScreen> historyAndStatisticsScreenProvider,
         Provider<InformationMenuPage1Screen> informationMenuScreenProvider,
         Provider<InformationMenuPage2Screen> informationMenuScreen2Provider,
         Provider<DependencyLicensesScreen> dependencyLicensesScreenProvider,
@@ -105,7 +105,7 @@ public class ScreenNavigationController {
         this.playMenuScreenProvider = playMenuScreenProvider;
         this.aboutScreenProvider = aboutScreenProvider;
         this.preferencesScreenProvider = preferencesScreenProvider;
-        this.statisticsScreenProvider = statisticsScreenProvider;
+        this.historyAndStatisticsScreenProvider = historyAndStatisticsScreenProvider;
         this.informationMenuScreenProvider = informationMenuScreenProvider;
         this.informationMenuScreen2Provider = informationMenuScreen2Provider;
         this.dependencyLicensesScreenProvider = dependencyLicensesScreenProvider;
@@ -232,10 +232,10 @@ public class ScreenNavigationController {
 
 
     /**
-     * Transitions to the statistics screen.
+     * Transitions to the history and statistics screen.
      */
-    public void transitionToStatisticsScreen() {
-        changeScreen(statisticsScreenProvider.get());
+    public void transitionToHistoryAndStatisticsScreen() {
+        changeScreen(historyAndStatisticsScreenProvider.get());
     }
 
     private void changeScreen(Screen screen) {

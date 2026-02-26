@@ -7,13 +7,21 @@ package de.sesu8642.feudaltactics.menu.common.ui;
  */
 public final class SkinConstants {
 
+    public static final String DEFAULT_NAME = "default";
     public static final String FONT_HEADLINE = "headline";
+    public static final String FONT_BUTTON = "button";
+    public static final String FONT_SMALLER_TEXT = "smallerText";
+    public static final String FONT_DEFAULT_TEXT = "text";
     public static final String FONT_OVERLAY = "overlay";
     public static final String FONT_OVERLAY_WITH_BACKGROUND = "overlay_w_bg";
     public static final String FONT_HEXAGON = "bestagon";
     public static final String COLOR_HIGHLIGHT2 = "highlight2";
     public static final String COLOR_DISABLED = "disabled";
     public static final String COLOR_BACKGROUND = "background";
+    /* Cyan color used for menu backgrounds */
+    public static final String COLOR_FIELD = "field";
+    /* 1x1 base drawable that can be tinted to create solid-color rectangles */
+    public static final String DRAWABLE_WHITE = "white";
     public static final String SEMI_TRANSPARENT_BACKGROUND_DRAWABLE = "black_semi_transparent";
     public static final String BUTTON_SPEED_HALF = "half_speed";
     public static final String BUTTON_SPEED_REGULAR = "regular_speed";

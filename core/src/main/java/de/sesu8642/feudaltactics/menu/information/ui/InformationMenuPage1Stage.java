@@ -29,8 +29,8 @@ import java.util.List;
 @Singleton
 public class InformationMenuPage1Stage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("about", "report-crash", "statistics", "page_2"
-        , "back");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("about", "report-crash", "game-history",
+        "page_2", "back");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}

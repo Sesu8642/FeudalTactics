@@ -4,7 +4,8 @@ package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.Preferences;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.statistics.dagger.StatisticsPrefsPrefStore;
+import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
+import de.sesu8642.feudaltactics.menu.statistics.dagger.StatisticsPrefStore;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,19 +28,19 @@ public class StatisticsDao {
     private final Preferences prefStore;
 
     @Inject
-    public StatisticsDao(@StatisticsPrefsPrefStore Preferences statisticsPrefs) {
+    public StatisticsDao(@StatisticsPrefStore Preferences statisticsPrefs) {
         prefStore = statisticsPrefs;
     }
 
-    public void incrementGamesWon(Intelligence aiDifficulty) {
+    private void incrementGamesWon(Intelligence aiDifficulty) {
         incrementCountingStat(GAMES_WON_NAME + "-AI" + aiDifficulty.name());
     }
 
-    public void incrementGamesLost(Intelligence aiDifficulty) {
+    private void incrementGamesLost(Intelligence aiDifficulty) {
         incrementCountingStat(GAMES_LOST_NAME + "-AI" + aiDifficulty.name());
     }
 
-    public void incrementGamesAborted(Intelligence aiDifficulty) {
+    private void incrementGamesAborted(Intelligence aiDifficulty) {
         incrementCountingStat(GAMES_ABORTED_NAME + "-AI" + aiDifficulty.name());
     }
 
@@ -75,5 +76,21 @@ public class StatisticsDao {
 
     public void incrementSeedsGenerated() {
         incrementCountingStat(MAPS_GENERATED_NAME);
+    }
+
+    public void registerPlayedGame(Intelligence aiDifficulty, GameResult gameResult) {
+        switch (gameResult) {
+            case WIN:
+                incrementGamesWon(aiDifficulty);
+                break;
+            case LOSS:
+                incrementGamesLost(aiDifficulty);
+                break;
+            case ABORTED:
+                incrementGamesAborted(aiDifficulty);
+                break;
+            default:
+                throw new IllegalStateException("Unknown GameResult " + gameResult);
+        }
     }
 }

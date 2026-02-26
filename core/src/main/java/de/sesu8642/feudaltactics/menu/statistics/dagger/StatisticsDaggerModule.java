@@ -7,6 +7,7 @@ import com.badlogic.gdx.Preferences;
 import dagger.Module;
 import dagger.Provides;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
+import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 
 import javax.inject.Singleton;
@@ -24,9 +25,15 @@ public class StatisticsDaggerModule {
 
     @Provides
     @Singleton
-    @StatisticsPrefsPrefStore
+    @StatisticsPrefStore
     static Preferences provideStatisticsPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
         return Gdx.app.getPreferences(prefix + StatisticsDao.STATISTICS_NAME);
     }
 
+    @Provides
+    @Singleton
+    @HistoryPrefStore
+    static Preferences provideHistoryPrefsPrefStore(@PreferencesPrefixProperty String prefix) {
+        return Gdx.app.getPreferences(prefix + HistoryDao.HISTORY_NAME);
+    }
 }

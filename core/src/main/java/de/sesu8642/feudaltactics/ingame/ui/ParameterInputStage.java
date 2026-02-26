@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -29,31 +30,8 @@ import java.util.stream.Collectors;
  */
 public class ParameterInputStage extends ResizableResettableStage {
 
-    /**
-     * Outer padding around all the inputs.
-     */
-    public static final int OUTER_PADDING_PX = 10;
-    /**
-     * Height of the play button.
-     */
-    public static final long BUTTON_HEIGHT_PX = 85;
-
-    // for map centering calculation
-    /**
-     * Padding below all the inputs.
-     */
-    public static final long BOTTOM_PADDING_PX = 11;
-    /**
-     * Width of all parameter inputs combined; depends on label texts and used font.
-     */
-    public static final long TOTAL_INPUT_WIDTH = 457;
-    private static final long INPUT_HEIGHT_PX = 74;
+    private static final int OUTER_PADDING_PX = 10;
     private static final int INPUT_PADDING_PX = 20;
-    /**
-     * Height of all parameter inputs combined.
-     */
-    public static final long TOTAL_INPUT_HEIGHT = OUTER_PADDING_PX + 5 * INPUT_PADDING_PX + BUTTON_HEIGHT_PX
-        + 5 * INPUT_HEIGHT_PX;
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
     private final LocalizationManager localizationManager;
@@ -68,6 +46,7 @@ public class ParameterInputStage extends ResizableResettableStage {
     TextButton playButton;
     TextField seedTextField;
     private Table rootTable;
+    private Table seedTable;
 
     /**
      * Constructor.
@@ -132,10 +111,11 @@ public class ParameterInputStage extends ResizableResettableStage {
         final float maxSeedNumberWidth = new GlyphLayout(seedTextField.getStyle().font, "7").width;
         final float seedTextFieldWidth = maxSeedNumberWidth * 20;
 
-        final Table seedTable = new Table();
+        seedTable = new Table();
         seedTable.defaults().uniformX();
         seedTable.add(seedTextField).colspan(2).fill().expand();
-        seedTable.add(randomButton).height(INPUT_HEIGHT_PX).width(INPUT_HEIGHT_PX);
+        seedTable.add(randomButton).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1,
+            difficultySelect));
 
         backButton = ButtonFactory.createTextButton(localizationManager.localizeText("back"), skin);
         playButton = ButtonFactory.createTextButton(localizationManager.localizeText("play"), skin);
@@ -157,20 +137,18 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.add().expandX();
         rootTable.row();
         rootTable.add(startingPositionLabel);
-        rootTable.add(startingPositionSelect).fillX().minHeight(INPUT_HEIGHT_PX);
+        rootTable.add(startingPositionSelect).fillX();
         rootTable.row();
         rootTable.add(difficultyLabel);
         rootTable.add(difficultySelect).fillX();
         rootTable.row();
         rootTable.add(sizeLabel);
         rootTable.add(sizeSelect).fillX();
-        rootTable.add(copyButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
-            .width(INPUT_HEIGHT_PX);
+        rootTable.add(copyButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1));
         rootTable.row();
         rootTable.add(densityLabel);
         rootTable.add(densitySelect).fillX();
-        rootTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(INPUT_HEIGHT_PX)
-            .width(INPUT_HEIGHT_PX);
+        rootTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1));
         rootTable.row();
         rootTable.add(buttonTable).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
             OUTER_PADDING_PX);
@@ -183,7 +161,7 @@ public class ParameterInputStage extends ResizableResettableStage {
      */
     public void updateNumberOfStartingPositions(int numberOfStartingPositions) {
         // markup must be enabled in the font for this coloring to work
-        // h is a hexagon chraracter in the font
+        // h is a hexagon character in the font
         final List<String> startingPositions = MapRenderer.PLAYER_COLOR_PALETTE.stream()
             .map(color -> String.format("[#%s]hhh", color.toString())).collect(Collectors.toList());
         final List<String> limitedStartingPositions = startingPositions.subList(0, numberOfStartingPositions);
@@ -228,13 +206,49 @@ public class ParameterInputStage extends ResizableResettableStage {
         return startingPositionSelect.getSelectedIndex();
     }
 
+    /**
+     * Returns the vertical distance above the inputs.
+     */
+    public float getAvailableHeightAboveInputs() {
+        return Gdx.graphics.getHeight() - seedTable.getY() - seedTable.getHeight();
+    }
+
+    /**
+     * Returns the horizontal distance available above the inputs.
+     */
+    public float getAvailableWidthAboveInputs() {
+        return Gdx.graphics.getWidth();
+    }
+
+    /**
+     * Returns the vertical distance available next to the inputs.
+     */
+    public float getAvailableHeightNextToInputs() {
+        return Gdx.graphics.getHeight() - playButton.getY() - playButton.getHeight();
+    }
+
+    /**
+     * Returns the horizontal distance available next to the inputs.
+     */
+    public float getAvailableWidthNextToInputs() {
+        return Gdx.graphics.getWidth() - sizeSelect.getWidth() - sizeSelect.getX();
+    }
+
+    /**
+     * Returns the bottom left point of empty space next to the inputs.
+     */
+    public Vector2 getAreaNextToInputsBottomLeftPoint() {
+        return new Vector2(sizeSelect.getX() + sizeSelect.getWidth(), playButton.getY() + playButton.getHeight());
+    }
+
     @Override
     public void updateOnResize(int width, int height) {
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
-        // VERY IMPORTANT!!! makes everything scale correctly on startup and going
-        // fullscreen etc.; took me hours to find out
-        rootTable.pack();
+        if (rootTable.getWidth() == 0) {
+            // packing the root table so the buttons take their correct square shape initially
+            rootTable.pack();
+        }
     }
 
     @Override
