@@ -11,11 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import java.util.List;
@@ -33,6 +35,8 @@ public class AchievementsSlide extends Slide {
     private final Table achievementsTable;
     private final AchievementRepository achievementRepository;
     private final DialogFactory dialogFactory;
+    private final Drawable achievementBackgroundLockedDrawable;
+    private final Drawable achievementBackgroundUnlockedDrawable;
 
     /**
      * Constructor.
@@ -45,6 +49,9 @@ public class AchievementsSlide extends Slide {
         this.skin = skin;
         this.achievementRepository = achievementRepository;
         this.dialogFactory = dialogFactory;
+
+        this.achievementBackgroundLockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.GRAY);
+        this.achievementBackgroundUnlockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.LIME);
 
         achievementsTable = new Table();
         getTable().add(achievementsTable).fill().expand();
@@ -92,6 +99,9 @@ public class AchievementsSlide extends Slide {
     private Window displayAchievement(AbstractAchievement achievement) {
         Window achievementWindow = new Window(achievement.getName(), skin);
 
+        achievementWindow.setMovable(false);
+
+
         // Set fixed size for the achievement window
         achievementWindow.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
 
@@ -109,13 +119,16 @@ public class AchievementsSlide extends Slide {
         }
 
         if (achievement.isUnlocked()) {
-            achievementWindow.setColor(0.5f, 1f, 0.5f, 1f); // Greenish for unlocked
+            achievementWindow.background(achievementBackgroundUnlockedDrawable);
+
             // Create a label with a white font color
             LabelStyle whiteLabelStyle = new LabelStyle(skin.get(LabelStyle.class));
             whiteLabelStyle.fontColor = Color.WHITE;
             Label progressLabel = new Label("Unlocked", whiteLabelStyle);
             achievementWindow.add(progressLabel).row();
         } else {
+            achievementWindow.background(achievementBackgroundLockedDrawable);
+
             ProgressBar progressBar = new ProgressBar(0, achievement.getGoal(), 1, false, skin);
             progressBar.setValue(achievement.getProgress());
             achievementWindow.add(progressBar).row();
