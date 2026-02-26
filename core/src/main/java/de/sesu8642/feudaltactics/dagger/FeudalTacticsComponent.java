@@ -9,6 +9,7 @@ import de.sesu8642.feudaltactics.GameInitializer;
 import de.sesu8642.feudaltactics.editor.dagger.EditorDaggerModule;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameDaggerModule;
 import de.sesu8642.feudaltactics.menu.about.dagger.AboutDaggerModule;
+import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsDaggerModule;
 import de.sesu8642.feudaltactics.menu.changelog.dagger.ChangelogDaggerModule;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuDaggerModule;
 import de.sesu8642.feudaltactics.menu.crashreporting.GameCrasher;
@@ -27,7 +28,7 @@ import javax.inject.Singleton;
  **/
 @Component(modules = {MainDaggerModule.class, ConfigDaggerModule.class, CrashReportingDaggerModule.class,
     EditorDaggerModule.class, IngameDaggerModule.class, MenuDaggerModule.class, AboutDaggerModule.class,
-    ChangelogDaggerModule.class, InformationMenuDaggerModule.class, PrefsDaggerModule.class,
+    AchievementsDaggerModule.class, ChangelogDaggerModule.class, InformationMenuDaggerModule.class, PrefsDaggerModule.class,
     StatisticsDaggerModule.class, RendererDaggerModule.class})
 @Singleton
 public interface FeudalTacticsComponent {
