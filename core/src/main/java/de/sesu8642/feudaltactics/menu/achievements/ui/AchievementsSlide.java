@@ -61,7 +61,7 @@ public class AchievementsSlide extends Slide {
     /* Width of a single achievement box */
     private final static float ACHIEVEMENT_WINDOW_WIDTH = 300f;
     /* Height of a single achievement box */
-    private final static float ACHIEVEMENT_WINDOW_HEIGHT = 160f;
+    private final static float ACHIEVEMENT_WINDOW_HEIGHT = 200f;
 
     /**
      * Refreshes the achievements UI with the latest values.
@@ -101,7 +101,6 @@ public class AchievementsSlide extends Slide {
 
         achievementWindow.setMovable(false);
 
-
         // Set fixed size for the achievement window
         achievementWindow.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
 
@@ -117,6 +116,9 @@ public class AchievementsSlide extends Slide {
                 titleTable.getCell(titleLabel).width(ACHIEVEMENT_WINDOW_WIDTH - 40);
             }
         }
+
+        // Reserve space at the top for the title
+        achievementWindow.padTop(80);
 
         if (achievement.isUnlocked()) {
             achievementWindow.background(achievementBackgroundUnlockedDrawable);
