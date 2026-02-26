@@ -42,7 +42,11 @@ public class LocalizationManager {
         try {
             return i18NBundle.format(text, args);
         } catch (MissingResourceException e) {
-            return localizeTextInLocale(DEFAULT_LANGUAGE_CODE, text, args);
+            try {
+                return localizeTextInLocale(DEFAULT_LANGUAGE_CODE, text, args);
+            } catch (MissingResourceException e2) {
+                return String.format("[missing: '%s']", text);
+            }
         }
     }
 
