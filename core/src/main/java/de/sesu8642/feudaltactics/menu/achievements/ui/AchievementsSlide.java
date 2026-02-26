@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
@@ -99,6 +101,7 @@ public class AchievementsSlide extends Slide {
     private Window displayAchievement(AbstractAchievement achievement) {
         Window achievementWindow = new Window(achievement.getName(), skin);
 
+        // The user shall not move around the achievement boxes. They align themselves
         achievementWindow.setMovable(false);
 
         // Set fixed size for the achievement window
@@ -117,13 +120,17 @@ public class AchievementsSlide extends Slide {
             }
         }
 
+        WindowStyle previousStyle = achievementWindow.getStyle();
+        Window.WindowStyle windowStyle = new Window.WindowStyle(previousStyle.titleFont, Color.BLACK, achievementBackgroundLockedDrawable);
+        achievementWindow.setStyle(windowStyle);
+
         // Reserve space at the top for the title
         achievementWindow.padTop(80);
 
         if (achievement.isUnlocked()) {
             achievementWindow.background(achievementBackgroundUnlockedDrawable);
 
-            // Create a label with a white font color
+            // Create a label with a white font color. TODO: It doesn't work, though ... result is black
             LabelStyle whiteLabelStyle = new LabelStyle(skin.get(LabelStyle.class));
             whiteLabelStyle.fontColor = Color.WHITE;
             Label progressLabel = new Label("Unlocked", whiteLabelStyle);
