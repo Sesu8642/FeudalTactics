@@ -2,16 +2,13 @@
 
 package de.sesu8642.feudaltactics.dagger;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionHandler;
-import com.ray3k.stripe.FreeTypeSkin;
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
+import de.sesu8642.feudaltactics.menu.common.ui.SkinFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +39,7 @@ public class MainDaggerModule {
     @Provides
     @Singleton
     static Skin provideSkin() {
-        final FreeTypeSkin skin = new FreeTypeSkin(Gdx.files.internal("skin/pixthulhu-ui.json"));
-        // set some additional things that are not configurable in the skin composer directly
-        final Label.LabelStyle style = skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, Label.LabelStyle.class);
-        style.font.getData().markupEnabled = true;
-        return skin;
+        return SkinFactory.createSkin();
     }
 
     @Provides

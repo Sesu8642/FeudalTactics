@@ -85,6 +85,7 @@ public class HistorySlide extends Slide {
      */
     private void placeHistoryEntry(HistoricGame game) {
         // Create table for the actual content
+        // TODO: too wide on phones after scaling fonts properly
         final Table contentTable = new Table();
         contentTable.pad(10);
         contentTable.background(rowBackgroundDrawable);

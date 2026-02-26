@@ -21,7 +21,6 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
-import de.sesu8642.feudaltactics.menu.common.ui.Margin;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
@@ -114,32 +113,7 @@ public class EditorScreen extends GameScreen {
      * Centers the map in the available screen space.
      */
     void centerMap() {
-        final Margin centeringMargin = calculateMapScreenArea();
-        eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
-            centeringMargin.marginTop, centeringMargin.marginRight));
-    }
-
-    /**
-     * Calculates where the map should be placed to have the most room while not
-     * being behind the UI elements.
-     *
-     * @return Vector of margin to the left and margin to the bottom where the map
-     * should not be rendered. The rest of the screen can be used.
-     */
-    // TODO: extract this duplicate code
-    private Margin calculateMapScreenArea() {
-        // calculate what is the bigger rectangular area for the map to fit: above the
-        // inputs or to their right
-        final float aboveArea =
-            ingameCamera.viewportWidth * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT);
-        final float rightArea =
-            (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH) * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX - ParameterInputStage.OUTER_PADDING_PX);
-        if (aboveArea > rightArea) {
-            return new Margin(0, ParameterInputStage.TOTAL_INPUT_HEIGHT, 0, 0);
-        } else {
-            return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
-                ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
-        }
+        eventBus.post(new CenterMapEvent(cachedGameState, 0, 0, 0, 0));
     }
 
     @Override

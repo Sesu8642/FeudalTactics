@@ -7,7 +7,11 @@ package de.sesu8642.feudaltactics.menu.common.ui;
  */
 public final class SkinConstants {
 
+    public static final String DEFAULT_NAME = "default";
     public static final String FONT_HEADLINE = "headline";
+    public static final String FONT_BUTTON = "button";
+    public static final String FONT_SMALLER_TEXT = "smallerText";
+    public static final String FONT_DEFAULT_TEXT = "text";
     public static final String FONT_OVERLAY = "overlay";
     public static final String FONT_OVERLAY_WITH_BACKGROUND = "overlay_w_bg";
     public static final String FONT_HEXAGON = "bestagon";

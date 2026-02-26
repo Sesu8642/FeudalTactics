@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -361,18 +362,18 @@ public class IngameScreen extends GameScreen {
     private Margin calculateMapScreenArea() {
         // calculate what is the bigger rectangular area for the map to fit: above the
         // inputs or to their right
-        final float aboveArea = ingameCamera.viewportWidth
-            * (ingameCamera.viewportHeight - ParameterInputStage.TOTAL_INPUT_HEIGHT - platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
-        final float rightArea = (ingameCamera.viewportWidth - ParameterInputStage.TOTAL_INPUT_WIDTH)
-            * (ingameCamera.viewportHeight - ParameterInputStage.BUTTON_HEIGHT_PX
-            - ParameterInputStage.OUTER_PADDING_PX);
+        final float aboveArea =
+            parameterInputStage.getAvailableHeightAboveInputs() * parameterInputStage.getAvailableWidthAboveInputs();
+        final float rightArea =
+            parameterInputStage.getAvailableHeightNextToInputs() * parameterInputStage.getAvailableWidthNextToInputs();
         if (aboveArea > rightArea) {
             return new Margin(0,
-                ParameterInputStage.TOTAL_INPUT_HEIGHT + platformInsetsProvider.getInsets(Gdx.app).getBottomInset(),
+                (long) (Gdx.graphics.getHeight() - parameterInputStage.getAvailableHeightAboveInputs()),
                 0, 0);
         } else {
-            return new Margin(ParameterInputStage.TOTAL_INPUT_WIDTH,
-                ParameterInputStage.BUTTON_HEIGHT_PX + ParameterInputStage.OUTER_PADDING_PX, 0, 0);
+            final Vector2 areaNextToInputsBottomLeftPoint = parameterInputStage.getAreaNextToInputsBottomLeftPoint();
+            return new Margin((long) areaNextToInputsBottomLeftPoint.x,
+                (long) areaNextToInputsBottomLeftPoint.y, 0, 0);
         }
     }
 
