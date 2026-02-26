@@ -25,16 +25,16 @@ public class LocalizationManager {
 
     @Inject
     public LocalizationManager(String language) {
-        Locale locale = new Locale(SupportedLanguages.getCode(language));
+        final Locale locale = new Locale(SupportedLanguages.getCode(language));
         i18NBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE, locale, StandardCharsets.UTF_8.name());
     }
 
     /**
      * Get localized text in a specific locale without changing the current locale.
      */
-    public String localizeTextInLocale(String locale, String text, Object... args) {
-        I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE,
-            new Locale(SupportedLanguages.getCode(locale)), StandardCharsets.UTF_8.name());
+    public String localizeTextInLocale(String localeLanguageCode, String text, Object... args) {
+        final I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE,
+            new Locale(localeLanguageCode), StandardCharsets.UTF_8.name());
         return tempBundle.format(text, args);
     }
 
