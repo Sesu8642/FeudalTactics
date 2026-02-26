@@ -14,11 +14,11 @@ public class SupportedLanguages {
 
     private static final String[] SUPPORTED_LANGUAGES_ARRAY = LANGUAGE_TO_CODE.keySet().toArray(new String[0]);
 
-    public static String getCode(String language){
+    public static String getCode(String language) {
         return LANGUAGE_TO_CODE.get(language);
     }
 
-    public static String[] getSupportedLanguages(){
-        return  SUPPORTED_LANGUAGES_ARRAY;
+    public static String[] getSupportedLanguages() {
+        return SUPPORTED_LANGUAGES_ARRAY;
     }
 }

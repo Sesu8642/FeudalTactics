@@ -30,7 +30,8 @@ public class TutorialDialogFactory {
      * Constructor.
      */
     @Inject
-    public TutorialDialogFactory(DialogFactory dialogFactory, TextureAtlasHelper textureAtlasHelper, LocalizationManager localizationManager) {
+    public TutorialDialogFactory(DialogFactory dialogFactory, TextureAtlasHelper textureAtlasHelper,
+                                 LocalizationManager localizationManager) {
         this.dialogFactory = dialogFactory;
         this.textureAtlasHelper = textureAtlasHelper;
         this.localizationManager = localizationManager;

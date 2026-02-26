@@ -15,7 +15,6 @@ import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,13 +32,12 @@ public class MenuStage extends ResizableResettableStage {
     private final Skin skin;
     private final OrthographicCamera camera;
     Set<Disposable> disposables = new HashSet<>();
+    LocalizationManager localizationManager;
     private Table rootTable;
     @Getter(AccessLevel.PROTECTED)
     private Table bottomLeftTable;
     @Getter(AccessLevel.PROTECTED)
     private Table bottomRightTable;
-
-    LocalizationManager localizationManager;
 
     /**
      * Constructor.
@@ -66,7 +64,7 @@ public class MenuStage extends ResizableResettableStage {
         disposables.add(logoTexture);
         for (String buttonText : buttonTexts) {
             final TextButton button =
-                ButtonFactory.createTextButton(this.localizationManager.localizeText(buttonText), skin);
+                ButtonFactory.createTextButton(localizationManager.localizeText(buttonText), skin);
             buttons.add(button);
         }
         bottomLeftTable = new Table();

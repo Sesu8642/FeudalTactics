@@ -42,7 +42,8 @@ public class PreferencesSlide extends Slide {
 
         final Table preferencesTable = new Table();
 
-        forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText("warn-about-forgotten-kingdoms"),
+        forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText(
+                "warn-about-forgotten-kingdoms"),
             skin);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable,
             localizationManager.localizeText("show-enemy-turns"), skin);
@@ -58,7 +59,8 @@ public class PreferencesSlide extends Slide {
         getTable().add(preferencesTable).fill().expand();
     }
 
-    private SelectBox<String> placeStringSelectWithLabel(Table preferencesTable, String labelText, Skin skin, String[] options) {
+    private SelectBox<String> placeStringSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
+                                                         String[] options) {
         final Label newLabel = new Label(labelText, skin);
         newLabel.setWrap(true);
         preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);

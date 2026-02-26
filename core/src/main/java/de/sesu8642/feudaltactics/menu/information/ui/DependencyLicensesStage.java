@@ -33,7 +33,8 @@ public class DependencyLicensesStage extends SlideStage {
                                    @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                                    @MenuCamera OrthographicCamera camera, Skin skin,
                                    LocalizationManager localizationManager) {
-        super(viewport, Collections.singletonList(dependencyListSlide), platformInsetsProvider, camera, skin, localizationManager);
+        super(viewport, Collections.singletonList(dependencyListSlide), platformInsetsProvider, camera, skin,
+            localizationManager);
         this.dependencyListSlide = dependencyListSlide;
     }
 

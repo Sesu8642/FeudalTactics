@@ -51,7 +51,8 @@ class BotAiIntegrationTest {
     MainPreferencesDao prefsDaoStub;
 
     // do not wait in tests
-    MainGamePreferences stubPreferences = new MainGamePreferences(false, false, LocalizationManager.DEFAULT_LANGUAGE_CODE);
+    MainGamePreferences stubPreferences = new MainGamePreferences(false, false,
+        LocalizationManager.DEFAULT_LANGUAGE_CODE);
 
     @InjectMocks
     private BotAi systemUnderTest;

@@ -37,7 +37,8 @@ public class CrashReportStage extends SlideStage {
     public CrashReportStage(CrashReportSlide crashReportSlide, PlatformInsetsProvider platformInsetsProvider,
                             @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin,
                             LocalizationManager localizationManager) {
-        super(viewport, Collections.singletonList(crashReportSlide), platformInsetsProvider, camera, skin, localizationManager);
+        super(viewport, Collections.singletonList(crashReportSlide), platformInsetsProvider, camera, skin,
+            localizationManager);
         this.crashReportSlide = crashReportSlide;
     }
 

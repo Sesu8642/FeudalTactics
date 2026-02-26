@@ -437,13 +437,15 @@ public class IngameScreen extends GameScreen {
         // exit button
         final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("confirm-lost-progress"),
+            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("confirm" +
+                    "-lost-progress"),
                 this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("confirm-lost-progress"),
+            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("confirm" +
+                    "-lost-progress"),
                 this::resetGame);
             confirmDialog.show(menuStage);
         }));

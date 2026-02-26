@@ -8,12 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.utils.Align;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.menu.common.ui.MapPreviewFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.MapPreviewWidget;
-import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import javax.inject.Inject;
@@ -42,7 +42,8 @@ public class LevelSelectionSlide extends Slide {
      * Constructor.
      */
     @Inject
-    public LevelSelectionSlide(Skin skin, MapPreviewFactory mapPreviewFactory, LocalizationManager localizationManager) {
+    public LevelSelectionSlide(Skin skin, MapPreviewFactory mapPreviewFactory,
+                               LocalizationManager localizationManager) {
         super(skin, localizationManager.localizeText("level-selection"));
 
         descriptionLabel = new Label("Lorem Ipsum", skin);

@@ -32,7 +32,8 @@ public class LevelSelectionStage extends SlideStage {
         , @MenuViewport Viewport viewport,
                                @MenuCamera OrthographicCamera camera, Skin skin,
                                LocalizationManager localizationManager) {
-        super(viewport, Collections.singletonList(levelSelectionSlide), platformInsetsProvider, camera, skin, localizationManager);
+        super(viewport, Collections.singletonList(levelSelectionSlide), platformInsetsProvider, camera, skin,
+            localizationManager);
         this.levelSelectionSlide = levelSelectionSlide;
     }
 

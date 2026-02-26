@@ -184,7 +184,8 @@ public class NewGamePreferences {
             localizationManager.localizeText(EnumDisplayNameConverter.getDisplayName(mapSize)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(DENSITY_KEY),
             localizationManager.localizeText(EnumDisplayNameConverter.getDisplayName(density)))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(NUMBER_OF_BOT_PLAYERS_KEY),
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
+            localizationManager.localizeText(NUMBER_OF_BOT_PLAYERS_KEY),
             numberOfBotPlayers);
     }
 
@@ -196,7 +197,8 @@ public class NewGamePreferences {
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_KEY, startingPosition + 1)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_KEY,
             EnumDisplayNameConverter.getDisplayName(botIntelligence))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_KEY, EnumDisplayNameConverter.getDisplayName(mapSize))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_KEY,
+            EnumDisplayNameConverter.getDisplayName(mapSize))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_KEY,
             EnumDisplayNameConverter.getDisplayName(density))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, NUMBER_OF_BOT_PLAYERS_DISPLAY_KEY, numberOfBotPlayers);

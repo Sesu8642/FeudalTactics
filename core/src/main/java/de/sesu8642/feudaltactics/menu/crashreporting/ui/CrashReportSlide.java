@@ -48,7 +48,8 @@ public class CrashReportSlide extends Slide {
 
         copyButton = ButtonFactory.createCopyButton(localizationManager.localizeText("copy-button"), skin, true);
         sendMailButton = ButtonFactory.createTextButton(localizationManager.localizeText("send-email-redirect"), skin);
-        openGithubButton = ButtonFactory.createTextButton(localizationManager.localizeText("open-github-redirect"), skin);
+        openGithubButton = ButtonFactory.createTextButton(localizationManager.localizeText("open-github-redirect"),
+            skin);
 
         buttonGroup = new HorizontalGroup();
         buttonGroup.addActor(copyButton);

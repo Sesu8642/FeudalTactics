@@ -177,7 +177,8 @@ public class IngameScreenDialogHelper {
     }
 
     void showCannotEndTurnMessage(Stage stage) {
-        final Dialog dialog = dialogFactory.createInformationDialog(localizationManager.localizeText("cannot-end-turn-text"), () -> {
+        final Dialog dialog = dialogFactory.createInformationDialog(localizationManager.localizeText("cannot-end-turn" +
+            "-text"), () -> {
         });
         dialog.show(stage);
     }
@@ -197,7 +198,8 @@ public class IngameScreenDialogHelper {
             + newGamePreferences.toDisplayString(localizationManager);
         final FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
-        addShareOrCopyButtonToDialog(localizationManager.localizeText("sharing-preemble-ongoing"), dialog, newGamePreferences
+        addShareOrCopyButtonToDialog(localizationManager.localizeText("sharing-preemble-ongoing"), dialog,
+            newGamePreferences
             , ScenarioMap.NONE);
         dialog.show(stage);
     }
