@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
@@ -41,6 +42,7 @@ public class EditorScreen extends GameScreen {
     private final EventBus eventBus;
     private final EditorHudStage editorHudStage;
     private final TextureAtlasHelper textureAtlasHelper;
+    private final LocalizationManager localizationManager;
 
     List<TileContent> possibleTileContents = ImmutableList.of(new Unit(Unit.UnitTypes.PEASANT),
         new Unit(Unit.UnitTypes.SPEARMAN), new Unit(Unit.UnitTypes.KNIGHT), new Unit(Unit.UnitTypes.BARON),
@@ -67,7 +69,7 @@ public class EditorScreen extends GameScreen {
                         @IngameRenderer MapRenderer mapRenderer, EventBus eventBus,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputMultiplexer inputMultiplexer, EditorHudStage editorHudStage,
-                        TextureAtlasHelper textureAtlasHelper) {
+                        TextureAtlasHelper textureAtlasHelper, LocalizationManager localizationManager) {
         super(ingameCamera, viewport, editorHudStage);
         this.ingameCamera = ingameCamera;
         this.screenNavigationController = screenNavigationController;
@@ -76,6 +78,7 @@ public class EditorScreen extends GameScreen {
         this.eventBus = eventBus;
         this.editorHudStage = editorHudStage;
         this.textureAtlasHelper = textureAtlasHelper;
+        this.localizationManager = localizationManager;
         addHudListeners();
 
         inputMultiplexer.addProcessor(editorHudStage);
@@ -104,7 +107,7 @@ public class EditorScreen extends GameScreen {
         cachedGameState = GameStateHelper.getCopy(newGameState);
         // update the UI
 
-        final String hudStageInfoText = "Map Size: " + newGameState.getMap().size();
+        final String hudStageInfoText = localizationManager.localizeText("map-size-info", newGameState.getMap().size());
 
         editorHudStage.infoTextLabel.setText(hudStageInfoText);
     }

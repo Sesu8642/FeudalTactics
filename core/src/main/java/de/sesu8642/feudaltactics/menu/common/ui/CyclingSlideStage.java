@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class CyclingSlideStage extends AbstractSlideStage {
 
+    private final LocalizationManager localizationManager;
     private final List<String> slideNames;
     private TextButton cyclingButton;
     @Setter
@@ -35,8 +37,9 @@ public class CyclingSlideStage extends AbstractSlideStage {
      */
     public CyclingSlideStage(Viewport viewport, List<Slide> slides, List<String> slideNames,
                              PlatformInsetsProvider platformInsetsProvider, Runnable finishedCallback,
-                             OrthographicCamera camera, Skin skin) {
+                             OrthographicCamera camera, Skin skin, LocalizationManager localizationManager) {
         super(viewport, slides, platformInsetsProvider, camera, skin);
+        this.localizationManager = localizationManager;
         if (slideNames.size() != slides.size()) {
             throw new IllegalArgumentException("slideNames size must match slides size");
         }
@@ -50,7 +53,8 @@ public class CyclingSlideStage extends AbstractSlideStage {
         slideContainer.setActor(currentSlide.getTable());
 
         cyclingButton = ButtonFactory.createTextButton("", skin);   // Text will be set later on reset()
-        final TextButton finishButton = ButtonFactory.createTextButton("Finish", skin);
+        final TextButton finishButton = ButtonFactory.createTextButton(localizationManager.localizeText("finish"),
+            skin);
 
         cyclingButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(getNextIndex())));
         finishButton.addListener(new ExceptionLoggingChangeListener(() -> finishedCallback.run()));

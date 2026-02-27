@@ -18,6 +18,9 @@ public class MainGamePreferences {
     @Getter
     @Setter
     private boolean showEnemyTurns;
+    @Getter
+    @Setter
+    private String language;
 
     /**
      * Constructor.
@@ -27,10 +30,12 @@ public class MainGamePreferences {
      *                                   the turn.
      * @param showEnemyTurns             whether to visualize the enemies doing
      *                                   their turns
+     * @param language                   the language display name e.g "English"
      */
-    public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns) {
+    public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns, String language) {
         this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
         this.showEnemyTurns = showEnemyTurns;
+        this.language = language;
     }
 
     @Override

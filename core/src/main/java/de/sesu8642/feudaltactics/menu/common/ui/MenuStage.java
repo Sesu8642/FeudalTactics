@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import lombok.AccessLevel;
@@ -33,6 +34,7 @@ public class MenuStage extends ResizableResettableStage {
     private final Skin skin;
     private final OrthographicCamera camera;
     Set<Disposable> disposables = new HashSet<>();
+    LocalizationManager localizationManager;
     private Table rootTable;
     @Getter(AccessLevel.PROTECTED)
     private Table bottomLeftTable;
@@ -49,12 +51,13 @@ public class MenuStage extends ResizableResettableStage {
      */
     public MenuStage(Viewport viewport, List<String> buttonTexts, OrthographicCamera camera,
                      PlatformInsetsProvider platformInsetsProvider,
-                     MapRenderer mapRenderer, Skin skin) {
+                     MapRenderer mapRenderer, Skin skin, LocalizationManager localizationManager) {
         super(viewport);
         this.camera = camera;
         this.platformInsetsProvider = platformInsetsProvider;
         this.mapRenderer = mapRenderer;
         this.skin = skin;
+        this.localizationManager = localizationManager;
         initUi(buttonTexts);
     }
 
@@ -62,7 +65,8 @@ public class MenuStage extends ResizableResettableStage {
         final Texture logoTexture = new Texture(Gdx.files.internal("logo.png"));
         disposables.add(logoTexture);
         for (String buttonText : buttonTexts) {
-            final TextButton button = ButtonFactory.createTextButton(buttonText, skin);
+            final TextButton button =
+                ButtonFactory.createTextButton(localizationManager.localizeText(buttonText), skin);
             buttons.add(button);
         }
         bottomLeftTable = new Table();

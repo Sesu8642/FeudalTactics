@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
@@ -33,11 +34,11 @@ public class CrashReportSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public CrashReportSlide(Skin skin) {
-        super(skin, "Report a Crash");
+    public CrashReportSlide(Skin skin, LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText("report-a-crash"));
 
         descriptionLabel = new Label(
-            "Feudal Tactics previously crashed. Please report the following information via email or GitHub.",
+            localizationManager.localizeText("report-crash-instruction"),
             skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
@@ -45,9 +46,10 @@ public class CrashReportSlide extends Slide {
         textArea = new TextArea("", skin);
         textArea.setDisabled(true);
 
-        copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
-        sendMailButton = ButtonFactory.createTextButton("Send Email ↗", skin);
-        openGithubButton = ButtonFactory.createTextButton("Open GitHub ↗", skin);
+        copyButton = ButtonFactory.createCopyButton(localizationManager.localizeText("copy-button"), skin, true);
+        sendMailButton = ButtonFactory.createTextButton(localizationManager.localizeText("send-email-redirect"), skin);
+        openGithubButton = ButtonFactory.createTextButton(localizationManager.localizeText("open-github-redirect"),
+            skin);
 
         buttonGroup = new HorizontalGroup();
         buttonGroup.addActor(copyButton);

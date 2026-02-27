@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -28,10 +29,10 @@ import java.util.List;
 @Singleton
 public class MainMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Play", "Level Editor", "Preferences",
-        "Information", "Community (Matrix) ↗");
-    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("Play", "Preferences",
-        "Information", "Community (Matrix) ↗");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("play", "level-editor", "preferences",
+        "community-redirect");
+    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("play", "preferences",
+        "information", "community-redirect");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -40,12 +41,13 @@ public class MainMenuStage extends MenuStage {
     public MainMenuStage(@MenuViewport Viewport viewport,
                          @MenuBackgroundCamera OrthographicCamera camera, PlatformInsetsProvider platformInsetsProvider,
                          @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
-                         @VersionProperty String gameVersion, @EnableLevelEditorProperty boolean levelEditorEnabled) {
+                         @VersionProperty String gameVersion, @EnableLevelEditorProperty boolean levelEditorEnabled,
+                         LocalizationManager localizationManager) {
         super(viewport, levelEditorEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR, camera,
-            platformInsetsProvider, mapRenderer, skin);
-        final Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
+            platformInsetsProvider, mapRenderer, skin, localizationManager);
+        final Label bottomRightLabel = new Label(String.format("%s %s",
+            localizationManager.localizeText("version"), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }
-
 }

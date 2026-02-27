@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ApplicationStub;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
@@ -50,7 +51,8 @@ class BotAiIntegrationTest {
     MainPreferencesDao prefsDaoStub;
 
     // do not wait in tests
-    MainGamePreferences stubPreferences = new MainGamePreferences(false, false);
+    MainGamePreferences stubPreferences = new MainGamePreferences(false, false,
+        LocalizationManager.DEFAULT_LANGUAGE_CODE);
 
     @InjectMocks
     private BotAi systemUnderTest;

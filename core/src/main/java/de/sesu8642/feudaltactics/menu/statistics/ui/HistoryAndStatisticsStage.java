@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -35,14 +36,16 @@ public class HistoryAndStatisticsStage extends CyclingSlideStage {
                                      PlatformInsetsProvider platformInsetsProvider,
                                      @MenuCamera OrthographicCamera camera,
                                      Skin skin,
-                                     ScreenNavigationController screenNavigationController) {
+                                     ScreenNavigationController screenNavigationController,
+                                     LocalizationManager localizationManager) {
         super(viewport,
             Arrays.asList(historySlide, statisticsSlide),
             Arrays.asList("History", "Statistics"),
             platformInsetsProvider,
             screenNavigationController::transitionToMainMenuScreen,
             camera,
-            skin);
+            skin,
+            localizationManager);
         this.statisticsSlide = statisticsSlide;
         this.historySlide = historySlide;
     }

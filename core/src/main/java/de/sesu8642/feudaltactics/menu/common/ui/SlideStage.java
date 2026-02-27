@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
 
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class SlideStage extends AbstractSlideStage {
 
+    private final LocalizationManager localizationManager;
     private TextButton backButton;
     private TextButton nextButton;
     @Setter
@@ -27,21 +29,23 @@ public class SlideStage extends AbstractSlideStage {
      * Constructor.
      */
     public SlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
-                      OrthographicCamera camera, Skin skin) {
+                      OrthographicCamera camera, Skin skin, LocalizationManager localizationManager) {
         this(viewport, slides, platformInsetsProvider, () -> {
-        }, camera, skin);
+        }, camera, skin, localizationManager);
     }
 
     /**
      * Constructor.
      */
     public SlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
-                      Runnable finishedCallback, OrthographicCamera camera, Skin skin) {
+                      Runnable finishedCallback, OrthographicCamera camera, Skin skin,
+                      LocalizationManager localizationManager) {
         super(viewport, slides, platformInsetsProvider, camera, skin);
         if (slides.isEmpty()) {
             throw new IllegalArgumentException("at least one slide is required");
         }
         this.finishedCallback = finishedCallback;
+        this.localizationManager = localizationManager;
         initUi();
     }
 
@@ -72,9 +76,9 @@ public class SlideStage extends AbstractSlideStage {
     @Override
     protected void updateNavigationButtonStates() {
         if (slides.size() == currentSlideIndex + 1) {
-            nextButton.setText("Finish");
+            nextButton.setText(localizationManager.localizeText("finish"));
         } else {
-            nextButton.setText("Next");
+            nextButton.setText(localizationManager.localizeText("next"));
         }
         if (currentSlideIndex == 0) {
             backButton.setTouchable(Touchable.disabled);
@@ -83,7 +87,7 @@ public class SlideStage extends AbstractSlideStage {
         } else {
             backButton.setTouchable(Touchable.enabled);
             backButton.setDisabled(false);
-            backButton.setText("Back");
+            backButton.setText(localizationManager.localizeText("back"));
         }
     }
 }
