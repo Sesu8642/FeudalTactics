@@ -70,6 +70,7 @@ public class PreferencesScreen extends GameScreen {
             String selectedLanguageCode = SupportedLanguages.getCode(
                 preferencesStage.preferencesSlide.getLanguageSelectBox().getSelected());
             if (selectedLanguageCode.equals(currentLanguageCode)) {
+                sendPreferencesChangedEvent();
                 return;
             }
 
