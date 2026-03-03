@@ -11,6 +11,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.BuyNCastlesAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAi;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinInNTurnsAchievement;
@@ -54,6 +55,7 @@ public class AchievementRepository {
         list.add(new WinInNRoundsAchievement(this, 16));
         list.add(new WinInNRoundsAchievement(this, 15));
         list.add(new WinInNRoundsAchievement(this, 14));
+        list.add(new LoseAgainstWeakestAi(this));
         list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
         list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker));
