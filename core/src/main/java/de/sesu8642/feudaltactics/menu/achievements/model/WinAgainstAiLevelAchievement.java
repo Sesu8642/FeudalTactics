@@ -42,5 +42,4 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
             storeProgress(1); // unlock
         }
     }
-    
 }
