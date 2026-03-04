@@ -65,26 +65,25 @@ public class ParameterInputStage extends ResizableResettableStage {
     }
 
     private void initUi() {
-        final Label startingPositionLabel = new Label(localizationManager.localizeText("starting-position")
-            .replace(" ", "\n"),
+        final Label startingPositionLabel = new Label(localizationManager.localizeText("starting-position"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
-        final Label difficultyLabel = new Label(localizationManager.localizeText("cpu-difficulty")
-            .replace(" ", "\n"), skin.get(SkinConstants.FONT_OVERLAY,
+        final Label difficultyLabel = new Label(localizationManager.localizeText("cpu-difficulty"),
+            skin.get(SkinConstants.FONT_OVERLAY,
             LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
         difficultySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DIFFICULTIES).toArray(new String[0]));
 
-        final Label sizeLabel = new Label(localizationManager.localizeText("map-size")
-            .replace(" ", "\n"), skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label sizeLabel = new Label(localizationManager.localizeText("map-size"),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
         sizeSelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.MAP_SIZES).toArray(new String[0]));
 
-        final Label densityLabel = new Label(localizationManager.localizeText("map-density")
-            .replace(" ", "\n"), skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label densityLabel = new Label(localizationManager.localizeText("map-density"),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
         densitySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DENSITIES).toArray(new String[0]));
 
