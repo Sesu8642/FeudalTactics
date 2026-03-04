@@ -14,8 +14,8 @@ import de.sesu8642.feudaltactics.menu.achievements.model.BuyNCastlesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAi;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstManyEnemiesAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinInMoreThanNRoundsAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinInNTurnsAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
@@ -56,6 +56,8 @@ public class AchievementRepository {
         list.add(new WinInNRoundsAchievement(this, 16));
         list.add(new WinInNRoundsAchievement(this, 15));
         list.add(new WinInNRoundsAchievement(this, 14));
+        list.add(new WinInMoreThanNRoundsAchievement(this, 25));
+        list.add(new WinInMoreThanNRoundsAchievement(this, 35));
         list.add(new LoseAgainstWeakestAi(this));
         list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
