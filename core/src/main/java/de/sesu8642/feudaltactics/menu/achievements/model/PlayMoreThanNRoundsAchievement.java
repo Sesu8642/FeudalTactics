@@ -2,11 +2,11 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
-public class WinInMoreThanNRoundsAchievement extends AbstractAchievement {
+public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
 
     private final int roundCount;
 
-    public WinInMoreThanNRoundsAchievement(AchievementRepository repository, int roundCount) {
+    public PlayMoreThanNRoundsAchievement(AchievementRepository repository, int roundCount) {
         super(repository, 1);
         this.roundCount = roundCount;
     }
@@ -33,11 +33,7 @@ public class WinInMoreThanNRoundsAchievement extends AbstractAchievement {
             return;     // Ignore exits from editor or similar
         }
 
-        final de.sesu8642.feudaltactics.lib.gamestate.Player winnerOfTheGame = gameState.getWinner();
-        if (winnerOfTheGame != null || winnerOfTheGame.getType() != de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER)
-            return;     // Player didn't win, so ignore
-
-        if ( gameState.getWinningRound() >= roundCount) {
+        if ( gameState.getRound() >= roundCount) {
             storeProgress(1); // unlock
         }
     }
