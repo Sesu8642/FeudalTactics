@@ -127,7 +127,8 @@ public class TutorialDialogFactory {
             localizationManager.localizeText("tutorial-unit-table-salary")
         ));
         for (UnitTypes unitType : UnitTypes.values()) {
-            tableData.add(Arrays.asList(EnumDisplayNameConverter.getLocalizedDisplayName(unitType, localizationManager),
+            tableData.add(Arrays.asList(GameStateEnumDisplayNameConverter.getLocalizedDisplayName(unitType,
+                            localizationManager),
                 String.valueOf(unitType.strength()),
                 String.valueOf(unitType.salary())));
         }

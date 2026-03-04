@@ -8,8 +8,6 @@ import de.sesu8642.feudaltactics.menu.preferences.dagger.GamePrefsPrefStore;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static de.sesu8642.feudaltactics.LocalizationManager.DEFAULT_LANGUAGE;
-
 /**
  * Data access object for the main preferences.
  */
@@ -36,7 +34,7 @@ public class MainPreferencesDao {
     public void saveMainPreferences(MainGamePreferences prefs) {
         prefStore.putBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, prefs.isWarnAboutForgottenKingdoms());
         prefStore.putBoolean(SHOW_ENEMY_TURNS_NAME, prefs.isShowEnemyTurns());
-        prefStore.putString(LANGUAGE_NAME, prefs.getLanguage());
+        prefStore.putString(LANGUAGE_NAME, prefs.getLanguage().getLanguageTag());
         prefStore.flush();
     }
 
@@ -48,7 +46,8 @@ public class MainPreferencesDao {
     public MainGamePreferences getMainPreferences() {
         final boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, true);
         final boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME, true);
-        final String language = prefStore.getString(LANGUAGE_NAME, DEFAULT_LANGUAGE);
+        final String languageTag = prefStore.getString(LANGUAGE_NAME);
+        final SupportedLanguages language = SupportedLanguages.fromLanguageTag(languageTag);
         return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns, language);
     }
 }

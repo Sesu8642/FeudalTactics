@@ -50,6 +50,6 @@ public class PreferencesStage extends SlideStage {
         final MainGamePreferences currentPreferences = mainPrefsDao.getMainPreferences();
         preferencesSlide.getForgottenKingdomSelectBox().setSelected(currentPreferences.isWarnAboutForgottenKingdoms());
         preferencesSlide.getShowEnemyTurnsSelectBox().setSelected(currentPreferences.isShowEnemyTurns());
-        preferencesSlide.getLanguageSelectBox().setSelected(currentPreferences.getLanguage());
+        preferencesSlide.getLanguageSelectBox().setSelected(currentPreferences.getLanguage().getDisplayName());
     }
 }

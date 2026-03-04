@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.ingame;
 
 import de.sesu8642.feudaltactics.LocalizationManager;
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
+import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import lombok.Getter;
 import lombok.Setter;
@@ -122,16 +122,17 @@ public class NewGamePreferences {
                         break;
                     case BOT_INTELLIGENCE_DISPLAY_KEY:
                         final Intelligence botIntelligence =
-                            EnumDisplayNameConverter.getBotIntelligenceFromDisplayName(secondStringPart);
+                            GameStateEnumDisplayNameConverter.getBotIntelligenceFromDisplayNameCode(secondStringPart);
                         preferences.setBotIntelligence(botIntelligence);
                         break;
                     case MAP_SIZE_DISPLAY_KEY:
-                        final MapSizes mapSize = EnumDisplayNameConverter.getMapSizeFromDisplayName(secondStringPart);
+                        final MapSizes mapSize =
+                            GameStateEnumDisplayNameConverter.getMapSizeFromDisplayNameCode(secondStringPart);
                         preferences.setMapSize(mapSize);
                         break;
                     case DENSITY_DISPLAY_KEY:
                         final Densities mapDensity =
-                            EnumDisplayNameConverter.getMapDensityFromDisplayName(secondStringPart);
+                            GameStateEnumDisplayNameConverter.getMapDensityFromDisplayNameCode(secondStringPart);
                         preferences.setDensity(mapDensity);
                         break;
                     case STARTING_POSITION_DISPLAY_KEY:
@@ -179,11 +180,11 @@ public class NewGamePreferences {
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(STARTING_POSITION_KEY),
             startingPosition + 1)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(BOT_INTELLIGENCE_KEY),
-            localizationManager.localizeText(EnumDisplayNameConverter.getDisplayName(botIntelligence)))
+            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(botIntelligence)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(MAP_SIZE_KEY),
-            localizationManager.localizeText(EnumDisplayNameConverter.getDisplayName(mapSize)))
+            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(mapSize)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(DENSITY_KEY),
-            localizationManager.localizeText(EnumDisplayNameConverter.getDisplayName(density)))
+            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(density)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
             localizationManager.localizeText(NUMBER_OF_BOT_PLAYERS_KEY),
             numberOfBotPlayers);
@@ -196,11 +197,11 @@ public class NewGamePreferences {
         return String.format(PARAMETER_DISPLAY_FORMAT, SEED_DISPLAY_KEY, seed)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_KEY, startingPosition + 1)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_KEY,
-            EnumDisplayNameConverter.getDisplayName(botIntelligence))
+            GameStateEnumDisplayNameConverter.getDisplayNameCode(botIntelligence))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_KEY,
-            EnumDisplayNameConverter.getDisplayName(mapSize))
+            GameStateEnumDisplayNameConverter.getDisplayNameCode(mapSize))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_KEY,
-            EnumDisplayNameConverter.getDisplayName(density))
+            GameStateEnumDisplayNameConverter.getDisplayNameCode(density))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, NUMBER_OF_BOT_PLAYERS_DISPLAY_KEY, numberOfBotPlayers);
     }
 

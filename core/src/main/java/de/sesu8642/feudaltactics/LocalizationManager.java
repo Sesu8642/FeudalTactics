@@ -15,41 +15,56 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.stream.Collectors;
 
+/**
+ * Offers functionality to get translated texts according to the current language setting.
+ */
 @Singleton
 public class LocalizationManager {
-    public static final String DEFAULT_LANGUAGE_CODE = "en";
-    public static final String DEFAULT_LANGUAGE = "English";
     private static final FileHandle BASE_LOCALISATION_FILE = Gdx.files.internal("i18n/strings");
 
-    I18NBundle i18NBundle;
+    private final I18NBundle i18NBundle;
 
     @Inject
-    public LocalizationManager(String language) {
-        final Locale locale = new Locale(SupportedLanguages.getCode(language));
+    public LocalizationManager(SupportedLanguages language) {
+        final Locale locale = language.getLocale();
         i18NBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE, locale, StandardCharsets.UTF_8.name());
     }
 
     /**
-     * Get localized text in a specific locale without changing the current locale.
+     * Returns a localized text in a given locale without changing the current locale.
+     *
+     * @param key  the key for the desired string
+     * @param args the arguments to be replaced in the string associated to the given key.
      */
-    public String localizeTextInLocale(String localeLanguageCode, String text, Object... args) {
-        final I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE,
-            new Locale(localeLanguageCode), StandardCharsets.UTF_8.name());
-        return tempBundle.format(text, args);
+    public String localizeTextInLanguage(SupportedLanguages language, String key, Object... args) {
+        final I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE, language.getLocale(),
+            StandardCharsets.UTF_8.name());
+        return tempBundle.format(key, args);
     }
 
-    public String localizeText(String text, Object... args) {
+    /**
+     * Returns a localized text in the current locale.
+     *
+     * @param key  the key for the desired string
+     * @param args the arguments to be replaced in the string associated to the given key.
+     */
+    public String localizeText(String key, Object... args) {
         try {
-            return i18NBundle.format(text, args);
+            return i18NBundle.format(key, args);
         } catch (MissingResourceException e) {
             try {
-                return localizeTextInLocale(DEFAULT_LANGUAGE_CODE, text, args);
+                return localizeTextInLanguage(SupportedLanguages.getFallback(), key, args);
             } catch (MissingResourceException e2) {
-                return String.format("[missing: '%s']", text);
+                return String.format("[missing: '%s']", key);
             }
         }
     }
 
+    /**
+     * Returns multiple localized texts in the current locale.
+     *
+     * @param keys the keys for the desired strings
+     */
     public List<String> localizeTextBatch(List<String> keys) {
         return keys.stream().map(this::localizeText).collect(Collectors.toList());
     }

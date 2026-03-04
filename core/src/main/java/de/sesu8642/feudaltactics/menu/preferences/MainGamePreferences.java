@@ -2,14 +2,14 @@
 
 package de.sesu8642.feudaltactics.menu.preferences;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Objects;
 
 /**
  * Value object: main preferences.
  */
+@EqualsAndHashCode
 public class MainGamePreferences {
 
     @Getter
@@ -20,7 +20,7 @@ public class MainGamePreferences {
     private boolean showEnemyTurns;
     @Getter
     @Setter
-    private String language;
+    private SupportedLanguages language;
 
     /**
      * Constructor.
@@ -30,32 +30,13 @@ public class MainGamePreferences {
      *                                   the turn.
      * @param showEnemyTurns             whether to visualize the enemies doing
      *                                   their turns
-     * @param language                   the language display name e.g "English"
+     * @param language                   language for the UI
      */
-    public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns, String language) {
+    public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns,
+                               SupportedLanguages language) {
         this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
         this.showEnemyTurns = showEnemyTurns;
         this.language = language;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(showEnemyTurns, warnAboutForgottenKingdoms);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MainGamePreferences other = (MainGamePreferences) obj;
-        return showEnemyTurns == other.showEnemyTurns && warnAboutForgottenKingdoms == other.warnAboutForgottenKingdoms;
     }
 
 }

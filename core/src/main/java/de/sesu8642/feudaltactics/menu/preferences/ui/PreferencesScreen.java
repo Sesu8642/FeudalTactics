@@ -18,6 +18,7 @@ import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 /**
@@ -31,7 +32,11 @@ public class PreferencesScreen extends GameScreen {
     private final EventBus eventBus;
     private final LocalizationManager localizationManager;
     private final DialogFactory dialogFactory;
-    private String currentLanguageCode;
+    /**
+     * Locale used at the time of opening the preferences. Using the locale instead of the Language enum because that
+     * would require handling the auto option specifically.
+     */
+    private Locale currentLocale;
 
 
     @Inject
@@ -57,7 +62,7 @@ public class PreferencesScreen extends GameScreen {
             new MainGamePreferences(
                 preferencesStage.preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
                 preferencesStage.preferencesSlide.getShowEnemyTurnsSelectBox().getSelected(),
-                preferencesStage.preferencesSlide.getLanguageSelectBox().getSelected())));
+                SupportedLanguages.values()[preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex()])));
     }
 
     private void registerEventListeners() {
@@ -67,16 +72,17 @@ public class PreferencesScreen extends GameScreen {
                 .addListener(new ExceptionLoggingChangeListener(this::sendPreferencesChangedEvent)));
 
         preferencesStage.preferencesSlide.getLanguageSelectBox().addListener(new ExceptionLoggingChangeListener(() -> {
-            String selectedLanguageCode = SupportedLanguages.getCode(
-                preferencesStage.preferencesSlide.getLanguageSelectBox().getSelected());
-            if (selectedLanguageCode.equals(currentLanguageCode)) {
+            final SupportedLanguages selectedLanguage =
+                SupportedLanguages.values()[preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex()];
+            if (selectedLanguage.getLocale().equals(currentLocale)) {
                 sendPreferencesChangedEvent();
                 return;
             }
 
             // Show bilingual restart prompt
-            String oldLanguageText = localizationManager.localizeText("restart-game-prompt");
-            String newLanguageText = localizationManager.localizeTextInLocale(selectedLanguageCode, "restart-game-prompt");
+            final String oldLanguageText = localizationManager.localizeText("restart-game-prompt");
+            final String newLanguageText = localizationManager.localizeTextInLanguage(selectedLanguage, "restart-game" +
+                "-prompt");
 
             sendPreferencesChangedEvent();
 
@@ -88,7 +94,7 @@ public class PreferencesScreen extends GameScreen {
 
     @Override
     public void show() {
-        currentLanguageCode = SupportedLanguages.getCode(mainPrefsDao.getMainPreferences().getLanguage());
+        currentLocale = mainPrefsDao.getMainPreferences().getLanguage().getLocale();
         super.show();
     }
 }

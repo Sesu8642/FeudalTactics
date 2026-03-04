@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import de.sesu8642.feudaltactics.LocalizationManager;
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
+import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
@@ -89,7 +89,7 @@ public class StatisticsSlide extends Slide {
         final Intelligence[] aiLevels = Intelligence.values();
         for (Intelligence level : aiLevels) {
             placeHeading(localizationManager.localizeText("ai-statistics",
-                EnumDisplayNameConverter.getLocalizedDisplayName(level, localizationManager)));
+                GameStateEnumDisplayNameConverter.getLocalizedDisplayName(level, localizationManager)));
             placeIntegerWithLabel("  " + localizationManager.localizeText("games-won"),
                 gamesWon.getCountByAiLevel().get(level));
             placeIntegerWithLabel("  " + localizationManager.localizeText("games-lost"),
