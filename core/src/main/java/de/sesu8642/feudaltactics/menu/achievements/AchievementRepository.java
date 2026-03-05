@@ -43,7 +43,7 @@ public class AchievementRepository {
 
     @Inject
     public AchievementRepository(
-            @AchievementsPrefStore Preferences achievementsPrefs, 
+            @AchievementsPrefStore Preferences achievementsPrefs,
             AutoSaveRepository autoSaveRepository,
             AchievementGameStateTracker gameStateTracker) {
         this.prefStore = achievementsPrefs;
@@ -56,13 +56,13 @@ public class AchievementRepository {
         list.add(new WinInNRoundsAchievement(this, 16));
         list.add(new WinInNRoundsAchievement(this, 15));
         list.add(new WinInNRoundsAchievement(this, 14).setName("Jeanne d'Arc"));    // Jeanne d'Arc won battles when she was very young
-        list.add(new PlayMoreThanNRoundsAchievement(this, 25));
+        list.add(new PlayMoreThanNRoundsAchievement(this, 25).setName("Thirty Years' War"));
         list.add(new PlayMoreThanNRoundsAchievement(this, 35).setName("Hundred Years’ War"));    // The Hundred Years' War lasted very long obviously
         list.add(new LoseAgainstWeakestAi(this).setName("Road to Canossa"));    // The Walk to Canossa was a humiliation. And so is this achievement.
         list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
         list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker).setName("Henry VIII"));    // Henry VIII built much military infrastructure
-        list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker));
+        list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker).setName("Holy Roman Emperor Henry VI")); // Henry VI was a travelling king who had no fixed castle, but still won many battles
         list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
