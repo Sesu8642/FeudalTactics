@@ -103,6 +103,9 @@ public class AchievementsSlide extends Slide {
 
         // The user shall not move around the achievement boxes. They align themselves
         achievementWindow.setMovable(false);
+        // This window is rendered inside a ScrollPane. Keep-within-stage clamping makes
+        // windows stick to the bottom while scrolling instead of being clipped out.
+        achievementWindow.setKeepWithinStage(false);
 
         // Set fixed size for the achievement window
         achievementWindow.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
@@ -130,10 +133,7 @@ public class AchievementsSlide extends Slide {
         if (achievement.isUnlocked()) {
             achievementWindow.background(achievementBackgroundUnlockedDrawable);
 
-            // Create a label with a white font color. TODO: It doesn't work, though ... result is black
-            LabelStyle whiteLabelStyle = new LabelStyle(skin.get(LabelStyle.class));
-            whiteLabelStyle.fontColor = Color.WHITE;
-            Label progressLabel = new Label("Unlocked", whiteLabelStyle);
+            Label progressLabel = new Label("Unlocked", skin);
             achievementWindow.add(progressLabel).row();
         } else {
             achievementWindow.background(achievementBackgroundLockedDrawable);
