@@ -9,18 +9,13 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
     private final Intelligence aiLevel;
 
     public WinAgainstAiLevelAchievement(AchievementRepository achievementRepository, Intelligence aiLevel) {
-        super(achievementRepository, 1);
+        super(achievementRepository, 1, "Win Against AI Level " + EnumDisplayNameConverter.getDisplayName(aiLevel));
         this.aiLevel = aiLevel;
     }
 
     @Override
     public String getId() {
         return "win-against-ai-level-" + aiLevel;
-    }
-
-    @Override
-    public String getName() {
-        return "Win Against AI Level " + EnumDisplayNameConverter.getDisplayName(aiLevel);
     }
 
     @Override

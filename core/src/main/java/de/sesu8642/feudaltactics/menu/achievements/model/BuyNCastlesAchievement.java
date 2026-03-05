@@ -11,7 +11,7 @@ public class BuyNCastlesAchievement extends AbstractAchievement {
         AchievementRepository achievementRepository,
         int targetNumberOfCastles, 
         AchievementGameStateTracker gameStateTracker) {
-        super(achievementRepository, targetNumberOfCastles);
+        super(achievementRepository, targetNumberOfCastles, "Buy " + targetNumberOfCastles + " Castles");
         this.gameStateTracker = gameStateTracker;
     }
 
@@ -20,11 +20,6 @@ public class BuyNCastlesAchievement extends AbstractAchievement {
         return "buy_" + getGoal() + "_castles";
     }
     
-    @Override
-    public String getName() {
-        return "Buy " + getGoal() + " Castles";
-    }
-
     @Override
     public String getDescription() {
         return "Buy " + getGoal() + " castles during your games.";

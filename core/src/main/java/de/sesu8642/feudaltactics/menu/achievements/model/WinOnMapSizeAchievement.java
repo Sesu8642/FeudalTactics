@@ -13,7 +13,7 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 
     public WinOnMapSizeAchievement(AchievementRepository achievementRepository, NewGamePreferences.MapSizes mapSize) {
-        super(achievementRepository, 1);
+        super(achievementRepository, 1, "Win on a " + mapSize.name().toLowerCase() + " map");
 
         this.mapSize = mapSize;
     }
@@ -21,11 +21,6 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     @Override
     public String getId() {
         return "win-" + mapSize.name().toLowerCase();
-    }
-
-    @Override
-    public String getName() {
-        return "Win on a " + mapSize.name().toLowerCase() + " map";
     }
 
     @Override

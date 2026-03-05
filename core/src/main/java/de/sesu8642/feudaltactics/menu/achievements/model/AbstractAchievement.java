@@ -4,11 +4,15 @@ import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
+@Accessors(chain = true)
 public abstract class AbstractAchievement {
     public abstract String getId();
 
-    public abstract String getName();
+    @Getter
+    @Setter
+    private String name;
 
     public abstract String getDescription();
 
@@ -18,9 +22,10 @@ public abstract class AbstractAchievement {
 
     protected AchievementRepository achievementRepository;
 
-    protected AbstractAchievement(AchievementRepository achievementRepository, int goal) {
+    protected AbstractAchievement(AchievementRepository achievementRepository, int goal, String name) {
         this.achievementRepository = achievementRepository;
         this.goal = goal;
+        this.name = name;
     }
 
     protected void unlock() {

@@ -51,32 +51,35 @@ public class AchievementRepository {
         List<AbstractAchievement> list = new ArrayList<>();
         list.add(new WinNGamesAchievement(this, 1));
         list.add(new WinNGamesAchievement(this, 10));
-        list.add(new WinNGamesAchievement(this, 50));
+        list.add(new WinNGamesAchievement(this, 50).setName("Charlemagne"));    // Charlemagne won many battles
         list.add(new WinInNRoundsAchievement(this, 18));
         list.add(new WinInNRoundsAchievement(this, 16));
         list.add(new WinInNRoundsAchievement(this, 15));
-        list.add(new WinInNRoundsAchievement(this, 14));
+        list.add(new WinInNRoundsAchievement(this, 14).setName("Jeanne d'Arc"));    // Jeanne d'Arc won battles when she was very young
         list.add(new PlayMoreThanNRoundsAchievement(this, 25));
-        list.add(new PlayMoreThanNRoundsAchievement(this, 35));
-        list.add(new LoseAgainstWeakestAi(this));
+        list.add(new PlayMoreThanNRoundsAchievement(this, 35).setName("Hundred Years’ War"));    // The Hundred Years' War lasted very long obviously
+        list.add(new LoseAgainstWeakestAi(this).setName("Road to Canossa"));    // The Walk to Canossa was a humiliation. And so is this achievement.
         list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
-        list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker));
+        list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker).setName("Henry VIII"));    // Henry VIII built much military infrastructure
         list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
         list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
-        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20));
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setName("William the Conqueror"));    // William the Conqueror won many battles in a row
         list.add(new WinAgainstManyEnemiesAchievement(this, 3));
         list.add(new WinAgainstManyEnemiesAchievement(this, 4));
         list.add(new WinAgainstManyEnemiesAchievement(this, 5));
-        for (MapSizes mapSize : MapSizes.values()) {
-            list.add(new WinOnMapSizeAchievement(this, mapSize));
-        }
-        for (Intelligence aiLevel : Intelligence.values()) {
-            list.add(new WinAgainstAiLevelAchievement(this, aiLevel));
-        }
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.SMALL));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.MEDIUM));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.LARGE));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.XLARGE));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.XXLARGE).setName("Richard the Lionheart"));    // Richard the Lionheart fought in the Crusades, far away from his home
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_1));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_2));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_3));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setName("Frederick the Great"));  // Frederick the Great is renowned for his intellect
         this.achievements = Collections.unmodifiableList(list);
 
         LoadPersistedAchievements();

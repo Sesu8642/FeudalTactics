@@ -16,7 +16,7 @@ public class WinWithOnlyNCastlesAchievement extends AbstractAchievement {
         AchievementRepository achievementRepository, 
         int targetNumberOfCastles,
         AchievementGameStateTracker gameStateTracker) {
-        super(achievementRepository, 1);
+        super(achievementRepository, 1, targetNumberOfCastles + " castles victory");
 
         this.targetNumberOfCastles = targetNumberOfCastles;
         this.gameStateTracker = gameStateTracker;
@@ -25,11 +25,6 @@ public class WinWithOnlyNCastlesAchievement extends AbstractAchievement {
     @Override
     public String getId() {
         return "win_with_only_" + targetNumberOfCastles + "_castles";
-    }
-
-    @Override
-    public String getName() {
-        return targetNumberOfCastles + " castles victory";
     }
 
     @Override

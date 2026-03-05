@@ -8,17 +8,12 @@ import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 public class WinNGamesAchievement extends AbstractAchievement {
 
     public WinNGamesAchievement(AchievementRepository achievementRepository, int gamesToWin) {
-        super(achievementRepository, gamesToWin);
+        super(achievementRepository, gamesToWin, "Win " + gamesToWin + " Games");
     }
 
     @Override
     public String getId() {
         return "win-" + getGoal() + "-games";
-    }
-
-    @Override
-    public String getName() {
-        return "Win " + getGoal() + " Games";
     }
 
     @Override

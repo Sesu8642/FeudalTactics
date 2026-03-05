@@ -12,18 +12,13 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
     private final int rounds;
 
     public WinInNRoundsAchievement(AchievementRepository repository, int rounds) {
-        super(repository, 1);
+        super(repository, 1, "Win in " + rounds + " Rounds");
         this.rounds = rounds;
     }
 
     @Override
     public String getId() {
         return "win_in_" + rounds + "_rounds";
-    }
-
-    @Override
-    public String getName() {
-        return "Win in " + rounds    + " Rounds";
     }
 
     @Override

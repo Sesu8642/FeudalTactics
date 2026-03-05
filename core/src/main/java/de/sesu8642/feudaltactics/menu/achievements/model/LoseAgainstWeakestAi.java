@@ -9,17 +9,12 @@ import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 public class LoseAgainstWeakestAi extends AbstractAchievement {
 
     public LoseAgainstWeakestAi(AchievementRepository repository) {
-        super(repository, 1);
+        super(repository, 1, "Lose against the weak AI");
     }
 
     @Override
     public String getId() {
         return "lose_against_weak_ai";
-    }
-
-    @Override
-    public String getName() {
-        return "Lose against the weak AI";
     }
 
     @Override

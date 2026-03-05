@@ -35,7 +35,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
         AchievementRepository achievementRepository,
         Preferences achievementsPrefs,
         int numberOfGamesInARowToWin) {
-        super(achievementRepository, numberOfGamesInARowToWin);
+        super(achievementRepository, numberOfGamesInARowToWin, "Win " + numberOfGamesInARowToWin + " Very Hard Games in a Row");
 
         this.prefStore = achievementsPrefs;
 
@@ -46,11 +46,6 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
     @Override
     public String getId() {
         return "win_" + getGoal() + "_very_hard_games_in_a_row";
-    }
-
-    @Override
-    public String getName() {
-        return "Win " + getGoal() + " Very Hard Games in a Row";
     }
 
     @Override

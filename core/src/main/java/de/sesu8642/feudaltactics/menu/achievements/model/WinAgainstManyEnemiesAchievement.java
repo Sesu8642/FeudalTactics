@@ -9,13 +9,8 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
     private final int enemyCount;
 
     public WinAgainstManyEnemiesAchievement(AchievementRepository repository, int enemyCount) {
-        super(repository, 1);
+        super(repository, 1, "Win with " + enemyCount + " enemies surrendering");
         this.enemyCount = enemyCount;
-    }
-
-    @Override
-    public String getName() {
-        return "Win with " + enemyCount + " enemies surrendering";
     }
 
     @Override

@@ -7,13 +7,8 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
     private final int roundCount;
 
     public PlayMoreThanNRoundsAchievement(AchievementRepository repository, int roundCount) {
-        super(repository, 1);
+        super(repository, 1, "Win using more than " + roundCount + " rounds");
         this.roundCount = roundCount;
-    }
-
-    @Override
-    public String getName() {
-        return "Win using more than " + roundCount + " rounds";
     }
 
     @Override
