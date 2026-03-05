@@ -9,7 +9,7 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
     private final int enemyCount;
 
     public WinAgainstManyEnemiesAchievement(AchievementRepository repository, int enemyCount) {
-        super(repository, 1, "Win with " + enemyCount + " enemies surrendering");
+        super(repository, 1, "Win with " + enemyCount + " surviving enemies");
         this.enemyCount = enemyCount;
     }
 
