@@ -16,7 +16,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
-import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
+import de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 import lombok.Setter;
@@ -119,6 +119,7 @@ public class IngameHudStage extends ResizableResettableStage {
         thumbImage.setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
 
         infoHexagonLabel = new Label("", skin.get(SkinConstants.FONT_HEXAGON, LabelStyle.class));
+        infoHexagonLabel.setFontScale(UiScalingConstants.HEXAGON_FONT_SCALING_FACTOR);
 
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
 
@@ -127,15 +128,15 @@ public class IngameHudStage extends ResizableResettableStage {
         rootTable.setFillParent(true);
         rootTable.add(infoHexagonLabel).left().top().pad(10);
         rootTable.add(infoTextLabel).left().top().pad(10).expandX();
-        rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
+        rootTable.add(menuButton).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100).pad(10);
         rootTable.row();
         rootTable.add();
         rootTable.add();
-        rootTable.add(infoButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
+        rootTable.add(infoButton).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100).pad(10);
         rootTable.row();
         rootTable.add();
         rootTable.add();
-        rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
+        rootTable.add(handStack).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 125);
         rootTable.row();
 
         bottomTable = new Table(skin);
@@ -150,7 +151,7 @@ public class IngameHudStage extends ResizableResettableStage {
         bottomTable.add(buyCastleButton);
         bottomTable.add(endTurnButton);
         rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
-            .height(ValueWithSize.percentSizeDensityMin(0.1F, rootTable, 100));
+            .height(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100);
         rootTable.row();
 
         bottomInsetTable = new Table(skin);

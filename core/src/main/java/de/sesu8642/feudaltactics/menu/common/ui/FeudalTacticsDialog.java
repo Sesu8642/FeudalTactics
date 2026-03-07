@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class FeudalTacticsDialog extends Dialog {
 
-    public static final float DIALOG_PADDING = 20;
-    public static final float DIALOG_LABEL_MAX_WIDTH = 600;
+    private static final float DIALOG_PADDING = 20;
+    private static final float DIALOG_LABEL_MAX_WIDTH = Gdx.graphics.getDensity() * 1200;
 
     private final Skin skin;
 

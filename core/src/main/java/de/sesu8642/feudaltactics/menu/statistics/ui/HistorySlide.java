@@ -26,6 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.EnumMap;
 
+import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.*;
+
 /**
  * Represents the slide for displaying game history.
  */
@@ -84,11 +86,18 @@ public class HistorySlide extends Slide {
      * Places a single history entry into the history table.
      */
     private void placeHistoryEntry(HistoricGame game) {
-        // Create table for the actual content
-        // TODO: too wide on phones after scaling fonts properly
-        final Table contentTable = new Table();
-        contentTable.pad(10);
-        contentTable.background(rowBackgroundDrawable);
+        // Create table as the container, specifying the background drawable
+        final Table entryTable = new Table();
+        entryTable.pad(Gdx.graphics.getDensity() * 20);
+        entryTable.background(rowBackgroundDrawable);
+
+        // Put a horizontal group inside for breaking on smaller screens
+        final HorizontalGroup contentGroup = new HorizontalGroup();
+        contentGroup.wrap();
+        contentGroup.center();
+        contentGroup.space(Gdx.graphics.getDensity() * 20);
+        contentGroup.wrapSpace(Gdx.graphics.getDensity() * 20);
+        entryTable.add(contentGroup).expand().fill();
 
         // Map preview
         final GameParameters gameParams = game.getGameSettings().toGameParameters();
@@ -96,7 +105,9 @@ public class HistorySlide extends Slide {
         GameStateHelper.initializeMap(gameStateToPreview, gameParams.getPlayers(), gameParams.getLandMass(),
             gameParams.getDensity(), null, gameParams.getSeed());
         final MapPreviewWidget previewWidget = mapPreviewFactory.createPreviewWidget(gameStateToPreview);
-        contentTable.add(previewWidget).minSize(100).fill().prefWidth(Value.percentHeight(1));
+        final float mapPreviewSize = Gdx.graphics.getDensity() * 200 * UI_SCALING_FACTOR;
+        previewWidget.setSize(mapPreviewSize, mapPreviewSize);
+        contentGroup.addActor(previewWidget);
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
@@ -105,7 +116,7 @@ public class HistorySlide extends Slide {
         resultTable.add(resultCell).left();
         resultTable.row();
         resultTable.add(roundsLabel).left();
-        contentTable.add(resultTable).left().width(200f).padRight(10).padLeft(10);
+        contentGroup.addActor(resultTable);
 
         // Settings
         String settingsString = "Unknown settings";
@@ -131,35 +142,34 @@ public class HistorySlide extends Slide {
             hexagonString = String.format("[#%s]h", playerColor.toString());
         }
         final Label settingsLabel = new Label(settingsString, skin);
-        contentTable.add(settingsLabel).left().expandX();
-
+        contentGroup.addActor(settingsLabel);
 
         final Label startingPositionLabel = new Label(hexagonString, skin, SkinConstants.FONT_HEXAGON);
-        startingPositionLabel.setFontScale(1.5f);
-        contentTable.add(startingPositionLabel).left().padRight(20f);
+        startingPositionLabel.setFontScale(HEXAGON_FONT_SCALING_FACTOR);
+        contentGroup.addActor(startingPositionLabel);
 
         // Copy settings button
         final ImageTextButton copyButton = ButtonFactory.createCopyButton("", skin, true);
-        copyButton.getImageCell().expand().fill();
+        copyButton.getImageCell().size(BUTTON_TEXT_SIZE);
         if (gamePreferences != null) {
             copyButton.addListener(new ExceptionLoggingChangeListener(() ->
                 Gdx.app.getClipboard().setContents(gamePreferences.toSharableString())));
         } else {
             copyButton.setDisabled(true);
         }
-        contentTable.add(copyButton).left().height(74).width(74);
+        contentGroup.addActor(copyButton);
 
-        final Actor borderedRow = wrapInBorder(contentTable);
+        final Actor borderedRow = wrapInBorder(entryTable);
 
         // Add the container to the history table
-        historyTable.row().padBottom(10f).padTop(10f);
-        historyTable.add(borderedRow).fill().expandX().colspan(5);
+        historyTable.row().padBottom(Gdx.graphics.getDensity() * 20).padTop(Gdx.graphics.getDensity() * 20);
+        historyTable.add(borderedRow).colspan(5).prefWidth(Gdx.graphics.getDensity() * 1200 * UiScalingConstants.TEXT_SCALING_FACTOR);
     }
 
     private Actor wrapInBorder(Actor innerContent) {
         final Container<Actor> container = new Container<>(innerContent);
         container.background(rowBorderDrawable);
-        container.pad(3); // Border width
+        container.pad(Gdx.graphics.getDensity() * 5 * UI_SCALING_FACTOR); // Border width
         container.fill();
         return container;
     }

@@ -88,6 +88,13 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
     }
 
     /**
+     * Disables scrolling in the horizontal direction. Needs to be called to make horizontal groups wrap properly.
+     */
+    public void disableHorizontalScrolling() {
+        scrollPane.setScrollingDisabled(true, false);
+    }
+
+    /**
      * Switches to the slide at the given index.
      *
      * @param index index of the slide to switch to

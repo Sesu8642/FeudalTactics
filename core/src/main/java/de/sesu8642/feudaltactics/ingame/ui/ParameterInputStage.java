@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
  */
 public class ParameterInputStage extends ResizableResettableStage {
 
-    private static final int OUTER_PADDING_PX = 10;
-    private static final int INPUT_PADDING_PX = 20;
+    private static final int OUTER_PADDING_PX = (int) (Gdx.graphics.getDensity() * 10);
+    private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 20);
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
     SelectBox<String> startingPositionSelect;

@@ -15,7 +15,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
-import de.sesu8642.feudaltactics.menu.common.ui.ValueWithSize;
+import de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 
@@ -85,10 +85,10 @@ public class EditorHudStage extends ResizableResettableStage {
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.setFillParent(true);
         rootTable.add(infoTextLabel).left().top().pad(10).expandX();
-        rootTable.add(menuButton).right().size(ValueWithSize.percentSize(0.075F, rootTable)).pad(10);
+        rootTable.add(menuButton).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100).pad(10);
         rootTable.row();
         rootTable.add();
-        rootTable.add(handStack).right().size(ValueWithSize.percentSize(0.1F, rootTable));
+        rootTable.add(handStack).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 125);
         rootTable.row();
 
         bottomTable = new Table();
@@ -98,7 +98,7 @@ public class EditorHudStage extends ResizableResettableStage {
         bottomTable.add(tileContentButton);
 
         rootTable.add(bottomTable).fill().expand().bottom().colspan(3)
-            .height(ValueWithSize.percentSize(0.1F, rootTable));
+            .height(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100);
 
         handStack.add(handImage);
         handStack.add(handContentTable);
