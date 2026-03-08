@@ -62,9 +62,7 @@ public class SlideStage extends AbstractSlideStage {
             }
         }));
 
-        backButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            switchToSlide(currentSlideIndex - 1);
-        }));
+        backButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(currentSlideIndex - 1)));
 
         switchToSlide(0);
     }
