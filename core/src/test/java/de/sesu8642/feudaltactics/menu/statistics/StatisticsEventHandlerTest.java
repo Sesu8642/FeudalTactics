@@ -27,7 +27,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Tests for {@link de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler}.
  */
-public class StatisticsEventHandlerTest {
+class StatisticsEventHandlerTest {
 
     private StatisticsDao statisticsDao;
     private HistoryDao historyDao;
