@@ -18,7 +18,7 @@ public class LoseAgainstWeakestAi extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Lose a game against the weakest AI. Aborting does not count!";
     }
     

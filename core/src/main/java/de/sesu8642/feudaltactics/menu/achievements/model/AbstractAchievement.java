@@ -10,22 +10,41 @@ import lombok.experimental.Accessors;
 public abstract class AbstractAchievement {
     public abstract String getId();
 
-    @Getter
-    @Setter
-    private String name;
+    public String getName() {
+        if (historicConnection != null) {
+            return historicConnection.getName();
+        }
+        else {
+            return baseName;
+        }
+    }
 
-    public abstract String getDescription();
+    private String baseName;
+
+    protected abstract String getBaseDescription();
+    public String getDescription() {
+        if (historicConnection != null) {
+            return historicConnection.getDescription() + "\n\n" + getBaseDescription();
+        }
+        else {
+            return getBaseDescription();
+        }
+    }
 
     @Getter
     @Setter
     private boolean unlocked;
+
+    @Getter
+    @Setter
+    private HistoricPersonOrEvent historicConnection;
 
     protected AchievementRepository achievementRepository;
 
     protected AbstractAchievement(AchievementRepository achievementRepository, int goal, String name) {
         this.achievementRepository = achievementRepository;
         this.goal = goal;
-        this.name = name;
+        this.baseName = name;
     }
 
     protected void unlock() {

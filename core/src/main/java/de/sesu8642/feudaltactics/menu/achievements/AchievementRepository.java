@@ -10,6 +10,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.HistoricPersonOrEvent;
 import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAi;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstManyEnemiesAchievement;
@@ -48,14 +49,14 @@ public class AchievementRepository {
         List<AbstractAchievement> list = new ArrayList<>();
         list.add(new WinNGamesAchievement(this, 1));
         list.add(new WinNGamesAchievement(this, 10));
-        list.add(new WinNGamesAchievement(this, 50).setName("Charlemagne"));    // Charlemagne won many battles
+        list.add(new WinNGamesAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.CHARLEMAGNE));    // Charlemagne won many battles
         list.add(new WinInNRoundsAchievement(this, 18));
         list.add(new WinInNRoundsAchievement(this, 16));
         list.add(new WinInNRoundsAchievement(this, 15));
-        list.add(new WinInNRoundsAchievement(this, 14).setName("Jeanne d'Arc"));    // Jeanne d'Arc won battles when she was very young
-        list.add(new PlayMoreThanNRoundsAchievement(this, 25).setName("Thirty Years' War"));
-        list.add(new PlayMoreThanNRoundsAchievement(this, 35).setName("Hundred Years’ War"));    // The Hundred Years' War lasted very long obviously
-        list.add(new LoseAgainstWeakestAi(this).setName("Road to Canossa"));    // The Walk to Canossa was a humiliation. And so is this achievement.
+        list.add(new WinInNRoundsAchievement(this, 14).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
+        list.add(new PlayMoreThanNRoundsAchievement(this, 25).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
+        list.add(new PlayMoreThanNRoundsAchievement(this, 35).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
+        list.add(new LoseAgainstWeakestAi(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));    // The Walk to Canossa was a humiliation. And so is this achievement.
         // list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
         // list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
         // list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker).setName("Henry VIII"));    // Henry VIII built much military infrastructure
@@ -64,7 +65,7 @@ public class AchievementRepository {
         // list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
-        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setName("William the Conqueror"));    // William the Conqueror won many battles in a row
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
         list.add(new WinAgainstManyEnemiesAchievement(this, 3));
         list.add(new WinAgainstManyEnemiesAchievement(this, 4));
         list.add(new WinAgainstManyEnemiesAchievement(this, 5));
@@ -72,11 +73,11 @@ public class AchievementRepository {
         list.add(new WinOnMapSizeAchievement(this, MapSizes.MEDIUM));
         list.add(new WinOnMapSizeAchievement(this, MapSizes.LARGE));
         list.add(new WinOnMapSizeAchievement(this, MapSizes.XLARGE));
-        list.add(new WinOnMapSizeAchievement(this, MapSizes.XXLARGE).setName("Richard the Lionheart"));    // Richard the Lionheart fought in the Crusades, far away from his home
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.XXLARGE).setHistoricConnection(HistoricPersonOrEvent.RICHARD_THE_LIONHEART));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_1));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_2));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_3));
-        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setName("Frederick the Great"));  // Frederick the Great is renowned for his intellect
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setHistoricConnection(HistoricPersonOrEvent.FREDERICK_THE_GREAT));
         this.achievements = Collections.unmodifiableList(list);
 
         LoadPersistedAchievements();

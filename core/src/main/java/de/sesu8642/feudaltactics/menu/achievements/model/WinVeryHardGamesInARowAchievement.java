@@ -49,7 +49,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Win " + getGoal() + " games in a row on Very Hard AI difficulty. Any map size is allowed, "
         + "but you must win consecutively without losing or aborting, and you must not re-generate the map (always use the first generated map). "
         + "Furthermore, you must always play with the same color and you must not play a game on lower difficulty in between.";

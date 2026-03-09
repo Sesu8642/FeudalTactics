@@ -17,7 +17,7 @@ public class WinNGamesAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Win " + getGoal() + " games, either by defeating your enemies or them giving up. Any difficulty and map size is allowed.";
     }
     

@@ -22,7 +22,7 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Win a game in " + rounds + " rounds or less. The AI level must be Very Strong, the map size must be at least Medium.";
     }
 

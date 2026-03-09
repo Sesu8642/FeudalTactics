@@ -14,7 +14,7 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Win a game where your enemies surrender -- and there are still " + enemyCount + " or more different enemies with surviving kingdoms.";
     }
 

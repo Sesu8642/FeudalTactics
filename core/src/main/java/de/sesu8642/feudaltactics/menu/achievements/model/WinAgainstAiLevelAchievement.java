@@ -19,7 +19,7 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Win a game against AI opponents of level " + EnumDisplayNameConverter.getDisplayName(aiLevel) + ". It must be exactly that AI level, not higher.";
     }
 

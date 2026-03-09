@@ -24,7 +24,7 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getDescription() {
+    public String getBaseDescription() {
         return "Win a game on a " + mapSize.name().toLowerCase() + " map, either by defeating your enemies or them giving up. Any difficulty is allowed.";
     }
 
