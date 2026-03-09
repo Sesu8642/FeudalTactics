@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.io.Resources;
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.exceptions.InitializationException;

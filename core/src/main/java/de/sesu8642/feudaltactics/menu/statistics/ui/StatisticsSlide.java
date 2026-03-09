@@ -5,7 +5,7 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;

@@ -8,7 +8,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinFactory;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import org.slf4j.Logger;

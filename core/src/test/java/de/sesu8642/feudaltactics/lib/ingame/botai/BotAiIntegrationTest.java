@@ -12,7 +12,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
+import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;

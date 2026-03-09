@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -73,7 +73,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 
         final Label difficultyLabel = new Label(localizationManager.localizeText("cpu-difficulty"),
             skin.get(SkinConstants.FONT_OVERLAY,
-            LabelStyle.class));
+                LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
         difficultySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DIFFICULTIES).toArray(new String[0]));
 

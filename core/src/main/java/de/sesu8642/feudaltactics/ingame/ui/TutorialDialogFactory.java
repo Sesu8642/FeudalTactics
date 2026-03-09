@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
@@ -128,7 +128,7 @@ public class TutorialDialogFactory {
         ));
         for (UnitTypes unitType : UnitTypes.values()) {
             tableData.add(Arrays.asList(GameStateEnumDisplayNameConverter.getLocalizedDisplayName(unitType,
-                            localizationManager),
+                    localizationManager),
                 String.valueOf(unitType.strength()),
                 String.valueOf(unitType.salary())));
         }

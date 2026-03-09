@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.preferences;
 
+import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

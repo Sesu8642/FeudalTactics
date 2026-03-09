@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
-import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
+import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 import lombok.Getter;
 
 import javax.inject.Inject;

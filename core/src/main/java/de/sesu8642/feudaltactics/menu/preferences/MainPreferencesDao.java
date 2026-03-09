@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.menu.preferences;
 
 import com.badlogic.gdx.Preferences;
+import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 import de.sesu8642.feudaltactics.menu.preferences.dagger.GamePrefsPrefStore;
 
 import javax.inject.Inject;

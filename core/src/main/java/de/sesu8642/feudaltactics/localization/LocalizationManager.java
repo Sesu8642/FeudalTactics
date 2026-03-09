@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics;
+package de.sesu8642.feudaltactics.localization;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.I18NBundle;
-import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

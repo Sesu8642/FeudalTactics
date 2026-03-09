@@ -1,7 +1,7 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.google.common.collect.ImmutableList;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;

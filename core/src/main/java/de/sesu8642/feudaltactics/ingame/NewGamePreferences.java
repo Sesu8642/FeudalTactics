@@ -2,7 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import lombok.Getter;

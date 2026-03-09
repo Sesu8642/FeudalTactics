@@ -5,7 +5,7 @@ package de.sesu8642.feudaltactics.menu.preferences.ui;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -14,7 +14,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;
+import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
