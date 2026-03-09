@@ -5,6 +5,8 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -39,6 +41,7 @@ public class AchievementsSlide extends Slide {
     private final DialogFactory dialogFactory;
     private final Drawable achievementBackgroundLockedDrawable;
     private final Drawable achievementBackgroundUnlockedDrawable;
+    private final Drawable rowBorderDrawable;
 
     /**
      * Constructor.
@@ -54,6 +57,7 @@ public class AchievementsSlide extends Slide {
 
         this.achievementBackgroundLockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.GRAY);
         this.achievementBackgroundUnlockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.LIME);
+        this.rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
 
         achievementsTable = new Table();
         getTable().add(achievementsTable).fill().expand();
@@ -81,8 +85,8 @@ public class AchievementsSlide extends Slide {
 
         int columnCount = 0;
         for (AbstractAchievement achievement : achievements) {
-            Window achievementWindow = displayAchievement(achievement);
-            achievementsTable.add(achievementWindow)
+            Actor achievementBox = displayAchievement(achievement);
+            achievementsTable.add(achievementBox)
                 .width(ACHIEVEMENT_WINDOW_WIDTH)
                 .height(ACHIEVEMENT_WINDOW_HEIGHT)
                 .pad(padding);
@@ -98,7 +102,7 @@ public class AchievementsSlide extends Slide {
     /**
      * Displays a single achievement in a summarized for in the UI. Will be used as part of a table.
      */
-    private Window displayAchievement(AbstractAchievement achievement) {
+    private Actor displayAchievement(AbstractAchievement achievement) {
         Window achievementWindow = new Window(achievement.getName(), skin);
 
         // The user shall not move around the achievement boxes. They align themselves
@@ -109,6 +113,8 @@ public class AchievementsSlide extends Slide {
 
         // Set fixed size for the achievement window
         achievementWindow.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
+
+        //achievementWindow.
 
         // Enable title label wrapping with width constraint
         Label titleLabel = achievementWindow.getTitleLabel();
@@ -148,7 +154,15 @@ public class AchievementsSlide extends Slide {
             showAchievementDetails(achievement)
         ));
 
-        return achievementWindow;
+        return wrapInBorder(achievementWindow);
+    }
+
+    private Actor wrapInBorder(Actor innerContent) {
+        final Container<Actor> container = new Container<>(innerContent);
+        container.background(rowBorderDrawable);
+        container.pad(3); // Border width
+        container.fill();
+        return container;
     }
 
     /**
@@ -159,6 +173,14 @@ public class AchievementsSlide extends Slide {
             // Dialog closed
         });
 
+        // Use the overlay style (white font) and scale it up for the title.
+        // The default Text font in the skin is black, so it remains unreadable on dark backgrounds.
+        // REVISIT: Maybe we should just change the default font to white in the skin? Or add a separate title font?
+        LabelStyle baseStyle = skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class);
+        Label titleLabel = new Label(achievement.getName(), new LabelStyle(baseStyle));
+        titleLabel.setFontScale(1.4f);
+        detailsDialog.text(titleLabel);
+        detailsDialog.getContentTable().row();
         detailsDialog.text(achievement.getDescription());
         detailsDialog.getContentTable().row();
 
