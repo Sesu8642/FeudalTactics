@@ -1,4 +1,6 @@
-package de.ui.statistics;
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.math.Vector2;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
@@ -10,8 +12,6 @@ import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
-import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
-import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 import de.sesu8642.feudaltactics.menu.statistics.ui.StatisticsEventHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,6 @@ import org.mockito.Mockito;
 import java.util.LinkedHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 /**

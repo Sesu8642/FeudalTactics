@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.backend.gamestate;
+package de.sesu8642.feudaltactics.lib.gamestate;
 
-import de.sesu8642.feudaltactics.lib.gamestate.GameState;
-import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import org.junit.jupiter.api.BeforeEach;
