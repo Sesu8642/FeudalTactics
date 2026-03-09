@@ -10,7 +10,6 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.BuyNCastlesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAi;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstManyEnemiesAchievement;
@@ -19,7 +18,6 @@ import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement
 import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinWithOnlyNCastlesAchievement;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -44,8 +42,7 @@ public class AchievementRepository {
     @Inject
     public AchievementRepository(
             @AchievementsPrefStore Preferences achievementsPrefs,
-            AutoSaveRepository autoSaveRepository,
-            AchievementGameStateTracker gameStateTracker) {
+            AutoSaveRepository autoSaveRepository) {
         this.prefStore = achievementsPrefs;
 
         List<AbstractAchievement> list = new ArrayList<>();
@@ -59,12 +56,12 @@ public class AchievementRepository {
         list.add(new PlayMoreThanNRoundsAchievement(this, 25).setName("Thirty Years' War"));
         list.add(new PlayMoreThanNRoundsAchievement(this, 35).setName("Hundred Years’ War"));    // The Hundred Years' War lasted very long obviously
         list.add(new LoseAgainstWeakestAi(this).setName("Road to Canossa"));    // The Walk to Canossa was a humiliation. And so is this achievement.
-        list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
-        list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
-        list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker).setName("Henry VIII"));    // Henry VIII built much military infrastructure
-        list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker).setName("Holy Roman Emperor Henry VI")); // Henry VI was a travelling king who had no fixed castle, but still won many battles
-        list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
-        list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
+        // list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
+        // list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
+        // list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker).setName("Henry VIII"));    // Henry VIII built much military infrastructure
+        // list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker).setName("Holy Roman Emperor Henry VI")); // Henry VI was a travelling king who had no fixed castle, but still won many battles
+        // list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
+        // list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setName("William the Conqueror"));    // William the Conqueror won many battles in a row
