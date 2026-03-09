@@ -412,7 +412,8 @@ public class IngameScreen extends GameScreen {
     public void show() {
         Gdx.input.setInputProcessor(inputMultiplexer);
         activateStage(IngameStages.PARAMETERS);
-        centerMap();
+        // this needs to be run after the stage has finished sizing its UI
+        Gdx.app.postRunnable(this::centerMap);
     }
 
     @Override

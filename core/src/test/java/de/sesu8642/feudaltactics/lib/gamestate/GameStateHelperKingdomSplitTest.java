@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.backend.gamestate;
+package de.sesu8642.feudaltactics.lib.gamestate;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import de.sesu8642.feudaltactics.ApplicationStub;
-import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import org.junit.jupiter.api.BeforeAll;

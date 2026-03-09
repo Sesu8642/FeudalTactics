@@ -2,25 +2,17 @@
 
 package de.sesu8642.feudaltactics.menu.campaign.ui;
 
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.utils.Align;
-import com.google.common.collect.ImmutableList;
 import de.sesu8642.feudaltactics.LocalizationManager;
-import de.sesu8642.feudaltactics.lib.gamestate.GameState;
-import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
-import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.menu.common.ui.MapPreviewFactory;
-import de.sesu8642.feudaltactics.menu.common.ui.MapPreviewWidget;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
+import de.sesu8642.feudaltactics.menu.common.ui.EvenlySpacedHorizontalGroup;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 
 // TODO: check this
@@ -34,47 +26,36 @@ import java.util.Random;
 @Singleton
 public class LevelSelectionSlide extends Slide {
 
-    final Label descriptionLabel;
+    public static final float PREVIEW_TILE_SIZE = Gdx.graphics.getDensity() * 500;
+    public static final float TILE_SPACING = Gdx.graphics.getDensity() * 40;
     final TextArea textArea;
-    final HorizontalGroup levelTileGroup;
+    final EvenlySpacedHorizontalGroup levelTileGroup;
 
     /**
      * Constructor.
      */
     @Inject
-    public LevelSelectionSlide(Skin skin, MapPreviewFactory mapPreviewFactory,
-                               LocalizationManager localizationManager) {
+    public LevelSelectionSlide(Skin skin, ScenarioMapPreviewTileFactory scenarioMapPreviewTileFactory, LocalizationManager localizationManager) {
         super(skin, localizationManager.localizeText("level-selection"));
-
-        descriptionLabel = new Label("Lorem Ipsum", skin);
-        descriptionLabel.setWrap(true);
-        descriptionLabel.setAlignment(Align.topLeft);
 
         textArea = new TextArea("", skin);
         textArea.setDisabled(true);
 
-        levelTileGroup = new HorizontalGroup();
+        levelTileGroup = new EvenlySpacedHorizontalGroup(PREVIEW_TILE_SIZE);
         levelTileGroup.wrap();
-        levelTileGroup.space(10);
-        levelTileGroup.wrapSpace(10);
+        levelTileGroup.rowLeft();
+        levelTileGroup.space(TILE_SPACING);
+        levelTileGroup.wrapSpace(TILE_SPACING);
         levelTileGroup.align(Align.center);
 
-        final Random random = new Random(12345);
-
-        for (int i = 0; i < 100; i++) {
-            final GameState dummyGameState = new GameState();
-            final List<Player> players = new ArrayList<>(ImmutableList.of(new Player(0, Player.Type.LOCAL_BOT),
-                new Player(1,
-                    Player.Type.LOCAL_BOT)));
-            GameStateHelper.initializeMap(dummyGameState, players, 50, 0, 0.2F, random.nextLong());
-
-            final MapPreviewWidget mapPreviewWidget = mapPreviewFactory.createPreviewWidget(dummyGameState);
-            mapPreviewWidget.setSize(400, 400);
-            levelTileGroup.addActor(mapPreviewWidget);
+        for (int i = 0; i < 50; i++) {
+            final ScenarioMapPreviewTile scenarioMapPreviewTile =
+                scenarioMapPreviewTileFactory.createScenarioMapPreviewTile(ScenarioMap.TUTORIAL, i < 5,
+                    Medals.values()[Math.min(i, Medals.values().length - 1)], i + 1);
+            scenarioMapPreviewTile.setWidth(PREVIEW_TILE_SIZE);
+            levelTileGroup.addActor(scenarioMapPreviewTile);
         }
 
-        getTable().add(descriptionLabel).fill().expandX();
-        getTable().row();
         getTable().add(levelTileGroup).fill().expand();
     }
 

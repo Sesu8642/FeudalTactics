@@ -29,8 +29,7 @@ public class LevelSelectionStage extends SlideStage {
      */
     @Inject
     public LevelSelectionStage(LevelSelectionSlide levelSelectionSlide, PlatformInsetsProvider platformInsetsProvider
-        , @MenuViewport Viewport viewport,
-                               @MenuCamera OrthographicCamera camera, Skin skin,
+        , @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin,
                                LocalizationManager localizationManager) {
         super(viewport, Collections.singletonList(levelSelectionSlide), platformInsetsProvider, camera, skin,
             localizationManager);

@@ -32,6 +32,12 @@ com.badlogic.gdx.graphics.Color: {
 		b: 1
 		a: 1
 	}
+	bronce: {
+		r: 0.88235295
+		g: 0.50980395
+		b: 0.050980393
+		a: 1
+	}
 	disabled: {
 		r: 0.7490196
 		g: 0.7490196
@@ -42,6 +48,12 @@ com.badlogic.gdx.graphics.Color: {
 		r: 0.5058824
 		g: 0.9372549
 		b: 0.9137255
+		a: 1
+	}
+	gold: {
+		r: 1
+		g: 0.73333335
+		b: 0
 		a: 1
 	}
 	highlight: {
@@ -60,6 +72,12 @@ com.badlogic.gdx.graphics.Color: {
 		r: 1
 		g: 0
 		b: 0
+		a: 1
+	}
+	silver: {
+		r: 0.81960785
+		g: 0.89411765
+		b: 0.9019608
 		a: 1
 	}
 	stone: {

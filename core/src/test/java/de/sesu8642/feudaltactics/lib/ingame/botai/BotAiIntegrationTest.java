@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.backend.ingame;
+package de.sesu8642.feudaltactics.lib.ingame.botai;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Json;
@@ -10,8 +10,6 @@ import de.sesu8642.feudaltactics.ApplicationStub;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
-import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
-import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.menu.preferences.SupportedLanguages;

@@ -48,5 +48,7 @@ public class HistoryAndStatisticsStage extends CyclingSlideStage {
             localizationManager);
         this.statisticsSlide = statisticsSlide;
         this.historySlide = historySlide;
+        // disable to make the horizontal group wrap
+        disableHorizontalScrolling();
     }
 }

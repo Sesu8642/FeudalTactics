@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.backend.ingame;
+package de.sesu8642.feudaltactics.lib.ingame.botai;
 
 import com.google.common.collect.ImmutableList;
 

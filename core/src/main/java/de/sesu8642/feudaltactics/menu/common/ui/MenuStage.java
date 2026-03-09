@@ -26,7 +26,6 @@ import java.util.Set;
  */
 public class MenuStage extends ResizableResettableStage {
 
-    private final static float BUTTON_HEIGHT = Gdx.graphics.getDensity() * 150;
     @Getter
     private final List<TextButton> buttons = new ArrayList<>();
     private final MapRenderer mapRenderer;
@@ -76,15 +75,15 @@ public class MenuStage extends ResizableResettableStage {
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.setFillParent(true);
-        rootTable.defaults().minSize(0).fillX().colspan(2);
+        rootTable.defaults().minSize(0).colspan(2);
         final Image logoImage = new Image(logoTexture);
         logoImage.setScaling(Scaling.contain);
-        rootTable.add(logoImage).minHeight(150).prefHeight(Value.percentWidth(0.51F));
+        rootTable.add(logoImage).prefWidth(Gdx.graphics.getDensity() * 2000).prefHeight(Value.percentWidth(0.51F));
 
         rootTable.row();
-        rootTable.defaults().minHeight(100).pad(5);
+        rootTable.defaults().minHeight(30).pad(5).expandX();
         for (TextButton button : buttons) {
-            rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable)).expandY();
+            rootTable.add(button).height(UiScalingConstants.BUTTON_TEXT_SIZE * 2F).prefWidth(Gdx.graphics.getDensity() * 1500).expandY();
             rootTable.row();
         }
         rootTable.row();
@@ -96,8 +95,6 @@ public class MenuStage extends ResizableResettableStage {
 
     @Override
     public void updateOnResize(int width, int height) {
-        // need to pack the table in order for it's size to be calculated so the logo image doesnt do weird things
-        rootTable.pack();
         camera.viewportHeight = height;
         camera.viewportWidth = width;
         camera.update();

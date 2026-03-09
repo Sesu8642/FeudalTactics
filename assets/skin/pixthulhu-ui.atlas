@@ -239,6 +239,20 @@ list
   orig: 114, 114
   offset: 0, 0
   index: -1
+lock
+  rotate: false
+  xy: 278, 536
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+medal
+  rotate: false
+  xy: 171, 451
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 paste
   rotate: false
   xy: 314, 604
@@ -285,7 +299,7 @@ progress-bar-health-knob
   index: -1
 progress-bar-horizontal
   rotate: false
-  xy: 171, 388
+  xy: 57, 10
   size: 9, 45
   split: 3, 3, 3, 3
   orig: 9, 45
@@ -415,7 +429,7 @@ slider-vertical
   index: -1
 split-pane-horizontal
   rotate: false
-  xy: 171, 435
+  xy: 171, 372
   size: 24, 48
   split: 3, 3, 3, 3
   pad: 0, 0, 0, 0
@@ -454,6 +468,13 @@ touchpad-knob
   orig: 48, 51
   offset: 0, 0
   index: -1
+trophy
+  rotate: false
+  xy: 312, 536
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 undo
   rotate: false
   xy: 105, 419
@@ -484,7 +505,7 @@ white-pixel
   index: -1
 window
   rotate: false
-  xy: 278, 541
+  xy: 171, 422
   size: 27, 27
   split: 9, 9, 9, 9
   orig: 27, 27
