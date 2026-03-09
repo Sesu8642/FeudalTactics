@@ -68,7 +68,7 @@ public class AchievementRepository {
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
         list.add(new WinAgainstManyEnemiesAchievement(this, 3));
         list.add(new WinAgainstManyEnemiesAchievement(this, 4));
-        list.add(new WinAgainstManyEnemiesAchievement(this, 5));
+        list.add(new WinAgainstManyEnemiesAchievement(this, 5).setHistoricConnection(HistoricPersonOrEvent.LOUIS_XI));
         list.add(new WinOnMapSizeAchievement(this, MapSizes.SMALL));
         list.add(new WinOnMapSizeAchievement(this, MapSizes.MEDIUM));
         list.add(new WinOnMapSizeAchievement(this, MapSizes.LARGE));
