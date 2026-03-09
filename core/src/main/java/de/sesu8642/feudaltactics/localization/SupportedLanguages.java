@@ -2,8 +2,6 @@
 
 package de.sesu8642.feudaltactics.localization;
 
-import lombok.Getter;
-
 import java.util.Locale;
 
 /**
@@ -14,16 +12,13 @@ public enum SupportedLanguages {
     /**
      * Follows system locale, if possible; defaults to English.
      */
-    AUTO("Auto", null),
-    EN_US("English", "en-US"),
-    DE_DE("Deutsch", "de-DE");
+    AUTO(null),
+    EN_US("en-US"),
+    DE_DE("de-DE");
 
-    @Getter
-    private final String displayName;
     private Locale locale;
 
-    SupportedLanguages(String displayName, String languageTag) {
-        this.displayName = displayName;
+    SupportedLanguages(String languageTag) {
         if (languageTag != null) {
             locale = Locale.forLanguageTag(languageTag);
         }
@@ -62,4 +57,13 @@ public enum SupportedLanguages {
         return locale != null ? locale.toLanguageTag() : "auto";
     }
 
+    /**
+     * Returns the display name for the language in the language itself.
+     */
+    public String getDisplayName() {
+        if (this == AUTO) {
+            return "Auto";
+        }
+        return getLocale().getDisplayLanguage(getLocale());
+    }
 }
