@@ -10,9 +10,9 @@ import de.sesu8642.feudaltactics.ApplicationStub;
 import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +50,7 @@ class BotAiIntegrationTest {
 
     // do not wait in tests
     MainGamePreferences stubPreferences = new MainGamePreferences(false, false,
-        SupportedLanguages.AUTO);
+        SupportedLanguage.AUTO);
 
     @InjectMocks
     private BotAi systemUnderTest;

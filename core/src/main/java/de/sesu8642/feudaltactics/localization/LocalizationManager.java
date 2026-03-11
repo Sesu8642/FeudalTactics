@@ -5,12 +5,16 @@ package de.sesu8642.feudaltactics.localization;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.I18NBundle;
+import de.sesu8642.feudaltactics.ResourceNameReader;
+import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import lombok.Getter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.stream.Collectors;
 
@@ -19,14 +23,36 @@ import java.util.stream.Collectors;
  */
 @Singleton
 public class LocalizationManager {
-    private static final FileHandle BASE_LOCALISATION_FILE = Gdx.files.internal("i18n/strings");
-
-    private final I18NBundle i18NBundle;
+    private static final String BASE_LOCALISATION_DIR = "i18n/strings";
+    private static final FileHandle BASE_LOCALIZATION_DIR_FILE_HANDLE = Gdx.files.internal(BASE_LOCALISATION_DIR);
+    @Getter
+    private final List<SupportedLanguage> supportedLanguages;
+    private final I18NBundle currentLanguageI18NBundle;
 
     @Inject
-    public LocalizationManager(SupportedLanguages language) {
-        final Locale locale = language.getLocale();
-        i18NBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE, locale, StandardCharsets.UTF_8.name());
+    public LocalizationManager(MainPreferencesDao preferencesDao, ResourceNameReader resourceNameReader) {
+        final SupportedLanguage savedLanguage = preferencesDao.getMainPreferences().getLanguage();
+        currentLanguageI18NBundle = I18NBundle.createBundle(BASE_LOCALIZATION_DIR_FILE_HANDLE,
+            savedLanguage.getLocale(),
+            StandardCharsets.UTF_8.name());
+        supportedLanguages = getSupportedLanguagesFromFiles(resourceNameReader);
+        supportedLanguages.add(0, SupportedLanguage.AUTO);
+    }
+
+    private List<SupportedLanguage> getSupportedLanguagesFromFiles(ResourceNameReader resourceNameReader) {
+        final List<String> languageFiles = resourceNameReader.getAssetFiles(BASE_LOCALISATION_DIR);
+        final List<SupportedLanguage> result = new ArrayList<>();
+        for (String languageFilePath : languageFiles) {
+            if (languageFilePath.endsWith("strings.properties")) {
+                // ignore fallback file
+                continue;
+            }
+            final String fileName = new File(languageFilePath).getName();
+            final String languageTag = fileName.substring("strings".length() + 1, fileName.length() -
+                ".properties".length());
+            result.add(SupportedLanguage.fromLanguageTag(languageTag));
+        }
+        return result;
     }
 
     /**
@@ -35,8 +61,8 @@ public class LocalizationManager {
      * @param key  the key for the desired string
      * @param args the arguments to be replaced in the string associated to the given key.
      */
-    public String localizeTextInLanguage(SupportedLanguages language, String key, Object... args) {
-        final I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALISATION_FILE, language.getLocale(),
+    public String localizeTextInLanguage(SupportedLanguage language, String key, Object... args) {
+        final I18NBundle tempBundle = I18NBundle.createBundle(BASE_LOCALIZATION_DIR_FILE_HANDLE, language.getLocale(),
             StandardCharsets.UTF_8.name());
         return tempBundle.format(key, args);
     }
@@ -49,10 +75,10 @@ public class LocalizationManager {
      */
     public String localizeText(String key, Object... args) {
         try {
-            return i18NBundle.format(key, args);
+            return currentLanguageI18NBundle.format(key, args);
         } catch (MissingResourceException e) {
             try {
-                return localizeTextInLanguage(SupportedLanguages.getFallback(), key, args);
+                return localizeTextInLanguage(SupportedLanguage.FALLBACK, key, args);
             } catch (MissingResourceException e2) {
                 return String.format("[missing: '%s']", key);
             }
@@ -67,4 +93,5 @@ public class LocalizationManager {
     public List<String> localizeTextBatch(List<String> keys) {
         return keys.stream().map(this::localizeText).collect(Collectors.toList());
     }
+
 }

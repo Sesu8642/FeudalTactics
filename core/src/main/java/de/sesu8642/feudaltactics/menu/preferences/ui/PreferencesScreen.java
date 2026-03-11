@@ -5,8 +5,9 @@ package de.sesu8642.feudaltactics.menu.preferences.ui;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -14,11 +15,9 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Locale;
 import java.util.stream.Stream;
 
 /**
@@ -33,10 +32,10 @@ public class PreferencesScreen extends GameScreen {
     private final LocalizationManager localizationManager;
     private final DialogFactory dialogFactory;
     /**
-     * Locale used at the time of opening the preferences. Using the locale instead of the Language enum because that
-     * would require handling the auto option specifically.
+     * Language used at the time of opening the preferences. Using the language string instead of the Language enum
+     * because that would require handling the auto option specifically.
      */
-    private Locale currentLocale;
+    private String currentLanguage;
 
 
     @Inject
@@ -62,7 +61,7 @@ public class PreferencesScreen extends GameScreen {
             new MainGamePreferences(
                 preferencesStage.preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
                 preferencesStage.preferencesSlide.getShowEnemyTurnsSelectBox().getSelected(),
-                SupportedLanguages.values()[preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex()])));
+                localizationManager.getSupportedLanguages().get(preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex()))));
     }
 
     private void registerEventListeners() {
@@ -72,9 +71,9 @@ public class PreferencesScreen extends GameScreen {
                 .addListener(new ExceptionLoggingChangeListener(this::sendPreferencesChangedEvent)));
 
         preferencesStage.preferencesSlide.getLanguageSelectBox().addListener(new ExceptionLoggingChangeListener(() -> {
-            final SupportedLanguages selectedLanguage =
-                SupportedLanguages.values()[preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex()];
-            if (selectedLanguage.getLocale().equals(currentLocale)) {
+            final SupportedLanguage selectedLanguage =
+                localizationManager.getSupportedLanguages().get(preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex());
+            if (selectedLanguage.getLocale().getLanguage().equals(currentLanguage)) {
                 sendPreferencesChangedEvent();
                 return;
             }
@@ -94,7 +93,7 @@ public class PreferencesScreen extends GameScreen {
 
     @Override
     public void show() {
-        currentLocale = mainPrefsDao.getMainPreferences().getLanguage().getLocale();
+        currentLanguage = mainPrefsDao.getMainPreferences().getLanguage().getLocale().getLanguage();
         super.show();
     }
 }

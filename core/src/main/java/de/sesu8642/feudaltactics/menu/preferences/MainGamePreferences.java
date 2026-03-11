@@ -2,7 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.preferences;
 
-import de.sesu8642.feudaltactics.localization.SupportedLanguages;
+import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ public class MainGamePreferences {
     private boolean showEnemyTurns;
     @Getter
     @Setter
-    private SupportedLanguages language;
+    private SupportedLanguage language;
 
     /**
      * Constructor.
@@ -34,7 +34,7 @@ public class MainGamePreferences {
      * @param language                   language for the UI
      */
     public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns,
-                               SupportedLanguages language) {
+                               SupportedLanguage language) {
         this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
         this.showEnemyTurns = showEnemyTurns;
         this.language = language;

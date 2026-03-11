@@ -7,13 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
-import de.sesu8642.feudaltactics.localization.SupportedLanguages;
 import lombok.Getter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
 
 // this is not just a slide created by a factory because it needs the additional accessors for the preferences
 // it is not created by the PreferencesStage because that could only use static methods as the slide needs to be
@@ -51,7 +50,7 @@ public class PreferencesSlide extends Slide {
 
         languageSelectBox = placeStringSelectWithLabel(preferencesTable,
             localizationManager.localizeText("select-language"), skin,
-            Arrays.stream(SupportedLanguages.values()).map(SupportedLanguages::getDisplayName).toArray(String[]::new));
+            localizationManager.getSupportedLanguages().stream().map(SupportedLanguage::getDisplayName).toArray(String[]::new));
 
         // add a row to fill the rest of the space in order for the other options to be
         // at the top of the page
