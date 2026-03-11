@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -33,6 +34,7 @@ public class ParameterInputStage extends ResizableResettableStage {
     private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 20);
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
+    private final LocalizationManager localizationManager;
     SelectBox<String> startingPositionSelect;
     SelectBox<String> sizeSelect;
     SelectBox<String> densitySelect;
@@ -54,34 +56,39 @@ public class ParameterInputStage extends ResizableResettableStage {
      */
     @Inject
     public ParameterInputStage(@MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
-                               Skin skin) {
+                               Skin skin, LocalizationManager localizationManager) {
         super(viewport);
         this.platformInsetsProvider = platformInsetsProvider;
         this.skin = skin;
+        this.localizationManager = localizationManager;
         initUi();
     }
 
     private void initUi() {
-        final Label startingPositionLabel = new Label("Starting\nPosition",
+        final Label startingPositionLabel = new Label(localizationManager.localizeText("starting-position"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
-        final Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY,
-            LabelStyle.class));
+        final Label difficultyLabel = new Label(localizationManager.localizeText("cpu-difficulty"),
+            skin.get(SkinConstants.FONT_OVERLAY,
+                LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
-        difficultySelect.setItems(EnumDisplayNameConverter.DIFFICULTIES.toArray(new String[0]));
+        difficultySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DIFFICULTIES).toArray(new String[0]));
 
-        final Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label sizeLabel = new Label(localizationManager.localizeText("map-size"),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
-        sizeSelect.setItems(EnumDisplayNameConverter.MAP_SIZES.toArray(new String[0]));
+        sizeSelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.MAP_SIZES).toArray(new String[0]));
 
-        final Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label densityLabel = new Label(localizationManager.localizeText("map-density"),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
-        densitySelect.setItems(EnumDisplayNameConverter.DENSITIES.toArray(new String[0]));
+        densitySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DENSITIES).toArray(new String[0]));
 
-        final Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label seedLabel = new Label(localizationManager.localizeText("seed"),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         seedTextField = new TextField("", skin);
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
         seedTextField.setMaxLength(18);
@@ -109,8 +116,8 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTable.add(randomButton).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1,
             difficultySelect));
 
-        backButton = ButtonFactory.createTextButton("Back", skin);
-        playButton = ButtonFactory.createTextButton("Play", skin);
+        backButton = ButtonFactory.createTextButton(localizationManager.localizeText("back"), skin);
+        playButton = ButtonFactory.createTextButton(localizationManager.localizeText("play"), skin);
 
         final Table buttonTable = new Table();
         buttonTable.add(backButton).expandX().fill();

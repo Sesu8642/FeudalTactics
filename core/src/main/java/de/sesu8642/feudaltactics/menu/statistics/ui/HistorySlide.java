@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
+import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
@@ -124,13 +124,13 @@ public class HistorySlide extends Slide {
         final NewGamePreferences gamePreferences = game.getGameSettings();
         if (gamePreferences != null) {
             final String difficulty = gamePreferences.getBotIntelligence() != null
-                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getBotIntelligence())
+                ? GameStateEnumDisplayNameConverter.getDisplayNameCode(gamePreferences.getBotIntelligence())
                 : "Unknown";
             final String mapSize = gamePreferences.getMapSize() != null
-                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getMapSize())
+                ? GameStateEnumDisplayNameConverter.getDisplayNameCode(gamePreferences.getMapSize())
                 : "Unknown";
             final String mapDensity = gamePreferences.getDensity() != null
-                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getDensity())
+                ? GameStateEnumDisplayNameConverter.getDisplayNameCode(gamePreferences.getDensity())
                 : "Unknown";
             settingsString = String.format("%s AI\n%s map\n%s density",
                 difficulty, mapSize, mapDensity);
