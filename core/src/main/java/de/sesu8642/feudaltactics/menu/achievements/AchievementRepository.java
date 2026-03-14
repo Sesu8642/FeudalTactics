@@ -19,6 +19,7 @@ import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement
 import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinWhenStartingLastAchievement;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -78,6 +79,7 @@ public class AchievementRepository {
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_2));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_3));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setHistoricConnection(HistoricPersonOrEvent.FREDERICK_THE_GREAT));
+        list.add(new WinWhenStartingLastAchievement(this).setHistoricConnection(HistoricPersonOrEvent.TOKUGAWA_IEYASU));
         this.achievements = Collections.unmodifiableList(list);
 
         LoadPersistedAchievements();

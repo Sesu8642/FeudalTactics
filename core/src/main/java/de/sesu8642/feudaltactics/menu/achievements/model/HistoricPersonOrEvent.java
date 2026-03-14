@@ -17,6 +17,7 @@ public enum HistoricPersonOrEvent {
     LOUIS_XI("Louis XI", "Louis XI (1423-1483) was King of France and had the nickname 'The Universal Spider', as he carried out intrigues to play out his enemies against each other. He is known for his cunning and deviousness, but also for uniting France after the Hundred Years' War."),
     HENRY_VIII("Henry VIII", "Henry VIII (1491-1547) was King of England. He is known for his six marriages, but also for building much military infrastructure."), // Reserved for BuyNCastlesAchievement
     HRE_HENRY_VI("Holy Roman Emperor Henry VI", "Henry VI (1165-1197) was Holy Roman Emperor. He was a travelling king who had no fixed castle, but still won many battles."), // Reserved for WinWithOnlyNCastlesAchievement
+    TOKUGAWA_IEYASU("Tokugawa Ieyasu", "Tokugawa Ieyasu (1543-1616) was born in a Samurai family, not a noble. Although he was not initially in a position of power, he eventually became the Shogun of Japan in 1603 when he was 60 years old."), 
     ;
 
     private HistoricPersonOrEvent(String name, String description) {
