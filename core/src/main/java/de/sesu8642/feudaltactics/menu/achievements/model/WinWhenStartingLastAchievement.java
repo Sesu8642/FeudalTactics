@@ -1,6 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
@@ -17,7 +16,7 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
 
     @Override
     public String getBaseDescription() {
-        return "Win a game when starting last in the turn order.";
+        return "Win a game against the very hard AI when starting last in the turn order.";
     }
 
     @Override
@@ -35,6 +34,11 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
 
         if (event.getGamePreferences().getStartingPosition() != gameState.getPlayers().size() - 1) {
             return;     // Ignore games where the local player didn't start last
+        }
+
+        Intelligence aiLevel = gameState.getBotIntelligence();
+        if (aiLevel != Intelligence.LEVEL_4) {
+            return;    // Not the very hard AI, ignore
         }
 
         storeProgress(1); // unlock
