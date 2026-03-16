@@ -2,9 +2,9 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,6 @@ public class NewGamePreferences {
     private static final String MAP_SIZE_KEY = "map-size";
     private static final String DENSITY_KEY = "map-density";
     private static final String STARTING_POSITION_KEY = "starting-position";
-    private static final String NUMBER_OF_BOT_PLAYERS_KEY = "number-of-bots";
 
     // Keys for sharing (readable English)
     private static final String SEED_DISPLAY_KEY = "Seed";
@@ -184,10 +183,7 @@ public class NewGamePreferences {
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(MAP_SIZE_KEY),
             localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(mapSize)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(DENSITY_KEY),
-            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(density)))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
-            localizationManager.localizeText(NUMBER_OF_BOT_PLAYERS_KEY),
-            numberOfBotPlayers);
+            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(density)));
     }
 
     /**
@@ -201,8 +197,7 @@ public class NewGamePreferences {
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_KEY,
             GameStateEnumDisplayNameConverter.getDisplayNameCode(mapSize))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_KEY,
-            GameStateEnumDisplayNameConverter.getDisplayNameCode(density))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, NUMBER_OF_BOT_PLAYERS_DISPLAY_KEY, numberOfBotPlayers);
+            GameStateEnumDisplayNameConverter.getDisplayNameCode(density));
     }
 
     /**
