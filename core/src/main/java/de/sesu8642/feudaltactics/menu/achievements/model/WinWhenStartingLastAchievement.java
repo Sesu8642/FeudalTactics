@@ -28,7 +28,7 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
 
         final de.sesu8642.feudaltactics.lib.gamestate.Player winnerOfTheGame = gameState.getWinner();
 
-        if (winnerOfTheGame == null && winnerOfTheGame.getType() != de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER){
+        if (winnerOfTheGame == null || winnerOfTheGame.getType() != de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER){
             return;     // Ignore games without a winner or where the local player didn't win
         }
 
