@@ -3,23 +3,22 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
-public class LoseAgainstWeakestAi extends AbstractAchievement {
+public class AbortGameAchievement extends AbstractAchievement {
 
-    public LoseAgainstWeakestAi(AchievementRepository repository) {
-        super(repository, 1, "Lose against the weak AI");
+    public AbortGameAchievement(AchievementRepository repository) {
+        super(repository, 1, "Abort a game");
     }
 
     @Override
     public String getId() {
-        return "lose_against_weak_ai";
+        return "abort_game";
     }
 
     @Override
     public String getBaseDescription() {
-        return "Lose a game against the weakest AI. Aborting does not count!";
+        return "Abort a game.";
     }
     
     @Override
@@ -30,16 +29,8 @@ public class LoseAgainstWeakestAi extends AbstractAchievement {
         }   
     
         final Player winnerOfTheGame = gameState.getWinner();
-
-        if (winnerOfTheGame == null || winnerOfTheGame.getType() == Player.Type.LOCAL_PLAYER) {
-            return;     // Player didn't lose, so ignore
+        if (winnerOfTheGame == null) {
+            storeProgress(1);
         }
-
-        Intelligence aiLevel = gameState.getBotIntelligence();
-        if (aiLevel != Intelligence.LEVEL_1) {
-            return;    // Not the weakest AI, ignore
-        }
-
-        storeProgress(1);
     }
 }

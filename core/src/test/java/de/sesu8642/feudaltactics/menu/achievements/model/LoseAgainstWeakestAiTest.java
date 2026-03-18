@@ -5,11 +5,11 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
-class LoseAgainstWeakestAiTest extends AbstractAchievementTest<LoseAgainstWeakestAi> {
+class LoseAgainstWeakestAiTest extends AbstractAchievementTest<LoseAgainstWeakestAiAchievement> {
 
     @Override
-    protected LoseAgainstWeakestAi createAchievement(AchievementRepository repo) {
-        return new LoseAgainstWeakestAi(repo);
+    protected LoseAgainstWeakestAiAchievement createAchievement(AchievementRepository repo) {
+        return new LoseAgainstWeakestAiAchievement(repo);
     }
 
     @Test
