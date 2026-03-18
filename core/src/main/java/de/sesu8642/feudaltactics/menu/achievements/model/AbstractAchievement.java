@@ -24,6 +24,9 @@ public abstract class AbstractAchievement {
     protected abstract String getBaseDescription();
     public String getDescription() {
         if (historicConnection != null) {
+            if (isSecret && !unlocked) {
+                return historicConnection.getDescription() + "\n\n" + "This achievement is still secret. Unlock it to see the full description.";
+            }
             return historicConnection.getDescription() + "\n\n" + getBaseDescription();
         }
         else {
@@ -39,8 +42,12 @@ public abstract class AbstractAchievement {
     @Setter
     private HistoricPersonOrEvent historicConnection;
 
-    protected AchievementRepository achievementRepository;
+    @Getter
+    @Setter
+    private boolean isSecret;
 
+    protected AchievementRepository achievementRepository;
+   
     protected AbstractAchievement(AchievementRepository achievementRepository, int goal, String name) {
         this.achievementRepository = achievementRepository;
         this.goal = goal;
