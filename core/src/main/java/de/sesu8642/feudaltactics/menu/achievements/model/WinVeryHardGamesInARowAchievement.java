@@ -52,7 +52,9 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
     public String getBaseDescription() {
         return "Win " + getGoal() + " games in a row on Very Hard AI difficulty. Any map size is allowed, "
         + "but you must win consecutively without losing or aborting, and you must not re-generate the map (always use the first generated map). "
-        + "Furthermore, you must always play with the same color and you must not play a game on lower difficulty in between.";
+        + "You must not change any setting, but always play the game you are presented with. "
+        + "Therefore, you must always play with the same color and the same map size you started with. "
+        + "Thus, you also must not play a game on lower difficulty in between. You must not even go back to the main menu once you have looked at the map.";
     }
 
     @Override
