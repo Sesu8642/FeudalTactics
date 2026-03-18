@@ -52,11 +52,10 @@ public class AchievementRepository {
         list.add(new WinNGamesAchievement(this, 10));
         list.add(new WinNGamesAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.CHARLEMAGNE));    // Charlemagne won many battles
         list.add(new WinInNRoundsAchievement(this, 18));
-        list.add(new WinInNRoundsAchievement(this, 16));
-        list.add(new WinInNRoundsAchievement(this, 15));
-        list.add(new WinInNRoundsAchievement(this, 14).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
-        list.add(new PlayMoreThanNRoundsAchievement(this, 25).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
-        list.add(new PlayMoreThanNRoundsAchievement(this, 35).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
+        list.add(new WinInNRoundsAchievement(this, 14));
+        list.add(new WinInNRoundsAchievement(this, 12).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
+        list.add(new PlayMoreThanNRoundsAchievement(this, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
+        list.add(new PlayMoreThanNRoundsAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
         list.add(new LoseAgainstWeakestAi(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));    // The Walk to Canossa was a humiliation. And so is this achievement.
         // list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
         // list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
