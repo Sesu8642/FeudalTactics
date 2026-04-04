@@ -29,7 +29,7 @@ public class InformationMenuDaggerModule {
     @Singleton
     @DependencyLicenses
     static Map<String, Map<String, String>> provideDependencyLicenses(ResourceNameReader resourceNameReader) {
-        final List<String> licenseFiles = resourceNameReader.getAssetFiles("dependency_licenses/");
+        final List<String> licenseFiles = resourceNameReader.getAssetFilePaths("dependency_licenses/");
         // outer map key: dependency name, inner map key: file name, outer map value:
         // file contents
         final Map<String, Map<String, String>> result = new HashMap<>();

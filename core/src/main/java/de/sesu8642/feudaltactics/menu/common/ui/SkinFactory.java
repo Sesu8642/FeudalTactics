@@ -9,9 +9,12 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.ray3k.stripe.FreeTypeSkin;
+import lombok.extern.slf4j.Slf4j;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.*;
 
@@ -19,10 +22,8 @@ import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.*;
  * Factoring for creating the skin for the game. Most stuff in here is a big hack, but it's the only way I found to
  * scale the fonts dynamically based on the device screen parameters.
  */
+@Slf4j
 public final class SkinFactory {
-
-    private static final String SUPPORTED_CHARACTERS =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–ÄÖÜäöüẞß";
 
     // prevent instantiation
     private SkinFactory() {
@@ -32,11 +33,14 @@ public final class SkinFactory {
     /**
      * Creates the game skin.
      */
-    public static Skin createSkin() {
+    public static Skin createSkin(java.util.List<String> languageFiles) {
         final Skin skin = new FreeTypeSkin(Gdx.files.internal("skin/pixthulhu-ui.json"));
 
+        final String neededCharacters = getNeededCharactersString(languageFiles);
+        log.info("Generating the following characters for fonts: {}", neededCharacters);
+
         // fonts cannot have dynamic size if included in the skin file using FreeTypeSkin
-        final Map<String, BitmapFont> fonts = SkinFactory.createFonts();
+        final Map<String, BitmapFont> fonts = SkinFactory.createFonts(neededCharacters);
 
         // headline label
         final Label.LabelStyle headlineLabelStyle = skin.get(SkinConstants.FONT_HEADLINE, Label.LabelStyle.class);
@@ -101,7 +105,16 @@ public final class SkinFactory {
         return skin;
     }
 
-    private static Map<String, BitmapFont> createFonts() {
+    private static String getNeededCharactersString(java.util.List<String> languageFiles) {
+        return languageFiles.stream().map(filePath -> Gdx.files.internal(filePath).readString(StandardCharsets.UTF_8.name()))
+            .flatMapToInt(String::chars).mapToObj(c -> (char) c)
+            // collect to set to remove duplicates
+            .collect(Collectors.toSet())
+            // sort after (just nicer for debugging)
+            .stream().sorted().collect(Collectors.toList()).toString();
+    }
+
+    private static Map<String, BitmapFont> createFonts(String neededCharacters) {
         // creating all fonts at once to be able to re-use the generators
 
         final FreeTypeFontGenerator regularFontGenerator = new FreeTypeFontGenerator(
@@ -110,57 +123,52 @@ public final class SkinFactory {
             Gdx.files.internal("skin/FreeSansBold.ttf"));
 
         final Map<String, BitmapFont> result = new HashMap<>();
-        result.put(SkinConstants.FONT_HEADLINE, createHeadlineFont(boldFontGenerator
-        ));
-        result.put(SkinConstants.FONT_BUTTON, createButtonFont(boldFontGenerator
-        ));
-        result.put(SkinConstants.FONT_OVERLAY, createOverlayFont(regularFontGenerator
-        ));
-        result.put(SkinConstants.FONT_DEFAULT_TEXT, createTextFont(regularFontGenerator
-        ));
-        result.put(SkinConstants.FONT_SMALLER_TEXT, createSmallerTextFont(regularFontGenerator
-        ));
+        result.put(SkinConstants.FONT_HEADLINE, createHeadlineFont(boldFontGenerator, neededCharacters));
+        result.put(SkinConstants.FONT_BUTTON, createButtonFont(boldFontGenerator, neededCharacters));
+        result.put(SkinConstants.FONT_OVERLAY, createOverlayFont(regularFontGenerator, neededCharacters));
+        result.put(SkinConstants.FONT_DEFAULT_TEXT, createTextFont(regularFontGenerator, neededCharacters));
+        result.put(SkinConstants.FONT_SMALLER_TEXT, createSmallerTextFont(regularFontGenerator, neededCharacters));
 
         regularFontGenerator.dispose();
         boldFontGenerator.dispose();
         return result;
     }
 
-    private static BitmapFont createHeadlineFont(FreeTypeFontGenerator fontGenerator) {
+    private static BitmapFont createHeadlineFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 70);
-        fontParameters.characters = SUPPORTED_CHARACTERS;
+        fontParameters.characters = neededCharacters;
         return fontGenerator.generateFont(fontParameters);
     }
 
-    private static BitmapFont createButtonFont(FreeTypeFontGenerator fontGenerator) {
+    private static BitmapFont createButtonFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = BUTTON_TEXT_SIZE;
-        fontParameters.characters = SUPPORTED_CHARACTERS;
+        fontParameters.characters = neededCharacters;
         fontParameters.borderWidth = Gdx.graphics.getDensity() * 5 * BUTTON_TEXT_SCALING_FACTOR;
         return fontGenerator.generateFont(fontParameters);
     }
 
-    private static BitmapFont createOverlayFont(FreeTypeFontGenerator fontGenerator) {
+    private static BitmapFont createOverlayFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 40);
-        fontParameters.characters = SUPPORTED_CHARACTERS;
+        fontParameters.characters = neededCharacters;
         fontParameters.borderWidth = Gdx.graphics.getDensity() * 2 * TEXT_SCALING_FACTOR;
         return fontGenerator.generateFont(fontParameters);
     }
 
-    private static BitmapFont createTextFont(FreeTypeFontGenerator fontGenerator) {
+    private static BitmapFont createTextFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 48);
-        fontParameters.characters = SUPPORTED_CHARACTERS;
+        fontParameters.characters = neededCharacters;
         fontParameters.color = Color.BLACK;
         return fontGenerator.generateFont(fontParameters);
     }
 
-    private static BitmapFont createSmallerTextFont(FreeTypeFontGenerator fontGenerator) {
+    private static BitmapFont createSmallerTextFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 32);
-        fontParameters.characters = SUPPORTED_CHARACTERS;
+        fontParameters.characters = neededCharacters;
         return fontGenerator.generateFont(fontParameters);
     }
 

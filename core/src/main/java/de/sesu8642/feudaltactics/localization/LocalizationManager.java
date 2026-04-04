@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 @Singleton
 public class LocalizationManager {
-    private static final String BASE_LOCALISATION_DIR = "i18n/strings";
+    public static final String BASE_LOCALISATION_DIR = "i18n/strings";
     private static final FileHandle BASE_LOCALIZATION_DIR_FILE_HANDLE = Gdx.files.internal(BASE_LOCALISATION_DIR);
     @Getter
     private final List<SupportedLanguage> supportedLanguages;
@@ -40,7 +40,7 @@ public class LocalizationManager {
     }
 
     private List<SupportedLanguage> getSupportedLanguagesFromFiles(ResourceNameReader resourceNameReader) {
-        final List<String> languageFiles = resourceNameReader.getAssetFiles(BASE_LOCALISATION_DIR);
+        final List<String> languageFiles = resourceNameReader.getAssetFilePaths(BASE_LOCALISATION_DIR);
         final List<SupportedLanguage> result = new ArrayList<>();
         for (String languageFilePath : languageFiles) {
             if (languageFilePath.endsWith("strings.properties")) {

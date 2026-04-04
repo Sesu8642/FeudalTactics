@@ -23,7 +23,7 @@ public class ResourceNameReader {
     /**
      * Returns a list of all asset files whose path begins with the given string.
      */
-    public List<String> getAssetFiles(String startOfPath) {
+    public List<String> getAssetFilePaths(String startOfPath) {
         final FileHandle assetsFileHandle = Gdx.files.internal("assets.txt");
         final String assetListText = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
         final String[] assets = assetListText.split("\n");
