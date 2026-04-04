@@ -6,8 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.base.Strings;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
@@ -63,8 +63,10 @@ public class CrashReportScreen extends GameScreen {
         if (!Strings.isNullOrEmpty(crashReportText)) {
             crashReportStage.crashReportSlide.textArea.setText(crashReportText);
         } else {
-            crashReportStage.crashReportSlide.descriptionLabel.setText(localizationManager.localizeText("no-crashes"));
-            crashReportStage.crashReportSlide.textArea.setText(localizationManager.localizeText("nothing-to-see-here"));
+            crashReportStage.crashReportSlide.descriptionLabel.setText(localizationManager.localizeText("crash-report" +
+                    "-page-text-no-craches"));
+            crashReportStage.crashReportSlide.textArea.setText(localizationManager.localizeText("crash-report-page" +
+                    "-details-placeholder"));
             crashReportStage.crashReportSlide.buttonGroup.removeActor(crashReportStage.crashReportSlide.sendMailButton);
             crashReportStage.crashReportSlide.buttonGroup.removeActor(crashReportStage.crashReportSlide.copyButton);
         }

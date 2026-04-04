@@ -74,9 +74,9 @@ public class SlideStage extends AbstractSlideStage {
     @Override
     protected void updateNavigationButtonStates() {
         if (slides.size() == currentSlideIndex + 1) {
-            nextButton.setText(localizationManager.localizeText("finish"));
+            nextButton.setText(localizationManager.localizeText("slide-stage-button-finish"));
         } else {
-            nextButton.setText(localizationManager.localizeText("next"));
+            nextButton.setText(localizationManager.localizeText("slide-stage-button-next"));
         }
         if (currentSlideIndex == 0) {
             backButton.setTouchable(Touchable.disabled);
@@ -85,7 +85,7 @@ public class SlideStage extends AbstractSlideStage {
         } else {
             backButton.setTouchable(Touchable.enabled);
             backButton.setDisabled(false);
-            backButton.setText(localizationManager.localizeText("back"));
+            backButton.setText(localizationManager.localizeText("menu-button-back"));
         }
     }
 }

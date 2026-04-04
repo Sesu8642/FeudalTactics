@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
@@ -19,6 +18,7 @@ import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import de.sesu8642.feudaltactics.input.FeudalTacticsGestureDetector;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
@@ -107,7 +107,8 @@ public class EditorScreen extends GameScreen {
         cachedGameState = GameStateHelper.getCopy(newGameState);
         // update the UI
 
-        final String hudStageInfoText = localizationManager.localizeText("map-size-info", newGameState.getMap().size());
+        final String hudStageInfoText = localizationManager.localizeText("editor-hud-text-map-size-info",
+            newGameState.getMap().size());
 
         editorHudStage.infoTextLabel.setText(hudStageInfoText);
     }

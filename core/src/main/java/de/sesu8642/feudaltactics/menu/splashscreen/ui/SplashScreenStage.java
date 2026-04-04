@@ -36,7 +36,7 @@ public class SplashScreenStage extends MenuStage {
                              LocalizationManager localizationManager) {
         // using a menu stage without buttons here
         super(viewport, ImmutableList.of(), camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
-        final Label bottomRightLabel = new Label(localizationManager.localizeText("by-author"),
+        final Label bottomRightLabel = new Label(localizationManager.localizeText("splash-screen-label-author"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }

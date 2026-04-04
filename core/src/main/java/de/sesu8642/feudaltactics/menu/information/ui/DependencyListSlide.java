@@ -35,9 +35,9 @@ public class DependencyListSlide extends Slide {
     @Inject
     public DependencyListSlide(Skin skin, @DependencyLicenses Map<String, Map<String, String>> dependencyLicenses,
                                LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("dependencies"));
+        super(skin, localizationManager.localizeText("dependency-page-headline"));
 
-        descriptionLabel = new Label(localizationManager.localizeText("dependency-click-description"), skin);
+        descriptionLabel = new Label(localizationManager.localizeText("dependency-page-preemble"), skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
         getTable().add(descriptionLabel).fill().expandX();

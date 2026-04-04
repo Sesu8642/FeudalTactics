@@ -8,9 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -29,10 +29,12 @@ import java.util.List;
 @Singleton
 public class MainMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("play", "level-editor", "preferences",
-        "community-redirect");
-    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("play", "preferences",
-        "information", "community-redirect");
+    private static final List<String> BUTTON_TEXTS = ImmutableList.of("menu-button-play", "button" +
+            "-menu-level-editor", "menu-button-preferences",
+        "menu-button-community");
+    private static final List<String> BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR = ImmutableList.of("menu-button-play"
+        , "menu-button-preferences",
+        "menu-button-information", "menu-button-community");
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -46,7 +48,7 @@ public class MainMenuStage extends MenuStage {
         super(viewport, levelEditorEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_LEVEL_EDITOR, camera,
             platformInsetsProvider, mapRenderer, skin, localizationManager);
         final Label bottomRightLabel = new Label(String.format("%s %s",
-            localizationManager.localizeText("version"), gameVersion),
+            localizationManager.localizeText("menu-label-version"), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }

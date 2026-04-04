@@ -9,13 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -135,9 +135,9 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        tutorialNagDialog.text(localizationManager.localizeText("tutorial-nag-text"));
-        tutorialNagDialog.button(localizationManager.localizeText("no"), (byte) 0);
-        tutorialNagDialog.button(localizationManager.localizeText("yes"), (byte) 1);
+        tutorialNagDialog.text(localizationManager.localizeText("dialog-text-tutorial-nag"));
+        tutorialNagDialog.button(localizationManager.localizeText("button-dialog-no"), (byte) 0);
+        tutorialNagDialog.button(localizationManager.localizeText("button-dialog-yes"), (byte) 1);
         tutorialNagDialog.show(getActiveStage());
     }
 
@@ -158,9 +158,9 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        newVersionDialog.text(localizationManager.localizeText("game-updated-text"));
-        newVersionDialog.button(localizationManager.localizeText("ok"), (byte) 0);
-        newVersionDialog.button(localizationManager.localizeText("open-changelog"), (byte) 1);
+        newVersionDialog.text(localizationManager.localizeText("dialog-text-game-updated"));
+        newVersionDialog.button(localizationManager.localizeText("button-dialog-ok"), (byte) 0);
+        newVersionDialog.button(localizationManager.localizeText("button-dialog-open-changelog"), (byte) 1);
         newVersionDialog.show(getActiveStage());
     }
 

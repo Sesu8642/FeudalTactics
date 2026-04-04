@@ -53,7 +53,8 @@ public class CyclingSlideStage extends AbstractSlideStage {
         slideContainer.setActor(currentSlide.getTable());
 
         cyclingButton = ButtonFactory.createTextButton("", skin);   // Text will be set later on reset()
-        final TextButton finishButton = ButtonFactory.createTextButton(localizationManager.localizeText("finish"),
+        final TextButton finishButton = ButtonFactory.createTextButton(localizationManager.localizeText("slide-stage" +
+                        "-button-finish"),
             skin);
 
         cyclingButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(getNextIndex())));

@@ -35,10 +35,10 @@ public class CrashReportSlide extends Slide {
      */
     @Inject
     public CrashReportSlide(Skin skin, LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("report-a-crash"));
+        super(skin, localizationManager.localizeText("menu-button-crash-report"));
 
         descriptionLabel = new Label(
-            localizationManager.localizeText("report-crash-instruction"),
+            localizationManager.localizeText("crash-report-page-text-instruction"),
             skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
@@ -47,8 +47,10 @@ public class CrashReportSlide extends Slide {
         textArea.setDisabled(true);
 
         copyButton = ButtonFactory.createCopyButton(localizationManager.localizeText("copy-button"), skin, true);
-        sendMailButton = ButtonFactory.createTextButton(localizationManager.localizeText("send-email-redirect"), skin);
-        openGithubButton = ButtonFactory.createTextButton(localizationManager.localizeText("open-github-redirect"),
+        sendMailButton = ButtonFactory.createTextButton(localizationManager.localizeText("crash-report-page-button" +
+            "-send-email"), skin);
+        openGithubButton = ButtonFactory.createTextButton(localizationManager.localizeText("crash-report-page-button" +
+                "-open-issues"),
             skin);
 
         buttonGroup = new HorizontalGroup();

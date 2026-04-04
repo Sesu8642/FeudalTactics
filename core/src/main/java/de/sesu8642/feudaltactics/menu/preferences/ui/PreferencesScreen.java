@@ -79,9 +79,9 @@ public class PreferencesScreen extends GameScreen {
             }
 
             // Show bilingual restart prompt
-            final String oldLanguageText = localizationManager.localizeText("restart-game-prompt");
-            final String newLanguageText = localizationManager.localizeTextInLanguage(selectedLanguage, "restart-game" +
-                "-prompt");
+            final String oldLanguageText = localizationManager.localizeText("dialog-text-restart-game");
+            final String newLanguageText = localizationManager.localizeTextInLanguage(selectedLanguage, "dialog-text" +
+                "-restart-game");
 
             sendPreferencesChangedEvent();
 

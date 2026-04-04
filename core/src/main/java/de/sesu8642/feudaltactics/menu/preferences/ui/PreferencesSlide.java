@@ -38,18 +38,18 @@ public class PreferencesSlide extends Slide {
      */
     @Inject
     public PreferencesSlide(Skin skin, LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("preferences"));
+        super(skin, localizationManager.localizeText("menu-button-preferences"));
 
         final Table preferencesTable = new Table();
 
         forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText(
-                "warn-about-forgotten-kingdoms"),
+                "settings-page-label-warn-about-forgotten-kingdoms"),
             skin);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable,
-            localizationManager.localizeText("show-enemy-turns"), skin);
+            localizationManager.localizeText("settings-page-label-show-enemy-turns"), skin);
 
         languageSelectBox = placeStringSelectWithLabel(preferencesTable,
-            localizationManager.localizeText("select-language"), skin,
+            localizationManager.localizeText("settings-page-label-language"), skin,
             localizationManager.getSupportedLanguages().stream().map(SupportedLanguage::getDisplayName).toArray(String[]::new));
 
         // add a row to fill the rest of the space in order for the other options to be

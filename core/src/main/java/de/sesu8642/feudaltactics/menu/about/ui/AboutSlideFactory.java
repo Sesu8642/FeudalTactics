@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import javax.inject.Inject;
@@ -42,14 +42,19 @@ public class AboutSlideFactory {
      * @return about slides
      */
     public Slide createAboutSlide() {
-        final String text1 = localizationManager.localizeText("version-text",
-            localizationManager.localizeText("by"), "Sesu8642",
-            localizationManager.localizeText("version"), version);
-        final String text2 = localizationManager.localizeText("gpl-text");
-        final String text3 = "\n" + localizationManager.localizeText("acknowledgements") +
-            "\n" + localizationManager.localizeText("acknowledgements-text");
+        final String text1 = localizationManager.localizeText("about-page-logo-caption", version);
+        // this legal text shouldn't be translated
+        final String text2 = "This program is free software: you can redistribute it and/or modify it under the terms" +
+            " of " +
+            "the GNU General Public License as published by the Free Software Foundation, either version 3 of the " +
+            "License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will " +
+            "be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR" +
+            " A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received" +
+            " a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu" +
+            ".org/licenses/>.";
+        final String text3 = "\n" + localizationManager.localizeText("acknowledgements");
         final String imagePath = "square_logo_64.png";
-        final Slide slide = new Slide(skin, localizationManager.localizeText("about-feudal-tactics"));
+        final Slide slide = new Slide(skin, localizationManager.localizeText("about-page-headline"));
         slide.getTable().add(new Image(new Texture(imagePath))).row();
         slide.getTable().add(new Label(text1, skin)).center().row();
         slide.addLabel(text2);

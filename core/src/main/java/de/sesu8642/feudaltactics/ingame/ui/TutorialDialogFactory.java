@@ -3,8 +3,8 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
@@ -85,46 +85,46 @@ public class TutorialDialogFactory {
             default:
                 throw new IllegalStateException("Tutorial objective index is higher than expected: " + objectiveProgress);
         }
-        dialog.button(localizationManager.localizeText("ok"));
+        dialog.button(localizationManager.localizeText("button-dialog-ok"));
         return dialog;
     }
 
 
     private void fillTutorialDialog1(FeudalTacticsDialog dialog) {
-        final String text = localizationManager.localizeText("tutorial-objective-1");
+        final String text = localizationManager.localizeText("tutorial-objective-game-goal");
         dialog.text(text).addButtonImage(SkinConstants.BUTTON_INFO);
     }
 
     private void fillTutorialDialog2(FeudalTacticsDialog dialog) {
-        final String text1 = localizationManager.localizeText("tutorial-objective-2");
+        final String text1 = localizationManager.localizeText("tutorial-objective-finances");
         dialog.text(text1).addButtonImage(SkinConstants.BUTTON_BUY_PEASANT);
     }
 
     private void fillTutorialDialog3(FeudalTacticsDialog dialog) {
-        final String text1 = localizationManager.localizeText("tutorial-objective-3-1");
-        final String text2 = localizationManager.localizeText("tutorial-objective-3-2");
+        final String text1 = localizationManager.localizeText("tutorial-objective-after-unit-purchase-part-1");
+        final String text2 = localizationManager.localizeText("tutorial-objective-after-unit-purchase-part-2");
         dialog.text(text1).addButtonImage(SkinConstants.SPRITE_HAND).text(text2);
     }
 
     private void fillTutorialDialog4(FeudalTacticsDialog dialog) {
-        final String text1 = localizationManager.localizeText("tutorial-objective-4-1");
-        final String text2 = localizationManager.localizeText("tutorial-objective-4-2");
+        final String text1 = localizationManager.localizeText("tutorial-objective-end-turn-part-1");
+        final String text2 = localizationManager.localizeText("tutorial-objective-end-turn-part-2");
         dialog.text(text1).addButtonImage(SkinConstants.BUTTON_END_TURN).text(text2);
     }
 
     private void fillTutorialDialog5(FeudalTacticsDialog dialog) {
-        final String text1 = localizationManager.localizeText("tutorial-objective-5-1");
-        final String text2 = localizationManager.localizeText("tutorial-objective-5-2");
+        final String text1 = localizationManager.localizeText("tutorial-objective-protection-part-1");
+        final String text2 = localizationManager.localizeText("tutorial-objective-protection-part-2");
         dialog.text(text1).addSpriteImage(textureAtlasHelper.getShieldSprite()).text(text2);
     }
 
     private void fillTutorialDialog6(FeudalTacticsDialog dialog) {
-        final String text1 = localizationManager.localizeText("tutorial-objective-6-1");
+        final String text1 = localizationManager.localizeText("tutorial-objective-unit-overview-part-1");
         final List<List<String>> tableData = new ArrayList<>();
         tableData.add(Arrays.asList(
-            localizationManager.localizeText("tutorial-unit-table-unit"),
-            localizationManager.localizeText("tutorial-unit-table-strength"),
-            localizationManager.localizeText("tutorial-unit-table-salary")
+            localizationManager.localizeText("tutorial-unit-table-headline-unit-name"),
+            localizationManager.localizeText("tutorial-unit-table-headline-strength"),
+            localizationManager.localizeText("tutorial-unit-table-headline-salary")
         ));
         for (UnitTypes unitType : UnitTypes.values()) {
             tableData.add(Arrays.asList(GameStateEnumDisplayNameConverter.getLocalizedDisplayName(unitType,
@@ -132,39 +132,39 @@ public class TutorialDialogFactory {
                 String.valueOf(unitType.strength()),
                 String.valueOf(unitType.salary())));
         }
-        final String text2 = localizationManager.localizeText("tutorial-objective-6-2");
+        final String text2 = localizationManager.localizeText("tutorial-objective-unit-overview-part-2");
         dialog.text(text1).addTable(tableData).text(text2);
     }
 
     private void fillTutorialDialog7(FeudalTacticsDialog dialog) {
-        final String text = localizationManager.localizeText("tutorial-objective-7");
+        final String text = localizationManager.localizeText("tutorial-objective-trees");
         dialog.text(text);
     }
 
     private void fillTutorialDialog8(FeudalTacticsDialog dialog) {
-        final String text = localizationManager.localizeText("tutorial-objective-8-1");
-        final String text2 = localizationManager.localizeText("tutorial-objective-8-2");
+        final String text = localizationManager.localizeText("tutorial-objective-castle-part-1");
+        final String text2 = localizationManager.localizeText("tutorial-objective-castle-part-2");
         dialog.text(text).addButtonImage(SkinConstants.BUTTON_BUY_CASTLE).text(text2);
     }
 
     private void fillTutorialDialog9(FeudalTacticsDialog dialog) {
-        final String text = localizationManager.localizeText("tutorial-objective-9");
+        final String text = localizationManager.localizeText("tutorial-objective-hint-collection");
         dialog.text(text);
     }
 
     private void fillTutorialDialog10(FeudalTacticsDialog dialog) {
-        final String text1 = localizationManager.localizeText("tutorial-objective-10-1");
-        final String text2 = localizationManager.localizeText("tutorial-objective-10-2");
+        final String text1 = localizationManager.localizeText("tutorial-objective-undoing-part-1");
+        final String text2 = localizationManager.localizeText("tutorial-objective-undoing-part-2");
         dialog.text(text1).addButtonImage(SkinConstants.BUTTON_UNDO).text(text2);
     }
 
     private void fillTutorialDialog11(FeudalTacticsDialog dialog) {
-        final String text = localizationManager.localizeText("tutorial-objective-11");
+        final String text = localizationManager.localizeText("tutorial-objective-shortcuts");
         dialog.text(text);
     }
 
     private void fillTutorialDialog12(FeudalTacticsDialog dialog) {
-        final String text = localizationManager.localizeText("tutorial-objective-12");
+        final String text = localizationManager.localizeText("tutorial-objective-shortcuts-duplicate");
         dialog.text(text);
     }
 }

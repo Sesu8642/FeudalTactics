@@ -12,7 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.*;
 import de.sesu8642.feudaltactics.events.moves.*;
@@ -26,6 +25,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
@@ -153,7 +153,7 @@ public class IngameScreen extends GameScreen {
             final Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
             if (forgottenKingdom.isPresent()) {
                 final Dialog confirmDialog = dialogFactory.createConfirmDialog(
-                    localizationManager.localizeText("forgotten-kingdoms-warning"),
+                    localizationManager.localizeText("dialog-text-forgotten-kingdoms-warning"),
                     this::endHumanPlayerTurn, () -> {
                         final Kingdom kingdom = forgottenKingdom.get();
                         eventBus.post(new FocusKingdomEvent(cachedGameState,
@@ -236,7 +236,7 @@ public class IngameScreen extends GameScreen {
             hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
                 newGameState);
         } else {
-            hudStageInfoText = localizationManager.localizeText("enemy-turn");
+            hudStageInfoText = localizationManager.localizeText("hud-status-text-enemy-turn");
             if (!ingameHudStage.isEnemyTurnButtonsShown()) {
                 Gdx.app.postRunnable(ingameHudStage::showEnemyTurnButtons);
             }
@@ -268,9 +268,9 @@ public class IngameScreen extends GameScreen {
                 // warn the user with red text
                 infoText += "[RED]";
             }
-            infoText += localizationManager.localizeText("savings-info", savings, budgetBalanceText);
+            infoText += localizationManager.localizeText("hud-status-text-savings-info", savings, budgetBalanceText);
         } else {
-            infoText = localizationManager.localizeText("select-kingdom-info");
+            infoText = localizationManager.localizeText("hud-status-text-select-kingdom");
         }
         // buttons
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
@@ -439,15 +439,15 @@ public class IngameScreen extends GameScreen {
         // exit button
         final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("confirm" +
-                    "-lost-progress"),
+            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("dialog" +
+                    "-text-confirm-lost-progress"),
                 this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("confirm" +
-                    "-lost-progress"),
+            final Dialog confirmDialog = dialogFactory.createConfirmDialog(localizationManager.localizeText("dialog" +
+                    "-text-confirm-lost-progress"),
                 this::resetGame);
             confirmDialog.show(menuStage);
         }));

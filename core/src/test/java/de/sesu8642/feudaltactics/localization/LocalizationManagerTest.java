@@ -77,7 +77,7 @@ class LocalizationManagerTest {
 
             final LocalizationManager systemUnderTest = new LocalizationManager(mainPreferencesDaoMock,
                 resourceNameReaderMock);
-            final String actual = systemUnderTest.localizeText("play");
+            final String actual = systemUnderTest.localizeText("menu-button-play");
 
             assertEquals("abc", actual);
         }
@@ -95,7 +95,7 @@ class LocalizationManagerTest {
 
             final LocalizationManager systemUnderTest = new LocalizationManager(mainPreferencesDaoMock,
                 resourceNameReaderMock);
-            final String actual = systemUnderTest.localizeText("play");
+            final String actual = systemUnderTest.localizeText("menu-button-play");
 
             assertEquals("[missing: 'play']", actual);
         }

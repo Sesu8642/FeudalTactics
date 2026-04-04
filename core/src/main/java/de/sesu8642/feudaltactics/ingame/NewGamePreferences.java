@@ -22,11 +22,11 @@ public class NewGamePreferences {
     public static final String PARAMETER_DISPLAY_FORMAT = "%s: %s";
 
     // Keys for UI localization
-    private static final String SEED_KEY = "seed";
-    private static final String BOT_INTELLIGENCE_KEY = "cpu-difficulty";
-    private static final String MAP_SIZE_KEY = "map-size";
-    private static final String DENSITY_KEY = "map-density";
-    private static final String STARTING_POSITION_KEY = "starting-position";
+    private static final String SEED_KEY = "game-details-seed";
+    private static final String BOT_INTELLIGENCE_KEY = "game-details-cpu-difficulty";
+    private static final String MAP_SIZE_KEY = "game-details-map-size";
+    private static final String DENSITY_KEY = "game-details-map-density";
+    private static final String STARTING_POSITION_KEY = "game-details-starting-position";
 
     // Keys for sharing (readable English)
     private static final String SEED_DISPLAY_KEY = "Seed";
