@@ -17,11 +17,10 @@ public class GameStateEnumDisplayNameConverter {
 
     public static final List<String> DIFFICULTIES = ImmutableList.of("game-parameter-difficulty-easy", "game" +
         "-parameter-difficulty-medium", "game-parameter-difficulty-hard", "game-parameter-difficulty-very-hard");
-    public static final List<String> MAP_SIZES = ImmutableList.of("game-parameter-size-small", "game-parameter" +
-        "-difficulty-medium", "game-parameter-size-large", "game-parameter-size-xlarge", "game-parameter-size" +
-        "-xxlarge");
+    public static final List<String> MAP_SIZES = ImmutableList.of("game-parameter-size-small", "game-parameter-size" +
+        "-medium", "game-parameter-size-large", "game-parameter-size-xlarge", "game-parameter-size-xxlarge");
     public static final List<String> DENSITIES = ImmutableList.of("game-parameter-density-dense", "game-parameter" +
-        "-difficulty-medium", "game-parameter-density-loose");
+        "-density-medium", "game-parameter-density-loose");
     public static final List<String> UNITS = ImmutableList.of("tutorial-unit-table-unit-type-peasant", "tutorial-unit" +
         "-table-unit-type-spearman", "tutorial-unit-table-unit-type-knight", "tutorial-unit-table-unit-type-baron");
 
