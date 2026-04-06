@@ -5,7 +5,6 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
@@ -23,6 +22,12 @@ import javax.inject.Singleton;
 
 public class StatisticsSlide extends Slide {
 
+    private static final String TRANSLATION_KEY_SECTION_BASE_TITLE = "statistics-page-difficulty-section-title";
+    private static final String TRANSLATION_KEY_SECTION_1_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-easy";
+    private static final String TRANSLATION_KEY_SECTION_2_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-medium";
+    private static final String TRANSLATION_KEY_SECTION_3_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-hard";
+    private static final String TRANSLATION_KEY_SECTION_4_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-very-hard";
+
     private final StatisticsDao statisticsDao;
     private final Skin skin;
     private final LocalizationManager localizationManager;
@@ -36,7 +41,7 @@ public class StatisticsSlide extends Slide {
      */
     @Inject
     public StatisticsSlide(Skin skin, StatisticsDao statisticsDao, LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("statistics"));
+        super(skin, localizationManager.localizeText("statistics-page-headline"));
         this.statisticsDao = statisticsDao;
         this.skin = skin;
         this.localizationManager = localizationManager;
@@ -79,7 +84,7 @@ public class StatisticsSlide extends Slide {
             statistics.getGamesPlayed());
         final CountByAiLevel gamesWon = statistics.getGamesWon();
         placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-games-won"),
-                gamesWon.getTotalCount());
+            gamesWon.getTotalCount());
         final CountByAiLevel gamesLost = statistics.getGamesLost();
         placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-games-lost"),
             gamesLost.getTotalCount());
@@ -91,10 +96,10 @@ public class StatisticsSlide extends Slide {
 
         statisticsTable.row();
 
-        final Intelligence[] aiLevels = Intelligence.values();
-        for (Intelligence level : aiLevels) {
-            placeHeading(localizationManager.localizeText("statistics-page-difficulty-ai-statistics",
-                GameStateEnumDisplayNameConverter.getLocalizedDisplayName(level, localizationManager)));
+        final Intelligence[] intelligenceLevels = Intelligence.values();
+        for (Intelligence level : intelligenceLevels) {
+            final String sectionTitle = intelligenceLevelToSectionTitle(level);
+            placeHeading(sectionTitle);
             placeIntegerWithLabel("  " + localizationManager.localizeText("statistics-page-games-won"),
                 gamesWon.getCountByAiLevel().get(level));
             placeIntegerWithLabel("  " + localizationManager.localizeText("statistics-page-games-lost"),
@@ -104,5 +109,26 @@ public class StatisticsSlide extends Slide {
             statisticsTable.row();
         }
 
+    }
+
+    private String intelligenceLevelToSectionTitle(Intelligence level) {
+        final String sectionTitleKey;
+        switch (level) {
+            case LEVEL_1:
+                sectionTitleKey = TRANSLATION_KEY_SECTION_1_TITLE;
+                break;
+            case LEVEL_2:
+                sectionTitleKey = TRANSLATION_KEY_SECTION_2_TITLE;
+                break;
+            case LEVEL_3:
+                sectionTitleKey = TRANSLATION_KEY_SECTION_3_TITLE;
+                break;
+            case LEVEL_4:
+                sectionTitleKey = TRANSLATION_KEY_SECTION_4_TITLE;
+                break;
+            default:
+                throw new IllegalStateException("Unknown bot intelligence level " + level);
+        }
+        return localizationManager.localizeText(sectionTitleKey);
     }
 }
