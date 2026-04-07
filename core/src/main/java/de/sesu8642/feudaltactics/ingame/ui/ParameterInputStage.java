@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.ImmutableList;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -29,6 +30,13 @@ import java.util.stream.Collectors;
  * {@link Stage} for displaying the input mask for a new game.
  */
 public class ParameterInputStage extends ResizableResettableStage {
+
+    private static final List<String> DIFFICULTIES_KEYS = ImmutableList.of("game-parameter-difficulty-easy", "game" +
+        "-parameter-difficulty-medium", "game-parameter-difficulty-hard", "game-parameter-difficulty-very-hard");
+    private static final List<String> MAP_SIZES_KEYS = ImmutableList.of("game-parameter-size-small", "game-parameter" +
+        "-size-medium", "game-parameter-size-large", "game-parameter-size-xlarge", "game-parameter-size-xxlarge");
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of("game-parameter-density-dense", "game" +
+        "-parameter-density-medium", "game-parameter-density-loose");
 
     private static final int OUTER_PADDING_PX = (int) (Gdx.graphics.getDensity() * 10);
     private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 20);
@@ -76,17 +84,17 @@ public class ParameterInputStage extends ResizableResettableStage {
             skin.get(SkinConstants.FONT_OVERLAY,
                 LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
-        difficultySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DIFFICULTIES).toArray(new String[0]));
+        difficultySelect.setItems(localizationManager.localizeTextBatch(DIFFICULTIES_KEYS).toArray(new String[0]));
 
         final Label sizeLabel = new Label(localizationManager.localizeText("game-details-map-size"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
-        sizeSelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.MAP_SIZES).toArray(new String[0]));
+        sizeSelect.setItems(localizationManager.localizeTextBatch(MAP_SIZES_KEYS).toArray(new String[0]));
 
         final Label densityLabel = new Label(localizationManager.localizeText("game-details-map-density"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
-        densitySelect.setItems(localizationManager.localizeTextBatch(GameStateEnumDisplayNameConverter.DENSITIES).toArray(new String[0]));
+        densitySelect.setItems(localizationManager.localizeTextBatch(DENSITIES_KEYS).toArray(new String[0]));
 
         final Label seedLabel = new Label(localizationManager.localizeText("game-details-seed"),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));

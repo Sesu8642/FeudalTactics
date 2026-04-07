@@ -3,6 +3,8 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit.UnitTypes;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -22,6 +24,9 @@ import java.util.List;
 @Singleton
 public class TutorialDialogFactory {
 
+    private static final List<String> UNIT_KEYS = ImmutableList.of("tutorial-unit-table-unit-type-peasant", "tutorial" +
+        "-unit-table-unit-type-spearman", "tutorial-unit-table-unit-type-knight", "tutorial-unit-table-unit-type" +
+        "-baron");
     private final DialogFactory dialogFactory;
     private final TextureAtlasHelper textureAtlasHelper;
     private final LocalizationManager localizationManager;
@@ -35,6 +40,11 @@ public class TutorialDialogFactory {
         this.dialogFactory = dialogFactory;
         this.textureAtlasHelper = textureAtlasHelper;
         this.localizationManager = localizationManager;
+    }
+
+    private static String unitTypeToLocalizedDisplayName(Unit.UnitTypes unitType,
+                                                         LocalizationManager localizationManager) {
+        return localizationManager.localizeText(UNIT_KEYS.get(unitType.ordinal()));
     }
 
     /**
@@ -89,7 +99,6 @@ public class TutorialDialogFactory {
         return dialog;
     }
 
-
     private void fillTutorialDialog1(FeudalTacticsDialog dialog) {
         final String text = localizationManager.localizeText("tutorial-objective-game-goal");
         dialog.text(text).addButtonImage(SkinConstants.BUTTON_INFO);
@@ -132,8 +141,7 @@ public class TutorialDialogFactory {
             localizationManager.localizeText("tutorial-unit-table-headline-salary")
         ));
         for (UnitTypes unitType : UnitTypes.values()) {
-            tableData.add(Arrays.asList(GameStateEnumDisplayNameConverter.getLocalizedDisplayName(unitType,
-                    localizationManager),
+            tableData.add(Arrays.asList(unitTypeToLocalizedDisplayName(unitType, localizationManager),
                 String.valueOf(unitType.strength()),
                 String.valueOf(unitType.salary())));
         }
@@ -167,5 +175,5 @@ public class TutorialDialogFactory {
         final String text = localizationManager.localizeText("tutorial-objective-shortcuts");
         dialog.text(text);
     }
-    
+
 }

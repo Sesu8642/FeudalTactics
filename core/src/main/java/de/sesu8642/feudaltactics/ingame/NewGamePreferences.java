@@ -2,7 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame;
 
-import de.sesu8642.feudaltactics.ingame.ui.GameStateEnumDisplayNameConverter;
+import com.google.common.collect.ImmutableList;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import lombok.Getter;
@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
 
 /**
  * Value object: preferences for a new game.
@@ -20,14 +21,18 @@ import java.io.StringReader;
 public class NewGamePreferences {
 
     public static final String PARAMETER_DISPLAY_FORMAT = "%s: %s";
-
+    private static final List<String> DIFFICULTIES_KEYS = ImmutableList.of("game-parameter-difficulty-easy", "game" +
+        "-parameter-difficulty-medium", "game-parameter-difficulty-hard", "game-parameter-difficulty-very-hard");
+    private static final List<String> MAP_SIZES_KEYS = ImmutableList.of("game-parameter-size-small", "game-parameter" +
+        "-size-medium", "game-parameter-size-large", "game-parameter-size-xlarge", "game-parameter-size-xxlarge");
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of("game-parameter-density-dense", "game" +
+        "-parameter-density-medium", "game-parameter-density-loose");
     // Keys for UI localization
     private static final String SEED_KEY = "game-details-seed";
     private static final String BOT_INTELLIGENCE_KEY = "game-details-cpu-difficulty";
     private static final String MAP_SIZE_KEY = "game-details-map-size";
     private static final String DENSITY_KEY = "game-details-map-density";
     private static final String STARTING_POSITION_KEY = "game-details-starting-position";
-
     // Keys for sharing (readable English)
     private static final String SEED_DISPLAY_KEY = "Seed";
     private static final String BOT_INTELLIGENCE_DISPLAY_KEY = "CPU Difficulty";
@@ -120,18 +125,17 @@ public class NewGamePreferences {
                         preferences.setSeed(Long.parseLong(secondStringPart));
                         break;
                     case BOT_INTELLIGENCE_DISPLAY_KEY:
-                        final Intelligence botIntelligence =
-                            GameStateEnumDisplayNameConverter.getBotIntelligenceFromDisplayNameCode(secondStringPart);
+                        final Intelligence botIntelligence = getBotIntelligenceFromDisplayNameCode(secondStringPart);
                         preferences.setBotIntelligence(botIntelligence);
                         break;
                     case MAP_SIZE_DISPLAY_KEY:
                         final MapSizes mapSize =
-                            GameStateEnumDisplayNameConverter.getMapSizeFromDisplayNameCode(secondStringPart);
+                            getMapSizeFromDisplayNameCode(secondStringPart);
                         preferences.setMapSize(mapSize);
                         break;
                     case DENSITY_DISPLAY_KEY:
                         final Densities mapDensity =
-                            GameStateEnumDisplayNameConverter.getMapDensityFromDisplayNameCode(secondStringPart);
+                            getMapDensityFromDisplayNameCode(secondStringPart);
                         preferences.setDensity(mapDensity);
                         break;
                     case STARTING_POSITION_DISPLAY_KEY:
@@ -159,6 +163,30 @@ public class NewGamePreferences {
         }
     }
 
+    private static String botIntelligenceToDisplayNameCode(Intelligence intelligence) {
+        return DIFFICULTIES_KEYS.get(intelligence.ordinal());
+    }
+
+    private static Intelligence getBotIntelligenceFromDisplayNameCode(String displayNameCode) {
+        return Intelligence.values()[DIFFICULTIES_KEYS.indexOf(displayNameCode)];
+    }
+
+    private static String mapSizeToDisplayNameCode(MapSizes mapSize) {
+        return MAP_SIZES_KEYS.get(mapSize.ordinal());
+    }
+
+    private static MapSizes getMapSizeFromDisplayNameCode(String displayNameCode) {
+        return MapSizes.values()[MAP_SIZES_KEYS.indexOf(displayNameCode)];
+    }
+
+    private static String mapDensityToDisplayNameCode(Densities density) {
+        return DENSITIES_KEYS.get(density.ordinal());
+    }
+
+    private static Densities getMapDensityFromDisplayNameCode(String displayNameCode) {
+        return Densities.values()[DENSITIES_KEYS.indexOf(displayNameCode)];
+    }
+
     /**
      * Returns game parameters matching these preferences.
      */
@@ -175,29 +203,31 @@ public class NewGamePreferences {
      * Uses localized keys and values for display.
      */
     public String toDisplayString(LocalizationManager localizationManager) {
+        // TODO: displays untranslated keys
         return String.format(PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(SEED_KEY), seed)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(STARTING_POSITION_KEY),
             startingPosition + 1)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(BOT_INTELLIGENCE_KEY),
-            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(botIntelligence)))
+            localizationManager.localizeText(botIntelligenceToDisplayNameCode(botIntelligence)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(MAP_SIZE_KEY),
-            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(mapSize)))
+            localizationManager.localizeText(mapSizeToDisplayNameCode(mapSize)))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(DENSITY_KEY),
-            localizationManager.localizeText(GameStateEnumDisplayNameConverter.getDisplayNameCode(density)));
+            localizationManager.localizeText(mapDensityToDisplayNameCode(density)));
     }
 
     /**
      * Converts the preferences to a sharable string.
      */
     public String toSharableString() {
+        // TODO: displays untranslated keys
         return String.format(PARAMETER_DISPLAY_FORMAT, SEED_DISPLAY_KEY, seed)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_KEY, startingPosition + 1)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_KEY,
-            GameStateEnumDisplayNameConverter.getDisplayNameCode(botIntelligence))
+            botIntelligenceToDisplayNameCode(botIntelligence))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_KEY,
-            GameStateEnumDisplayNameConverter.getDisplayNameCode(mapSize))
+            mapSizeToDisplayNameCode(mapSize))
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_KEY,
-            GameStateEnumDisplayNameConverter.getDisplayNameCode(density));
+            mapDensityToDisplayNameCode(density));
     }
 
     /**
