@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -73,30 +74,31 @@ public class ParameterInputStage extends ResizableResettableStage {
     }
 
     private void initUi() {
-        final Label startingPositionLabel = new Label(localizationManager.localizeText("game-details-starting" +
-            "-position"),
-            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label startingPositionLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_STARTING_POSITION),
+                skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
-        final Label difficultyLabel = new Label(localizationManager.localizeText("game-details-cpu-difficulty"),
-            skin.get(SkinConstants.FONT_OVERLAY,
-                LabelStyle.class));
+        final Label difficultyLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY),
+                skin.get(SkinConstants.FONT_OVERLAY,
+                    LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
         difficultySelect.setItems(localizationManager.localizeTextBatch(DIFFICULTIES_KEYS).toArray(new String[0]));
 
-        final Label sizeLabel = new Label(localizationManager.localizeText("game-details-map-size"),
+        final Label sizeLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_SIZE),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
         sizeSelect.setItems(localizationManager.localizeTextBatch(MAP_SIZES_KEYS).toArray(new String[0]));
 
-        final Label densityLabel = new Label(localizationManager.localizeText("game-details-map-density"),
+        final Label densityLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_DENSITY),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
         densitySelect.setItems(localizationManager.localizeTextBatch(DENSITIES_KEYS).toArray(new String[0]));
 
-        final Label seedLabel = new Label(localizationManager.localizeText("game-details-seed"),
+        final Label seedLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_SEED),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         seedTextField = new TextField("", skin);
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
@@ -125,8 +127,10 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTable.add(randomButton).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1,
             difficultySelect));
 
-        backButton = ButtonFactory.createTextButton(localizationManager.localizeText("menu-button-back"), skin);
-        playButton = ButtonFactory.createTextButton(localizationManager.localizeText("menu-button-play"), skin);
+        backButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_BACK), skin);
+        playButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_PLAY), skin);
 
         final Table buttonTable = new Table();
         buttonTable.add(backButton).expandX().fill();

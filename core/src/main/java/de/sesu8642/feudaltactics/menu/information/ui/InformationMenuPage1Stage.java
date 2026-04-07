@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -29,8 +30,10 @@ import java.util.List;
 @Singleton
 public class InformationMenuPage1Stage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("menu-button-about", "menu-button-report-crash"
-        , "menu-button-game-history", "menu-button-page-2", "menu-button-back");
+    private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_ABOUT,
+        TranslationKeys.MENU_BUTTON_REPORT_CRASH
+        , TranslationKeys.MENU_BUTTON_GAME_HISTORY, TranslationKeys.MENU_BUTTON_PAGE_2,
+        TranslationKeys.MENU_BUTTON_BACK);
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -42,9 +45,9 @@ public class InformationMenuPage1Stage extends MenuStage {
                                      @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
                                      @VersionProperty String gameVersion,
                                      LocalizationManager localizationManager) {
-        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
+        super(viewport, BUTTON_TEXTS_KEYS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
         final Label bottomRightLabel = new Label(String.format("%s %s",
-            localizationManager.localizeText("menu-label-version"), gameVersion),
+            localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
 

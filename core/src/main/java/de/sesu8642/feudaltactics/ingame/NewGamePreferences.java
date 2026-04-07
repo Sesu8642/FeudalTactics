@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.ingame;
 
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
@@ -25,19 +26,15 @@ import java.util.List;
 public class NewGamePreferences {
 
     public static final String PARAMETER_DISPLAY_FORMAT = "%s: %s";
-    private static final List<String> DIFFICULTIES_KEYS = ImmutableList.of("game-parameter-difficulty-easy", "game" +
-        "-parameter-difficulty-medium", "game-parameter-difficulty-hard", "game-parameter-difficulty-very-hard");
-    private static final List<String> MAP_SIZES_KEYS = ImmutableList.of("game-parameter-size-small", "game-parameter" +
-        "-size-medium", "game-parameter-size-large", "game-parameter-size-xlarge", "game-parameter-size-xxlarge");
-    private static final List<String> DENSITIES_KEYS = ImmutableList.of("game-parameter-density-dense", "game" +
-        "-parameter-density-medium", "game-parameter-density-loose");
-    // Keys for UI localization
-    private static final String SEED_KEY = "game-details-seed";
-    private static final String BOT_INTELLIGENCE_KEY = "game-details-cpu-difficulty";
-    private static final String MAP_SIZE_KEY = "game-details-map-size";
-    private static final String DENSITY_KEY = "game-details-map-density";
-    private static final String STARTING_POSITION_KEY = "game-details-starting-position";
-    private static final String NUMBER_OF_BOT_PLAYERS_KEY = "game-details-number-of-bots";
+    private static final List<String> DIFFICULTIES_KEYS =
+        ImmutableList.of(TranslationKeys.GAME_PARAMETER_DIFFICULTY_EASY,
+            TranslationKeys.GAME_PARAMETER_DIFFICULTY_MEDIUM, TranslationKeys.GAME_PARAMETER_DIFFICULTY_HARD,
+            TranslationKeys.GAME_PARAMETER_DIFFICULTY_VERY_HARD);
+    private static final List<String> MAP_SIZES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_SIZE_SMALL,
+        TranslationKeys.GAME_PARAMETER_SIZE_MEDIUM, TranslationKeys.GAME_PARAMETER_SIZE_LARGE,
+        TranslationKeys.GAME_PARAMETER_SIZE_XLARGE, TranslationKeys.GAME_PARAMETER_SIZE_XXLARGE);
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_DENSE,
+        TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE);
 
     @Getter
     @Setter
@@ -109,17 +106,21 @@ public class NewGamePreferences {
     private static void fillPreferences(String sharedString, NewGamePreferences preferences,
                                         LocalizationManager localizationManager) throws IOException {
         // shared parameters are always in Englisch
-        final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, SEED_KEY);
+        final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+            TranslationKeys.GAME_DETAILS_SEED);
         final String botIntelligenceDisplayName =
-            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, BOT_INTELLIGENCE_KEY);
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY);
         final String mapSizeDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
-            MAP_SIZE_KEY);
+            TranslationKeys.GAME_DETAILS_MAP_SIZE);
         final String densityDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
-            DENSITY_KEY);
+            TranslationKeys.GAME_DETAILS_MAP_DENSITY);
         final String startingPositionDisplayName =
-            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, STARTING_POSITION_KEY);
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                TranslationKeys.GAME_DETAILS_STARTING_POSITION);
         final String numberOfBotPlayersDisplayName =
-            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, NUMBER_OF_BOT_PLAYERS_KEY);
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                TranslationKeys.GAME_DETAILS_NUMBER_OF_BOTS);
 
         final BufferedReader reader = new BufferedReader(new StringReader(sharedString));
         String line;
@@ -205,15 +206,19 @@ public class NewGamePreferences {
      * Uses localized keys and values for display.
      */
     public String toDisplayString(LocalizationManager localizationManager) {
-        return String.format(PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(SEED_KEY), seed)
+        return String.format(PARAMETER_DISPLAY_FORMAT,
+            localizationManager.localizeText(TranslationKeys.GAME_DETAILS_SEED), seed)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
-            localizationManager.localizeText(STARTING_POSITION_KEY),
+            localizationManager.localizeText(TranslationKeys.GAME_DETAILS_STARTING_POSITION),
             startingPosition + 1)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(BOT_INTELLIGENCE_KEY),
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
+            localizationManager.localizeText(TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY),
             localizationManager.localizeText(botIntelligenceToDisplayNameCode(botIntelligence)))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(MAP_SIZE_KEY),
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
+            localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_SIZE),
             localizationManager.localizeText(mapSizeToDisplayNameCode(mapSize)))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(DENSITY_KEY),
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
+            localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_DENSITY),
             localizationManager.localizeText(mapDensityToDisplayNameCode(density)));
     }
 
@@ -222,15 +227,18 @@ public class NewGamePreferences {
      */
     public String toSharableString(LocalizationManager localizationManager) {
         // Parameter names for sharing (readable English)
-        final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, SEED_KEY);
+        final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+            TranslationKeys.GAME_DETAILS_SEED);
         final String botIntelligenceDisplayName =
-            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, BOT_INTELLIGENCE_KEY);
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY);
         final String mapSizeDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
-            MAP_SIZE_KEY);
+            TranslationKeys.GAME_DETAILS_MAP_SIZE);
         final String densityDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
-            DENSITY_KEY);
+            TranslationKeys.GAME_DETAILS_MAP_DENSITY);
         final String startingPositionDisplayName =
-            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, STARTING_POSITION_KEY);
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                TranslationKeys.GAME_DETAILS_STARTING_POSITION);
 
         return String.format(PARAMETER_DISPLAY_FORMAT, seedDisplayName, seed)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, startingPositionDisplayName, startingPosition + 1)

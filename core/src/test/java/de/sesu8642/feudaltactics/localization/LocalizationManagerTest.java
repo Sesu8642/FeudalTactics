@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.localization;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.I18NBundle;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.FilesStub;
 import de.sesu8642.feudaltactics.ResourceNameReader;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
@@ -77,7 +78,7 @@ class LocalizationManagerTest {
 
             final LocalizationManager systemUnderTest = new LocalizationManager(mainPreferencesDaoMock,
                 resourceNameReaderMock);
-            final String actual = systemUnderTest.localizeText("menu-button-play");
+            final String actual = systemUnderTest.localizeText(TranslationKeys.MENU_BUTTON_PLAY);
 
             assertEquals("abc", actual);
         }
@@ -95,9 +96,9 @@ class LocalizationManagerTest {
 
             final LocalizationManager systemUnderTest = new LocalizationManager(mainPreferencesDaoMock,
                 resourceNameReaderMock);
-            final String actual = systemUnderTest.localizeText("menu-button-play");
+            final String actual = systemUnderTest.localizeText(TranslationKeys.MENU_BUTTON_PLAY);
 
-            assertEquals("[missing: 'play']", actual);
+            assertEquals("[missing: 'menu-button-play']", actual);
         }
     }
 

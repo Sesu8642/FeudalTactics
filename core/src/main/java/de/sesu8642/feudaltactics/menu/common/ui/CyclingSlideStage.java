@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
@@ -53,8 +54,8 @@ public class CyclingSlideStage extends AbstractSlideStage {
         slideContainer.setActor(currentSlide.getTable());
 
         cyclingButton = ButtonFactory.createTextButton("", skin);   // Text will be set later on reset()
-        final TextButton finishButton = ButtonFactory.createTextButton(localizationManager.localizeText("slide-stage" +
-                        "-button-finish"),
+        final TextButton finishButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.SLIDE_STAGE_BUTTON_FINISH),
             skin);
 
         cyclingButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(getNextIndex())));

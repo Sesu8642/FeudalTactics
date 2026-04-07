@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
@@ -107,7 +108,7 @@ public class EditorScreen extends GameScreen {
         cachedGameState = GameStateHelper.getCopy(newGameState);
         // update the UI
 
-        final String hudStageInfoText = localizationManager.localizeText("editor-hud-text-map-size-info",
+        final String hudStageInfoText = localizationManager.localizeText(TranslationKeys.EDITOR_HUD_TEXT_MAP_SIZE_INFO,
             newGameState.getMap().size());
 
         editorHudStage.infoTextLabel.setText(hudStageInfoText);

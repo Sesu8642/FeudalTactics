@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
@@ -135,9 +136,9 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        tutorialNagDialog.text(localizationManager.localizeText("dialog-text-tutorial-nag"));
-        tutorialNagDialog.button(localizationManager.localizeText("button-dialog-no"), (byte) 0);
-        tutorialNagDialog.button(localizationManager.localizeText("button-dialog-yes"), (byte) 1);
+        tutorialNagDialog.text(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_TUTORIAL_NAG));
+        tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_NO), (byte) 0);
+        tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_YES), (byte) 1);
         tutorialNagDialog.show(getActiveStage());
     }
 
@@ -158,9 +159,10 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        newVersionDialog.text(localizationManager.localizeText("dialog-text-game-updated"));
-        newVersionDialog.button(localizationManager.localizeText("button-dialog-ok"), (byte) 0);
-        newVersionDialog.button(localizationManager.localizeText("button-dialog-open-changelog"), (byte) 1);
+        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_GAME_UPDATED));
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OPEN_CHANGELOG),
+            (byte) 1);
         newVersionDialog.show(getActiveStage());
     }
 

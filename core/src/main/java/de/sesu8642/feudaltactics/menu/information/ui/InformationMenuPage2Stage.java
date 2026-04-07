@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -28,8 +29,9 @@ import java.util.List;
 @Singleton
 public class InformationMenuPage2Stage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("menu-button-changelog", "menu-button" +
-        "-dependency-licenses", "menu-button-privacy-policy", "menu-button-page-1", "menu-button-back");
+    private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_CHANGELOG,
+        TranslationKeys.MENU_BUTTON_DEPENDENCY_LICENSES, TranslationKeys.MENU_BUTTON_PRIVACY_POLICY,
+        TranslationKeys.MENU_BUTTON_PAGE_1, TranslationKeys.MENU_BUTTON_BACK);
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -41,9 +43,9 @@ public class InformationMenuPage2Stage extends MenuStage {
                                      @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
                                      @VersionProperty String gameVersion,
                                      LocalizationManager localizationManager) {
-        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
+        super(viewport, BUTTON_TEXTS_KEYS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
         final Label bottomRightLabel = new Label(String.format("%s %s",
-            localizationManager.localizeText("menu-label-version"), gameVersion),
+            localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
 

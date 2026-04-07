@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
@@ -36,7 +37,8 @@ public class SplashScreenStage extends MenuStage {
                              LocalizationManager localizationManager) {
         // using a menu stage without buttons here
         super(viewport, ImmutableList.of(), camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
-        final Label bottomRightLabel = new Label(localizationManager.localizeText("splash-screen-label-author"),
+        final Label bottomRightLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.SPLASH_SCREEN_LABEL_AUTHOR),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
     }

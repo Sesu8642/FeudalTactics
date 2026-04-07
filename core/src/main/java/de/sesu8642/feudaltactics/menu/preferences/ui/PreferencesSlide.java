@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
@@ -38,18 +39,18 @@ public class PreferencesSlide extends Slide {
      */
     @Inject
     public PreferencesSlide(Skin skin, LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("menu-button-preferences"));
+        super(skin, localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_HEADLINE));
 
         final Table preferencesTable = new Table();
 
         forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText(
-                "settings-page-label-warn-about-forgotten-kingdoms"),
+                TranslationKeys.SETTINGS_PAGE_LABEL_WARN_ABOUT_FORGOTTEN_KINGDOMS),
             skin);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable,
-            localizationManager.localizeText("settings-page-label-show-enemy-turns"), skin);
+            localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_SHOW_ENEMY_TURNS), skin);
 
         languageSelectBox = placeStringSelectWithLabel(preferencesTable,
-            localizationManager.localizeText("settings-page-label-language"), skin,
+            localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_LANGUAGE), skin,
             localizationManager.getSupportedLanguages().stream().map(SupportedLanguage::getDisplayName).toArray(String[]::new));
 
         // add a row to fill the rest of the space in order for the other options to be

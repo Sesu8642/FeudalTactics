@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.io.Resources;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.exceptions.InitializationException;
@@ -76,8 +77,9 @@ public final class ChangelogDaggerModule {
                                                  @ChangelogText String changelogText,
                                                  @MenuBackgroundCamera OrthographicCamera camera, Skin skin,
                                                  LocalizationManager localizationManager) {
-        final Slide changelogSlide = new Slide(skin, localizationManager.localizeText("menu-button-changelog"))
-            .addLabel(localizationManager.localizeText("changelog-community-nag")).addLabel(changelogText);
+        final Slide changelogSlide = new Slide(skin,
+            localizationManager.localizeText(TranslationKeys.MENU_BUTTON_CHANGELOG))
+            .addLabel(localizationManager.localizeText(TranslationKeys.CHANGELOG_COMMUNITY_NAG)).addLabel(changelogText);
         return new SlideStage(viewport, Collections.singletonList(changelogSlide), platformInsetsProvider,
             screenNavigationController::transitionToInformationMenuScreenPage2,
             camera, skin, localizationManager);

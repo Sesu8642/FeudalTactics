@@ -6,6 +6,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
@@ -54,19 +55,21 @@ public class IngameScreenDialogHelper {
                     break;
             }
         });
-        endDialog.button(localizationManager.localizeText("button-dialog-exit"), (byte) 1);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_EXIT), (byte) 1);
         final String sharingPreemble;
         if (win) {
-            sharingPreemble = localizationManager.localizeText("sharing-preemble-victory", winningRound);
-            endDialog.text(localizationManager.localizeText("dialog-text-victory-surrender", winningRound));
-            endDialog.button(localizationManager.localizeText("button-dialog-replay"), (byte) 2);
+            sharingPreemble = localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_VICTORY, winningRound);
+            endDialog.text(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_VICTORY_SURRENDER,
+                winningRound));
+            endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_REPLAY), (byte) 2);
         } else {
-            sharingPreemble = localizationManager.localizeText("sharing-preemble-surrender");
-            endDialog.text(localizationManager.localizeText("dialog-text-defeat-conquered-majority", winningRound));
-            endDialog.button(localizationManager.localizeText("button-dialog-retry"), (byte) 2);
+            sharingPreemble = localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_SURRENDER);
+            endDialog.text(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_DEFEAT_CONQUERED_MAJORITY,
+                winningRound));
+            endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_RETRY), (byte) 2);
         }
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
-        endDialog.button(localizationManager.localizeText("button-dialog-continue"), (byte) 0);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_CONTINUE), (byte) 0);
         endDialog.show(stage);
     }
 
@@ -90,17 +93,19 @@ public class IngameScreenDialogHelper {
                     break;
             }
         });
-        endDialog.button(localizationManager.localizeText("button-dialog-exit"), (byte) 1);
-        endDialog.button(localizationManager.localizeText("button-dialog-replay"), (byte) 2);
-        final String sharingPreemble = localizationManager.localizeText("sharing-preemble-victory", winningRound);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_EXIT), (byte) 1);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_REPLAY), (byte) 2);
+        final String sharingPreemble = localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_VICTORY,
+            winningRound);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
         String dialogText;
         if (botsGaveUpPreviously) {
-            dialogText = localizationManager.localizeText("dialog-text-victory-all-enemies-defeated-surrendered",
-                winningRound);
+            dialogText =
+                localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_VICTORY_ALL_ENEMIES_DEFEATED_SURRENDERED,
+                    winningRound);
         } else {
             // probably its somehow possible to defeat all enemies without triggering the win condition somehow...
-            dialogText = localizationManager.localizeText("dialog-text-victory-all-enemies-defeated",
+            dialogText = localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_VICTORY_ALL_ENEMIES_DEFEATED,
                 winningRound);
         }
         dialogText += "\n";
@@ -129,12 +134,13 @@ public class IngameScreenDialogHelper {
                     break;
             }
         });
-        endDialog.button(localizationManager.localizeText("button-dialog-exit"), (byte) 1);
-        endDialog.button(localizationManager.localizeText("button-dialog-retry"), (byte) 2);
-        final String sharingPreemble = localizationManager.localizeText("sharing-preemble-defeat", currentRound);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_EXIT), (byte) 1);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_REPLAY), (byte) 2);
+        final String sharingPreemble = localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_DEFEAT,
+            currentRound);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
-        endDialog.button(localizationManager.localizeText("button-dialog-spectate"), (byte) 0);
-        String dialogText = localizationManager.localizeText("dialog-text-defeat-all-kingdoms-conquered",
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_SPECTATE), (byte) 0);
+        String dialogText = localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_DEFEAT_ALL_KINGDOMS_CONQUERED,
             currentRound);
         dialogText += "\n";
         endDialog.text(dialogText);
@@ -158,12 +164,13 @@ public class IngameScreenDialogHelper {
                     break;
             }
         });
-        endDialog.button(localizationManager.localizeText("button-dialog-exit"), (byte) 1);
-        endDialog.button(localizationManager.localizeText("button-dialog-retry"), (byte) 2);
-        final String sharingPreemble = localizationManager.localizeText("sharing-preemble-defeat", roundOfDefeat);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_EXIT), (byte) 1);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_RETRY), (byte) 2);
+        final String sharingPreemble = localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_DEFEAT,
+            roundOfDefeat);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
 
-        String dialogText = localizationManager.localizeText("dialog-text-enemy-defeated-all",
+        String dialogText = localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_ENEMY_DEFEATED_ALL,
             roundOfDefeat);
         dialogText += "\n";
         endDialog.text(dialogText);
@@ -177,9 +184,9 @@ public class IngameScreenDialogHelper {
     }
 
     void showCannotEndTurnMessage(Stage stage) {
-        final Dialog dialog = dialogFactory.createInformationDialog(localizationManager.localizeText("cannot-end-turn" +
-            "-text"), () -> {
-        });
+        final Dialog dialog =
+            dialogFactory.createInformationDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CANNOT_END_TURN), () -> {
+            });
         dialog.show(stage);
     }
 
@@ -194,11 +201,12 @@ public class IngameScreenDialogHelper {
     }
 
     private void showGameDetails(Stage stage, int currentRound, NewGamePreferences newGamePreferences) {
-        final String gameDetails = localizationManager.localizeText("game-details-round") + ": " + currentRound + "\n"
-            + newGamePreferences.toDisplayString(localizationManager);
+        final String gameDetails =
+            localizationManager.localizeText(TranslationKeys.GAME_DETAILS_ROUND) + ": " + currentRound + "\n"
+                + newGamePreferences.toDisplayString(localizationManager);
         final FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(gameDetails, () -> {
         });
-        addShareOrCopyButtonToDialog(localizationManager.localizeText("sharing-preemble-ongoing"), dialog,
+        addShareOrCopyButtonToDialog(localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_ONGOING), dialog,
             newGamePreferences
             , ScenarioMap.NONE);
         dialog.show(stage);
@@ -211,7 +219,7 @@ public class IngameScreenDialogHelper {
             return;
         }
         final String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString(localizationManager);
-        final String buttonText = localizationManager.localizeText("button-dialog-share");
+        final String buttonText = localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_SHARE);
         if (Gdx.app.getType() == Application.ApplicationType.Android) {
             dialogFactory.addNonClosingTextButtonToDialog(endDialog, buttonText,
                 () -> platformSharing.shareText(fullSharedMessage));

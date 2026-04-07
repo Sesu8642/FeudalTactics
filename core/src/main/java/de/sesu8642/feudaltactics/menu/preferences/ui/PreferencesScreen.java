@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.menu.preferences.ui;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
@@ -79,9 +80,9 @@ public class PreferencesScreen extends GameScreen {
             }
 
             // Show bilingual restart prompt
-            final String oldLanguageText = localizationManager.localizeText("dialog-text-restart-game");
-            final String newLanguageText = localizationManager.localizeTextInLanguage(selectedLanguage, "dialog-text" +
-                "-restart-game");
+            final String oldLanguageText = localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_RESTART_GAME);
+            final String newLanguageText = localizationManager.localizeTextInLanguage(selectedLanguage,
+                TranslationKeys.DIALOG_TEXT_RESTART_GAME);
 
             sendPreferencesChangedEvent();
 

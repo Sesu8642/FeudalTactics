@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
@@ -35,10 +36,10 @@ public class CrashReportSlide extends Slide {
      */
     @Inject
     public CrashReportSlide(Skin skin, LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("menu-button-crash-report"));
+        super(skin, localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_HEADLINE));
 
         descriptionLabel = new Label(
-            localizationManager.localizeText("crash-report-page-text-instruction"),
+            localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_TEXT_INSTRUCTION),
             skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
@@ -46,11 +47,12 @@ public class CrashReportSlide extends Slide {
         textArea = new TextArea("", skin);
         textArea.setDisabled(true);
 
-        copyButton = ButtonFactory.createCopyButton(localizationManager.localizeText("copy-button"), skin, true);
-        sendMailButton = ButtonFactory.createTextButton(localizationManager.localizeText("crash-report-page-button" +
-            "-send-email"), skin);
-        openGithubButton = ButtonFactory.createTextButton(localizationManager.localizeText("crash-report-page-button" +
-                "-open-issues"),
+        copyButton = ButtonFactory.createCopyButton(localizationManager.localizeText(TranslationKeys.COPY_BUTTON),
+            skin, true);
+        sendMailButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_BUTTON_SEND_EMAIL), skin);
+        openGithubButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_BUTTON_OPEN_ISSUES),
             skin);
 
         buttonGroup = new HorizontalGroup();

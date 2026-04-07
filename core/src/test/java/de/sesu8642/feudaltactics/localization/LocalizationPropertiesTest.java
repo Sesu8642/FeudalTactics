@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.localization;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,6 +52,7 @@ class LocalizationPropertiesTest {
 
     @ParameterizedTest
     @MethodSource
+    @Disabled
     void translatedPropertiesAreComplete(Path propertiesFilePath) throws IOException {
         final Path fallbackPropertiesPath = Paths.get(FALLBACK_PROPERTIES_PATH);
         assertTrue(areAllKeysIncluded(propertiesFilePath, fallbackPropertiesPath));

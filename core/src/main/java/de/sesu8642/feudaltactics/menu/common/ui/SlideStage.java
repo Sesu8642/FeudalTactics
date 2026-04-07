@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
@@ -74,9 +75,9 @@ public class SlideStage extends AbstractSlideStage {
     @Override
     protected void updateNavigationButtonStates() {
         if (slides.size() == currentSlideIndex + 1) {
-            nextButton.setText(localizationManager.localizeText("slide-stage-button-finish"));
+            nextButton.setText(localizationManager.localizeText(TranslationKeys.SLIDE_STAGE_BUTTON_FINISH));
         } else {
-            nextButton.setText(localizationManager.localizeText("slide-stage-button-next"));
+            nextButton.setText(localizationManager.localizeText(TranslationKeys.SLIDE_STAGE_BUTTON_NEXT));
         }
         if (currentSlideIndex == 0) {
             backButton.setTouchable(Touchable.disabled);
@@ -85,7 +86,7 @@ public class SlideStage extends AbstractSlideStage {
         } else {
             backButton.setTouchable(Touchable.enabled);
             backButton.setDisabled(false);
-            backButton.setText(localizationManager.localizeText("menu-button-back"));
+            backButton.setText(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_BACK));
         }
     }
 }

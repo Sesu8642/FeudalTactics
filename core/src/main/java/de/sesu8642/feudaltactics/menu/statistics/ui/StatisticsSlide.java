@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
@@ -22,12 +23,6 @@ import javax.inject.Singleton;
 
 public class StatisticsSlide extends Slide {
 
-    private static final String TRANSLATION_KEY_SECTION_BASE_TITLE = "statistics-page-difficulty-section-title";
-    private static final String TRANSLATION_KEY_SECTION_1_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-easy";
-    private static final String TRANSLATION_KEY_SECTION_2_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-medium";
-    private static final String TRANSLATION_KEY_SECTION_3_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-hard";
-    private static final String TRANSLATION_KEY_SECTION_4_TITLE = TRANSLATION_KEY_SECTION_BASE_TITLE + "-very-hard";
-
     private final StatisticsDao statisticsDao;
     private final Skin skin;
     private final LocalizationManager localizationManager;
@@ -41,7 +36,7 @@ public class StatisticsSlide extends Slide {
      */
     @Inject
     public StatisticsSlide(Skin skin, StatisticsDao statisticsDao, LocalizationManager localizationManager) {
-        super(skin, localizationManager.localizeText("statistics-page-headline"));
+        super(skin, localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_HEADLINE));
         this.statisticsDao = statisticsDao;
         this.skin = skin;
         this.localizationManager = localizationManager;
@@ -80,18 +75,18 @@ public class StatisticsSlide extends Slide {
     public void refreshStatistics() {
         statisticsTable.clear();
         final Statistics statistics = statisticsDao.getStatistics();
-        placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-games-played"),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_PLAYED),
             statistics.getGamesPlayed());
         final CountByAiLevel gamesWon = statistics.getGamesWon();
-        placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-games-won"),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
             gamesWon.getTotalCount());
         final CountByAiLevel gamesLost = statistics.getGamesLost();
-        placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-games-lost"),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
             gamesLost.getTotalCount());
         final CountByAiLevel gamesAborted = statistics.getGamesAborted();
-        placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-games-aborted"),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_ABORTED),
             gamesAborted.getTotalCount());
-        placeIntegerWithLabel(localizationManager.localizeText("statistics-page-total-maps-generated"),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_MAPS_GENERATED),
             statistics.getMapsGenerated());
 
         statisticsTable.row();
@@ -100,11 +95,11 @@ public class StatisticsSlide extends Slide {
         for (Intelligence level : intelligenceLevels) {
             final String sectionTitle = intelligenceLevelToSectionTitle(level);
             placeHeading(sectionTitle);
-            placeIntegerWithLabel("  " + localizationManager.localizeText("statistics-page-games-won"),
+            placeIntegerWithLabel("  " + localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_GAMES_WON),
                 gamesWon.getCountByAiLevel().get(level));
-            placeIntegerWithLabel("  " + localizationManager.localizeText("statistics-page-games-lost"),
+            placeIntegerWithLabel("  " + localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_GAMES_LOST),
                 gamesLost.getCountByAiLevel().get(level));
-            placeIntegerWithLabel("  " + localizationManager.localizeText("statistics-page-games-aborted"),
+            placeIntegerWithLabel("  " + localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_GAMES_ABORTED),
                 gamesAborted.getCountByAiLevel().get(level));
             statisticsTable.row();
         }
@@ -115,16 +110,16 @@ public class StatisticsSlide extends Slide {
         final String sectionTitleKey;
         switch (level) {
             case LEVEL_1:
-                sectionTitleKey = TRANSLATION_KEY_SECTION_1_TITLE;
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_EASY;
                 break;
             case LEVEL_2:
-                sectionTitleKey = TRANSLATION_KEY_SECTION_2_TITLE;
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_MEDIUM;
                 break;
             case LEVEL_3:
-                sectionTitleKey = TRANSLATION_KEY_SECTION_3_TITLE;
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_HARD;
                 break;
             case LEVEL_4:
-                sectionTitleKey = TRANSLATION_KEY_SECTION_4_TITLE;
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_VERY_HARD;
                 break;
             default:
                 throw new IllegalStateException("Unknown bot intelligence level " + level);

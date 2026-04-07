@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.dagger.EnableCampaignProperty;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -25,10 +26,11 @@ import java.util.List;
 @Singleton
 public class PlayMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("menu-button-sandbox-game", "menu-button" +
-        "-campaign", "menu-button-tutorial", "menu-button-back");
-    private static final List<String> BUTTON_TEXTS_WITHOUT_CAMPAIGN = ImmutableList.of("menu-button-sandbox-game",
-        "menu-button-tutorial", "menu-button-back");
+    private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_SANDBOX_GAME,
+        TranslationKeys.MENU_BUTTON_CAMPAIGN, TranslationKeys.MENU_BUTTON_TUTORIAL, TranslationKeys.MENU_BUTTON_BACK);
+    private static final List<String> BUTTON_TEXTS_KEXS_WITHOUT_CAMPAIGN =
+        ImmutableList.of(TranslationKeys.MENU_BUTTON_SANDBOX_GAME, TranslationKeys.MENU_BUTTON_TUTORIAL,
+            TranslationKeys.MENU_BUTTON_BACK);
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -39,7 +41,7 @@ public class PlayMenuStage extends MenuStage {
                          @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
                          @EnableCampaignProperty boolean campaignEnabled,
                          LocalizationManager localizationManager) {
-        super(viewport, campaignEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_CAMPAIGN, camera,
+        super(viewport, campaignEnabled ? BUTTON_TEXTS_KEYS : BUTTON_TEXTS_KEXS_WITHOUT_CAMPAIGN, camera,
             platformInsetsProvider, mapRenderer, skin, localizationManager);
     }
 
