@@ -469,13 +469,13 @@ public class IngameScreen extends GameScreen {
             final String clipboardContents = Gdx.app.getClipboard().getContents();
             if (clipboardContents != null) {
                 final NewGamePreferences pastedPreferences =
-                    NewGamePreferences.fromSharableString(clipboardContents);
+                    NewGamePreferences.fromSharableString(clipboardContents, localizationManager);
                 updateParameterInputsFromNewGamePrefs(pastedPreferences);
             }
         }));
 
         parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
-            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString())));
+            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString(localizationManager))));
 
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                 parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,

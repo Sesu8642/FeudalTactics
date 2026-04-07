@@ -163,7 +163,7 @@ public class HistorySlide extends Slide {
         copyButton.getImageCell().size(BUTTON_TEXT_SIZE);
         if (gamePreferences != null) {
             copyButton.addListener(new ExceptionLoggingChangeListener(() ->
-                Gdx.app.getClipboard().setContents(gamePreferences.toSharableString())));
+                Gdx.app.getClipboard().setContents(gamePreferences.toSharableString(localizationManager))));
         } else {
             copyButton.setDisabled(true);
         }

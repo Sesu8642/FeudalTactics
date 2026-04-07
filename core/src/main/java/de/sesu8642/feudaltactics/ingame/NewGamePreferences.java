@@ -5,7 +5,9 @@ package de.sesu8642.feudaltactics.ingame;
 import com.google.common.collect.ImmutableList;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,6 +20,8 @@ import java.util.List;
  * Value object: preferences for a new game.
  */
 @Slf4j
+// for JSON serialization
+@NoArgsConstructor
 public class NewGamePreferences {
 
     public static final String PARAMETER_DISPLAY_FORMAT = "%s: %s";
@@ -33,13 +37,7 @@ public class NewGamePreferences {
     private static final String MAP_SIZE_KEY = "game-details-map-size";
     private static final String DENSITY_KEY = "game-details-map-density";
     private static final String STARTING_POSITION_KEY = "game-details-starting-position";
-    // Keys for sharing (readable English)
-    private static final String SEED_DISPLAY_KEY = "Seed";
-    private static final String BOT_INTELLIGENCE_DISPLAY_KEY = "CPU Difficulty";
-    private static final String MAP_SIZE_DISPLAY_KEY = "Map Size";
-    private static final String DENSITY_DISPLAY_KEY = "Map Density";
-    private static final String STARTING_POSITION_DISPLAY_KEY = "Starting Position";
-    private static final String NUMBER_OF_BOT_PLAYERS_DISPLAY_KEY = "Number of Bots";
+    private static final String NUMBER_OF_BOT_PLAYERS_KEY = "game-details-number-of-bots";
 
     @Getter
     @Setter
@@ -93,11 +91,11 @@ public class NewGamePreferences {
      * Static factory method: creates preferences from a String representation. In case some information is missing,
      * default values are used.
      */
-    public static NewGamePreferences fromSharableString(String sharedString) {
+    public static NewGamePreferences fromSharableString(String sharedString, LocalizationManager localizationManager) {
         final NewGamePreferences preferences = new NewGamePreferences(0, Intelligence.LEVEL_1, MapSizes.SMALL,
             Densities.DENSE, 0);
         try {
-            fillPreferences(sharedString, preferences);
+            fillPreferences(sharedString, preferences, localizationManager);
         } catch (IOException e) {
             // no need to crash, just return what's there
             log.warn("error reading string from clipboard", e);
@@ -108,7 +106,21 @@ public class NewGamePreferences {
     /**
      * Updates the given preferences from the given preferences string.
      */
-    private static void fillPreferences(String sharedString, NewGamePreferences preferences) throws IOException {
+    private static void fillPreferences(String sharedString, NewGamePreferences preferences,
+                                        LocalizationManager localizationManager) throws IOException {
+        // shared parameters are always in Englisch
+        final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, SEED_KEY);
+        final String botIntelligenceDisplayName =
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, BOT_INTELLIGENCE_KEY);
+        final String mapSizeDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+            MAP_SIZE_KEY);
+        final String densityDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+            DENSITY_KEY);
+        final String startingPositionDisplayName =
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, STARTING_POSITION_KEY);
+        final String numberOfBotPlayersDisplayName =
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, NUMBER_OF_BOT_PLAYERS_KEY);
+
         final BufferedReader reader = new BufferedReader(new StringReader(sharedString));
         String line;
         line = reader.readLine();
@@ -120,41 +132,31 @@ public class NewGamePreferences {
                 }
                 final String firstStringPart = stringParts[0].trim();
                 final String secondStringPart = stringParts[1].trim();
-                switch (firstStringPart) {
-                    case SEED_DISPLAY_KEY:
-                        preferences.setSeed(Long.parseLong(secondStringPart));
-                        break;
-                    case BOT_INTELLIGENCE_DISPLAY_KEY:
-                        final Intelligence botIntelligence = getBotIntelligenceFromDisplayNameCode(secondStringPart);
-                        preferences.setBotIntelligence(botIntelligence);
-                        break;
-                    case MAP_SIZE_DISPLAY_KEY:
-                        final MapSizes mapSize =
-                            getMapSizeFromDisplayNameCode(secondStringPart);
-                        preferences.setMapSize(mapSize);
-                        break;
-                    case DENSITY_DISPLAY_KEY:
-                        final Densities mapDensity =
-                            getMapDensityFromDisplayNameCode(secondStringPart);
-                        preferences.setDensity(mapDensity);
-                        break;
-                    case STARTING_POSITION_DISPLAY_KEY:
-                        int startingPosition = Integer.parseInt(secondStringPart);
-                        // compensate for displayed index starting at 1
-                        startingPosition -= 1;
-                        startingPosition = Math.min(5, Math.abs(startingPosition));
-                        preferences.setStartingPosition(startingPosition);
-                        break;
-                    case NUMBER_OF_BOT_PLAYERS_DISPLAY_KEY:
-                        int numberOfBotPlayers = Integer.parseInt(secondStringPart);
-                        numberOfBotPlayers = Math.min(5, Math.abs(numberOfBotPlayers));
-                        numberOfBotPlayers = Math.max(1, numberOfBotPlayers);
-                        preferences.setNumberOfBotPlayers(numberOfBotPlayers);
-                        break;
-                    default:
-                        // ignore non recognized lines
-                        break;
+                if (firstStringPart.equals(seedDisplayName)) {
+                    preferences.setSeed(Long.parseLong(secondStringPart));
+                } else if (firstStringPart.equals(botIntelligenceDisplayName)) {
+                    final Intelligence botIntelligence = getBotIntelligenceFromDisplayNameCode(secondStringPart);
+                    preferences.setBotIntelligence(botIntelligence);
+                } else if (firstStringPart.equals(mapSizeDisplayName)) {
+                    final MapSizes mapSize = getMapSizeFromDisplayNameCode(secondStringPart);
+                    preferences.setMapSize(mapSize);
+                } else if (firstStringPart.equals(densityDisplayName)) {
+                    final Densities mapDensity =
+                        getMapDensityFromDisplayNameCode(secondStringPart);
+                    preferences.setDensity(mapDensity);
+                } else if (firstStringPart.equals(startingPositionDisplayName)) {
+                    int startingPosition = Integer.parseInt(secondStringPart);
+                    // compensate for displayed index starting at 1
+                    startingPosition -= 1;
+                    startingPosition = Math.min(5, Math.abs(startingPosition));
+                    preferences.setStartingPosition(startingPosition);
+                } else if (firstStringPart.equals(numberOfBotPlayersDisplayName)) {
+                    int numberOfBotPlayers = Integer.parseInt(secondStringPart);
+                    numberOfBotPlayers = Math.min(5, Math.abs(numberOfBotPlayers));
+                    numberOfBotPlayers = Math.max(1, numberOfBotPlayers);
+                    preferences.setNumberOfBotPlayers(numberOfBotPlayers);
                 }
+                // ignore non recognized lines
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 // continue with other lines
             } finally {
@@ -203,9 +205,9 @@ public class NewGamePreferences {
      * Uses localized keys and values for display.
      */
     public String toDisplayString(LocalizationManager localizationManager) {
-        // TODO: displays untranslated keys
         return String.format(PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(SEED_KEY), seed)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(STARTING_POSITION_KEY),
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT,
+            localizationManager.localizeText(STARTING_POSITION_KEY),
             startingPosition + 1)
             + String.format("\n" + PARAMETER_DISPLAY_FORMAT, localizationManager.localizeText(BOT_INTELLIGENCE_KEY),
             localizationManager.localizeText(botIntelligenceToDisplayNameCode(botIntelligence)))
@@ -218,16 +220,28 @@ public class NewGamePreferences {
     /**
      * Converts the preferences to a sharable string.
      */
-    public String toSharableString() {
-        // TODO: displays untranslated keys
-        return String.format(PARAMETER_DISPLAY_FORMAT, SEED_DISPLAY_KEY, seed)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, STARTING_POSITION_DISPLAY_KEY, startingPosition + 1)
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, BOT_INTELLIGENCE_DISPLAY_KEY,
-            botIntelligenceToDisplayNameCode(botIntelligence))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, MAP_SIZE_DISPLAY_KEY,
-            mapSizeToDisplayNameCode(mapSize))
-            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, DENSITY_DISPLAY_KEY,
-            mapDensityToDisplayNameCode(density));
+    public String toSharableString(LocalizationManager localizationManager) {
+        // Parameter names for sharing (readable English)
+        final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, SEED_KEY);
+        final String botIntelligenceDisplayName =
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, BOT_INTELLIGENCE_KEY);
+        final String mapSizeDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+            MAP_SIZE_KEY);
+        final String densityDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+            DENSITY_KEY);
+        final String startingPositionDisplayName =
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, STARTING_POSITION_KEY);
+
+        return String.format(PARAMETER_DISPLAY_FORMAT, seedDisplayName, seed)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, startingPositionDisplayName, startingPosition + 1)
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, botIntelligenceDisplayName,
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                botIntelligenceToDisplayNameCode(botIntelligence)))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, mapSizeDisplayName,
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK, mapSizeToDisplayNameCode(mapSize)))
+            + String.format("\n" + PARAMETER_DISPLAY_FORMAT, densityDisplayName,
+            localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                mapDensityToDisplayNameCode(density)));
     }
 
     /**

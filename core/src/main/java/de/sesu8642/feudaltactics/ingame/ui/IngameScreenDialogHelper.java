@@ -210,7 +210,7 @@ public class IngameScreenDialogHelper {
             // dont offer the option in the tutorial
             return;
         }
-        final String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString();
+        final String fullSharedMessage = preemble + "\n" + newGamePreferences.toSharableString(localizationManager);
         final String buttonText = localizationManager.localizeText("button-dialog-share");
         if (Gdx.app.getType() == Application.ApplicationType.Android) {
             dialogFactory.addNonClosingTextButtonToDialog(endDialog, buttonText,
