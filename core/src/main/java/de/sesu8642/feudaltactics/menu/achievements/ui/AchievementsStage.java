@@ -34,10 +34,4 @@ public class AchievementsStage extends SlideStage {
             screenNavigationController::transitionToMainMenuScreen, camera, skin);
         this.achievementsSlide = achievementsSlide;
     }
-
-    @Override
-    public void updateOnResize(int width, int height) {
-        super.updateOnResize(width, height);
-        achievementsSlide.refreshAchievements();
-    }
 }

@@ -21,12 +21,4 @@ public class AchievementsScreen extends GameScreen {
                               AchievementsStage stage) {
         super(camera, viewport, stage);
     }
-
-    @Override
-    public void show() {
-        super.show();
-
-        final AchievementsStage achievementsStage = (AchievementsStage) getActiveStage();
-        achievementsStage.getAchievementsSlide().refreshAchievements();
-    }
 }

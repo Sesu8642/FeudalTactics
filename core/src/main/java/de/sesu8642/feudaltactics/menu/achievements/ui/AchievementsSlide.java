@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -16,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
 
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
@@ -36,7 +38,7 @@ import javax.inject.Singleton;
 public class AchievementsSlide extends Slide {
 
     private final Skin skin;
-    private final Table achievementsTable;
+    private final HorizontalGroup achievementTileGroup;
     private final AchievementRepository achievementRepository;
     private final DialogFactory dialogFactory;
     private final Drawable achievementBackgroundLockedDrawable;
@@ -59,45 +61,26 @@ public class AchievementsSlide extends Slide {
         this.achievementBackgroundUnlockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.LIME);
         this.rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
 
-        achievementsTable = new Table();
-        getTable().add(achievementsTable).fill().expand();
-        refreshAchievements();
+        achievementTileGroup =  new HorizontalGroup();
+        achievementTileGroup.wrap();
+        achievementTileGroup.space(10);
+        achievementTileGroup.wrapSpace(10);
+        achievementTileGroup.align(Align.center);
+
+        List<AbstractAchievement> achievements = achievementRepository.getAchievements();
+        for (AbstractAchievement achievement : achievements) {
+            Actor achievementBox = displayAchievement(achievement);
+            achievementBox.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
+            achievementTileGroup.addActor(achievementBox);
+        }
+
+        getTable().add(achievementTileGroup).fill().expand();
     }
 
     /* Width of a single achievement box */
     private final static float ACHIEVEMENT_WINDOW_WIDTH = 300f;
     /* Height of a single achievement box */
     private final static float ACHIEVEMENT_WINDOW_HEIGHT = 200f;
-
-    /**
-     * Refreshes the achievements UI with the latest values.
-     */
-    public void refreshAchievements() {
-        achievementsTable.clear();
-
-        List<AbstractAchievement> achievements = achievementRepository.getAchievements();
-
-        // Calculate how many achievements fit per row based on screen width
-        // Estimate achievement window width + padding: ~300px per achievement window
-        final float padding = 10f;
-        final float screenWidth = Gdx.graphics.getWidth();
-        final int achievementsPerRow = Math.max(1, (int) (screenWidth / (ACHIEVEMENT_WINDOW_WIDTH + 2 * padding)));
-
-        int columnCount = 0;
-        for (AbstractAchievement achievement : achievements) {
-            Actor achievementBox = displayAchievement(achievement);
-            achievementsTable.add(achievementBox)
-                .width(ACHIEVEMENT_WINDOW_WIDTH)
-                .height(ACHIEVEMENT_WINDOW_HEIGHT)
-                .pad(padding);
-
-            columnCount++;
-            if (columnCount >= achievementsPerRow) {
-                achievementsTable.row();
-                columnCount = 0;
-            }
-        }
-    }
 
     /**
      * Displays a single achievement in a summarized for in the UI. Will be used as part of a table.
@@ -114,7 +97,7 @@ public class AchievementsSlide extends Slide {
         // Set fixed size for the achievement window
         achievementWindow.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
 
-        //achievementWindow.
+        achievementWindow.pad(20f);
 
         // Enable title label wrapping with width constraint
         Label titleLabel = achievementWindow.getTitleLabel();
