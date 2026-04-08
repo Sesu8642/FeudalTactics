@@ -6,6 +6,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Lose a game against the weakest AI. Aborting does not count!
+ */
 public class LoseAgainstWeakestAiAchievement extends AbstractAchievement {
 
     public LoseAgainstWeakestAiAchievement(AchievementRepository repository) {

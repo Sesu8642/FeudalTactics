@@ -2,6 +2,9 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a game that lasts at least a specified number of rounds.
+ */
 public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
 
     private final int roundCount;

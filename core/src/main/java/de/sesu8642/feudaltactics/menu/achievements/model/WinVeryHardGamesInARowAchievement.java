@@ -9,6 +9,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a specified number of Very Hard games in a row without losing or aborting.
+ */
 public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
 
     private static final String CURRENT_STREAK_PLAYER_INDEX_NAME = "current-streak-player-index";

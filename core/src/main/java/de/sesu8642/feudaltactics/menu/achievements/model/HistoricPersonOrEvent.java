@@ -26,8 +26,16 @@ public enum HistoricPersonOrEvent {
         this.description = description;
     }
 
+    /**
+     * Name of the historic person or event. Shouldn't be too long, as it needs to fit in the achievement overview.
+     */
     @Getter
     private final String name;
+
+    /**
+     * Description of the historic person or event. It is shown in the achievement details. For secret achievements,
+     * it hints at what needs to be done, because the exact requirements are not revealed until the achievement is unlocked.
+     */
     @Getter
     private final String description;
 

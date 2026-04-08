@@ -5,6 +5,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a specified number of games, either by defeating your enemies or them giving up. Any difficulty and map size is allowed.
+ */
 public class WinNGamesAchievement extends AbstractAchievement {
 
     public WinNGamesAchievement(AchievementRepository achievementRepository, int gamesToWin) {

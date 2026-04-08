@@ -4,6 +4,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a game where your enemies surrender -- and there are still a specified number of or more different enemies with surviving kingdoms.
+ */
 public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
 
     private final int enemyCount;

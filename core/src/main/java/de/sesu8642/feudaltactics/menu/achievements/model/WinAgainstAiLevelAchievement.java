@@ -4,6 +4,9 @@ import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a game against AI opponents of a specified level. It must be exactly that AI level, not higher.
+ */
 public class WinAgainstAiLevelAchievement extends AbstractAchievement {
 
     private final Intelligence aiLevel;

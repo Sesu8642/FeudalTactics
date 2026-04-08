@@ -9,6 +9,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a game on a specified map size, either by defeating your enemies or them giving up. Any difficulty is allowed.
+ */
 public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 

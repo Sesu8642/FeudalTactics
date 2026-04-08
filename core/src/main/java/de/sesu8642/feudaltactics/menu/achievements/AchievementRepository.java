@@ -35,6 +35,9 @@ import java.util.List;
 @Singleton
 public class AchievementRepository {
 
+    /**
+     * Name of the preferences store for achievements.
+     */
     public static final String ACHIEVEMENTS_NAME = "achievements";
 
     private final Preferences prefStore;
@@ -95,22 +98,34 @@ public class AchievementRepository {
         }
     }
 
+    /**
+     * Unlocks the achievement with the given ID. Called from the achievement itself.
+     */
     public void unlockAchievement(String achievementId) {
         prefStore.putBoolean("achievement-" + achievementId, true);
         prefStore.flush();
     }
 
+    /**
+     * Stores the progress for the achievement with the given ID. Called from the achievement itself.
+     */
     public void storeProgress(String id, int number) {
         prefStore.putInteger("achievement-progress-" + id, number);
         prefStore.flush();
     }
 
+    /**
+     * Called when a game is exited. Called from AchievementsEventHandler and forwards the event to all achievements.
+     */
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         for (AbstractAchievement achievement : achievements) {
             achievement.onGameExited(event);
         }
     }
 
+    /**
+     * Called when the map is regenerated. Called from AchievementsEventHandler and forwards the event to all achievements.
+     */
     public void onMapRegeneration(RegenerateMapEvent event) {
         for (AbstractAchievement achievement : achievements) {
             achievement.onMapRegeneration(event);

@@ -7,6 +7,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a game in a specified number of rounds or less. The AI level must be Very Strong, the map size must be at least Medium.
+ */
 public class WinInNRoundsAchievement extends AbstractAchievement {
 
     private final int rounds;

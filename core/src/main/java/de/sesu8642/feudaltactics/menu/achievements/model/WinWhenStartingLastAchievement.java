@@ -3,6 +3,9 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Win a game against the very hard AI when starting last in the turn order
+ */
 public class WinWhenStartingLastAchievement extends AbstractAchievement {
 
     public WinWhenStartingLastAchievement(AchievementRepository achievementRepository) {
@@ -32,6 +35,7 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
             return;     // Ignore games without a winner or where the local player didn't win
         }
 
+        // REVISIT: This doesn't work. It never unlocks.
         if (event.getGamePreferences().getStartingPosition() != gameState.getPlayers().size() - 1) {
             return;     // Ignore games where the local player didn't start last
         }
