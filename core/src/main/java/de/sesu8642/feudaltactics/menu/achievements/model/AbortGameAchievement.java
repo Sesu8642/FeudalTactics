@@ -5,6 +5,9 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
+/**
+ * Achievement: Abort a game in first round.
+ */
 public class AbortGameAchievement extends AbstractAchievement {
 
     public AbortGameAchievement(AchievementRepository repository) {
@@ -26,7 +29,11 @@ public class AbortGameAchievement extends AbstractAchievement {
         final GameState gameState = event.getGameState();
         if (gameState == null) {
             return;     // Ignore exits from editor or similar
-        }   
+        }
+
+        if (gameState.getRound() > 1) {
+            return;     // Not an abort in the first round, ignore
+        }
     
         final Player winnerOfTheGame = gameState.getWinner();
         if (winnerOfTheGame == null) {
