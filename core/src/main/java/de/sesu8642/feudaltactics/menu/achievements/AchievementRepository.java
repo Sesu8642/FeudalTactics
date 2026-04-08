@@ -61,12 +61,6 @@ public class AchievementRepository {
         list.add(new PlayMoreThanNRoundsAchievement(this, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR).setSecret(true));
         list.add(new PlayMoreThanNRoundsAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR).setSecret(true));    // The Hundred Years' War lasted very long obviously
         list.add(new LoseAgainstWeakestAiAchievement(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA).setSecret(true));    // The Walk to Canossa was a humiliation. And so is this achievement.
-        // list.add(new BuyNCastlesAchievement(this, 1, gameStateTracker));
-        // list.add(new BuyNCastlesAchievement(this, 20, gameStateTracker));
-        // list.add(new BuyNCastlesAchievement(this, 100, gameStateTracker).setName("Henry VIII"));    // Henry VIII built much military infrastructure
-        // list.add(new WinWithOnlyNCastlesAchievement(this, 0, gameStateTracker).setName("Holy Roman Emperor Henry VI")); // Henry VI was a travelling king who had no fixed castle, but still won many battles
-        // list.add(new WinWithOnlyNCastlesAchievement(this, 1, gameStateTracker));
-        // list.add(new WinWithOnlyNCastlesAchievement(this, 3, gameStateTracker));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
