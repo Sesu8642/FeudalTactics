@@ -35,7 +35,7 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
             return;     // Ignore games without a winner or where the local player didn't win
         }
 
-        // REVISIT: This doesn't work. It never unlocks.
+        // REVISIT: This doesn't work. StartingPosition is seemingly not the turn order, but the "player color".
         if (event.getGamePreferences().getStartingPosition() != gameState.getPlayers().size() - 1) {
             return;     // Ignore games where the local player didn't start last
         }
