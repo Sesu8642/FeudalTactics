@@ -1,5 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
@@ -35,8 +36,9 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
             return;     // Ignore games without a winner or where the local player didn't win
         }
 
-        // REVISIT: This doesn't work. StartingPosition is seemingly not the turn order, but the "player color".
-        if (event.getGamePreferences().getStartingPosition() != gameState.getPlayers().size() - 1) {
+        Player lastPlayer = gameState.getPlayers().get(gameState.getPlayers().size() - 1);
+        // There is event.getGamePreferences().getStartingPosition(), but that is only the player color, not the turn order
+        if (lastPlayer.getType() != Player.Type.LOCAL_PLAYER) {
             return;     // Ignore games where the local player didn't start last
         }
 
