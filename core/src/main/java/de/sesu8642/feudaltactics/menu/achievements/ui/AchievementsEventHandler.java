@@ -21,11 +21,17 @@ public class AchievementsEventHandler {
         this.achievementRepository = achievementRepository;
     }
 
+    /**
+     * Handles the GameExitedEvent by forwarding it to the achievement repository, which will then forward it to all achievements.
+     */
     @Subscribe
     public void handleGameExited(GameExitedEvent event) {
         achievementRepository.onGameExited(event);
     }
 
+    /**
+    * Handles the RegenerateMapEvent by forwarding it to the achievement repository, which will then forward it to all achievements.
+    */
     @Subscribe
     public void handleMapRegeneration(RegenerateMapEvent event) {
         achievementRepository.onMapRegeneration(event);
