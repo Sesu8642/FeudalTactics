@@ -173,12 +173,8 @@ public class AchievementsSlide extends Slide {
             // Dialog closed
         });
 
-        // Use the overlay style (white font) and scale it up for the title.
-        // The default Text font in the skin is black, so it remains unreadable on dark backgrounds.
-        // REVISIT: Maybe we should just change the default font to white in the skin? Or add a separate title font?
-        LabelStyle baseStyle = skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class);
+        LabelStyle baseStyle = skin.get(SkinConstants.FONT_MENU_HEADING, LabelStyle.class);
         Label titleLabel = new Label(achievement.getName(), new LabelStyle(baseStyle));
-        titleLabel.setFontScale(1.4f);
         detailsDialog.text(titleLabel);
         detailsDialog.getContentTable().row();
         detailsDialog.text(achievement.getDescription());

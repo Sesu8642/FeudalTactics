@@ -147,6 +147,30 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		magFilter: Nearest
 		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
 	}
+	MenuHeading: {
+		font: FreeSansBold.ttf
+		size: 42
+		mono: false
+		color: white
+		gamma: 1.8
+		renderCount: 2
+		borderWidth: 1
+		borderColor: black
+		borderStraight: false
+		borderGamma: 1.8
+		shadowOffsetX: 0
+		shadowOffsetY: 0
+		spaceX: 0
+		spaceY: 0
+		kerning: true
+		flip: false
+		genMipMaps: false
+		incremental: false
+		hinting: AutoMedium
+		minFilter: Nearest
+		magFilter: Nearest
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
+	}
 	SmallerText: {
 		font: FreeSans.ttf
 		size: 24
@@ -362,6 +386,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	overlay: {
 		font: Overlay
+	}
+	menu_heading: {
+		font: MenuHeading
 	}
 	bestagon: {
 		font: bestagon
