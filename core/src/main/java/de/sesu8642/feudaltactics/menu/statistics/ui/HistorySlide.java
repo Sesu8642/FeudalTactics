@@ -34,7 +34,7 @@ import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.*;
  */
 @Singleton
 public class HistorySlide extends Slide {
-    
+
     private static final int MAX_DISPLAYED_GAMES = 100;
     private final Skin skin;
     private final HistoryDao historyDao;
@@ -55,7 +55,7 @@ public class HistorySlide extends Slide {
     @Inject
     public HistorySlide(Skin skin, HistoryDao historyDao, MapPreviewFactory mapPreviewFactory,
                         LocalizationManager localizationManager) {
-        super(skin, TranslationKeys.HISTORY_PAGE_HEADLINE);
+        super(skin, localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_HEADLINE));
         this.skin = skin;
         this.historyDao = historyDao;
         this.mapPreviewFactory = mapPreviewFactory;
@@ -270,7 +270,7 @@ public class HistorySlide extends Slide {
         HistoricGame[] history = historyDao.getGameHistory();
 
         if (history.length == 0) {
-            final Label noHistoryLabel = new Label(TranslationKeys.HISTORY_PAGE_TEXT_NO_HISTORY, skin);
+            final Label noHistoryLabel = new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_TEXT_NO_HISTORY), skin);
             noHistoryLabel.setWrap(true);
             historyTable.add(noHistoryLabel).fill().expand();
             return;
