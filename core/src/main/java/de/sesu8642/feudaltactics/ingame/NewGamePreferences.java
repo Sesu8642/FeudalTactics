@@ -105,7 +105,7 @@ public class NewGamePreferences {
      */
     private static void fillPreferences(String sharedString, NewGamePreferences preferences,
                                         LocalizationManager localizationManager) throws IOException {
-        // shared parameters are always in Englisch
+        // shared parameters are always in English
         final String seedDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
             TranslationKeys.GAME_DETAILS_SEED);
         final String botIntelligenceDisplayName =
@@ -131,6 +131,7 @@ public class NewGamePreferences {
                 if (stringParts.length < 2) {
                     continue;
                 }
+                // TODO: text has English strings, not display codes
                 final String firstStringPart = stringParts[0].trim();
                 final String secondStringPart = stringParts[1].trim();
                 if (firstStringPart.equals(seedDisplayName)) {
