@@ -53,7 +53,7 @@ public class AboutSlideFactory {
             " A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received" +
             " a copy of the GNU General Public License along with this program.  If not, see <https://www.gnu" +
             ".org/licenses/>.";
-        final String text3 = "\n" + localizationManager.localizeText(TranslationKeys.ACKNOWLEDGEMENTS);
+        final String text3 = "\n" + localizationManager.localizeText(TranslationKeys.ABOUT_PAGE_ACKNOWLEDGEMENTS);
         final String imagePath = "square_logo_64.png";
         final Slide slide = new Slide(skin, localizationManager.localizeText(TranslationKeys.ABOUT_PAGE_HEADLINE));
         slide.getTable().add(new Image(new Texture(imagePath))).row();

@@ -136,7 +136,7 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        tutorialNagDialog.text(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_TUTORIAL_NAG));
+        tutorialNagDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_TUTORIAL_NAG));
         tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_NO), (byte) 0);
         tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_YES), (byte) 1);
         tutorialNagDialog.show(getActiveStage());
@@ -159,9 +159,9 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_GAME_UPDATED));
+        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_GAME_UPDATED));
         newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
-        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OPEN_CHANGELOG),
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_BUTTON_OPEN_CHANGELOG),
             (byte) 1);
         newVersionDialog.show(getActiveStage());
     }
