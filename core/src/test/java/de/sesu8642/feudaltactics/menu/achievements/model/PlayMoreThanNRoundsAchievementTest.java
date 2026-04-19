@@ -40,10 +40,8 @@ class PlayMoreThanNRoundsAchievementTest extends AbstractAchievementTest<PlayMor
     }
 
     private GameExitedEvent eventWithRounds(int rounds) {
-        GameState gs = mock(GameState.class);
-        when(gs.getRound()).thenReturn(rounds);
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        return event;
+        GameState gs = new GameState();
+        gs.setRound(rounds);
+        return new GameExitedEvent(gs, null);
     }
 }

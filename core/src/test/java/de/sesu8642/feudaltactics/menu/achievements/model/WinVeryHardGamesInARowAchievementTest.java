@@ -3,6 +3,7 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 import com.badlogic.gdx.Preferences;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
@@ -70,52 +71,55 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
 
     @Test
     void firstMapGeneration_doesNotResetProgress() {
-        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis(), 0));
+        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
         verifyNoProgress();
     }
 
     @Test
     void secondMapGeneration_resetsProgress() {
-        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis(), 0));
-        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis(), 0));
+        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
+        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
         verifyProgress(0);
     }
 
     @Test
     void copiedMapSeed_resetsProgress() {
         long oldSeed = System.currentTimeMillis() - 100_000;
-        achievement.onMapRegeneration(mapRegenEvent(oldSeed, 0));
+        achievement.onMapRegeneration(mapRegenEvent(oldSeed));
         verifyProgress(0);
     }
 
     @Test
     void gameExitResetsMapGeneratedFlag() {
-        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis(), 0));
+        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
 
         // Win resets the flag
         achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
         reset(repository);
 
         // Next generation should be treated as first again
-        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis(), 0));
+        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
         verifyNoProgress();
     }
 
-    private RegenerateMapEvent mapRegenEvent(long seed, int humanPlayerIndex) {
-        Player local = new Player(humanPlayerIndex, Player.Type.LOCAL_PLAYER);
+    private RegenerateMapEvent mapRegenEvent(long seed) {
+        Player local = new Player(0, Player.Type.LOCAL_PLAYER);
         Player bot = new Player(1, Player.Type.LOCAL_BOT);
 
-        GameParameters gp = mock(GameParameters.class);
-        when(gp.getSeed()).thenReturn(seed);
-        when(gp.getPlayers()).thenReturn(Arrays.asList(local, bot));
+        GameParameters gp = new GameParameters(
+            0, // humanPlayerIndex, 0 is okay for the test
+            444,              // seed, just some number
+            NewGamePreferences.MapSizes.MEDIUM.getAmountOfTiles(), // landMass
+            NewGamePreferences.Densities.MEDIUM.getDensityFloat(),    // density
+            Intelligence.LEVEL_2,   // AI level, not important for the test
+            1                 // number of bot player
+        );
 
-        RegenerateMapEvent event = mock(RegenerateMapEvent.class);
-        when(event.getGameParams()).thenReturn(gp);
-        return event;
+        return new RegenerateMapEvent(gp);
     }
 
     private Preferences createInMemoryPrefs() {
-        Preferences mockPrefs = mock(Preferences.class);
+        Preferences mockPrefs = mock(Preferences.class);    // TODO: Check whether there is an implementation for this in the lib already
         when(mockPrefs.getInteger(anyString(), anyInt())).thenAnswer(inv -> {
             Object val = prefData.get((String) inv.getArgument(0));
             return val != null ? (int) val : (int) inv.getArgument(1);

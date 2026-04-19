@@ -58,27 +58,23 @@ class WinAgainstManyEnemiesAchievementTest extends AbstractAchievementTest<WinAg
     /** Creates an event where local player wins and {@code survivingBots} bots have kingdoms. */
     private GameExitedEvent enemyWinEvent(int survivingBots) {
         Player localPlayer = new Player(0, Player.Type.LOCAL_PLAYER);
-        Player[] bots = new Player[survivingBots + 1]; // +1 extra bot with no kingdom
+        Player[] allPlayers = new Player[TOTAL_PLAYERS];
         Kingdom[] kingdoms = new Kingdom[survivingBots];
 
-        for (int i = 0; i < survivingBots + 1; i++) {
-            bots[i] = new Player(i + 1, Player.Type.LOCAL_BOT);
-            if (i < survivingBots) {
-                kingdoms[i] = new Kingdom(bots[i]);
-            }
+        allPlayers[0] = localPlayer;
+        for (int i = 1; i <= survivingBots; i++) {
+            allPlayers[i] = new Player(i, Player.Type.LOCAL_BOT);
+            kingdoms[i] = new Kingdom(allPlayers[i]);
+        }
+        for (int j = survivingBots +1; j < TOTAL_PLAYERS; j++) {
+            allPlayers[j] = new Player(j, Player.Type.LOCAL_BOT);
         }
 
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(localPlayer);
+        GameState gs = new GameState();
+        gs.setWinner(localPlayer);
+        gs.setPlayers(Arrays.asList(allPlayers));
+        gs.setKingdoms(Arrays.asList(kingdoms));
 
-        Player[] allPlayers = new Player[survivingBots + 2];
-        allPlayers[0] = localPlayer;
-        System.arraycopy(bots, 0, allPlayers, 1, bots.length);
-        when(gs.getPlayers()).thenReturn(Arrays.asList(allPlayers));
-        when(gs.getKingdoms()).thenReturn(Arrays.asList(kingdoms));
-
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        return event;
+        return new GameExitedEvent(gs, null);
     }
 }

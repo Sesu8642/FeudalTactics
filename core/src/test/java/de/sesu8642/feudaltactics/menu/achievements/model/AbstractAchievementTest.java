@@ -75,8 +75,7 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
     @Test
     void onGameExited_nullGameState_doesNothing() {
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(null);
+        GameExitedEvent event = new GameExitedEvent(null, null);
 
         achievement.onGameExited(event);
 
@@ -84,77 +83,69 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
     }
 
     // ---- event builder helpers ----
-
-    protected static GameExitedEvent nullGameStateEvent() {
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(null);
-        return event;
-    }
+    protected static final int TOTAL_PLAYERS = 6;
 
     protected static GameExitedEvent noWinnerEvent() {
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(null);
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        return event;
+        GameState gs = new GameState();
+        gs.setWinner(null);
+        return new GameExitedEvent(gs, null);
     }
 
     /** Event where a player of the given type wins, with specific AI level. */
     protected static GameExitedEvent winEvent(Player.Type winnerType, Intelligence aiLevel) {
         Player winner = new Player(0, winnerType);
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(winner);
-        when(gs.getBotIntelligence()).thenReturn(aiLevel);
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        return event;
-    }
-
-    /** Event where local player wins, with configurable GameState properties. */
-    protected static GameExitedEvent localPlayerWinEvent(Intelligence aiLevel) {
-        return winEvent(Player.Type.LOCAL_PLAYER, aiLevel);
+        GameState gs = new GameState();
+        gs.setWinner(winner);
+        gs.setBotIntelligence(aiLevel);
+        return new GameExitedEvent(gs, null);
     }
 
     /** Event where local player wins with preferences attached. */
     protected static GameExitedEvent localPlayerWinEventWithPrefs(
             Intelligence aiLevel, NewGamePreferences.MapSizes mapSize, int winningRound) {
         Player winner = new Player(0, Player.Type.LOCAL_PLAYER);
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(winner);
-        when(gs.getBotIntelligence()).thenReturn(aiLevel);
-        when(gs.getWinningRound()).thenReturn(winningRound);
+        GameState gs = new GameState();
+        gs.setWinner(winner);
+        gs.setBotIntelligence(aiLevel);
+        gs.setWinningRound(winningRound);
 
-        NewGamePreferences prefs = mock(NewGamePreferences.class);
-        when(prefs.getMapSize()).thenReturn(mapSize);
+        NewGamePreferences prefs = new NewGamePreferences(
+            142,        // seed, just some number
+            aiLevel,
+            mapSize,
+            NewGamePreferences.Densities.MEDIUM,
+            0,  // startingPosition
+            TOTAL_PLAYERS
+        );
 
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        when(event.getGamePreferences()).thenReturn(prefs);
-        return event;
+        return new GameExitedEvent(gs, prefs);
     }
 
     /** Event where local player wins with preferences (including starting position). */
     protected static GameExitedEvent localPlayerWinEventFull(
-            Intelligence aiLevel, int startingPosition, int totalPlayers) {
+            Intelligence aiLevel, int startingPosition) {
         Player winner = new Player(0, Player.Type.LOCAL_PLAYER);
-
-        Player[] players = new Player[totalPlayers];
-        for (int i = 0; i < totalPlayers; i++) {
-            players[i] = new Player(i, i == 0 ? Player.Type.LOCAL_PLAYER : Player.Type.LOCAL_BOT);
+        Player[] players = new Player[TOTAL_PLAYERS];
+        players[0] = winner;
+        for (int i = 1; i < TOTAL_PLAYERS; i++) {
+            players[i] = new Player(i, Player.Type.LOCAL_BOT);
         }
 
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(winner);
-        when(gs.getBotIntelligence()).thenReturn(aiLevel);
-        when(gs.getPlayers()).thenReturn(Arrays.asList(players));
+        GameState gs = new GameState();
+        gs.setWinner(winner);
+        gs.setBotIntelligence(aiLevel);
+        gs.setPlayers(Arrays.asList(players));
 
-        NewGamePreferences prefs = mock(NewGamePreferences.class);
-        when(prefs.getStartingPosition()).thenReturn(startingPosition);
+        NewGamePreferences prefs = new NewGamePreferences(
+            142,        // seed, just some number
+            aiLevel,
+            NewGamePreferences.MapSizes.MEDIUM,
+            NewGamePreferences.Densities.MEDIUM,
+            startingPosition,  // startingPosition
+            TOTAL_PLAYERS
+        );
 
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        when(event.getGamePreferences()).thenReturn(prefs);
-        return event;
+        return new GameExitedEvent(gs, prefs);
     }
 
     /** Verify that storeProgress was called for the achievement. */

@@ -5,6 +5,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
@@ -30,33 +31,19 @@ class WinOnMapSizeAchievementTest extends AbstractAchievementTest<WinOnMapSizeAc
 
     @Test
     void botWins_doesNotUnlock() {
-        achievement.onGameExited(winEvent(Player.Type.LOCAL_BOT, null));
+        achievement.onGameExited(winEvent(Player.Type.LOCAL_BOT, Intelligence.LEVEL_3));
         verifyNoProgress();
     }
 
     @Test
     void matchingMapSize_unlocks() {
-        achievement.onGameExited(mapSizeWinEvent(MapSizes.LARGE));
+        achievement.onGameExited(localPlayerWinEventWithPrefs(Intelligence.LEVEL_2, MapSizes.LARGE, 7));
         verifyProgress(1);
     }
 
     @Test
     void differentMapSize_doesNotUnlock() {
-        achievement.onGameExited(mapSizeWinEvent(MapSizes.MEDIUM));
+        achievement.onGameExited(localPlayerWinEventWithPrefs(Intelligence.LEVEL_2, MapSizes.LARGE, 7));
         verifyNoProgress();
-    }
-
-    private GameExitedEvent mapSizeWinEvent(MapSizes mapSize) {
-        Player winner = new Player(0, Player.Type.LOCAL_PLAYER);
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(winner);
-
-        NewGamePreferences prefs = mock(NewGamePreferences.class);
-        when(prefs.getMapSize()).thenReturn(mapSize);
-
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        when(event.getGamePreferences()).thenReturn(prefs);
-        return event;
     }
 }

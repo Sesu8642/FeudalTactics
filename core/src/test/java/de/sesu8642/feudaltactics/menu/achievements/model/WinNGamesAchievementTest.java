@@ -3,6 +3,7 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
@@ -34,13 +35,13 @@ class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievem
 
     @Test
     void localPlayerWins_incrementsProgress() {
-        achievement.onGameExited(localPlayerWinEvent());
+        achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_2));
         verifyProgress(1);
     }
 
     @Test
     void multipleWins_progressIncrementsEachTime() {
-        GameExitedEvent event = localPlayerWinEvent();
+        GameExitedEvent event = winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_2);
         achievement.onGameExited(event);
         achievement.onGameExited(event);
         achievement.onGameExited(event);
@@ -48,14 +49,5 @@ class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievem
         verify(repository).storeProgress(achievement.getId(), 1);
         verify(repository).storeProgress(achievement.getId(), 2);
         verify(repository).storeProgress(achievement.getId(), 3);
-    }
-
-    private GameExitedEvent localPlayerWinEvent() {
-        Player winner = new Player(0, Player.Type.LOCAL_PLAYER);
-        GameState gs = mock(GameState.class);
-        when(gs.getWinner()).thenReturn(winner);
-        GameExitedEvent event = mock(GameExitedEvent.class);
-        when(event.getGameState()).thenReturn(gs);
-        return event;
     }
 }
