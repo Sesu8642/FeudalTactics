@@ -7,22 +7,16 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import de.ui.statistics.MockPreferences;
+
+import static org.mockito.Mockito.reset;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinVeryHardGamesInARowAchievement> {
 
     private static final int GOAL = 3;
-    private Map<String, Object> prefData;
     private Preferences prefs;
 
     @Override
@@ -38,8 +32,7 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
     @Override
     @BeforeEach
     void setUp() {
-        prefData = new HashMap<>();
-        prefs = createInMemoryPrefs();
+        prefs = new MockPreferences();
         super.setUp();
     }
 
@@ -71,6 +64,7 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
 
     @Test
     void firstMapGeneration_doesNotResetProgress() {
+        verifyNoProgress();
         achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
         verifyNoProgress();
     }
@@ -103,12 +97,9 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
     }
 
     private RegenerateMapEvent mapRegenEvent(long seed) {
-        Player local = new Player(0, Player.Type.LOCAL_PLAYER);
-        Player bot = new Player(1, Player.Type.LOCAL_BOT);
-
         GameParameters gp = new GameParameters(
             0, // humanPlayerIndex, 0 is okay for the test
-            444,              // seed, just some number
+            seed,              // seed, just some number
             NewGamePreferences.MapSizes.MEDIUM.getAmountOfTiles(), // landMass
             NewGamePreferences.Densities.MEDIUM.getDensityFloat(),    // density
             Intelligence.LEVEL_2,   // AI level, not important for the test
@@ -116,23 +107,5 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
         );
 
         return new RegenerateMapEvent(gp);
-    }
-
-    private Preferences createInMemoryPrefs() {
-        Preferences mockPrefs = mock(Preferences.class);    // TODO: Check whether there is an implementation for this in the lib already
-        when(mockPrefs.getInteger(anyString(), anyInt())).thenAnswer(inv -> {
-            Object val = prefData.get((String) inv.getArgument(0));
-            return val != null ? (int) val : (int) inv.getArgument(1);
-        });
-        when(mockPrefs.getBoolean(anyString(), anyBoolean())).thenAnswer(inv -> {
-            Object val = prefData.get((String) inv.getArgument(0));
-            return val != null ? (boolean) val : (boolean) inv.getArgument(1);
-        });
-        doAnswer(inv -> { prefData.put(inv.getArgument(0), inv.getArgument(1)); return null; })
-                .when(mockPrefs).putInteger(anyString(), anyInt());
-        doAnswer(inv -> { prefData.put(inv.getArgument(0), inv.getArgument(1)); return null; })
-                .when(mockPrefs).putBoolean(anyString(), anyBoolean());
-        doNothing().when(mockPrefs).flush();
-        return mockPrefs;
     }
 }

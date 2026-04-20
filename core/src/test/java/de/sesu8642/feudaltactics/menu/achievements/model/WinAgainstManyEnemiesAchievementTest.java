@@ -64,7 +64,7 @@ class WinAgainstManyEnemiesAchievementTest extends AbstractAchievementTest<WinAg
         allPlayers[0] = localPlayer;
         for (int i = 1; i <= survivingBots; i++) {
             allPlayers[i] = new Player(i, Player.Type.LOCAL_BOT);
-            kingdoms[i] = new Kingdom(allPlayers[i]);
+            kingdoms[i-1] = new Kingdom(allPlayers[i]);
         }
         for (int j = survivingBots +1; j < TOTAL_PLAYERS; j++) {
             allPlayers[j] = new Player(j, Player.Type.LOCAL_BOT);

@@ -126,9 +126,8 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
             Intelligence aiLevel, int startingPosition) {
         Player winner = new Player(0, Player.Type.LOCAL_PLAYER);
         Player[] players = new Player[TOTAL_PLAYERS];
-        players[0] = winner;
-        for (int i = 1; i < TOTAL_PLAYERS; i++) {
-            players[i] = new Player(i, Player.Type.LOCAL_BOT);
+        for (int i = 0; i < TOTAL_PLAYERS; i++) {
+            players[i] = i == startingPosition ? new Player(i, Player.Type.LOCAL_PLAYER) : new Player(i, Player.Type.LOCAL_BOT);
         }
 
         GameState gs = new GameState();
