@@ -7,7 +7,7 @@ import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
-import de.ui.statistics.MockPreferences;
+import de.sesu8642.feudaltactics.MockPreferences;
 
 import static org.mockito.Mockito.reset;
 
