@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 
@@ -25,23 +24,23 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
     protected final OrthographicCamera camera;
     protected final Container<Table> slideContainer = new Container<>();
     protected final Set<Disposable> disposables = new HashSet<>();
+    protected final List<Slide> slides;
     protected Table rootTable;
     protected ScrollPane scrollPane;
-    protected final List<Slide> slides;
     protected Slide currentSlide;
     protected int currentSlideIndex = 0;
 
     /**
      * Constructor.
      *
-     * @param viewport                viewport for the stage
-     * @param slides                  list of slides to display
-     * @param platformInsetsProvider  provider for platform-specific insets
-     * @param camera                  camera for the stage
-     * @param skin                    game skin
+     * @param viewport               viewport for the stage
+     * @param slides                 list of slides to display
+     * @param platformInsetsProvider provider for platform-specific insets
+     * @param camera                 camera for the stage
+     * @param skin                   game skin
      */
     protected AbstractSlideStage(Viewport viewport, List<Slide> slides, PlatformInsetsProvider platformInsetsProvider,
-                                  OrthographicCamera camera, Skin skin) {
+                                 OrthographicCamera camera, Skin skin) {
         super(viewport);
 
         if (slides.isEmpty()) {
@@ -86,6 +85,13 @@ public abstract class AbstractSlideStage extends ResizableResettableStage {
         }
 
         addActor(rootTable);
+    }
+
+    /**
+     * Disables scrolling in the horizontal direction. Needs to be called to make horizontal groups wrap properly.
+     */
+    public void disableHorizontalScrolling() {
+        scrollPane.setScrollingDisabled(true, false);
     }
 
     /**

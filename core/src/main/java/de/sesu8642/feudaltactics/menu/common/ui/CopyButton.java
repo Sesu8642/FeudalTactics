@@ -32,6 +32,8 @@ public class CopyButton extends ImageTextButton {
             skin.get(renderButtonBackground ? SkinConstants.BUTTON_COPY : SkinConstants.BUTTON_COPY_NO_BACKGROUND,
                 ImageTextButtonStyle.class));
 
+        getImageCell().size(UiScalingConstants.BUTTON_TEXT_SIZE);
+
         if (renderButtonBackground) {
             defaultStyle = skin.get(SkinConstants.BUTTON_COPY, ImageTextButtonStyle.class);
             tickStyle = skin.get(SkinConstants.BUTTON_COPY_TICK, ImageTextButtonStyle.class);

@@ -48,7 +48,7 @@ public class StatisticsSlide extends Slide {
         statisticsTable.add(newLabel).left().fill().expandX().prefWidth(200);
 
         final Label valueLabel = new Label(Integer.toString(value), skin);
-        statisticsTable.add(valueLabel).colspan(2).center().fillX().expandX();
+        statisticsTable.add(valueLabel).colspan(2).center().fillX().expandX().padLeft(10);
         statisticsTable.row();
         statisticsTable.add().height(20);
         statisticsTable.row();

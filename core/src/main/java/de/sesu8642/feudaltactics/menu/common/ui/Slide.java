@@ -34,12 +34,8 @@ public class Slide {
         // cannot use fillParent because it then the content will be placed a little too
         // high
         table.defaults().pad(10);
-        // adding the headline is a hack needed because the slide would get a width of 0
-        // if the the label does not need to wrap (bug?)
-        final Table hackTable = new Table();
         headlineLabel = new Label(headline, skin.get(SkinConstants.FONT_HEADLINE, LabelStyle.class));
-        hackTable.add(headlineLabel);
-        table.add(hackTable);
+        table.add(headlineLabel);
         table.row();
     }
 

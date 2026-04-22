@@ -16,19 +16,25 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class HistoryAndStatisticsScreen extends GameScreen {
+
+    HistoryAndStatisticsStage stage;
+
+    /**
+     * Constructor.
+     */
     @Inject
     public HistoryAndStatisticsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                            HistoryAndStatisticsStage stage) {
+                                      HistoryAndStatisticsStage stage) {
         super(camera, viewport, stage);
+        this.stage = stage;
     }
 
     @Override
     public void show() {
         super.show();
 
-        final HistoryAndStatisticsStage statisticsStage = (HistoryAndStatisticsStage) getActiveStage();
         // Refresh all slides when screen is shown
-        statisticsStage.getStatisticsSlide().refreshStatistics();
-        statisticsStage.getHistorySlide().refreshHistory();
+        stage.getStatisticsSlide().refreshStatistics();
+        stage.getHistorySlide().refreshHistory();
     }
 }

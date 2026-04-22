@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -70,13 +71,15 @@ public class MenuStage extends ResizableResettableStage {
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.setFillParent(true);
-        rootTable.defaults().minSize(0).fillX().expandY().colspan(2);
-        final Image logo = new Image(logoTexture);
-        rootTable.add(logo).prefHeight(Value.percentWidth(0.51F, rootTable)).minHeight(150).width(Value.percentHeight(1.91F));
+        rootTable.defaults().minSize(0).colspan(2);
+        final Image logoImage = new Image(logoTexture);
+        logoImage.setScaling(Scaling.contain);
+        rootTable.add(logoImage).prefWidth(Gdx.graphics.getDensity() * 2000).prefHeight(Value.percentWidth(0.51F));
+
         rootTable.row();
-        rootTable.defaults().minHeight(100).pad(5);
+        rootTable.defaults().minHeight(30).pad(5).expandX();
         for (TextButton button : buttons) {
-            rootTable.add(button).prefWidth(Value.percentWidth(0.5F, rootTable));
+            rootTable.add(button).height(UiScalingConstants.BUTTON_TEXT_SIZE * 2F).prefWidth(Gdx.graphics.getDensity() * 1500).expandY();
             rootTable.row();
         }
         rootTable.row();
@@ -88,7 +91,6 @@ public class MenuStage extends ResizableResettableStage {
 
     @Override
     public void updateOnResize(int width, int height) {
-        rootTable.pack();
         camera.viewportHeight = height;
         camera.viewportWidth = width;
         camera.update();
