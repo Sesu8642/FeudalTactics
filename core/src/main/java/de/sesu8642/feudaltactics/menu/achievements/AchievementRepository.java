@@ -1,0 +1,128 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+package de.sesu8642.feudaltactics.menu.achievements;
+
+import com.badlogic.gdx.Preferences;
+
+import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
+import de.sesu8642.feudaltactics.menu.achievements.model.AbortGameAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.HistoricPersonOrEvent;
+import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAiAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstManyEnemiesAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.PlayMoreThanNRoundsAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
+import de.sesu8642.feudaltactics.menu.achievements.model.WinWhenStartingLastAchievement;
+import lombok.Getter;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Repository for managing achievements. Combines achievement storage and retrieval.
+ */
+@Singleton
+public class AchievementRepository {
+
+    /**
+     * Name of the preferences store for achievements.
+     */
+    public static final String ACHIEVEMENTS_NAME = "achievements";
+
+    private final Preferences prefStore;
+
+    @Getter
+    private final List<AbstractAchievement> achievements;
+
+    @Inject
+    public AchievementRepository(
+            @AchievementsPrefStore Preferences achievementsPrefs,
+            AutoSaveRepository autoSaveRepository) {
+        this.prefStore = achievementsPrefs;
+
+        List<AbstractAchievement> list = new ArrayList<>();
+        list.add(new WinNGamesAchievement(this, 1));
+        list.add(new WinNGamesAchievement(this, 10));
+        list.add(new WinNGamesAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.CHARLEMAGNE));    // Charlemagne won many battles
+        list.add(new WinInNRoundsAchievement(this, 18));
+        list.add(new WinInNRoundsAchievement(this, 14));
+        list.add(new WinInNRoundsAchievement(this, 12).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
+        list.add(new PlayMoreThanNRoundsAchievement(this, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR).setSecret(true));
+        list.add(new PlayMoreThanNRoundsAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR).setSecret(true));    // The Hundred Years' War lasted very long obviously
+        list.add(new LoseAgainstWeakestAiAchievement(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA).setSecret(true));    // The Walk to Canossa was a humiliation. And so is this achievement.
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
+        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
+        list.add(new WinAgainstManyEnemiesAchievement(this, 3));
+        list.add(new WinAgainstManyEnemiesAchievement(this, 4));
+        list.add(new WinAgainstManyEnemiesAchievement(this, 5).setHistoricConnection(HistoricPersonOrEvent.LOUIS_XI));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.SMALL));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.MEDIUM));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.LARGE));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.XLARGE));
+        list.add(new WinOnMapSizeAchievement(this, MapSizes.XXLARGE).setHistoricConnection(HistoricPersonOrEvent.RICHARD_THE_LIONHEART));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_1));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_2));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_3));
+        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setHistoricConnection(HistoricPersonOrEvent.FREDERICK_THE_GREAT));
+        list.add(new WinWhenStartingLastAchievement(this).setHistoricConnection(HistoricPersonOrEvent.TOKUGAWA_IEYASU).setSecret(true));
+        list.add(new AbortGameAchievement(this).setHistoricConnection(HistoricPersonOrEvent.JOHN_THE_POSTHUMOUS).setSecret(true));
+        this.achievements = Collections.unmodifiableList(list);
+
+        LoadPersistedAchievements();
+    }
+
+    private void LoadPersistedAchievements() {
+        for (AbstractAchievement achievement : achievements) {
+            achievement.setUnlocked(
+                prefStore.getBoolean("achievement-" + achievement.getId(), false));
+            achievement.setProgress(
+                prefStore.getInteger("achievement-progress-" + achievement.getId(), 0));
+        }
+    }
+
+    /**
+     * Unlocks the achievement with the given ID. Called from the achievement itself.
+     */
+    public void unlockAchievement(String achievementId) {
+        prefStore.putBoolean("achievement-" + achievementId, true);
+        prefStore.flush();
+    }
+
+    /**
+     * Stores the progress for the achievement with the given ID. Called from the achievement itself.
+     */
+    public void storeProgress(String id, int number) {
+        prefStore.putInteger("achievement-progress-" + id, number);
+        prefStore.flush();
+    }
+
+    /**
+     * Called when a game is exited. Called from AchievementsEventHandler and forwards the event to all achievements.
+     */
+    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+        for (AbstractAchievement achievement : achievements) {
+            achievement.onGameExited(event);
+        }
+    }
+
+    /**
+     * Called when the map is regenerated. Called from AchievementsEventHandler and forwards the event to all achievements.
+     */
+    public void onMapRegeneration(RegenerateMapEvent event) {
+        for (AbstractAchievement achievement : achievements) {
+            achievement.onMapRegeneration(event);
+        }
+    }
+}
