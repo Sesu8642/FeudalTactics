@@ -14,7 +14,7 @@ import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler;
 import de.sesu8642.feudaltactics.menu.about.dagger.AboutScreen;
-import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsEventHandler;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementsEventHandler;
 import de.sesu8642.feudaltactics.menu.achievements.ui.AchievementsScreen;
 import de.sesu8642.feudaltactics.menu.campaign.ui.CampaignLevelSelectionScreen;
 import de.sesu8642.feudaltactics.menu.changelog.dagger.ChangelogScreen;

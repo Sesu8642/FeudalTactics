@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-package de.sesu8642.feudaltactics.menu.achievements.ui;
+package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 import javax.inject.Inject;
 
