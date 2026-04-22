@@ -15,6 +15,11 @@ public class AbortGameAchievement extends AbstractAchievement {
     }
 
     @Override
+    public boolean isSecret() {
+        return true;
+    }
+
+    @Override
     public String getId() {
         return "abort_game";
     }

@@ -41,7 +41,7 @@ public abstract class AbstractAchievement {
      */
     public String getDescription() {
         if (historicConnection != null) {
-            if (isSecret && !unlocked) {
+            if (isSecret() && !unlocked) {
                 return historicConnection.getDescription() + "\n\n" + "This achievement is still secret. Unlock it to see the full description.";
             }
             return historicConnection.getDescription() + "\n\n" + getBaseDescription();
@@ -69,10 +69,11 @@ public abstract class AbstractAchievement {
      * Indicates whether the achievement is secret = its description is hidden until the player unlocks it.
      * It is used for achievements with historic connection that hint what needs to be done, but the player still
      * needs to figure out how to do it exactly.
+     * It is false by default, but subclasses can override this method to return true if they want the achievement to be secret.
      */
-    @Getter
-    @Setter
-    private boolean isSecret;
+    public boolean isSecret() {
+        return false;
+    }
 
     protected AchievementRepository achievementRepository;
    

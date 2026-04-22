@@ -16,6 +16,11 @@ public class LoseAgainstWeakestAiAchievement extends AbstractAchievement {
     }
 
     @Override
+    public boolean isSecret() {
+        return true;
+    }
+
+    @Override
     public String getId() {
         return "lose_against_weak_ai";
     }

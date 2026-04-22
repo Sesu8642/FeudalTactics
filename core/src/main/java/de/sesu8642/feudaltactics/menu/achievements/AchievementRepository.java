@@ -58,9 +58,9 @@ public class AchievementRepository {
         list.add(new WinInNRoundsAchievement(this, 18));
         list.add(new WinInNRoundsAchievement(this, 14));
         list.add(new WinInNRoundsAchievement(this, 12).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
-        list.add(new PlayMoreThanNRoundsAchievement(this, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR).setSecret(true));
-        list.add(new PlayMoreThanNRoundsAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR).setSecret(true));    // The Hundred Years' War lasted very long obviously
-        list.add(new LoseAgainstWeakestAiAchievement(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA).setSecret(true));    // The Walk to Canossa was a humiliation. And so is this achievement.
+        list.add(new PlayMoreThanNRoundsAchievement(this, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
+        list.add(new PlayMoreThanNRoundsAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
+        list.add(new LoseAgainstWeakestAiAchievement(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));    // The Walk to Canossa was a humiliation. And so is this achievement.
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
         list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
@@ -76,8 +76,8 @@ public class AchievementRepository {
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_2));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_3));
         list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setHistoricConnection(HistoricPersonOrEvent.FREDERICK_THE_GREAT));
-        list.add(new WinWhenStartingLastAchievement(this).setHistoricConnection(HistoricPersonOrEvent.TOKUGAWA_IEYASU).setSecret(true));
-        list.add(new AbortGameAchievement(this).setHistoricConnection(HistoricPersonOrEvent.JOHN_THE_POSTHUMOUS).setSecret(true));
+        list.add(new WinWhenStartingLastAchievement(this).setHistoricConnection(HistoricPersonOrEvent.TOKUGAWA_IEYASU));
+        list.add(new AbortGameAchievement(this).setHistoricConnection(HistoricPersonOrEvent.JOHN_THE_POSTHUMOUS));
         this.achievements = Collections.unmodifiableList(list);
 
         LoadPersistedAchievements();

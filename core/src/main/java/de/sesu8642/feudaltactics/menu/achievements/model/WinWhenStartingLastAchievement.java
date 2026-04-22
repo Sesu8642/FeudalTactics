@@ -14,6 +14,11 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
     }
 
     @Override
+    public boolean isSecret() {
+        return true;
+    }
+
+    @Override
     public String getId() {
         return "win-when-starting-last";
     }

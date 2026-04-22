@@ -15,6 +15,11 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
     }
 
     @Override
+    public boolean isSecret() {
+        return true;
+    }
+
+    @Override
     public String getBaseDescription() {
         return "Win a game that lasts at least " + roundCount + " rounds.";
     }
