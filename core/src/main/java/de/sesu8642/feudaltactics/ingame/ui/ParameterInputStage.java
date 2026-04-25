@@ -34,7 +34,7 @@ public class ParameterInputStage extends ResizableResettableStage {
 
     private static final List<String> DIFFICULTIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DIFFICULTY_EASY, TranslationKeys.GAME_PARAMETER_DIFFICULTY_MEDIUM, TranslationKeys.GAME_PARAMETER_DIFFICULTY_HARD, TranslationKeys.GAME_PARAMETER_DIFFICULTY_VERY_HARD);
     private static final List<String> MAP_SIZES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_SIZE_SMALL, TranslationKeys.GAME_PARAMETER_SIZE_MEDIUM, TranslationKeys.GAME_PARAMETER_SIZE_LARGE, TranslationKeys.GAME_PARAMETER_SIZE_XLARGE, TranslationKeys.GAME_PARAMETER_SIZE_XXLARGE);
-    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_DENSE, TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE);
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE, TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_DENSE);
 
     private static final int OUTER_PADDING_PX = (int) (Gdx.graphics.getDensity() * 10);
     private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 20);

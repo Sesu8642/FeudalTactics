@@ -131,20 +131,19 @@ public class NewGamePreferences {
                 if (stringParts.length < 2) {
                     continue;
                 }
-                // TODO: text has English strings, not display codes
                 final String firstStringPart = stringParts[0].trim();
                 final String secondStringPart = stringParts[1].trim();
                 if (firstStringPart.equals(seedDisplayName)) {
                     preferences.setSeed(Long.parseLong(secondStringPart));
                 } else if (firstStringPart.equals(botIntelligenceDisplayName)) {
-                    final Intelligence botIntelligence = getBotIntelligenceFromDisplayNameCode(secondStringPart);
+                    final Intelligence botIntelligence = getBotIntelligenceFromEnglishName(localizationManager, secondStringPart);
                     preferences.setBotIntelligence(botIntelligence);
                 } else if (firstStringPart.equals(mapSizeDisplayName)) {
-                    final MapSizes mapSize = getMapSizeFromDisplayNameCode(secondStringPart);
+                    final MapSizes mapSize = getMapSizeFromDisplayName(localizationManager, secondStringPart);
                     preferences.setMapSize(mapSize);
                 } else if (firstStringPart.equals(densityDisplayName)) {
                     final Densities mapDensity =
-                        getMapDensityFromDisplayNameCode(secondStringPart);
+                        getMapDensityFromDisplayNameCode(localizationManager, secondStringPart);
                     preferences.setDensity(mapDensity);
                 } else if (firstStringPart.equals(startingPositionDisplayName)) {
                     int startingPosition = Integer.parseInt(secondStringPart);
@@ -171,24 +170,45 @@ public class NewGamePreferences {
         return DIFFICULTIES_KEYS.get(intelligence.ordinal());
     }
 
-    private static Intelligence getBotIntelligenceFromDisplayNameCode(String displayNameCode) {
-        return Intelligence.values()[DIFFICULTIES_KEYS.indexOf(displayNameCode)];
+    private static Intelligence getBotIntelligenceFromEnglishName(LocalizationManager localizationManager, String displayName) {
+        for (Intelligence intelligence : Intelligence.values()) {
+            final String intelligenceDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                botIntelligenceToDisplayNameCode(intelligence));
+            if (displayName.equals(intelligenceDisplayName)) {
+                return intelligence;
+            }
+        }
+        return Intelligence.LEVEL_1;
     }
 
     private static String mapSizeToDisplayNameCode(MapSizes mapSize) {
         return MAP_SIZES_KEYS.get(mapSize.ordinal());
     }
 
-    private static MapSizes getMapSizeFromDisplayNameCode(String displayNameCode) {
-        return MapSizes.values()[MAP_SIZES_KEYS.indexOf(displayNameCode)];
+    private static MapSizes getMapSizeFromDisplayName(LocalizationManager localizationManager, String displayNameCode) {
+        for (MapSizes mapSize : MapSizes.values()) {
+            final String mapSizeDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                mapSizeToDisplayNameCode(mapSize));
+            if (displayNameCode.equals(mapSizeDisplayName)) {
+                return mapSize;
+            }
+        }
+        return MapSizes.SMALL;
     }
 
     private static String mapDensityToDisplayNameCode(Densities density) {
         return DENSITIES_KEYS.get(density.ordinal());
     }
 
-    private static Densities getMapDensityFromDisplayNameCode(String displayNameCode) {
-        return Densities.values()[DENSITIES_KEYS.indexOf(displayNameCode)];
+    private static Densities getMapDensityFromDisplayNameCode(LocalizationManager localizationManager, String displayNameCode) {
+        for (Densities mapDensity : Densities.values()) {
+            final String mapDensityDisplayName = localizationManager.localizeTextInLanguage(SupportedLanguage.FALLBACK,
+                mapDensityToDisplayNameCode(mapDensity));
+            if (displayNameCode.equals(mapDensityDisplayName)) {
+                return mapDensity;
+            }
+        }
+        return Densities.DENSE;
     }
 
     /**
@@ -272,7 +292,7 @@ public class NewGamePreferences {
      * Map densities that can be generated.
      */
     public enum Densities {
-        LOOSE(-3), MEDIUM(0), DENSE(3);
+        LOOSE(3), MEDIUM(0), DENSE(-3);
 
         @Getter
         private final float densityFloat;
