@@ -41,6 +41,8 @@ Before starting any work, please propose your changes in a GitHub issue.
 
 Before a pull request can be accepted, you must sign the [CLA](CLA.md) by adding your name to the table.
 
+All new displayable texts need to be translatable. Adding the English translation is required. Do not add translations in languages you don't speak very well. Any missing translations will be added by me.
+
 ## Privacy
 
 No data is collected at all.
@@ -48,10 +50,10 @@ See [privacy policy](https://raw.githubusercontent.com/Sesu8642/FeudalTactics/ma
 on [the one from the Catima Website](https://github.com/CatimaLoyalty/Website/blob/98018f63d0f69331de70054db61c699b9c316c2c/_pages/privacy-policy.md).
 
 ## Language Support
-Localization is supported, see SupportedLanguages.java for the list of currently translated languages 
+The game is available ins several languages. See assets/i18n for the full list.
+See [this wiki page](../../wiki/Adding-a-new-Language) on how to add a language.
 
 ## Platforms
-
 - `core`: Main module with the application logic shared by all platforms.
 - `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
 - `android`: Android mobile platform. Needs Android SDK.
