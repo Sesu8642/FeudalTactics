@@ -150,7 +150,7 @@ public class TutorialDialogFactory {
                 String.valueOf(unitType.strength()),
                 String.valueOf(unitType.salary())));
         }
-        final String text2 = localizationManager.localizeText(TranslationKeys.TUTORIAL_OBJECTIVE_UNIT_OVERVIEW_PART_1);
+        final String text2 = localizationManager.localizeText(TranslationKeys.TUTORIAL_OBJECTIVE_UNIT_OVERVIEW_PART_2);
         dialog.text(text1).addTable(tableData).text(text2);
     }
 
