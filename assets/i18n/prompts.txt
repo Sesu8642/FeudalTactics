@@ -1,0 +1,3 @@
+# for translating to a new language
+The following is a properties file containing translatable strings for the game Feudal Tactics, a medieval strategy game.
+Translate the values to <Language>. Do not change the keys. Consider the comments for context. Preserve all comments exactly as they appear, do not translate them. A natural, fitting translation is preferred over a literal one. Leave English loanwords that are commonly used in the target language unchanged. For example, the word “Tutorial” is often kept in English in many languages. Make sure that reoccurring words are translated consistently, unless the context requires a different translation. Do not insert special characters like non-breaking spaces that are not present in the original.
