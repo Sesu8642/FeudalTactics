@@ -9,12 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -41,6 +43,7 @@ public class MainMenuScreen extends GameScreen {
     private final DialogFactory dialogFactory;
     private final EventBus eventBus;
     private final ScreenNavigationController screenNavigationController;
+    private final LocalizationManager localizationManager;
     private final boolean levelEditorEnabled;
 
     /**
@@ -51,12 +54,14 @@ public class MainMenuScreen extends GameScreen {
                           MainMenuStage mainMenuStage, NagPreferencesDao nagPreferencesDao,
                           DialogFactory dialogFactory, EventBus eventBus,
                           ScreenNavigationController screenNavigationController,
+                          LocalizationManager localizationManager,
                           @EnableLevelEditorProperty boolean levelEditorEnabled) {
         super(camera, viewport, mainMenuStage);
         this.nagPreferencesDao = nagPreferencesDao;
         this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
         this.screenNavigationController = screenNavigationController;
+        this.localizationManager = localizationManager;
         this.levelEditorEnabled = levelEditorEnabled;
         initUi(mainMenuStage);
     }
@@ -131,9 +136,9 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        tutorialNagDialog.text("Do you know how to play?\n");
-        tutorialNagDialog.button("No", (byte) 0);
-        tutorialNagDialog.button("Yes", (byte) 1);
+        tutorialNagDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_TUTORIAL_NAG));
+        tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_NO), (byte) 0);
+        tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_YES), (byte) 1);
         tutorialNagDialog.show(getActiveStage());
     }
 
@@ -154,9 +159,10 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        newVersionDialog.text("The game was updated. See the changelog for details.\n");
-        newVersionDialog.button("OK", (byte) 0);
-        newVersionDialog.button("Open changelog", (byte) 1);
+        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_GAME_UPDATED));
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_BUTTON_OPEN_CHANGELOG),
+            (byte) 1);
         newVersionDialog.show(getActiveStage());
     }
 

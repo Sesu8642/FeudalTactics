@@ -10,9 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -29,10 +32,15 @@ import java.util.stream.Collectors;
  */
 public class ParameterInputStage extends ResizableResettableStage {
 
+    private static final List<String> DIFFICULTIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DIFFICULTY_EASY, TranslationKeys.GAME_PARAMETER_DIFFICULTY_MEDIUM, TranslationKeys.GAME_PARAMETER_DIFFICULTY_HARD, TranslationKeys.GAME_PARAMETER_DIFFICULTY_VERY_HARD);
+    private static final List<String> MAP_SIZES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_SIZE_SMALL, TranslationKeys.GAME_PARAMETER_SIZE_MEDIUM, TranslationKeys.GAME_PARAMETER_SIZE_LARGE, TranslationKeys.GAME_PARAMETER_SIZE_XLARGE, TranslationKeys.GAME_PARAMETER_SIZE_XXLARGE);
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE, TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_DENSE);
+
     private static final int OUTER_PADDING_PX = (int) (Gdx.graphics.getDensity() * 10);
     private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 20);
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
+    private final LocalizationManager localizationManager;
     SelectBox<String> startingPositionSelect;
     SelectBox<String> sizeSelect;
     SelectBox<String> densitySelect;
@@ -54,34 +62,41 @@ public class ParameterInputStage extends ResizableResettableStage {
      */
     @Inject
     public ParameterInputStage(@MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
-                               Skin skin) {
+                               Skin skin, LocalizationManager localizationManager) {
         super(viewport);
         this.platformInsetsProvider = platformInsetsProvider;
         this.skin = skin;
+        this.localizationManager = localizationManager;
         initUi();
     }
 
     private void initUi() {
-        final Label startingPositionLabel = new Label("Starting\nPosition",
-            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label startingPositionLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_STARTING_POSITION),
+                skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
-        final Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY,
-            LabelStyle.class));
+        final Label difficultyLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY),
+                skin.get(SkinConstants.FONT_OVERLAY,
+                    LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
-        difficultySelect.setItems(EnumDisplayNameConverter.DIFFICULTIES.toArray(new String[0]));
+        difficultySelect.setItems(localizationManager.localizeTextBatch(DIFFICULTIES_KEYS).toArray(new String[0]));
 
-        final Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label sizeLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_SIZE),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
-        sizeSelect.setItems(EnumDisplayNameConverter.MAP_SIZES.toArray(new String[0]));
+        sizeSelect.setItems(localizationManager.localizeTextBatch(MAP_SIZES_KEYS).toArray(new String[0]));
 
-        final Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label densityLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_DENSITY),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
-        densitySelect.setItems(EnumDisplayNameConverter.DENSITIES.toArray(new String[0]));
+        densitySelect.setItems(localizationManager.localizeTextBatch(DENSITIES_KEYS).toArray(new String[0]));
 
-        final Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label seedLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_SEED),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         seedTextField = new TextField("", skin);
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
         seedTextField.setMaxLength(18);
@@ -109,8 +124,10 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTable.add(randomButton).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1,
             difficultySelect));
 
-        backButton = ButtonFactory.createTextButton("Back", skin);
-        playButton = ButtonFactory.createTextButton("Play", skin);
+        backButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_BACK), skin);
+        playButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_PLAY), skin);
 
         final Table buttonTable = new Table();
         buttonTable.add(backButton).expandX().fill();

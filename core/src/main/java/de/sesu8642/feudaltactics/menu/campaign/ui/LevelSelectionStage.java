@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
@@ -28,8 +29,10 @@ public class LevelSelectionStage extends SlideStage {
      */
     @Inject
     public LevelSelectionStage(LevelSelectionSlide levelSelectionSlide, PlatformInsetsProvider platformInsetsProvider
-        , @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin) {
-        super(viewport, Collections.singletonList(levelSelectionSlide), platformInsetsProvider, camera, skin);
+        , @MenuViewport Viewport viewport, @MenuCamera OrthographicCamera camera, Skin skin,
+                               LocalizationManager localizationManager) {
+        super(viewport, Collections.singletonList(levelSelectionSlide), platformInsetsProvider, camera, skin,
+            localizationManager);
         this.levelSelectionSlide = levelSelectionSlide;
     }
 

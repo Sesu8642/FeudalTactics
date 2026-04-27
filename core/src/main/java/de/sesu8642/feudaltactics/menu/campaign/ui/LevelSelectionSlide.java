@@ -6,7 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.utils.Align;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.EvenlySpacedHorizontalGroup;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
@@ -34,8 +36,9 @@ public class LevelSelectionSlide extends Slide {
      * Constructor.
      */
     @Inject
-    public LevelSelectionSlide(Skin skin, ScenarioMapPreviewTileFactory scenarioMapPreviewTileFactory) {
-        super(skin, "Level Selection");
+    public LevelSelectionSlide(Skin skin, ScenarioMapPreviewTileFactory scenarioMapPreviewTileFactory,
+                               LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText(TranslationKeys.CAMPAIGN_LEVEL_SELECTION_PAGE_HEADLINE));
 
         textArea = new TextArea("", skin);
         textArea.setDisabled(true);

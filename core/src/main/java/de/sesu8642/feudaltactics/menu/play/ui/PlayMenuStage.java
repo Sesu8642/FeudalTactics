@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.dagger.EnableCampaignProperty;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -24,9 +26,11 @@ import java.util.List;
 @Singleton
 public class PlayMenuStage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("Sandbox Game", "Campaign", "Tutorial", "Back");
-    private static final List<String> BUTTON_TEXTS_WITHOUT_CAMPAIGN = ImmutableList.of("Sandbox Game", "Tutorial",
-        "Back");
+    private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_SANDBOX_GAME,
+        TranslationKeys.MENU_BUTTON_CAMPAIGN, TranslationKeys.MENU_BUTTON_TUTORIAL, TranslationKeys.MENU_BUTTON_BACK);
+    private static final List<String> BUTTON_TEXTS_KEXS_WITHOUT_CAMPAIGN =
+        ImmutableList.of(TranslationKeys.MENU_BUTTON_SANDBOX_GAME, TranslationKeys.MENU_BUTTON_TUTORIAL,
+            TranslationKeys.MENU_BUTTON_BACK);
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -35,9 +39,10 @@ public class PlayMenuStage extends MenuStage {
     public PlayMenuStage(@MenuViewport Viewport viewport,
                          @MenuBackgroundCamera OrthographicCamera camera, PlatformInsetsProvider platformInsetsProvider,
                          @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
-                         @EnableCampaignProperty boolean campaignEnabled) {
-        super(viewport, campaignEnabled ? BUTTON_TEXTS : BUTTON_TEXTS_WITHOUT_CAMPAIGN, camera,
-            platformInsetsProvider, mapRenderer, skin);
+                         @EnableCampaignProperty boolean campaignEnabled,
+                         LocalizationManager localizationManager) {
+        super(viewport, campaignEnabled ? BUTTON_TEXTS_KEYS : BUTTON_TEXTS_KEXS_WITHOUT_CAMPAIGN, camera,
+            platformInsetsProvider, mapRenderer, skin, localizationManager);
     }
 
 }

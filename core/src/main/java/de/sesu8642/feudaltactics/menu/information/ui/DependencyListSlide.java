@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import de.sesu8642.TranslationKeys;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.information.dagger.DependencyLicenses;
 
@@ -32,10 +34,11 @@ public class DependencyListSlide extends Slide {
      * Constructor.
      */
     @Inject
-    public DependencyListSlide(Skin skin, @DependencyLicenses Map<String, Map<String, String>> dependencyLicenses) {
-        super(skin, "Dependencies");
+    public DependencyListSlide(Skin skin, @DependencyLicenses Map<String, Map<String, String>> dependencyLicenses,
+                               LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText(TranslationKeys.DEPENDENCY_PAGE_HEADLINE));
 
-        descriptionLabel = new Label("Click/tap any dependency to see its licensing details.", skin);
+        descriptionLabel = new Label(localizationManager.localizeText(TranslationKeys.DEPENDENCY_PAGE_PREEMBLE), skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
         getTable().add(descriptionLabel).fill().expandX();

@@ -10,9 +10,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.io.Resources;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.exceptions.InitializationException;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -73,13 +75,14 @@ public final class ChangelogDaggerModule {
                                                  @MenuViewport Viewport viewport,
                                                  PlatformInsetsProvider platformInsetsProvider,
                                                  @ChangelogText String changelogText,
-                                                 @MenuBackgroundCamera OrthographicCamera camera, Skin skin) {
-        final Slide changelogSlide = new Slide(skin, "Changelog").addLabel("Join the Feudal Tactics Community on " +
-            "Matrix! " +
-            "See Information menu.").addLabel(changelogText);
+                                                 @MenuBackgroundCamera OrthographicCamera camera, Skin skin,
+                                                 LocalizationManager localizationManager) {
+        final Slide changelogSlide = new Slide(skin,
+            localizationManager.localizeText(TranslationKeys.MENU_BUTTON_CHANGELOG))
+            .addLabel(localizationManager.localizeText(TranslationKeys.CHANGELOG_COMMUNITY_NAG)).addLabel(changelogText);
         return new SlideStage(viewport, Collections.singletonList(changelogSlide), platformInsetsProvider,
             screenNavigationController::transitionToInformationMenuScreenPage2,
-            camera, skin);
+            camera, skin, localizationManager);
     }
 
 }

@@ -6,7 +6,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.base.Strings;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
@@ -32,6 +34,7 @@ public class CrashReportScreen extends GameScreen {
 
     private final CrashReportStage crashReportStage;
     private final CrashReportDao crashReportDao;
+    private final LocalizationManager localizationManager;
     /**
      * Whether the screen is shown on startup. Causes the splash screen to be shown
      * on finish instead of the menu.
@@ -46,10 +49,12 @@ public class CrashReportScreen extends GameScreen {
     @Inject
     public CrashReportScreen(ScreenNavigationController screenNavigationController,
                              @MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
-                             CrashReportStage crashReportStage, CrashReportDao crashReportDao) {
+                             CrashReportStage crashReportStage, CrashReportDao crashReportDao,
+                             LocalizationManager localizationManager) {
         super(camera, viewport, crashReportStage);
         this.crashReportStage = crashReportStage;
         this.crashReportDao = crashReportDao;
+        this.localizationManager = localizationManager;
         registerEventListeners(screenNavigationController);
     }
 
@@ -59,8 +64,8 @@ public class CrashReportScreen extends GameScreen {
         if (!Strings.isNullOrEmpty(crashReportText)) {
             crashReportStage.crashReportSlide.textArea.setText(crashReportText);
         } else {
-            crashReportStage.crashReportSlide.descriptionLabel.setText("No crashes were detected previously!");
-            crashReportStage.crashReportSlide.textArea.setText("Nothing to see here.");
+            crashReportStage.crashReportSlide.descriptionLabel.setText(localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_TEXT_NO_CRACHES));
+            crashReportStage.crashReportSlide.textArea.setText(localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_DETAILS_PLACEHOLDER));
             crashReportStage.crashReportSlide.buttonGroup.removeActor(crashReportStage.crashReportSlide.sendMailButton);
             crashReportStage.crashReportSlide.buttonGroup.removeActor(crashReportStage.crashReportSlide.copyButton);
         }

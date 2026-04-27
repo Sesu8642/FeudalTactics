@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.events.*;
 import de.sesu8642.feudaltactics.events.moves.*;
@@ -25,6 +26,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
@@ -71,6 +73,8 @@ public class IngameScreen extends GameScreen {
 
     private final NewGamePreferencesDao newGamePrefDao;
 
+    private final LocalizationManager localizationManager;
+
     @Setter
     private NewGamePreferences cachedNewGamePreferences;
     /**
@@ -106,7 +110,8 @@ public class IngameScreen extends GameScreen {
                         IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper,
                         IngameHudStage ingameHudStage,
                         IngameMenuStage menuStage, ParameterInputStage parameterInputStage,
-                        PlatformInsetsProvider platformInsetsProvider) {
+                        PlatformInsetsProvider platformInsetsProvider,
+                        LocalizationManager localizationManager) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
         this.newGamePrefDao = newGamePrefDao;
@@ -125,6 +130,7 @@ public class IngameScreen extends GameScreen {
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
         this.platformInsetsProvider = platformInsetsProvider;
+        this.localizationManager = localizationManager;
         // load before adding the listeners because they will trigger persisting the preferences on each update
         loadNewGameParameterValues();
         addIngameMenuListeners();
@@ -148,8 +154,7 @@ public class IngameScreen extends GameScreen {
             final Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
             if (forgottenKingdom.isPresent()) {
                 final Dialog confirmDialog = dialogFactory.createConfirmDialog(
-                    "You might have forgotten to do your moves for a kingdom.\n\nAre you sure you want to" +
-                        " end your turn?\n",
+                    localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_FORGOTTEN_KINGDOMS_WARNING),
                     this::endHumanPlayerTurn, () -> {
                         final Kingdom kingdom = forgottenKingdom.get();
                         eventBus.post(new FocusKingdomEvent(cachedGameState,
@@ -232,7 +237,7 @@ public class IngameScreen extends GameScreen {
             hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
                 newGameState);
         } else {
-            hudStageInfoText = "Enemy turn";
+            hudStageInfoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_ENEMY_TURN);
             if (!ingameHudStage.isEnemyTurnButtonsShown()) {
                 Gdx.app.postRunnable(ingameHudStage::showEnemyTurnButtons);
             }
@@ -264,9 +269,10 @@ public class IngameScreen extends GameScreen {
                 // warn the user with red text
                 infoText += "[RED]";
             }
-            infoText += "Savings: " + savings + " (" + budgetBalanceText + ")";
+            infoText += localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_SAVINGS_INFO, savings,
+                budgetBalanceText);
         } else {
-            infoText = "Your turn – select a kingdom.";
+            infoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_SELECT_KINGDOM);
         }
         // buttons
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
@@ -435,15 +441,15 @@ public class IngameScreen extends GameScreen {
         // exit button
         final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you " +
-                    "sure?\n",
+            final Dialog confirmDialog =
+                dialogFactory.createConfirmDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CONFIRM_LOST_PROGRESS),
                 this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog = dialogFactory.createConfirmDialog("Your progress will be lost. Are you " +
-                    "sure?\n",
+            final Dialog confirmDialog =
+                dialogFactory.createConfirmDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CONFIRM_LOST_PROGRESS),
                 this::resetGame);
             confirmDialog.show(menuStage);
         }));
@@ -465,13 +471,13 @@ public class IngameScreen extends GameScreen {
             final String clipboardContents = Gdx.app.getClipboard().getContents();
             if (clipboardContents != null) {
                 final NewGamePreferences pastedPreferences =
-                    NewGamePreferences.fromSharableString(clipboardContents);
+                    NewGamePreferences.fromSharableString(clipboardContents, localizationManager);
                 updateParameterInputsFromNewGamePrefs(pastedPreferences);
             }
         }));
 
         parameterInputStage.copyButton.addListener(new ExceptionLoggingChangeListener(
-            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString())));
+            () -> Gdx.app.getClipboard().setContents(cachedNewGamePreferences.toSharableString(localizationManager))));
 
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                 parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,

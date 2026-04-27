@@ -9,7 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
@@ -28,8 +30,10 @@ import java.util.List;
 @Singleton
 public class InformationMenuPage1Stage extends MenuStage {
 
-    private static final List<String> BUTTON_TEXTS = ImmutableList.of("About", "Report Crash", "Game History", "Page 2"
-        , "Back");
+    private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_ABOUT,
+        TranslationKeys.MENU_BUTTON_REPORT_CRASH
+        , TranslationKeys.MENU_BUTTON_GAME_HISTORY, TranslationKeys.MENU_BUTTON_PAGE_2,
+        TranslationKeys.MENU_BUTTON_BACK);
 
     /**
      * Constructor. See {@link MenuStage#MenuStage}
@@ -39,9 +43,11 @@ public class InformationMenuPage1Stage extends MenuStage {
                                      @MenuBackgroundCamera OrthographicCamera camera,
                                      PlatformInsetsProvider platformInsetsProvider,
                                      @MenuBackgroundRenderer MapRenderer mapRenderer, Skin skin,
-                                     @VersionProperty String gameVersion) {
-        super(viewport, BUTTON_TEXTS, camera, platformInsetsProvider, mapRenderer, skin);
-        final Label bottomRightLabel = new Label(String.format("Version %s", gameVersion),
+                                     @VersionProperty String gameVersion,
+                                     LocalizationManager localizationManager) {
+        super(viewport, BUTTON_TEXTS_KEYS, camera, platformInsetsProvider, mapRenderer, skin, localizationManager);
+        final Label bottomRightLabel = new Label(String.format("%s %s",
+            localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         getBottomRightTable().add(bottomRightLabel);
 

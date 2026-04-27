@@ -6,6 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import de.sesu8642.TranslationKeys;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
+import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import lombok.Getter;
 
@@ -26,6 +29,8 @@ public class PreferencesSlide extends Slide {
     private final SelectBox<Boolean> forgottenKingdomSelectBox;
     @Getter
     private final SelectBox<Boolean> showEnemyTurnsSelectBox;
+    @Getter
+    private final SelectBox<String> languageSelectBox;
 
     /**
      * Constructor.
@@ -33,14 +38,20 @@ public class PreferencesSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public PreferencesSlide(Skin skin) {
-        super(skin, "Preferences");
+    public PreferencesSlide(Skin skin, LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_HEADLINE));
 
         final Table preferencesTable = new Table();
 
-        forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Warn about forgotten kingdoms",
+        forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText(
+                TranslationKeys.SETTINGS_PAGE_LABEL_WARN_ABOUT_FORGOTTEN_KINGDOMS),
             skin);
-        showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable, "Show enemy turns", skin);
+        showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable,
+            localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_SHOW_ENEMY_TURNS), skin);
+
+        languageSelectBox = placeStringSelectWithLabel(preferencesTable,
+            localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_LANGUAGE), skin,
+            localizationManager.getSupportedLanguages().stream().map(SupportedLanguage::getDisplayName).toArray(String[]::new));
 
         // add a row to fill the rest of the space in order for the other options to be
         // at the top of the page
@@ -48,6 +59,20 @@ public class PreferencesSlide extends Slide {
         preferencesTable.add().fill().expand();
 
         getTable().add(preferencesTable).fill().expand();
+    }
+
+    private SelectBox<String> placeStringSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
+                                                         String[] options) {
+        final Label newLabel = new Label(labelText, skin);
+        newLabel.setWrap(true);
+        preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
+        final SelectBox<String> newSelectBox = new SelectBox<>(skin);
+        newSelectBox.setItems(options);
+        preferencesTable.add(newSelectBox).center().fillX().expandX();
+        preferencesTable.row();
+        preferencesTable.add().height(20);
+        preferencesTable.row();
+        return newSelectBox;
     }
 
     private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin) {

@@ -116,7 +116,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–äöüÄÖÜßẞ\n"
 	}
 	Headline: {
 		font: FreeSansBold.ttf
@@ -139,7 +139,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–äöüÄÖÜßẞ\n"
 	}
 	Overlay: {
 		font: FreeSans.ttf
@@ -163,7 +163,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–äöüÄÖÜßẞ\n"
 	}
 	SmallerText: {
 		font: FreeSans.ttf
@@ -186,7 +186,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–äöüÄÖÜßẞ\n"
 	}
 	Text: {
 		font: FreeSans.ttf
@@ -210,7 +210,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 		hinting: AutoMedium
 		minFilter: Nearest
 		magFilter: Nearest
-		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–\n"
+		characters: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'↗–äöüÄÖÜßẞ\n"
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {

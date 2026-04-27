@@ -109,8 +109,8 @@ public class GameStateHelper {
      * @param gameState         GameState to generate the map in
      * @param players           players that own tiles on the map
      * @param landMass          number of tiles to generate
-     * @param density           Higher density means the map will be more clumpy and
-     *                          lower means it will be more stringy. Values between
+     * @param density           Lower density means the map will be more clumpy and
+     *                          higher means it will be more stringy. Values between
      *                          -3 and 3 produce good results.
      * @param vegetationDensity determines how many trees will be generated. 0.5 =
      *                          50% of empty tiles will have trees

@@ -7,11 +7,12 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
@@ -43,6 +44,7 @@ public class HistorySlide extends Slide {
     private final Drawable rowBorderDrawable;
     private final Drawable rowBackgroundDrawable;
     private final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+    private final LocalizationManager localizationManager;
 
     /**
      * Constructor.
@@ -51,11 +53,13 @@ public class HistorySlide extends Slide {
      * @param historyDao data access object for game history
      */
     @Inject
-    public HistorySlide(Skin skin, HistoryDao historyDao, MapPreviewFactory mapPreviewFactory) {
-        super(skin, "Game History");
+    public HistorySlide(Skin skin, HistoryDao historyDao, MapPreviewFactory mapPreviewFactory,
+                        LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_HEADLINE));
         this.skin = skin;
         this.historyDao = historyDao;
         this.mapPreviewFactory = mapPreviewFactory;
+        this.localizationManager = localizationManager;
         historyTable = new Table();
         resultBackgrounds = new EnumMap<>(HistoricGame.GameResult.class);
         rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
@@ -111,7 +115,9 @@ public class HistorySlide extends Slide {
 
         // Result
         final Container<Label> resultCell = createResultCell(game.getGameResult());
-        final Label roundsLabel = new Label("in round " + game.getRoundsPlayed(), skin);
+        final Label roundsLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_GAME_RESULT_ROUND,
+                game.getRoundsPlayed()), skin);
         final Table resultTable = new Table();
         resultTable.add(resultCell).left();
         resultTable.row();
@@ -119,21 +125,11 @@ public class HistorySlide extends Slide {
         contentGroup.addActor(resultTable);
 
         // Settings
-        String settingsString = "Unknown settings";
+        String settingsString = "";
         String hexagonString = "[#808080]h"; // Gray hexagon for unknown
         final NewGamePreferences gamePreferences = game.getGameSettings();
         if (gamePreferences != null) {
-            final String difficulty = gamePreferences.getBotIntelligence() != null
-                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getBotIntelligence())
-                : "Unknown";
-            final String mapSize = gamePreferences.getMapSize() != null
-                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getMapSize())
-                : "Unknown";
-            final String mapDensity = gamePreferences.getDensity() != null
-                ? EnumDisplayNameConverter.getDisplayName(gamePreferences.getDensity())
-                : "Unknown";
-            settingsString = String.format("%s AI\n%s map\n%s density",
-                difficulty, mapSize, mapDensity);
+            settingsString = gamePreferencesToDisplayString(gamePreferences);
 
             final Color playerColor = MapRenderer.PLAYER_COLOR_PALETTE.get(gamePreferences.getStartingPosition());
 
@@ -153,7 +149,7 @@ public class HistorySlide extends Slide {
         copyButton.getImageCell().size(BUTTON_TEXT_SIZE);
         if (gamePreferences != null) {
             copyButton.addListener(new ExceptionLoggingChangeListener(() ->
-                Gdx.app.getClipboard().setContents(gamePreferences.toSharableString())));
+                Gdx.app.getClipboard().setContents(gamePreferences.toSharableString(localizationManager))));
         } else {
             copyButton.setDisabled(true);
         }
@@ -166,6 +162,66 @@ public class HistorySlide extends Slide {
         historyTable.add(borderedRow).colspan(5).prefWidth(Gdx.graphics.getDensity() * 1200 * UiScalingConstants.TEXT_SCALING_FACTOR);
     }
 
+    private String gamePreferencesToDisplayString(NewGamePreferences gamePreferences) {
+        final String settingsString;
+        final String botIntelligenceTranslationKey;
+        switch (gamePreferences.getBotIntelligence()) {
+            case LEVEL_1:
+                botIntelligenceTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DIFFICULTY_EASY;
+                break;
+            case LEVEL_2:
+                botIntelligenceTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DIFFICULTY_MEDIUM;
+                break;
+            case LEVEL_3:
+                botIntelligenceTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DIFFICULTY_HARD;
+                break;
+            case LEVEL_4:
+                botIntelligenceTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DIFFICULTY_VERY_HARD;
+                break;
+            default:
+                throw new IllegalStateException("Unknown bot intelligence " + gamePreferences.getBotIntelligence());
+        }
+        final String difficulty = localizationManager.localizeText(botIntelligenceTranslationKey);
+        final String mapSizeTranslationKey;
+        switch (gamePreferences.getMapSize()) {
+            case SMALL:
+                mapSizeTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_SIZE_SMALL;
+                break;
+            case MEDIUM:
+                mapSizeTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_SIZE_MEDIUM;
+                break;
+            case LARGE:
+                mapSizeTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_SIZE_LARGE;
+                break;
+            case XLARGE:
+                mapSizeTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_SIZE_XLARGE;
+                break;
+            case XXLARGE:
+                mapSizeTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_SIZE_XXLARGE;
+                break;
+            default:
+                throw new IllegalStateException("Unknown map size " + gamePreferences.getMapSize());
+        }
+        final String mapSize = localizationManager.localizeText(mapSizeTranslationKey);
+        final String mapDensityTranslationKey;
+        switch (gamePreferences.getDensity()) {
+            case DENSE:
+                mapDensityTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DENSITY_DENSE;
+                break;
+            case MEDIUM:
+                mapDensityTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DENSITY_MEDIUM;
+                break;
+            case LOOSE:
+                mapDensityTranslationKey = TranslationKeys.HISTORY_PAGE_PARAMETER_DENSITY_LOOSE;
+                break;
+            default:
+                throw new IllegalStateException("Unknown map density " + gamePreferences.getDensity());
+        }
+        final String mapDensity = localizationManager.localizeText(mapDensityTranslationKey);
+        settingsString = String.format("%s\n%s\n%s", difficulty, mapSize, mapDensity);
+        return settingsString;
+    }
+
     private Actor wrapInBorder(Actor innerContent) {
         final Container<Actor> container = new Container<>(innerContent);
         container.background(rowBorderDrawable);
@@ -175,7 +231,23 @@ public class HistorySlide extends Slide {
     }
 
     private Container<Label> createResultCell(HistoricGame.GameResult result) {
-        final Label resultLabel = new Label(result.toString(), skin);
+        final String gameResultKey;
+        switch (result) {
+            case WIN:
+                gameResultKey = TranslationKeys.HISTORY_PAGE_GAME_RESULT_VICTORY;
+                break;
+            case LOSS:
+                gameResultKey = TranslationKeys.HISTORY_PAGE_GAME_RESULT_LOSS;
+                break;
+            case ABORTED:
+                gameResultKey = TranslationKeys.HISTORY_PAGE_GAME_RESULT_ABORTED;
+                break;
+            default:
+                throw new IllegalStateException("Unknown game result " + result);
+        }
+        final String gameResultDisplayName = localizationManager.localizeText(gameResultKey);
+
+        final Label resultLabel = new Label(gameResultDisplayName, skin);
         resultLabel.setColor(Color.BLACK);
 
         final Container<Label> container = new Container<>(resultLabel);
@@ -198,7 +270,7 @@ public class HistorySlide extends Slide {
         HistoricGame[] history = historyDao.getGameHistory();
 
         if (history.length == 0) {
-            final Label noHistoryLabel = new Label("No games recorded yet.", skin);
+            final Label noHistoryLabel = new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_TEXT_NO_HISTORY), skin);
             noHistoryLabel.setWrap(true);
             historyTable.add(noHistoryLabel).fill().expand();
             return;
