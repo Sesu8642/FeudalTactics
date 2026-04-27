@@ -78,8 +78,7 @@ public final class ChangelogDaggerModule {
                                                  @MenuBackgroundCamera OrthographicCamera camera, Skin skin,
                                                  LocalizationManager localizationManager) {
         final Slide changelogSlide = new Slide(skin,
-            localizationManager.localizeText(TranslationKeys.MENU_BUTTON_CHANGELOG))
-            .addLabel(localizationManager.localizeText(TranslationKeys.CHANGELOG_COMMUNITY_NAG)).addLabel(changelogText);
+            localizationManager.localizeText(TranslationKeys.MENU_BUTTON_CHANGELOG)).addLabel(changelogText);
         return new SlideStage(viewport, Collections.singletonList(changelogSlide), platformInsetsProvider,
             screenNavigationController::transitionToInformationMenuScreenPage2,
             camera, skin, localizationManager);
