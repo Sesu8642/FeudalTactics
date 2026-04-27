@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
@@ -118,10 +119,11 @@ public class HistorySlide extends Slide {
         final Label roundsLabel =
             new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_GAME_RESULT_ROUND,
                 game.getRoundsPlayed()), skin);
+        roundsLabel.setAlignment(Align.center);
         final Table resultTable = new Table();
-        resultTable.add(resultCell).left();
+        resultTable.add(resultCell);
         resultTable.row();
-        resultTable.add(roundsLabel).left();
+        resultTable.add(roundsLabel).minWidth(Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 400);
         contentGroup.addActor(resultTable);
 
         // Settings
@@ -138,7 +140,10 @@ public class HistorySlide extends Slide {
             hexagonString = String.format("[#%s]h", playerColor.toString());
         }
         final Label settingsLabel = new Label(settingsString, skin);
-        contentGroup.addActor(settingsLabel);
+        settingsLabel.setAlignment(Align.center);
+        final Table settingsTable = new Table();
+        settingsTable.add(settingsLabel).minWidth(Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 500);
+        contentGroup.addActor(settingsTable);
 
         final Label startingPositionLabel = new Label(hexagonString, skin, SkinConstants.FONT_HEXAGON);
         startingPositionLabel.setFontScale(HEXAGON_FONT_SCALING_FACTOR);
@@ -159,7 +164,7 @@ public class HistorySlide extends Slide {
 
         // Add the container to the history table
         historyTable.row().padBottom(Gdx.graphics.getDensity() * 20).padTop(Gdx.graphics.getDensity() * 20);
-        historyTable.add(borderedRow).colspan(5).prefWidth(Gdx.graphics.getDensity() * 1200 * UiScalingConstants.TEXT_SCALING_FACTOR);
+        historyTable.add(borderedRow).colspan(5).prefWidth(Gdx.graphics.getDensity() * 1500 * TEXT_SCALING_FACTOR);
     }
 
     private String gamePreferencesToDisplayString(NewGamePreferences gamePreferences) {
@@ -270,7 +275,8 @@ public class HistorySlide extends Slide {
         HistoricGame[] history = historyDao.getGameHistory();
 
         if (history.length == 0) {
-            final Label noHistoryLabel = new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_TEXT_NO_HISTORY), skin);
+            final Label noHistoryLabel =
+                new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_TEXT_NO_HISTORY), skin);
             noHistoryLabel.setWrap(true);
             historyTable.add(noHistoryLabel).fill().expand();
             return;
