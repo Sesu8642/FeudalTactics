@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.*;
@@ -106,10 +107,16 @@ public final class SkinFactory {
     }
 
     private static String getNeededCharactersString(java.util.List<String> languageFiles) {
-        return languageFiles.stream().map(filePath -> Gdx.files.internal(filePath).readString(StandardCharsets.UTF_8.name()))
-            .flatMapToInt(String::chars).mapToObj(c -> (char) c)
-            // collect to set to remove duplicates
-            .collect(Collectors.toSet())
+        final Set<Character> neededCharacters =
+            languageFiles.stream().map(filePath -> Gdx.files.internal(filePath).readString(StandardCharsets.UTF_8.name()))
+                .flatMapToInt(String::chars).mapToObj(c -> (char) c)
+                // collect to set to remove duplicates
+                .collect(Collectors.toSet());
+        // add numbers that are dynamically inserted
+        final java.util.List<Character> numbers =
+            "0123456789".chars().mapToObj(c -> (char) c).collect(Collectors.toList());
+        neededCharacters.addAll(numbers);
+        return neededCharacters
             // sort after (just nicer for debugging)
             .stream().sorted().collect(Collectors.toList()).toString();
     }
