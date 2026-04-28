@@ -353,7 +353,10 @@ public class IngameScreen extends GameScreen {
      * Centers the map in the available screen space.
      */
     void centerMap() {
-        final Margin centeringMargin = calculateMapScreenArea();
+        Margin centeringMargin = new Margin(0, 0, 0, 0);
+        if (getActiveStage() == parameterInputStage) {
+            centeringMargin = calculateMapScreenArea();
+        }
         eventBus.post(new CenterMapEvent(cachedGameState, centeringMargin.marginBottom, centeringMargin.marginLeft,
             centeringMargin.marginTop, centeringMargin.marginRight));
     }
@@ -443,14 +446,14 @@ public class IngameScreen extends GameScreen {
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
             final Dialog confirmDialog =
                 dialogFactory.createConfirmDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CONFIRM_LOST_PROGRESS),
-                this::exitToMenu);
+                    this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
             final Dialog confirmDialog =
                 dialogFactory.createConfirmDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CONFIRM_LOST_PROGRESS),
-                this::resetGame);
+                    this::resetGame);
             confirmDialog.show(menuStage);
         }));
         // continue button

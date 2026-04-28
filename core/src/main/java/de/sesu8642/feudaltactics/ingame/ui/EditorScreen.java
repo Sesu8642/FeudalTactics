@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
-import de.sesu8642.feudaltactics.events.CenterMapEvent;
 import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
@@ -112,13 +111,6 @@ public class EditorScreen extends GameScreen {
             newGameState.getMap().size());
 
         editorHudStage.infoTextLabel.setText(hudStageInfoText);
-    }
-
-    /**
-     * Centers the map in the available screen space.
-     */
-    void centerMap() {
-        eventBus.post(new CenterMapEvent(cachedGameState, 0, 0, 0, 0));
     }
 
     @Override

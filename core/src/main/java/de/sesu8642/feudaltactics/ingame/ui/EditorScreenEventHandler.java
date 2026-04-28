@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.events.input.EscInputEvent;
 
@@ -39,16 +38,6 @@ public class EditorScreenEventHandler {
     @Subscribe
     public void handleGameStateChange(GameStateChangeEvent event) {
         editorScreen.handleGameStateChange(event.getGameState());
-    }
-
-    /**
-     * Event handler for centering the map.
-     *
-     * @param event event to handle
-     */
-    @Subscribe
-    public void handleMapCenteringUiEvent(CenterMapUIEvent event) {
-        editorScreen.centerMap();
     }
 
 }
