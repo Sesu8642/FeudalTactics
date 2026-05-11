@@ -1,6 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import com.google.common.eventbus.EventBus;
 
 /**
  * Achievement: Win a game that lasts at least a specified number of rounds.
@@ -9,8 +9,8 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
 
     private final int roundCount;
 
-    public PlayMoreThanNRoundsAchievement(AchievementRepository repository, int roundCount) {
-        super(repository, 1, "Win using more than " + roundCount + " rounds");
+    public PlayMoreThanNRoundsAchievement(EventBus eventBus, int roundCount) {
+        super(eventBus, 1, "Win using more than " + roundCount + " rounds");
         this.roundCount = roundCount;
     }
 

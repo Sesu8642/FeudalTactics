@@ -1,17 +1,18 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 /**
  * Achievement: Win a specified number of games, either by defeating your enemies or them giving up. Any difficulty and map size is allowed.
  */
 public class WinNGamesAchievement extends AbstractAchievement {
 
-    public WinNGamesAchievement(AchievementRepository achievementRepository, int gamesToWin) {
-        super(achievementRepository, gamesToWin, "Win " + gamesToWin + " Games");
+    public WinNGamesAchievement(EventBus eventBus, int gamesToWin) {
+        super(eventBus, gamesToWin, "Win " + gamesToWin + " Games");
     }
 
     @Override

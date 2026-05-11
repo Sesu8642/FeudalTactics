@@ -1,17 +1,22 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import com.badlogic.gdx.Preferences;
+import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import lombok.EqualsAndHashCode;
+
+    // TODO: Add marker interface that this achievement needs to be persisted as full JSON to track nextMapHasBeenGenerated and currentStreakPlayerIndex, 
+    // and add code to persist these fields in the achievement repository, and load them when loading the achievement
 
 /**
  * Achievement: Win a specified number of Very Hard games in a row without losing or aborting.
  */
+@EqualsAndHashCode
 public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
 
     private static final String CURRENT_STREAK_PLAYER_INDEX_NAME = "current-streak-player-index";
@@ -35,10 +40,10 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
     }
 
     public WinVeryHardGamesInARowAchievement(
-        AchievementRepository achievementRepository,
+        EventBus eventBus,
         Preferences achievementsPrefs,
         int numberOfGamesInARowToWin) {
-        super(achievementRepository, numberOfGamesInARowToWin, "Win " + numberOfGamesInARowToWin + " Very Hard Games in a Row");
+        super(eventBus, numberOfGamesInARowToWin, "Win " + numberOfGamesInARowToWin + " Very Hard Games in a Row");
 
         this.prefStore = achievementsPrefs;
 

@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Repository for managing achievements. Combines achievement storage and retrieval.
+ * Repository for storing achievements, used by AchievementService.
  */
 @Singleton
 public class AchievementRepository {
@@ -42,48 +42,14 @@ public class AchievementRepository {
 
     private final Preferences prefStore;
 
-    @Getter
-    private final List<AbstractAchievement> achievements;
-
     @Inject
     public AchievementRepository(
             @AchievementsPrefStore Preferences achievementsPrefs,
             AutoSaveRepository autoSaveRepository) {
         this.prefStore = achievementsPrefs;
-
-        List<AbstractAchievement> list = new ArrayList<>();
-        list.add(new WinNGamesAchievement(this, 1));
-        list.add(new WinNGamesAchievement(this, 10));
-        list.add(new WinNGamesAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.CHARLEMAGNE));    // Charlemagne won many battles
-        list.add(new WinInNRoundsAchievement(this, 18));
-        list.add(new WinInNRoundsAchievement(this, 14));
-        list.add(new WinInNRoundsAchievement(this, 12).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
-        list.add(new PlayMoreThanNRoundsAchievement(this, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
-        list.add(new PlayMoreThanNRoundsAchievement(this, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
-        list.add(new LoseAgainstWeakestAiAchievement(this).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));    // The Walk to Canossa was a humiliation. And so is this achievement.
-        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 3));
-        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 10));
-        list.add(new WinVeryHardGamesInARowAchievement(this, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
-        list.add(new WinAgainstManyEnemiesAchievement(this, 3));
-        list.add(new WinAgainstManyEnemiesAchievement(this, 4));
-        list.add(new WinAgainstManyEnemiesAchievement(this, 5).setHistoricConnection(HistoricPersonOrEvent.LOUIS_XI));
-        list.add(new WinOnMapSizeAchievement(this, MapSizes.SMALL));
-        list.add(new WinOnMapSizeAchievement(this, MapSizes.MEDIUM));
-        list.add(new WinOnMapSizeAchievement(this, MapSizes.LARGE));
-        list.add(new WinOnMapSizeAchievement(this, MapSizes.XLARGE));
-        list.add(new WinOnMapSizeAchievement(this, MapSizes.XXLARGE).setHistoricConnection(HistoricPersonOrEvent.RICHARD_THE_LIONHEART));
-        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_1));
-        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_2));
-        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_3));
-        list.add(new WinAgainstAiLevelAchievement(this, Intelligence.LEVEL_4).setHistoricConnection(HistoricPersonOrEvent.FREDERICK_THE_GREAT));
-        list.add(new WinWhenStartingLastAchievement(this).setHistoricConnection(HistoricPersonOrEvent.TOKUGAWA_IEYASU));
-        list.add(new AbortGameAchievement(this).setHistoricConnection(HistoricPersonOrEvent.JOHN_THE_POSTHUMOUS));
-        this.achievements = Collections.unmodifiableList(list);
-
-        LoadPersistedAchievements();
     }
 
-    private void LoadPersistedAchievements() {
+    public void LoadPersistedAchievements(Iterable<AbstractAchievement> achievements) {
         for (AbstractAchievement achievement : achievements) {
             achievement.setUnlocked(
                 prefStore.getBoolean("achievement-" + achievement.getId(), false));
@@ -93,7 +59,7 @@ public class AchievementRepository {
     }
 
     /**
-     * Unlocks the achievement with the given ID. Called from the achievement itself.
+     * Unlocks the achievement with the given ID.
      */
     public void unlockAchievement(String achievementId) {
         prefStore.putBoolean("achievement-" + achievementId, true);
@@ -101,28 +67,10 @@ public class AchievementRepository {
     }
 
     /**
-     * Stores the progress for the achievement with the given ID. Called from the achievement itself.
+     * Stores the progress for the achievement with the given ID.
      */
     public void storeProgress(String id, int number) {
         prefStore.putInteger("achievement-progress-" + id, number);
         prefStore.flush();
-    }
-
-    /**
-     * Called when a game is exited. Called from AchievementsEventHandler and forwards the event to all achievements.
-     */
-    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
-        for (AbstractAchievement achievement : achievements) {
-            achievement.onGameExited(event);
-        }
-    }
-
-    /**
-     * Called when the map is regenerated. Called from AchievementsEventHandler and forwards the event to all achievements.
-     */
-    public void onMapRegeneration(RegenerateMapEvent event) {
-        for (AbstractAchievement achievement : achievements) {
-            achievement.onMapRegeneration(event);
-        }
     }
 }

@@ -1,16 +1,17 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 /**
  * Achievement: Win a game against the very hard AI when starting last in the turn order
  */
 public class WinWhenStartingLastAchievement extends AbstractAchievement {
 
-    public WinWhenStartingLastAchievement(AchievementRepository achievementRepository) {
-        super(achievementRepository, 1, "Win When Starting Last");
+    public WinWhenStartingLastAchievement(EventBus eventBus) {
+        super(eventBus, 1, "Win When Starting Last");
     }
 
     @Override

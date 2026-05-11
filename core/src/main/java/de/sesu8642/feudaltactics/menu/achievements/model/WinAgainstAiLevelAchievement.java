@@ -1,8 +1,9 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 /**
  * Achievement: Win a game against AI opponents of a specified level. It must be exactly that AI level, not higher.
@@ -11,8 +12,8 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
 
     private final Intelligence aiLevel;
 
-    public WinAgainstAiLevelAchievement(AchievementRepository achievementRepository, Intelligence aiLevel) {
-        super(achievementRepository, 1, "Win Against AI Level " + EnumDisplayNameConverter.getDisplayName(aiLevel));
+    public WinAgainstAiLevelAchievement(EventBus eventBus, Intelligence aiLevel) {
+        super(eventBus, 1, "Win Against AI Level " + EnumDisplayNameConverter.getDisplayName(aiLevel));
         this.aiLevel = aiLevel;
     }
 

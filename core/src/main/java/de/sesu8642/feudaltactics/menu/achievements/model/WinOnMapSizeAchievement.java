@@ -2,12 +2,13 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 /**
  * Achievement: Win a game on a specified map size, either by defeating your enemies or them giving up. Any difficulty is allowed.
@@ -15,8 +16,8 @@ import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 
-    public WinOnMapSizeAchievement(AchievementRepository achievementRepository, NewGamePreferences.MapSizes mapSize) {
-        super(achievementRepository, 1, "Win on a " + mapSize.name().toLowerCase() + " map");
+    public WinOnMapSizeAchievement(EventBus eventBus, NewGamePreferences.MapSizes mapSize) {
+        super(eventBus, 1, "Win on a " + mapSize.name().toLowerCase() + " map");
 
         this.mapSize = mapSize;
     }

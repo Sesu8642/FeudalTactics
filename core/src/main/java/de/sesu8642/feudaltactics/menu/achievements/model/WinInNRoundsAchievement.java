@@ -1,11 +1,12 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 /**
  * Achievement: Win a game in a specified number of rounds or less. The AI level must be Very Strong, the map size must be at least Medium.
@@ -14,8 +15,8 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
 
     private final int rounds;
 
-    public WinInNRoundsAchievement(AchievementRepository repository, int rounds) {
-        super(repository, 1, "Win in " + rounds + " Rounds");
+    public WinInNRoundsAchievement(EventBus eventBus, int rounds) {
+        super(eventBus, 1, "Win in " + rounds + " Rounds");
         this.rounds = rounds;
     }
 

@@ -1,17 +1,18 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 
 /**
  * Achievement: Abort a game in first round.
  */
 public class AbortGameAchievement extends AbstractAchievement {
 
-    public AbortGameAchievement(AchievementRepository repository) {
-        super(repository, 1, "Abort a game");
+    public AbortGameAchievement(EventBus eventBus) {
+        super(eventBus, 1, "Abort a game");
     }
 
     @Override

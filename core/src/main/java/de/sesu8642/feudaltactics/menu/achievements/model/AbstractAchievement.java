@@ -1,7 +1,10 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
+
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
+import de.sesu8642.feudaltactics.events.achievements.AchievementUnlockedEvent;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -75,10 +78,10 @@ public abstract class AbstractAchievement {
         return false;
     }
 
-    protected AchievementRepository achievementRepository;
+    protected EventBus eventBus;
    
-    protected AbstractAchievement(AchievementRepository achievementRepository, int goal, String name) {
-        this.achievementRepository = achievementRepository;
+    protected AbstractAchievement(EventBus eventBus, int goal, String name) {
+        this.eventBus = eventBus;
         this.goal = goal;
         this.baseName = name;
     }
@@ -86,7 +89,7 @@ public abstract class AbstractAchievement {
     protected void unlock() {
         if (!unlocked) {
             unlocked = true;
-            achievementRepository.unlockAchievement(getId());
+            eventBus.post(new AchievementUnlockedEvent(this));
         }
     }
 
@@ -102,7 +105,7 @@ public abstract class AbstractAchievement {
 
     protected void storeProgress(int number) {
         this.progress = number;
-        achievementRepository.storeProgress(getId(), number);
+        eventBus.post(new AchievementProgressEvent(this));
         if (progress >= goal) {
             unlock();
         }
