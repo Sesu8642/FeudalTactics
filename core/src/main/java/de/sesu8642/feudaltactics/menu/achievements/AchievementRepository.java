@@ -4,30 +4,12 @@ package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.badlogic.gdx.Preferences;
 
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
-import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
-import de.sesu8642.feudaltactics.menu.achievements.model.AbortGameAchievement;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.HistoricPersonOrEvent;
-import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAiAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstManyEnemiesAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.PlayMoreThanNRoundsAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinWhenStartingLastAchievement;
-import lombok.Getter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Repository for storing achievements, used by AchievementService.
@@ -55,6 +37,12 @@ public class AchievementRepository {
                 prefStore.getBoolean("achievement-" + achievement.getId(), false));
             achievement.setProgress(
                 prefStore.getInteger("achievement-progress-" + achievement.getId(), 0));
+            if (achievement instanceof AchievementNeedsFullStorage) {
+                String serializedData = prefStore.getString("achievement-full-" + achievement.getId(), null);
+                if (serializedData != null) {
+                    ((AchievementNeedsFullStorage) achievement).deserializeFromJson(serializedData);
+                }
+            }
         }
     }
 
@@ -71,6 +59,16 @@ public class AchievementRepository {
      */
     public void storeProgress(String id, int number) {
         prefStore.putInteger("achievement-progress-" + id, number);
+        prefStore.flush();
+    }
+
+    /**
+     * Stores the full achievement data for achievements that implement AchievementNeedsFullStorage.
+     * @param id The ID of the achievement.
+     * @param serializedData The serialized data (JSON) of the achievement.
+     */
+    public void storeFullAchievementData(String id, String serializedData) {
+        prefStore.putString("achievement-full-" + id, serializedData);
         prefStore.flush();
     }
 }

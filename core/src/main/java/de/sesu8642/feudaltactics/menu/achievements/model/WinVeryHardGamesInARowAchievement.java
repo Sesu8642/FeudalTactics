@@ -1,6 +1,7 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.utils.Json;
 import com.google.common.eventbus.EventBus;
 
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
@@ -8,47 +9,29 @@ import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementNeedsFullStorage;
 import lombok.EqualsAndHashCode;
-
-    // TODO: Add marker interface that this achievement needs to be persisted as full JSON to track nextMapHasBeenGenerated and currentStreakPlayerIndex, 
-    // and add code to persist these fields in the achievement repository, and load them when loading the achievement
+import lombok.Getter;
 
 /**
  * Achievement: Win a specified number of Very Hard games in a row without losing or aborting.
+ * 
+ * It implements AchievementNeedsFullStorage, as the two values nextMapHasBeenGenerated and currentStreakPlayerIndex must be persisted 
+ * in order to properly track the progress of this achievement.
  */
-@EqualsAndHashCode
-public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
+@EqualsAndHashCode(callSuper = false)
+public class WinVeryHardGamesInARowAchievement extends AbstractAchievement implements AchievementNeedsFullStorage {
 
-    private static final String CURRENT_STREAK_PLAYER_INDEX_NAME = "current-streak-player-index";
-
-    private Preferences prefStore;
-
+    @Getter
     private boolean nextMapHasBeenGenerated;
 
-    private void setNextMapHasBeenGenerated(boolean value) {
-        this.nextMapHasBeenGenerated = value;
-        prefStore.putBoolean(getId() + "-mapHasBeenGenerated", value);
-        prefStore.flush();
-    }
-
+    @Getter
     private int currentStreakPlayerIndex;
-
-    private void setCurrentStreakPlayerIndex(int playerIndex) {
-        this.currentStreakPlayerIndex = playerIndex;
-        prefStore.putInteger(CURRENT_STREAK_PLAYER_INDEX_NAME, playerIndex);
-        prefStore.flush();
-    }
 
     public WinVeryHardGamesInARowAchievement(
         EventBus eventBus,
-        Preferences achievementsPrefs,
         int numberOfGamesInARowToWin) {
         super(eventBus, numberOfGamesInARowToWin, "Win " + numberOfGamesInARowToWin + " Very Hard Games in a Row");
-
-        this.prefStore = achievementsPrefs;
-
-        currentStreakPlayerIndex = prefStore.getInteger(CURRENT_STREAK_PLAYER_INDEX_NAME, -1);
-        nextMapHasBeenGenerated = prefStore.getBoolean(getId() + "-mapHasBeenGenerated", false);
     }
 
     @Override
@@ -73,7 +56,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
             return;     // Ignore exits from editor or similar
         }
 
-        setNextMapHasBeenGenerated(false);
+        nextMapHasBeenGenerated = false;
 
         final Player winnerOfTheGame = gameState.getWinner();
         if (winnerOfTheGame == null || winnerOfTheGame.getType() != Player.Type.LOCAL_PLAYER) {
@@ -87,14 +70,14 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
             return;
         }
 
-        storeProgress(getProgress() + 1);
-
         int thisTimePlayerIndex = winnerOfTheGame.getPlayerIndex();
         if (thisTimePlayerIndex != currentStreakPlayerIndex) {
-            setCurrentStreakPlayerIndex(thisTimePlayerIndex);    // Start new streak with this color
-            // Progress must have been 0 already and was now increased to 1,
+            currentStreakPlayerIndex = thisTimePlayerIndex;    // Start new streak with this color
+            // Progress must have been 0 already and will now increase to 1,
             // as this streak color change was detected when starting the game
         }
+
+        storeProgress(getProgress() + 1);
     }
 
     @Override
@@ -119,6 +102,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
                     storeProgress(0);   // Player changed color, reset progress
                         // We don't need to store the streak color here, as it will be store when exiting this game 
                         // if the player wins and actually starts a streak
+                    return;
                 }
             });
         
@@ -126,7 +110,23 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement {
         if (nextMapHasBeenGenerated) {
             storeProgress(0);   // Map was re-generated, reset progress
         } else {
-            setNextMapHasBeenGenerated(true);
+            nextMapHasBeenGenerated = true;
+            storeProgress(getProgress());   // This is just for triggering the storage of the nextMapHasBeenGenerated value
         }
+    }
+
+    private final Json json = new Json();
+
+    @Override
+    public String serializeToJson() {
+        return json.toJson(this);
+    }
+
+    @Override
+    public void deserializeFromJson(String serializedData) {
+        WinVeryHardGamesInARowAchievement loadedAchievement = json.fromJson(WinVeryHardGamesInARowAchievement.class, serializedData);
+        // Progress is already loaded otherwise
+        this.currentStreakPlayerIndex = loadedAchievement.currentStreakPlayerIndex;
+        this.nextMapHasBeenGenerated = loadedAchievement.nextMapHasBeenGenerated;
     }
 }

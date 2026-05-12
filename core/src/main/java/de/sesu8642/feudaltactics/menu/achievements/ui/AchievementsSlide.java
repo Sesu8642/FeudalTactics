@@ -2,9 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.ui;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -19,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementService;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
@@ -39,7 +37,6 @@ public class AchievementsSlide extends Slide {
 
     private final Skin skin;
     private final HorizontalGroup achievementTileGroup;
-    private final AchievementRepository achievementRepository;
     private final DialogFactory dialogFactory;
     private final Drawable achievementBackgroundLockedDrawable;
     private final Drawable achievementBackgroundUnlockedDrawable;
@@ -51,10 +48,9 @@ public class AchievementsSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public AchievementsSlide(Skin skin, AchievementRepository achievementRepository, DialogFactory dialogFactory) {
+    public AchievementsSlide(Skin skin, AchievementService achievementService, DialogFactory dialogFactory) {
         super(skin, "Achievements");
         this.skin = skin;
-        this.achievementRepository = achievementRepository;
         this.dialogFactory = dialogFactory;
 
         this.achievementBackgroundLockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.GRAY);
@@ -67,7 +63,7 @@ public class AchievementsSlide extends Slide {
         achievementTileGroup.wrapSpace(10);
         achievementTileGroup.align(Align.center);
 
-        List<AbstractAchievement> achievements = achievementRepository.getAchievements();
+        List<AbstractAchievement> achievements = achievementService.getAchievements();
         for (AbstractAchievement achievement : achievements) {
             Actor achievementBox = displayAchievement(achievement);
             achievementBox.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);

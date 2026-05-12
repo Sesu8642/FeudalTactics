@@ -1,39 +1,29 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.badlogic.gdx.Preferences;
+import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
-import de.sesu8642.feudaltactics.MockPreferences;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.reset;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinVeryHardGamesInARowAchievement> {
 
     private static final int GOAL = 3;
-    private Preferences prefs;
 
     @Override
-    protected WinVeryHardGamesInARowAchievement createAchievement(AchievementRepository repo) {
-        return new WinVeryHardGamesInARowAchievement(repo, prefs, GOAL);
+    protected WinVeryHardGamesInARowAchievement createAchievement(EventBus eventBus) {
+        return new WinVeryHardGamesInARowAchievement(eventBus, GOAL);
     }
 
     @Override
-    protected WinVeryHardGamesInARowAchievement createAchievementWithDifferentParams(AchievementRepository repo) {
-        return new WinVeryHardGamesInARowAchievement(repo, prefs, 10);
-    }
-
-    @Override
-    @BeforeEach
-    void setUp() {
-        prefs = new MockPreferences();
-        super.setUp();
+    protected WinVeryHardGamesInARowAchievement createAchievementWithDifferentParams(EventBus eventBus) {
+        return new WinVeryHardGamesInARowAchievement(eventBus, 10);
     }
 
     @Test
@@ -64,9 +54,9 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
 
     @Test
     void firstMapGeneration_doesNotResetProgress() {
-        verifyNoProgress();
+        assertEquals(0, achievement.getProgress());
         achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
-        verifyNoProgress();
+        assertEquals(0, achievement.getProgress());
     }
 
     @Test
@@ -89,11 +79,11 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
 
         // Win resets the flag
         achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
-        reset(repository);
+        reset(eventBus);
 
-        // Next generation should be treated as first again
+        // Next generation should be treated as first again (progress preserved, not reset)
         achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
-        verifyNoProgress();
+        assertEquals(1, achievement.getProgress());
     }
 
     private RegenerateMapEvent mapRegenEvent(long seed) {

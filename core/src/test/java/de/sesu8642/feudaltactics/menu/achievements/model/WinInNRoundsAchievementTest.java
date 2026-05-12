@@ -1,9 +1,9 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
 class WinInNRoundsAchievementTest extends AbstractAchievementTest<WinInNRoundsAchievement> {
@@ -11,13 +11,13 @@ class WinInNRoundsAchievementTest extends AbstractAchievementTest<WinInNRoundsAc
     private static final int ROUND_LIMIT = 16;
 
     @Override
-    protected WinInNRoundsAchievement createAchievement(AchievementRepository repo) {
-        return new WinInNRoundsAchievement(repo, ROUND_LIMIT);
+    protected WinInNRoundsAchievement createAchievement(EventBus eventBus) {
+        return new WinInNRoundsAchievement(eventBus, ROUND_LIMIT);
     }
 
     @Override
-    protected WinInNRoundsAchievement createAchievementWithDifferentParams(AchievementRepository repo) {
-        return new WinInNRoundsAchievement(repo, 14);
+    protected WinInNRoundsAchievement createAchievementWithDifferentParams(EventBus eventBus) {
+        return new WinInNRoundsAchievement(eventBus, 14);
     }
 
     @Test

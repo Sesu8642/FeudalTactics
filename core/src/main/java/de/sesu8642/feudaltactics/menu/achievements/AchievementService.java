@@ -11,6 +11,7 @@ import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
 import de.sesu8642.feudaltactics.events.achievements.AchievementUnlockedEvent;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import lombok.Getter;
 
 /**
  * Service for managing achievements, used to track and update player progress.
@@ -19,6 +20,7 @@ import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 public class AchievementService {
     private final AchievementRepository achievementRepository;
 
+    @Getter
     private final List<AbstractAchievement> achievements;
 
     @Inject
@@ -56,5 +58,8 @@ public class AchievementService {
     public void onAchievementProgress(AchievementProgressEvent event) {
         AbstractAchievement achievement = event.getAchievement();
         achievementRepository.storeProgress(achievement.getId(), achievement.getProgress());
+        if (achievement instanceof AchievementNeedsFullStorage) {
+            achievementRepository.storeFullAchievementData(achievement.getId(), ((AchievementNeedsFullStorage) achievement).serializeToJson());
+        }
     }
 }

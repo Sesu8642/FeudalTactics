@@ -1,22 +1,22 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
 
 class WinOnMapSizeAchievementTest extends AbstractAchievementTest<WinOnMapSizeAchievement> {
 
     @Override
-    protected WinOnMapSizeAchievement createAchievement(AchievementRepository repo) {
-        return new WinOnMapSizeAchievement(repo, MapSizes.LARGE);
+    protected WinOnMapSizeAchievement createAchievement(EventBus eventBus) {
+        return new WinOnMapSizeAchievement(eventBus, MapSizes.LARGE);
     }
 
     @Override
-    protected WinOnMapSizeAchievement createAchievementWithDifferentParams(AchievementRepository repo) {
-        return new WinOnMapSizeAchievement(repo, MapSizes.SMALL);
+    protected WinOnMapSizeAchievement createAchievementWithDifferentParams(EventBus eventBus) {
+        return new WinOnMapSizeAchievement(eventBus, MapSizes.SMALL);
     }
 
     @Test

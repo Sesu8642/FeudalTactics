@@ -1,11 +1,12 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,24 +20,24 @@ import static org.mockito.Mockito.*;
  */
 abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
-    protected AchievementRepository repository;
+    protected EventBus eventBus;
     protected T achievement;
 
     /** Create the achievement under test. Called in {@link #setUp()}. */
-    protected abstract T createAchievement(AchievementRepository repository);
+    protected abstract T createAchievement(EventBus eventBus);
 
     /**
      * Create the same type of achievement but with different constructor parameters,
      * so that we can verify the id changes. Return {@code null} if no parameterised variant exists.
      */
-    protected T createAchievementWithDifferentParams(AchievementRepository repository) {
+    protected T createAchievementWithDifferentParams(EventBus eventBus) {
         return null; // override when applicable
     }
 
     @BeforeEach
     void setUp() {
-        repository = mock(AchievementRepository.class);
-        achievement = createAchievement(repository);
+        eventBus = mock(EventBus.class);
+        achievement = createAchievement(eventBus);
     }
 
     // ---- common id / description tests ----
@@ -50,7 +51,7 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
     @Test
     void id_changesWithDifferentParams() {
-        T other = createAchievementWithDifferentParams(repository);
+        T other = createAchievementWithDifferentParams(eventBus);
         if (other != null) {
             assertNotEquals(achievement.getId(), other.getId(),
                     "Achievements with different params should produce different ids");
@@ -79,7 +80,7 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
         achievement.onGameExited(event);
 
-        verifyNoInteractions(repository);
+        verifyNoInteractions(eventBus);
     }
 
     // ---- event builder helpers ----
@@ -149,11 +150,13 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
     /** Verify that storeProgress was called for the achievement. */
     protected void verifyProgress(int expectedProgress) {
-        verify(repository).storeProgress(achievement.getId(), expectedProgress);
+        assertEquals(expectedProgress, achievement.getProgress());
+        verify(eventBus, atLeastOnce()).post(any(AchievementProgressEvent.class));
     }
 
-    /** Verify no repository interaction happened. */
+    /** Verify no event bus interaction happened. */
     protected void verifyNoProgress() {
-        verifyNoInteractions(repository);
+        assertEquals(0, achievement.getProgress());
+        verifyNoInteractions(eventBus);
     }
 }

@@ -1,24 +1,25 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievement> {
 
     @Override
-    protected WinNGamesAchievement createAchievement(AchievementRepository repo) {
-        return new WinNGamesAchievement(repo, 5);
+    protected WinNGamesAchievement createAchievement(EventBus eventBus) {
+        return new WinNGamesAchievement(eventBus, 5);
     }
 
     @Override
-    protected WinNGamesAchievement createAchievementWithDifferentParams(AchievementRepository repo) {
-        return new WinNGamesAchievement(repo, 50);
+    protected WinNGamesAchievement createAchievementWithDifferentParams(EventBus eventBus) {
+        return new WinNGamesAchievement(eventBus, 50);
     }
 
     @Test
@@ -46,8 +47,7 @@ class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievem
         achievement.onGameExited(event);
         achievement.onGameExited(event);
 
-        verify(repository).storeProgress(achievement.getId(), 1);
-        verify(repository).storeProgress(achievement.getId(), 2);
-        verify(repository).storeProgress(achievement.getId(), 3);
+        assertEquals(3, achievement.getProgress());
+        verify(eventBus, times(3)).post(any(AchievementProgressEvent.class));
     }
 }

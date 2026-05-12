@@ -1,20 +1,20 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
 import org.junit.jupiter.api.Test;
 
 class WinAgainstAiLevelAchievementTest extends AbstractAchievementTest<WinAgainstAiLevelAchievement> {
 
     @Override
-    protected WinAgainstAiLevelAchievement createAchievement(AchievementRepository repo) {
-        return new WinAgainstAiLevelAchievement(repo, Intelligence.LEVEL_2);
+    protected WinAgainstAiLevelAchievement createAchievement(EventBus eventBus) {
+        return new WinAgainstAiLevelAchievement(eventBus, Intelligence.LEVEL_2);
     }
 
     @Override
-    protected WinAgainstAiLevelAchievement createAchievementWithDifferentParams(AchievementRepository repo) {
-        return new WinAgainstAiLevelAchievement(repo, Intelligence.LEVEL_4);
+    protected WinAgainstAiLevelAchievement createAchievementWithDifferentParams(EventBus eventBus) {
+        return new WinAgainstAiLevelAchievement(eventBus, Intelligence.LEVEL_4);
     }
 
     @Test

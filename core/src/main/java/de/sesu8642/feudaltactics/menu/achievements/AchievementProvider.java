@@ -49,9 +49,9 @@ public class AchievementProvider {
         list.add(new PlayMoreThanNRoundsAchievement(eventBus, 30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
         list.add(new PlayMoreThanNRoundsAchievement(eventBus, 50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
         list.add(new LoseAgainstWeakestAiAchievement(eventBus).setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));    // The Walk to Canossa was a humiliation. And so is this achievement.
-        list.add(new WinVeryHardGamesInARowAchievement(eventBus, achievementsPrefs, 3));
-        list.add(new WinVeryHardGamesInARowAchievement(eventBus, achievementsPrefs, 10));
-        list.add(new WinVeryHardGamesInARowAchievement(eventBus, achievementsPrefs, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
+        list.add(new WinVeryHardGamesInARowAchievement(eventBus, 3));
+        list.add(new WinVeryHardGamesInARowAchievement(eventBus, 10));
+        list.add(new WinVeryHardGamesInARowAchievement(eventBus, 20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));
         list.add(new WinAgainstManyEnemiesAchievement(eventBus, 3));
         list.add(new WinAgainstManyEnemiesAchievement(eventBus, 4));
         list.add(new WinAgainstManyEnemiesAchievement(eventBus, 5).setHistoricConnection(HistoricPersonOrEvent.LOUIS_XI));
