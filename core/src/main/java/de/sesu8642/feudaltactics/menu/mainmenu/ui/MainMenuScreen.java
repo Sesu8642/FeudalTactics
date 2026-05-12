@@ -29,7 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.badlogic.gdx.Application.ApplicationType.Android;
 
 /**
  * {@link Screen} for displaying the main menu.
@@ -111,10 +114,15 @@ public class MainMenuScreen extends GameScreen {
     @Override
     public void show() {
         super.show();
+        // only show one dialog at a time
         if (nagPreferencesDao.getShowChangelog()) {
             // show the dialog only once after the update
             nagPreferencesDao.setShowChangelog(false);
             showNewVersionDialog();
+        } else if (nagPreferencesDao.getShowAndroidEnshittificationNag()) {
+            // show the dialog only once
+            nagPreferencesDao.setShowAndroidEnshittificationNag(false);
+            showAndroidEnshittificationNag();
         }
     }
 
@@ -163,6 +171,31 @@ public class MainMenuScreen extends GameScreen {
         newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
         newVersionDialog.button(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_BUTTON_OPEN_CHANGELOG),
             (byte) 1);
+        newVersionDialog.show(getActiveStage());
+    }
+
+    private void showAndroidEnshittificationNag() {
+        if (Gdx.app.getType() != Android || LocalDateTime.now().isAfter(LocalDateTime.of(2026, 9, 1, 0, 0))) {
+            return;
+        }
+        logger.debug("informing the user about Android enshittification");
+        final Dialog newVersionDialog = dialogFactory.createDialog(result -> {
+            switch ((byte) result) {
+                case 0:
+                    // ok button
+                    break;
+                case 1:
+                    // open link button
+                    logger.debug("opening keep android open URI.");
+                    Gdx.net.openURI("https://keepandroidopen.org/");
+                    break;
+                default:
+                    break;
+            }
+        });
+        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_ANDROID_ENSHITTIFICATION));
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_BUTTON_OPEN_KEEP_ANDROID_OPEN), (byte) 1);
         newVersionDialog.show(getActiveStage());
     }
 

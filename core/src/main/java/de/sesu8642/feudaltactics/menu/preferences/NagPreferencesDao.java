@@ -17,6 +17,7 @@ public class NagPreferencesDao {
     public static final String NAG_PREFERENCES_NAME = "nagPreferences";
     private static final String SHOW_TUTORIAL_NAG_NAME = "showTutorialNag";
     private static final String CHANGELOG_STATE_NAME = "showChangeLog";
+    private static final String ANDROID_ENSHITTIFICATION_STATE_NAME = "showAndroidEnshittificationNag";
 
     private final Preferences prefStore;
 
@@ -52,6 +53,21 @@ public class NagPreferencesDao {
      */
     public void setShowChangelog(boolean showChangelog) {
         prefStore.putBoolean(CHANGELOG_STATE_NAME, showChangelog);
+        prefStore.flush();
+    }
+
+    /**
+     * Loads whether to show the android enshittification nag or not.
+     */
+    public boolean getShowAndroidEnshittificationNag() {
+        return prefStore.getBoolean(ANDROID_ENSHITTIFICATION_STATE_NAME, true);
+    }
+
+    /**
+     * Saves whether to show the android enshittification nag or not.
+     */
+    public void setShowAndroidEnshittificationNag(boolean showAndroidEnshittificationNotice) {
+        prefStore.putBoolean(ANDROID_ENSHITTIFICATION_STATE_NAME, showAndroidEnshittificationNotice);
         prefStore.flush();
     }
 
