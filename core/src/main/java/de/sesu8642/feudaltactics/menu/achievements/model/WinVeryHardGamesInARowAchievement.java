@@ -19,13 +19,15 @@ import lombok.Getter;
  * It implements AchievementNeedsFullStorage, as the two values nextMapHasBeenGenerated and currentStreakPlayerIndex must be persisted 
  * in order to properly track the progress of this achievement.
  */
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class WinVeryHardGamesInARowAchievement extends AbstractAchievement implements AchievementNeedsFullStorage {
 
     @Getter
+    @EqualsAndHashCode.Include
     private boolean nextMapHasBeenGenerated;
 
     @Getter
+    @EqualsAndHashCode.Include
     private int currentStreakPlayerIndex;
 
     public WinVeryHardGamesInARowAchievement(

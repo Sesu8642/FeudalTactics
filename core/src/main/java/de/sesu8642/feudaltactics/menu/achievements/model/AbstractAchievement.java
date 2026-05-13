@@ -5,6 +5,7 @@ import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
 import de.sesu8642.feudaltactics.events.achievements.AchievementUnlockedEvent;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,11 +17,13 @@ import lombok.experimental.Accessors;
  * It also provides some helper methods to store progress and unlock the achievement.
  */
 @Accessors(chain = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class AbstractAchievement {
     /**
     * Unique ID of the achievement. It is used to store the achievement's state (progress and unlocked status) in the repository, 
     * so it must not change once released.
     */
+    @EqualsAndHashCode.Include
     public abstract String getId();
 
     /**
@@ -59,6 +62,7 @@ public abstract class AbstractAchievement {
      */
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     private boolean unlocked;
 
     /**
@@ -94,6 +98,7 @@ public abstract class AbstractAchievement {
     }
 
     @Getter
+    @EqualsAndHashCode.Include
     private final int goal;
 
     /**
@@ -101,6 +106,7 @@ public abstract class AbstractAchievement {
      */
     @Getter
     @Setter
+    @EqualsAndHashCode.Include
     private int progress = 0;
 
     protected void storeProgress(int number) {
