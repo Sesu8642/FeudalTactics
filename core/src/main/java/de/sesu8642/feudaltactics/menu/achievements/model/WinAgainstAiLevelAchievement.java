@@ -2,7 +2,6 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import com.google.common.eventbus.EventBus;
 
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 /**
@@ -13,7 +12,7 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
     private final Intelligence aiLevel;
 
     public WinAgainstAiLevelAchievement(EventBus eventBus, Intelligence aiLevel) {
-        super(eventBus, 1, "Win Against AI Level " + EnumDisplayNameConverter.getDisplayName(aiLevel));
+        super(eventBus, 1, "Win Against AI Level " + aiLevel);  // TODO: localization
         this.aiLevel = aiLevel;
     }
 
@@ -24,7 +23,7 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
 
     @Override
     public String getBaseDescription() {
-        return "Win a game against AI opponents of level " + EnumDisplayNameConverter.getDisplayName(aiLevel) + ". It must be exactly that AI level, not higher.";
+        return "Win a game against AI opponents of level " + aiLevel + ". It must be exactly that AI level, not higher.";
     }
 
     @Override
