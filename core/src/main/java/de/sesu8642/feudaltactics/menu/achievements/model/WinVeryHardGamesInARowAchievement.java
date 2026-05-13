@@ -119,16 +119,24 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
 
     private final Json json = new Json();
 
+    private class SerializedData {
+        public int currentStreakPlayerIndex;
+        public boolean nextMapHasBeenGenerated;
+    }
+
     @Override
     public String serializeToJson() {
-        return json.toJson(this);
+        SerializedData data = new SerializedData();
+        data.currentStreakPlayerIndex = this.currentStreakPlayerIndex;
+        data.nextMapHasBeenGenerated = this.nextMapHasBeenGenerated;
+        return json.toJson(data);
     }
 
     @Override
     public void deserializeFromJson(String serializedData) {
-        WinVeryHardGamesInARowAchievement loadedAchievement = json.fromJson(WinVeryHardGamesInARowAchievement.class, serializedData);
+        SerializedData data = json.fromJson(SerializedData.class, serializedData);
         // Progress is already loaded otherwise
-        this.currentStreakPlayerIndex = loadedAchievement.currentStreakPlayerIndex;
-        this.nextMapHasBeenGenerated = loadedAchievement.nextMapHasBeenGenerated;
+        this.currentStreakPlayerIndex = data.currentStreakPlayerIndex;
+        this.nextMapHasBeenGenerated = data.nextMapHasBeenGenerated;
     }
 }
