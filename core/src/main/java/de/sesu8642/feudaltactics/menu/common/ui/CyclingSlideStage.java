@@ -6,10 +6,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import de.sesu8642.TranslationKeys;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * {@link com.badlogic.gdx.scenes.scene2d.Stage} that displays slides with a cycling button
@@ -18,6 +21,7 @@ import java.util.List;
  */
 public class CyclingSlideStage extends AbstractSlideStage {
 
+    private final LocalizationManager localizationManager;
     private final List<String> slideNames;
     private TextButton cyclingButton;
     @Setter
@@ -28,19 +32,20 @@ public class CyclingSlideStage extends AbstractSlideStage {
      *
      * @param viewport               viewport for the stage
      * @param slides                 list of slides to display (must have at least 1)
-     * @param slideNames             names for each slide (must match slides size)
+     * @param slideNameKeys          translation key names for each slide (must match slides size)
      * @param platformInsetsProvider provider for platform-specific insets
      * @param camera                 camera for the stage
      * @param skin                   game skin
      */
-    public CyclingSlideStage(Viewport viewport, List<Slide> slides, List<String> slideNames,
+    public CyclingSlideStage(Viewport viewport, List<Slide> slides, List<String> slideNameKeys,
                              PlatformInsetsProvider platformInsetsProvider, Runnable finishedCallback,
-                             OrthographicCamera camera, Skin skin) {
+                             OrthographicCamera camera, Skin skin, LocalizationManager localizationManager) {
         super(viewport, slides, platformInsetsProvider, camera, skin);
-        if (slideNames.size() != slides.size()) {
-            throw new IllegalArgumentException("slideNames size must match slides size");
+        this.localizationManager = localizationManager;
+        if (slideNameKeys.size() != slides.size()) {
+            throw new IllegalArgumentException("slideNameKeys size must match slides size");
         }
-        this.slideNames = slideNames;
+        slideNames = slideNameKeys.stream().map(localizationManager::localizeText).collect(Collectors.toList());
         this.finishedCallback = finishedCallback;
         initUi();
     }
@@ -50,7 +55,9 @@ public class CyclingSlideStage extends AbstractSlideStage {
         slideContainer.setActor(currentSlide.getTable());
 
         cyclingButton = ButtonFactory.createTextButton("", skin);   // Text will be set later on reset()
-        final TextButton finishButton = ButtonFactory.createTextButton("Finish", skin);
+        final TextButton finishButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.SLIDE_STAGE_BUTTON_FINISH),
+                skin);
 
         cyclingButton.addListener(new ExceptionLoggingChangeListener(() -> switchToSlide(getNextIndex())));
         finishButton.addListener(new ExceptionLoggingChangeListener(() -> finishedCallback.run()));

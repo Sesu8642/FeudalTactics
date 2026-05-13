@@ -25,7 +25,8 @@ public class DependencyDetailsSlide extends Slide {
      */
     @Inject
     public DependencyDetailsSlide(Skin skin) {
-        super(skin, "Dependency Details");
+        // headline is set dynamically
+        super(skin, "");
         label = new Label("", skin);
         label.setWrap(true);
         super.getTable().add(label).fill().expand();

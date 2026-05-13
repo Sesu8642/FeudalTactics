@@ -45,7 +45,11 @@ public class StatisticsEventHandler {
 
     private GameResult evaluateGameResult(GameState gameState) {
         final Player winner = gameState.getWinner();
-        if (null != winner) {
+        boolean localPlayerDefeated = gameState.getPlayers().stream()
+            .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated());
+        if (localPlayerDefeated) {
+            return GameResult.LOSS;
+        } else if (winner != null) {
             switch (winner.getType()) {
                 case LOCAL_PLAYER:
                     return GameResult.WIN;
@@ -56,13 +60,7 @@ public class StatisticsEventHandler {
                     throw new IllegalStateException("Unknown Player Type " + winner.getType());
             }
         } else {
-            boolean localPlayerDefeated = gameState.getPlayers().stream()
-                .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated());
-            if (localPlayerDefeated) {
-                return GameResult.LOSS;
-            } else {
-                return GameResult.ABORTED;
-            }
+            return GameResult.ABORTED;
         }
     }
 

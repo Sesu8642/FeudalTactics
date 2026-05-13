@@ -9,12 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
 import de.sesu8642.feudaltactics.dagger.EnableLevelEditorProperty;
 import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -27,7 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.badlogic.gdx.Application.ApplicationType.Android;
 
 /**
  * {@link Screen} for displaying the main menu.
@@ -41,6 +46,7 @@ public class MainMenuScreen extends GameScreen {
     private final DialogFactory dialogFactory;
     private final EventBus eventBus;
     private final ScreenNavigationController screenNavigationController;
+    private final LocalizationManager localizationManager;
     private final boolean levelEditorEnabled;
 
     /**
@@ -51,12 +57,14 @@ public class MainMenuScreen extends GameScreen {
                           MainMenuStage mainMenuStage, NagPreferencesDao nagPreferencesDao,
                           DialogFactory dialogFactory, EventBus eventBus,
                           ScreenNavigationController screenNavigationController,
+                          LocalizationManager localizationManager,
                           @EnableLevelEditorProperty boolean levelEditorEnabled) {
         super(camera, viewport, mainMenuStage);
         this.nagPreferencesDao = nagPreferencesDao;
         this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
         this.screenNavigationController = screenNavigationController;
+        this.localizationManager = localizationManager;
         this.levelEditorEnabled = levelEditorEnabled;
         initUi(mainMenuStage);
     }
@@ -106,10 +114,15 @@ public class MainMenuScreen extends GameScreen {
     @Override
     public void show() {
         super.show();
+        // only show one dialog at a time
         if (nagPreferencesDao.getShowChangelog()) {
             // show the dialog only once after the update
             nagPreferencesDao.setShowChangelog(false);
             showNewVersionDialog();
+        } else if (nagPreferencesDao.getShowAndroidEnshittificationNag()) {
+            // show the dialog only once
+            nagPreferencesDao.setShowAndroidEnshittificationNag(false);
+            showAndroidEnshittificationNag();
         }
     }
 
@@ -131,9 +144,9 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        tutorialNagDialog.text("Do you know how to play?\n");
-        tutorialNagDialog.button("No", (byte) 0);
-        tutorialNagDialog.button("Yes", (byte) 1);
+        tutorialNagDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_TUTORIAL_NAG));
+        tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_NO), (byte) 0);
+        tutorialNagDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_YES), (byte) 1);
         tutorialNagDialog.show(getActiveStage());
     }
 
@@ -154,9 +167,35 @@ public class MainMenuScreen extends GameScreen {
                     break;
             }
         });
-        newVersionDialog.text("The game was updated. See the changelog for details.\n");
-        newVersionDialog.button("OK", (byte) 0);
-        newVersionDialog.button("Open changelog", (byte) 1);
+        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_GAME_UPDATED));
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_BUTTON_OPEN_CHANGELOG),
+            (byte) 1);
+        newVersionDialog.show(getActiveStage());
+    }
+
+    private void showAndroidEnshittificationNag() {
+        if (Gdx.app.getType() != Android || LocalDateTime.now().isAfter(LocalDateTime.of(2026, 9, 1, 0, 0))) {
+            return;
+        }
+        logger.debug("informing the user about Android enshittification");
+        final Dialog newVersionDialog = dialogFactory.createDialog(result -> {
+            switch ((byte) result) {
+                case 0:
+                    // ok button
+                    break;
+                case 1:
+                    // open link button
+                    logger.debug("opening keep android open URI.");
+                    Gdx.net.openURI("https://keepandroidopen.org/");
+                    break;
+                default:
+                    break;
+            }
+        });
+        newVersionDialog.text(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_TEXT_ANDROID_ENSHITTIFICATION));
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), (byte) 0);
+        newVersionDialog.button(localizationManager.localizeText(TranslationKeys.MENU_DIALOG_BUTTON_OPEN_KEEP_ANDROID_OPEN), (byte) 1);
         newVersionDialog.show(getActiveStage());
     }
 

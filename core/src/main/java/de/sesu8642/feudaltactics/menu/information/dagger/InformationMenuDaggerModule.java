@@ -6,10 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.feudaltactics.ResourceNameReader;
 
 import javax.inject.Singleton;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,26 +28,20 @@ public class InformationMenuDaggerModule {
     @Provides
     @Singleton
     @DependencyLicenses
-    static Map<String, Map<String, String>> provideDependencyLicenses() {
-        final FileHandle assetsFileHandle = Gdx.files.internal("assets.txt");
-        final String assetListText = assetsFileHandle.readString(StandardCharsets.UTF_8.name());
-        final String[] assets = assetListText.split("\n");
+    static Map<String, Map<String, String>> provideDependencyLicenses(ResourceNameReader resourceNameReader) {
+        final List<String> licenseFiles = resourceNameReader.getAssetFilePaths("dependency_licenses/");
         // outer map key: dependency name, inner map key: file name, outer map value:
         // file contents
         final Map<String, Map<String, String>> result = new HashMap<>();
-        for (int i = 0; i < assets.length; i++) {
-            final String assetPath = assets[i];
-            if (!assetPath.startsWith("dependency_licenses/")) {
-                continue;
-            }
+        for (String assetPath : licenseFiles) {
             final String[] pathParts = assetPath.split("/");
             final String fileName = pathParts[pathParts.length - 1];
             final StringBuilder dependencyNameBuilder = new StringBuilder();
-            for (int j = 1; j < pathParts.length - 1; j++) {
+            for (int i = 1; i < pathParts.length - 1; i++) {
                 if (dependencyNameBuilder.length() > 0) {
                     dependencyNameBuilder.append(" - ");
                 }
-                dependencyNameBuilder.append(pathParts[j]);
+                dependencyNameBuilder.append(pathParts[i]);
             }
             final String dependencyName = dependencyNameBuilder.toString();
             final FileHandle fileHandle = Gdx.files.internal(assetPath);

@@ -5,8 +5,9 @@ package de.sesu8642.feudaltactics.menu.statistics.ui;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import de.sesu8642.feudaltactics.ingame.ui.EnumDisplayNameConverter;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.statistics.CountByAiLevel;
 import de.sesu8642.feudaltactics.menu.statistics.Statistics;
@@ -24,6 +25,7 @@ public class StatisticsSlide extends Slide {
 
     private final StatisticsDao statisticsDao;
     private final Skin skin;
+    private final LocalizationManager localizationManager;
     private final Table statisticsTable;
 
 
@@ -33,10 +35,11 @@ public class StatisticsSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public StatisticsSlide(Skin skin, StatisticsDao statisticsDao) {
-        super(skin, "Statistics");
+    public StatisticsSlide(Skin skin, StatisticsDao statisticsDao, LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_HEADLINE));
         this.statisticsDao = statisticsDao;
         this.skin = skin;
+        this.localizationManager = localizationManager;
         statisticsTable = new Table();
         getTable().add(statisticsTable).fill().expand();
         refreshStatistics();
@@ -72,28 +75,55 @@ public class StatisticsSlide extends Slide {
     public void refreshStatistics() {
         statisticsTable.clear();
         final Statistics statistics = statisticsDao.getStatistics();
-        placeIntegerWithLabel("Total games played", statistics.getGamesPlayed());
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_PLAYED),
+            statistics.getGamesPlayed());
         final CountByAiLevel gamesWon = statistics.getGamesWon();
-        placeIntegerWithLabel("Total games won", gamesWon.getTotalCount());
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
+            gamesWon.getTotalCount());
         final CountByAiLevel gamesLost = statistics.getGamesLost();
-        placeIntegerWithLabel("Total games lost", gamesLost.getTotalCount());
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
+            gamesLost.getTotalCount());
         final CountByAiLevel gamesAborted = statistics.getGamesAborted();
-        placeIntegerWithLabel("Total games aborted", gamesAborted.getTotalCount());
-        placeIntegerWithLabel("Total maps generated", statistics.getMapsGenerated());
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_ABORTED),
+            gamesAborted.getTotalCount());
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_MAPS_GENERATED),
+            statistics.getMapsGenerated());
 
         statisticsTable.row();
 
-        final Intelligence[] aiLevels = Intelligence.values();
-        for (Intelligence level : aiLevels) {
-            placeHeading(EnumDisplayNameConverter.getDisplayName(level) + " AI Statistics");
-            placeIntegerWithLabel("  Games won",
+        final Intelligence[] intelligenceLevels = Intelligence.values();
+        for (Intelligence level : intelligenceLevels) {
+            final String sectionTitle = intelligenceLevelToSectionTitle(level);
+            placeHeading(sectionTitle);
+            placeIntegerWithLabel("  " + localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_GAMES_WON),
                 gamesWon.getCountByAiLevel().get(level));
-            placeIntegerWithLabel("  Games lost",
+            placeIntegerWithLabel("  " + localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_GAMES_LOST),
                 gamesLost.getCountByAiLevel().get(level));
-            placeIntegerWithLabel("  Games aborted",
+            placeIntegerWithLabel("  " + localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_GAMES_ABORTED),
                 gamesAborted.getCountByAiLevel().get(level));
             statisticsTable.row();
         }
 
+    }
+
+    private String intelligenceLevelToSectionTitle(Intelligence level) {
+        final String sectionTitleKey;
+        switch (level) {
+            case LEVEL_1:
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_EASY;
+                break;
+            case LEVEL_2:
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_MEDIUM;
+                break;
+            case LEVEL_3:
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_HARD;
+                break;
+            case LEVEL_4:
+                sectionTitleKey = TranslationKeys.STATISTICS_PAGE_DIFFICULTY_SECTION_TITLE_VERY_HARD;
+                break;
+            default:
+                throw new IllegalStateException("Unknown bot intelligence level " + level);
+        }
+        return localizationManager.localizeText(sectionTitleKey);
     }
 }

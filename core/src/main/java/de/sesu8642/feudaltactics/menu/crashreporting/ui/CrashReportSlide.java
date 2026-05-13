@@ -4,6 +4,8 @@ package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import de.sesu8642.TranslationKeys;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
@@ -33,11 +35,11 @@ public class CrashReportSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public CrashReportSlide(Skin skin) {
-        super(skin, "Report a Crash");
+    public CrashReportSlide(Skin skin, LocalizationManager localizationManager) {
+        super(skin, localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_HEADLINE));
 
         descriptionLabel = new Label(
-            "Feudal Tactics previously crashed. Please report the following information via email or GitHub.",
+            localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_TEXT_INSTRUCTION),
             skin);
         descriptionLabel.setWrap(true);
         descriptionLabel.setAlignment(Align.topLeft);
@@ -45,9 +47,13 @@ public class CrashReportSlide extends Slide {
         textArea = new TextArea("", skin);
         textArea.setDisabled(true);
 
-        copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
-        sendMailButton = ButtonFactory.createTextButton("Send Email ↗", skin);
-        openGithubButton = ButtonFactory.createTextButton("Open GitHub ↗", skin);
+        copyButton = ButtonFactory.createCopyButton(localizationManager.localizeText(TranslationKeys.COPY_BUTTON),
+            skin, true);
+        sendMailButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_BUTTON_SEND_EMAIL), skin);
+        openGithubButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.CRASH_REPORT_PAGE_BUTTON_OPEN_ISSUES),
+            skin);
 
         buttonGroup = new HorizontalGroup();
         buttonGroup.addActor(copyButton);

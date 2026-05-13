@@ -4,10 +4,10 @@ package de.sesu8642.feudaltactics.menu.statistics;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefStore;
@@ -37,29 +37,6 @@ public class HistoryDao {
     public HistoryDao(@HistoryPrefStore Preferences historyPrefs) {
         prefStore = historyPrefs;
         json.setOutputType(JsonWriter.OutputType.json);
-        registerSerializers();
-    }
-
-    /**
-     * Teach the LibGDX Json mapper how to handle NewGamePreferences that lacks a zero-arg constructor.
-     * We serialize NewGamePreferences as its existing sharable string format to avoid
-     * adding a dummy constructor just for deserialization.
-     */
-    private void registerSerializers() {
-        json.setSerializer(NewGamePreferences.class, new Json.Serializer<NewGamePreferences>() {
-            @Override
-            @SuppressWarnings("rawtypes")
-            public void write(Json json, NewGamePreferences prefs, Class knownType) {
-                json.writeValue(prefs.toSharableString());
-            }
-
-            @Override
-            @SuppressWarnings("rawtypes")
-            public NewGamePreferences read(Json json, JsonValue jsonData, Class type) {
-                final String sharedString = jsonData == null ? "" : jsonData.asString();
-                return NewGamePreferences.fromSharableString(sharedString);
-            }
-        });
     }
 
     public void registerPlayedGame(GameState gameState, NewGamePreferences gamePreferences, GameResult gameResult) {
@@ -67,14 +44,24 @@ public class HistoryDao {
             return; // only record generated maps for now. We must treat ScenarioMaps differently.
         }
 
-        Integer roundsPlayed = gameState.getWinningRound();
-        if (roundsPlayed == null)
-        // game was aborted, so return the current round.
-        // In other cases, winningRound is one lower than round, because round is incremented at the start of a
-        // round after evaluating victory conditions,
-        // but before invoking this method.
-        {
-            roundsPlayed = gameState.getRound();
+        Integer roundsPlayed;
+        switch (gameResult) {
+            case WIN:
+                roundsPlayed = gameState.getWinningRound();
+                break;
+            case LOSS:
+                Player humanPlayer = gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER).findAny().get();
+                if (humanPlayer.isDefeated()) {
+                    roundsPlayed = humanPlayer.getRoundOfDefeat();
+                } else {
+                    roundsPlayed = gameState.getRound();
+                }
+                break;
+            case ABORTED:
+                roundsPlayed = gameState.getRound();
+                break;
+            default:
+                throw new IllegalStateException();
         }
 
         final HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed,

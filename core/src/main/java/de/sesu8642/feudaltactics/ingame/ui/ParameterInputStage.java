@@ -10,9 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter.DigitsOnlyFilter;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.Densities;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
@@ -29,10 +32,21 @@ import java.util.stream.Collectors;
  */
 public class ParameterInputStage extends ResizableResettableStage {
 
+    private static final List<String> DIFFICULTIES_KEYS =
+        ImmutableList.of(TranslationKeys.GAME_PARAMETER_DIFFICULTY_EASY,
+            TranslationKeys.GAME_PARAMETER_DIFFICULTY_MEDIUM, TranslationKeys.GAME_PARAMETER_DIFFICULTY_HARD,
+            TranslationKeys.GAME_PARAMETER_DIFFICULTY_VERY_HARD);
+    private static final List<String> MAP_SIZES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_SIZE_SMALL,
+        TranslationKeys.GAME_PARAMETER_SIZE_MEDIUM, TranslationKeys.GAME_PARAMETER_SIZE_LARGE,
+        TranslationKeys.GAME_PARAMETER_SIZE_XLARGE, TranslationKeys.GAME_PARAMETER_SIZE_XXLARGE);
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE,
+        TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_DENSE);
+
     private static final int OUTER_PADDING_PX = (int) (Gdx.graphics.getDensity() * 10);
-    private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 20);
+    private static final int INPUT_PADDING_PX = (int) (Gdx.graphics.getDensity() * 10);
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
+    private final LocalizationManager localizationManager;
     SelectBox<String> startingPositionSelect;
     SelectBox<String> sizeSelect;
     SelectBox<String> densitySelect;
@@ -44,6 +58,9 @@ public class ParameterInputStage extends ResizableResettableStage {
     TextButton playButton;
     TextField seedTextField;
     private Table rootTable;
+    private Table rightInputsTable;
+    private Table bottomButtonTable;
+    private Table leftInputsTable;
     private Table seedTable;
 
     /**
@@ -54,34 +71,41 @@ public class ParameterInputStage extends ResizableResettableStage {
      */
     @Inject
     public ParameterInputStage(@MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
-                               Skin skin) {
+                               Skin skin, LocalizationManager localizationManager) {
         super(viewport);
         this.platformInsetsProvider = platformInsetsProvider;
         this.skin = skin;
+        this.localizationManager = localizationManager;
         initUi();
     }
 
     private void initUi() {
-        final Label startingPositionLabel = new Label("Starting\nPosition",
-            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label startingPositionLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_STARTING_POSITION),
+                skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
-        final Label difficultyLabel = new Label("CPU\nDifficulty", skin.get(SkinConstants.FONT_OVERLAY,
-            LabelStyle.class));
+        final Label difficultyLabel =
+            new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY),
+                skin.get(SkinConstants.FONT_OVERLAY,
+                    LabelStyle.class));
         difficultySelect = new SelectBox<>(skin);
-        difficultySelect.setItems(EnumDisplayNameConverter.DIFFICULTIES.toArray(new String[0]));
+        difficultySelect.setItems(localizationManager.localizeTextBatch(DIFFICULTIES_KEYS).toArray(new String[0]));
 
-        final Label sizeLabel = new Label("Map\nSize", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label sizeLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_SIZE),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         sizeSelect = new SelectBox<>(skin);
-        sizeSelect.setItems(EnumDisplayNameConverter.MAP_SIZES.toArray(new String[0]));
+        sizeSelect.setItems(localizationManager.localizeTextBatch(MAP_SIZES_KEYS).toArray(new String[0]));
 
-        final Label densityLabel = new Label("Map\nDensity", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label densityLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_DENSITY),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         densitySelect = new SelectBox<>(skin);
-        densitySelect.setItems(EnumDisplayNameConverter.DENSITIES.toArray(new String[0]));
+        densitySelect.setItems(localizationManager.localizeTextBatch(DENSITIES_KEYS).toArray(new String[0]));
 
-        final Label seedLabel = new Label("Seed", skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
+        final Label seedLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_SEED),
+            skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
         seedTextField = new TextField("", skin);
         seedTextField.setTextFieldFilter(new DigitsOnlyFilter());
         seedTextField.setMaxLength(18);
@@ -109,41 +133,58 @@ public class ParameterInputStage extends ResizableResettableStage {
         seedTable.add(randomButton).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1,
             difficultySelect));
 
-        backButton = ButtonFactory.createTextButton("Back", skin);
-        playButton = ButtonFactory.createTextButton("Play", skin);
+        backButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_BACK), skin);
+        playButton =
+            ButtonFactory.createTextButton(localizationManager.localizeText(TranslationKeys.MENU_BUTTON_PLAY), skin);
 
-        final Table buttonTable = new Table();
-        buttonTable.add(backButton).expandX().fill();
-        buttonTable.add(playButton).expandX().fill();
+        bottomButtonTable = new Table();
+        bottomButtonTable.add(backButton).expandX().fill();
+        bottomButtonTable.add(playButton).expandX().fill();
+
+        leftInputsTable = new Table();
+        leftInputsTable.defaults().left();
+        leftInputsTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
+        leftInputsTable.add().expandY();
+        leftInputsTable.row();
+        leftInputsTable.add(seedLabel);
+        leftInputsTable.row();
+        leftInputsTable.add(seedTable).minWidth(seedTextFieldWidth).fillX().padBottom(INPUT_PADDING_PX / 2F);
+        leftInputsTable.add().expandX();
+        leftInputsTable.row();
+        leftInputsTable.add(startingPositionLabel);
+        leftInputsTable.row();
+        leftInputsTable.add(startingPositionSelect).fillX().padBottom(INPUT_PADDING_PX / 2F);
+        leftInputsTable.row();
+        leftInputsTable.add(difficultyLabel);
+        leftInputsTable.row();
+        leftInputsTable.add(difficultySelect).fillX().padBottom(INPUT_PADDING_PX / 2F);
+        leftInputsTable.row();
+        leftInputsTable.add(sizeLabel);
+        leftInputsTable.row();
+        leftInputsTable.add(sizeSelect).fillX().padBottom(INPUT_PADDING_PX / 2F);
+        leftInputsTable.row();
+        leftInputsTable.add(densityLabel);
+        leftInputsTable.row();
+        leftInputsTable.add(densitySelect).fillX();
+
+        rightInputsTable = new Table();
+        rightInputsTable.add().expand();
+        rightInputsTable.row();
+        rightInputsTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).padBottom(INPUT_PADDING_PX).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1));
+        rightInputsTable.row();
+        rightInputsTable.add(copyButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1));
 
         rootTable = new Table();
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
-        rootTable.defaults().left().pad(INPUT_PADDING_PX / 2F, 0, INPUT_PADDING_PX / 2F, 0);
-        rootTable.columnDefaults(0).pad(0, OUTER_PADDING_PX, 0, OUTER_PADDING_PX);
         rootTable.setFillParent(true);
-        rootTable.add().expandY();
         rootTable.row();
-        rootTable.add(seedLabel);
-        rootTable.add(seedTable).minWidth(seedTextFieldWidth).fillX();
-        rootTable.add().expandX();
+        rootTable.add(leftInputsTable).expandY().fillY();
+        rootTable.add(rightInputsTable).expand().fill();
         rootTable.row();
-        rootTable.add(startingPositionLabel);
-        rootTable.add(startingPositionSelect).fillX();
-        rootTable.row();
-        rootTable.add(difficultyLabel);
-        rootTable.add(difficultySelect).fillX();
-        rootTable.row();
-        rootTable.add(sizeLabel);
-        rootTable.add(sizeSelect).fillX();
-        rootTable.add(copyButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1));
-        rootTable.row();
-        rootTable.add(densityLabel);
-        rootTable.add(densitySelect).fillX();
-        rootTable.add(pasteButton).right().padLeft(OUTER_PADDING_PX).padRight(OUTER_PADDING_PX).height(Value.percentHeight(1, difficultySelect)).width(Value.percentHeight(1));
-        rootTable.row();
-        rootTable.add(buttonTable).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX, OUTER_PADDING_PX,
-            OUTER_PADDING_PX);
+        rootTable.add(bottomButtonTable).colspan(3).fillX().pad(INPUT_PADDING_PX / 2F, OUTER_PADDING_PX,
+            OUTER_PADDING_PX, OUTER_PADDING_PX);
         addActor(rootTable);
     }
 
@@ -202,7 +243,7 @@ public class ParameterInputStage extends ResizableResettableStage {
      * Returns the vertical distance above the inputs.
      */
     public float getAvailableHeightAboveInputs() {
-        return Gdx.graphics.getHeight() - seedTable.getY() - seedTable.getHeight();
+        return Gdx.graphics.getHeight() - seedTable.getY() - seedTable.getHeight() - leftInputsTable.getY();
     }
 
     /**
@@ -238,8 +279,8 @@ public class ParameterInputStage extends ResizableResettableStage {
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         if (rootTable.getWidth() == 0) {
-            // packing the root table so the buttons take their correct square shape initially
-            rootTable.pack();
+            // packing the table so the buttons take their correct square shape initially
+            rightInputsTable.pack();
         }
     }
 

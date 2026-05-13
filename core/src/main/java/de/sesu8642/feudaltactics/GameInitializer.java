@@ -7,7 +7,6 @@ import com.badlogic.gdx.Input.Keys;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.dagger.VersionProperty;
-import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.exceptions.InitializationException;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
@@ -85,7 +84,6 @@ public class GameInitializer {
                     // resume running game
                     screenNavigationController.transitionToIngameScreen();
                     eventBus.post(new GameResumedEvent());
-                    eventBus.post(new CenterMapUIEvent());
                 } else {
                     // fresh start
                     screenNavigationController.transitionToSplashScreen();

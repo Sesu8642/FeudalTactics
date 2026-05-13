@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.CenterMapUIEvent;
 import de.sesu8642.feudaltactics.events.GameResumedEvent;
 import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
@@ -73,16 +72,6 @@ public class IngameScreenEventHandler {
     @Subscribe
     public void handleGameStateChange(GameStateChangeEvent event) {
         ingameScreen.handleGameStateChange(event.getGameState());
-    }
-
-    /**
-     * Event handler for centering the map.
-     *
-     * @param event event to handle
-     */
-    @Subscribe
-    public void handleMapCenteringUiEvent(CenterMapUIEvent event) {
-        ingameScreen.centerMap();
     }
 
     /**

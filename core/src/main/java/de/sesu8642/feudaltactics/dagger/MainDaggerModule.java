@@ -8,11 +8,15 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.SubscriberExceptionHandler;
 import dagger.Module;
 import dagger.Provides;
+import de.sesu8642.feudaltactics.ResourceNameReader;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import java.util.List;
+
+import static de.sesu8642.feudaltactics.localization.LocalizationManager.BASE_LOCALISATION_DIR;
 
 /**
  * Dagger module for the application.
@@ -38,8 +42,9 @@ public class MainDaggerModule {
 
     @Provides
     @Singleton
-    static Skin provideSkin() {
-        return SkinFactory.createSkin();
+    static Skin provideSkin(ResourceNameReader resourceNameReader) {
+        final List<String> languageFiles = resourceNameReader.getAssetFilePaths(BASE_LOCALISATION_DIR);
+        return SkinFactory.createSkin(languageFiles);
     }
 
     @Provides
