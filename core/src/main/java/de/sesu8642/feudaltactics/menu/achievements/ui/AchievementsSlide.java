@@ -38,6 +38,7 @@ public class AchievementsSlide extends Slide {
     private final Skin skin;
     private final HorizontalGroup achievementTileGroup;
     private final DialogFactory dialogFactory;
+    private final AchievementService achievementService;
     private final Drawable achievementBackgroundLockedDrawable;
     private final Drawable achievementBackgroundUnlockedDrawable;
     private final Drawable rowBorderDrawable;
@@ -51,26 +52,36 @@ public class AchievementsSlide extends Slide {
     public AchievementsSlide(Skin skin, AchievementService achievementService, DialogFactory dialogFactory) {
         super(skin, "Achievements");
         this.skin = skin;
+        this.achievementService = achievementService;
         this.dialogFactory = dialogFactory;
 
         this.achievementBackgroundLockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.GRAY);
         this.achievementBackgroundUnlockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.LIME);
         this.rowBorderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
 
-        achievementTileGroup =  new HorizontalGroup();
+        achievementTileGroup = new HorizontalGroup();
         achievementTileGroup.wrap();
         achievementTileGroup.space(10);
         achievementTileGroup.wrapSpace(10);
         achievementTileGroup.align(Align.center);
 
+        renderAchievements();
+
+        getTable().add(achievementTileGroup).fill().expand();
+    }
+
+    /**
+     * Refresh the achievement tiles from the current service state.
+     * Call this when the screen becomes visible to update the UI.
+     */
+    public void renderAchievements() {
+        achievementTileGroup.clearChildren();
         List<AbstractAchievement> achievements = achievementService.getAchievements();
         for (AbstractAchievement achievement : achievements) {
             Actor achievementBox = displayAchievement(achievement);
             achievementBox.setSize(ACHIEVEMENT_WINDOW_WIDTH, ACHIEVEMENT_WINDOW_HEIGHT);
             achievementTileGroup.addActor(achievementBox);
         }
-
-        getTable().add(achievementTileGroup).fill().expand();
     }
 
     /* Width of a single achievement box */

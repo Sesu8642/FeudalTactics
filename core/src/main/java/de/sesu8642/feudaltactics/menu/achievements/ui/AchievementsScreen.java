@@ -16,9 +16,19 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class AchievementsScreen extends GameScreen {
+    private final AchievementsStage achievementsStage;
     @Inject
     public AchievementsScreen(@MenuCamera OrthographicCamera camera, @MenuViewport Viewport viewport,
                               AchievementsStage stage) {
         super(camera, viewport, stage);
+        this.achievementsStage = stage;
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        if (achievementsStage != null && achievementsStage.getAchievementsSlide() != null) {
+            achievementsStage.getAchievementsSlide().renderAchievements();
+        }
     }
 }
