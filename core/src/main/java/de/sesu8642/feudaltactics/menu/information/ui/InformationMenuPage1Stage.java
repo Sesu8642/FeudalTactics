@@ -49,7 +49,7 @@ public class InformationMenuPage1Stage extends MenuStage {
         final Label bottomRightLabel = new Label(String.format("%s %s",
             localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        getBottomRightTable().add(bottomRightLabel);
+        getBottomTable().add(bottomRightLabel);
 
     }
 

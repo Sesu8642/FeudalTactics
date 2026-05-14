@@ -34,11 +34,10 @@ public class MenuStage extends ResizableResettableStage {
     private final OrthographicCamera camera;
     Set<Disposable> disposables = new HashSet<>();
     LocalizationManager localizationManager;
+    @Getter
     private Table rootTable;
     @Getter(AccessLevel.PROTECTED)
-    private Table bottomLeftTable;
-    @Getter(AccessLevel.PROTECTED)
-    private Table bottomRightTable;
+    private Table bottomTable;
 
     /**
      * Constructor.
@@ -68,14 +67,13 @@ public class MenuStage extends ResizableResettableStage {
                 ButtonFactory.createTextButton(localizationManager.localizeText(buttonText), skin);
             buttons.add(button);
         }
-        bottomLeftTable = new Table();
-        bottomRightTable = new Table();
+        bottomTable = new Table();
 
         rootTable = new Table();
         rootTable.padBottom(platformInsetsProvider.getInsets(Gdx.app).getBottomInset());
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.setFillParent(true);
-        rootTable.defaults().minSize(0).colspan(2);
+        rootTable.defaults().minSize(0);
         final Image logoImage = new Image(logoTexture);
         logoImage.setScaling(Scaling.contain);
         rootTable.add(logoImage).prefWidth(Gdx.graphics.getDensity() * 2000).prefHeight(Value.percentWidth(0.51F));
@@ -87,9 +85,7 @@ public class MenuStage extends ResizableResettableStage {
             rootTable.row();
         }
         rootTable.row();
-        rootTable.add(bottomLeftTable).fill(false).left().bottom().pad(10).minHeight(0).colspan(1);
-        rootTable.add(bottomRightTable).fill(false).right().bottom().pad(10).minHeight(0).colspan(1);
-
+        rootTable.add(bottomTable).fill(false).right().bottom().pad(10).minSize(0);
         addActor(rootTable);
     }
 
@@ -98,6 +94,10 @@ public class MenuStage extends ResizableResettableStage {
         camera.viewportHeight = height;
         camera.viewportWidth = width;
         camera.update();
+        if (getRootTable().getWidth() == 0) {
+            // packing the table so the bottom label is in the correct position initially
+            getRootTable().pack();
+        }
     }
 
     @Override

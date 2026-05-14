@@ -31,10 +31,12 @@ import java.util.List;
 public class MainMenuStage extends MenuStage {
 
     private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_PLAY,
-        TranslationKeys.MENU_BUTTON_LEVEL_EDITOR, TranslationKeys.MENU_BUTTON_PREFERENCES, TranslationKeys.MENU_BUTTON_INFORMATION,
+        TranslationKeys.MENU_BUTTON_LEVEL_EDITOR, TranslationKeys.MENU_BUTTON_PREFERENCES,
+            TranslationKeys.MENU_BUTTON_INFORMATION,
         TranslationKeys.MENU_BUTTON_COMMUNITY);
     private static final List<String> BUTTON_TEXTS_KEYS_WITHOUT_LEVEL_EDITOR =
-        ImmutableList.of(TranslationKeys.MENU_BUTTON_PLAY, TranslationKeys.MENU_BUTTON_PREFERENCES,TranslationKeys.MENU_BUTTON_INFORMATION,
+        ImmutableList.of(TranslationKeys.MENU_BUTTON_PLAY, TranslationKeys.MENU_BUTTON_PREFERENCES,
+                TranslationKeys.MENU_BUTTON_INFORMATION,
             TranslationKeys.MENU_BUTTON_COMMUNITY);
 
     /**
@@ -51,6 +53,6 @@ public class MainMenuStage extends MenuStage {
         final Label bottomRightLabel = new Label(String.format("%s %s",
             localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        getBottomRightTable().add(bottomRightLabel);
+        getBottomTable().add(bottomRightLabel);
     }
 }

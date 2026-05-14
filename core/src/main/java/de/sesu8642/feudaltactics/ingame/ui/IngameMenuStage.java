@@ -49,7 +49,7 @@ public class IngameMenuStage extends MenuStage {
             localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY,
                 LabelStyle.class));
-        getBottomRightTable().add(bottomRightLabel);
+        getBottomTable().add(bottomRightLabel);
     }
 
 }
