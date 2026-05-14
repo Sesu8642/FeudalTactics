@@ -50,7 +50,8 @@ public final class GameStateValidator {
             && allTilesInAKingdomAreConnected(gameState)
             && tilesHaveBackLinksInTheirKingdoms(gameState)
             && mapIsNotTooLarge(gameState)
-            && treesAreTheCorrectTypeBasedOnPosition(gameState);
+            && treesAreTheCorrectTypeBasedOnPosition(gameState)
+            && capitalsAndCastlesAreOnlyInKingdoms(gameState);
         if (isValid) {
             log.info("game state is valid in general");
         } else {
@@ -320,6 +321,23 @@ public final class GameStateValidator {
             }
             if (Tree.class.isAssignableFrom(tile.getContent().getClass()) && isCoastTile) {
                 log.info("oak tree is on coast tile");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean capitalsAndCastlesAreOnlyInKingdoms(GameState gameState) {
+        for (HexTile tile : gameState.getMap().values()) {
+            if (tile.getContent() == null || tile.getKingdom() != null) {
+                continue;
+            }
+            if (Capital.class.isAssignableFrom(tile.getContent().getClass())) {
+                log.info("capital is on non-kingdom tile");
+                return false;
+            }
+            if (Castle.class.isAssignableFrom(tile.getContent().getClass())) {
+                log.info("castle is on non-kingdom tile");
                 return false;
             }
         }
