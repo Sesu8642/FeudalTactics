@@ -1,0 +1,9 @@
+Feudal Tactics 1.5.0
+
+This update brings several new features and improvements. Highlights include:
+- history of played games
+- statistics
+- translation support
+- German translation
+- more visual indicators on the map
+- improved UI scaling
