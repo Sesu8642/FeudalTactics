@@ -1,6 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import org.junit.jupiter.api.Test;
@@ -8,8 +7,8 @@ import org.junit.jupiter.api.Test;
 class LoseAgainstWeakestAiTest extends AbstractAchievementTest<LoseAgainstWeakestAiAchievement> {
 
     @Override
-    protected LoseAgainstWeakestAiAchievement createAchievement(EventBus eventBus) {
-        return new LoseAgainstWeakestAiAchievement(eventBus);
+    protected LoseAgainstWeakestAiAchievement createAchievement() {
+        return new LoseAgainstWeakestAiAchievement();
     }
 
     @Test

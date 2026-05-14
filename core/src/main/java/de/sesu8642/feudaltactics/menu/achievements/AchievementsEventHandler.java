@@ -5,8 +5,6 @@ package de.sesu8642.feudaltactics.menu.achievements;
 import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementUnlockedEvent;
 
 import javax.inject.Inject;
 
@@ -36,15 +34,5 @@ public class AchievementsEventHandler {
     @Subscribe
     public void handleMapRegeneration(RegenerateMapEvent event) {
         achievementService.onMapRegeneration(event);
-    }
-
-    @Subscribe
-    public void handleAchievementUnlocked(AchievementUnlockedEvent event) {
-        achievementService.onAchievementUnlocked(event);
-    }
-
-    @Subscribe
-    public void handleAchievementProgress(AchievementProgressEvent event) {
-        achievementService.onAchievementProgress(event);
     }
 }

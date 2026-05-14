@@ -8,8 +8,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementUnlockedEvent;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import lombok.Getter;
 
@@ -38,7 +36,9 @@ public class AchievementService {
      */
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         for (AbstractAchievement achievement : achievements) {
-            achievement.onGameExited(event);
+            if (achievement.onGameExited(event)) {
+                    storeAchievementProgress(achievement);
+            }
         }
     }
 
@@ -47,19 +47,20 @@ public class AchievementService {
      */
     public void onMapRegeneration(RegenerateMapEvent event) {
         for (AbstractAchievement achievement : achievements) {
-            achievement.onMapRegeneration(event);
+            if (achievement.onMapRegeneration(event)) {
+                storeAchievementProgress(achievement);
+            }
         }
     }
 
-    public void onAchievementUnlocked(AchievementUnlockedEvent event) {
-        achievementRepository.unlockAchievement(event.getAchievement().getId());
-    }
-
-    public void onAchievementProgress(AchievementProgressEvent event) {
-        AbstractAchievement achievement = event.getAchievement();
-        achievementRepository.storeProgress(achievement.getId(), achievement.getProgress());
-        if (achievement instanceof AchievementNeedsFullStorage) {
-            achievementRepository.storeFullAchievementData(achievement.getId(), ((AchievementNeedsFullStorage) achievement).serializeToJson());
+    public void storeAchievementProgress(AbstractAchievement achievement) {
+        if (achievement.isUnlocked()) {
+            achievementRepository.unlockAchievement(achievement.getId());
+        } else {
+            achievementRepository.storeProgress(achievement.getId(), achievement.getProgress());
+            if (achievement instanceof AchievementNeedsFullStorage) {
+                achievementRepository.storeFullAchievementData(achievement.getId(), ((AchievementNeedsFullStorage) achievement).serializeToJson());
+            }
         }
     }
 }

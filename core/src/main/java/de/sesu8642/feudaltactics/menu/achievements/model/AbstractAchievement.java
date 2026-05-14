@@ -1,10 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementUnlockedEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -82,10 +78,7 @@ public abstract class AbstractAchievement {
         return false;
     }
 
-    protected EventBus eventBus;
-   
-    protected AbstractAchievement(EventBus eventBus, int goal, String name) {
-        this.eventBus = eventBus;
+    protected AbstractAchievement(int goal, String name) {
         this.goal = goal;
         this.baseName = name;
     }
@@ -93,7 +86,6 @@ public abstract class AbstractAchievement {
     protected void unlock() {
         if (!unlocked) {
             unlocked = true;
-            eventBus.post(new AchievementUnlockedEvent(this));
         }
     }
 
@@ -111,7 +103,6 @@ public abstract class AbstractAchievement {
 
     protected void storeProgress(int number) {
         this.progress = number;
-        eventBus.post(new AchievementProgressEvent(this));
         if (progress >= goal) {
             unlock();
         }
@@ -119,15 +110,21 @@ public abstract class AbstractAchievement {
 
     /**
      * Called when a game is exited. Override to handle this event.
+     * 
+     * Returns whether the achievement's state has changed (e.g. progress updated or achievement unlocked) and thus the achievement needs to be persisted.
      */
-    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         // No-op by default
+        return false;
     }
 
     /**
     * Called when the map is regenerated. Override to handle this event.
-    */
-    public void onMapRegeneration(RegenerateMapEvent event) {
+     * 
+     * Returns whether the achievement's state has changed (e.g. progress updated or achievement unlocked) and thus the achievement needs to be persisted.
+     */
+    public boolean onMapRegeneration(RegenerateMapEvent event) {
         // No-op by default
+        return false;
     }
 }

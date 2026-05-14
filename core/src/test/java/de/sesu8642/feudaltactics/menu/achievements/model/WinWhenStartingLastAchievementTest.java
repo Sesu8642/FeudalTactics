@@ -1,14 +1,13 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import org.junit.jupiter.api.Test;
 
 class WinWhenStartingLastAchievementTest extends AbstractAchievementTest<WinWhenStartingLastAchievement> {
 
     @Override
-    protected WinWhenStartingLastAchievement createAchievement(EventBus eventBus) {
-        return new WinWhenStartingLastAchievement(eventBus);
+    protected WinWhenStartingLastAchievement createAchievement() {
+        return new WinWhenStartingLastAchievement();
     }
 
     @Test

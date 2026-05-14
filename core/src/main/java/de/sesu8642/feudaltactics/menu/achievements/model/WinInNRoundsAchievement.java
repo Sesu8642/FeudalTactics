@@ -1,7 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
@@ -15,8 +13,8 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
 
     private final int rounds;
 
-    public WinInNRoundsAchievement(EventBus eventBus, int rounds) {
-        super(eventBus, 1, "Win in " + rounds + " Rounds");
+    public WinInNRoundsAchievement(int rounds) {
+        super(1, "Win in " + rounds + " Rounds");
         this.rounds = rounds;
     }
 
@@ -31,30 +29,32 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
     }
 
     @Override
-    public void onGameExited(GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
         if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+            return false;     // Ignore exits from editor or similar
         }   
     
         final Player winnerOfTheGame = gameState.getWinner();
 
         if (winnerOfTheGame == null || winnerOfTheGame.getType() != Player.Type.LOCAL_PLAYER) {
-            return;     // Player didn't win, so ignore
+            return false;     // Player didn't win, so ignore
         }
 
         Intelligence aiLevel = gameState.getBotIntelligence();
         if (aiLevel != Intelligence.LEVEL_4) {
-            return;    // Not a Very Hard game, ignore
+            return false;    // Not a Very Hard game, ignore
         }
 
         NewGamePreferences gamePreferences = event.getGamePreferences();
         if (gamePreferences.getMapSize().getAmountOfTiles() < NewGamePreferences.MapSizes.MEDIUM.getAmountOfTiles()) {
-            return;    // Map size is too small, ignore
+            return false;    // Map size is too small, ignore
         }
 
         if (gameState.getWinningRound() <= rounds) {
             storeProgress(1);
+            return true;
         }
+        return false;
     }
 }

@@ -1,6 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
@@ -8,7 +7,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.reset;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,13 +17,13 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
     private static final int GOAL = 3;
 
     @Override
-    protected WinVeryHardGamesInARowAchievement createAchievement(EventBus eventBus) {
-        return new WinVeryHardGamesInARowAchievement(eventBus, GOAL);
+    protected WinVeryHardGamesInARowAchievement createAchievement() {
+        return new WinVeryHardGamesInARowAchievement(GOAL);
     }
 
     @Override
-    protected WinVeryHardGamesInARowAchievement createAchievementWithDifferentParams(EventBus eventBus) {
-        return new WinVeryHardGamesInARowAchievement(eventBus, 10);
+    protected WinVeryHardGamesInARowAchievement createAchievementWithDifferentParams() {
+        return new WinVeryHardGamesInARowAchievement(10);
     }
 
     @Test
@@ -78,12 +78,15 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
         achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
 
         // Win resets the flag
-        achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
-        reset(eventBus);
+        boolean resExitedEvent = achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
+        assertTrue(resExitedEvent);
+        int progress = achievement.getProgress();
+        assertTrue(progress > 0);
 
         // Next generation should be treated as first again (progress preserved, not reset)
-        achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
-        assertEquals(1, achievement.getProgress());
+        boolean resMapRegen2 = achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
+        assertTrue(resMapRegen2);
+        verifyProgress(progress);
     }
 
     private RegenerateMapEvent mapRegenEvent(long seed) {

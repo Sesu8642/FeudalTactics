@@ -1,7 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
@@ -11,8 +9,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
  */
 public class WinNGamesAchievement extends AbstractAchievement {
 
-    public WinNGamesAchievement(EventBus eventBus, int gamesToWin) {
-        super(eventBus, gamesToWin, "Win " + gamesToWin + " Games");
+    public WinNGamesAchievement(int gamesToWin) {
+        super(gamesToWin, "Win " + gamesToWin + " Games");
     }
 
     @Override
@@ -26,16 +24,18 @@ public class WinNGamesAchievement extends AbstractAchievement {
     }
     
     @Override
-    public void onGameExited(GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
         if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+            return false;     // Ignore exits from editor or similar
         }   
     
         final Player winnerOfTheGame = gameState.getWinner();
 
         if (winnerOfTheGame != null && winnerOfTheGame.getType() == Player.Type.LOCAL_PLAYER) {
             storeProgress(getProgress() + 1);
+            return true;
         }
+        return false;
     }
 }

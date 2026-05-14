@@ -1,8 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import org.junit.jupiter.api.Test;
@@ -13,13 +11,13 @@ import static org.mockito.Mockito.*;
 class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievement> {
 
     @Override
-    protected WinNGamesAchievement createAchievement(EventBus eventBus) {
-        return new WinNGamesAchievement(eventBus, 5);
+    protected WinNGamesAchievement createAchievement() {
+        return new WinNGamesAchievement(5);
     }
 
     @Override
-    protected WinNGamesAchievement createAchievementWithDifferentParams(EventBus eventBus) {
-        return new WinNGamesAchievement(eventBus, 50);
+    protected WinNGamesAchievement createAchievementWithDifferentParams() {
+        return new WinNGamesAchievement(50);
     }
 
     @Test
@@ -43,11 +41,13 @@ class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievem
     @Test
     void multipleWins_progressIncrementsEachTime() {
         GameExitedEvent event = winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_2);
-        achievement.onGameExited(event);
-        achievement.onGameExited(event);
-        achievement.onGameExited(event);
+        boolean result1 = achievement.onGameExited(event);
+        boolean result2 = achievement.onGameExited(event);
+        boolean result3 = achievement.onGameExited(event);
 
         assertEquals(3, achievement.getProgress());
-        verify(eventBus, times(3)).post(any(AchievementProgressEvent.class));
+        assertTrue(result1);
+        assertTrue(result2);
+        assertTrue(result3);
     }
 }

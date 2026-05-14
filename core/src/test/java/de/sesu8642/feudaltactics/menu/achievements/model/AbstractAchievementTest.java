@@ -1,8 +1,6 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.events.achievements.AchievementProgressEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
@@ -20,24 +18,22 @@ import static org.mockito.Mockito.*;
  */
 abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
-    protected EventBus eventBus;
     protected T achievement;
 
     /** Create the achievement under test. Called in {@link #setUp()}. */
-    protected abstract T createAchievement(EventBus eventBus);
+    protected abstract T createAchievement();
 
     /**
      * Create the same type of achievement but with different constructor parameters,
      * so that we can verify the id changes. Return {@code null} if no parameterised variant exists.
      */
-    protected T createAchievementWithDifferentParams(EventBus eventBus) {
+    protected T createAchievementWithDifferentParams() {
         return null; // override when applicable
     }
 
     @BeforeEach
     void setUp() {
-        eventBus = mock(EventBus.class);
-        achievement = createAchievement(eventBus);
+        achievement = createAchievement();
     }
 
     // ---- common id / description tests ----
@@ -51,7 +47,7 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
     @Test
     void id_changesWithDifferentParams() {
-        T other = createAchievementWithDifferentParams(eventBus);
+        T other = createAchievementWithDifferentParams();
         if (other != null) {
             assertNotEquals(achievement.getId(), other.getId(),
                     "Achievements with different params should produce different ids");
@@ -78,9 +74,8 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
     void onGameExited_nullGameState_doesNothing() {
         GameExitedEvent event = new GameExitedEvent(null, null);
 
-        achievement.onGameExited(event);
-
-        verifyNoInteractions(eventBus);
+        boolean result = achievement.onGameExited(event);
+        assertFalse(result);
     }
 
     // ---- event builder helpers ----
@@ -151,12 +146,10 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
     /** Verify that storeProgress was called for the achievement. */
     protected void verifyProgress(int expectedProgress) {
         assertEquals(expectedProgress, achievement.getProgress());
-        verify(eventBus, atLeastOnce()).post(any(AchievementProgressEvent.class));
     }
 
     /** Verify no event bus interaction happened. */
     protected void verifyNoProgress() {
         assertEquals(0, achievement.getProgress());
-        verifyNoInteractions(eventBus);
     }
 }

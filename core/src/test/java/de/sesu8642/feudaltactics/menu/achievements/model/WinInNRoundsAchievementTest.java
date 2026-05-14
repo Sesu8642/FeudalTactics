@@ -1,6 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
@@ -11,13 +10,13 @@ class WinInNRoundsAchievementTest extends AbstractAchievementTest<WinInNRoundsAc
     private static final int ROUND_LIMIT = 16;
 
     @Override
-    protected WinInNRoundsAchievement createAchievement(EventBus eventBus) {
-        return new WinInNRoundsAchievement(eventBus, ROUND_LIMIT);
+    protected WinInNRoundsAchievement createAchievement() {
+        return new WinInNRoundsAchievement(ROUND_LIMIT);
     }
 
     @Override
-    protected WinInNRoundsAchievement createAchievementWithDifferentParams(EventBus eventBus) {
-        return new WinInNRoundsAchievement(eventBus, 14);
+    protected WinInNRoundsAchievement createAchievementWithDifferentParams() {
+        return new WinInNRoundsAchievement(14);
     }
 
     @Test

@@ -2,8 +2,6 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
@@ -16,8 +14,8 @@ import de.sesu8642.feudaltactics.lib.gamestate.Player;
 public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 
-    public WinOnMapSizeAchievement(EventBus eventBus, NewGamePreferences.MapSizes mapSize) {
-        super(eventBus, 1, "Win on a " + mapSize.name().toLowerCase() + " map");
+    public WinOnMapSizeAchievement(NewGamePreferences.MapSizes mapSize) {
+        super(1, "Win on a " + mapSize.name().toLowerCase() + " map");
 
         this.mapSize = mapSize;
     }
@@ -33,10 +31,10 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     }
 
     @Override
-    public void onGameExited(GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
         if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+            return false;     // Ignore exits from editor or similar
         }
 
         final Player winnerOfTheGame = gameState.getWinner();
@@ -45,7 +43,9 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
             NewGamePreferences gamePreferences = event.getGamePreferences();
             if (gamePreferences.getMapSize() == mapSize) {
                 storeProgress(1);   // unlock
+                return true;
             }
         }
+        return false;
     }
 }

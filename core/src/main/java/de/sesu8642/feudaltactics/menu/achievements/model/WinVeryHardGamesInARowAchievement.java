@@ -2,8 +2,6 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
@@ -31,9 +29,8 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
     private int currentStreakPlayerIndex;
 
     public WinVeryHardGamesInARowAchievement(
-        EventBus eventBus,
         int numberOfGamesInARowToWin) {
-        super(eventBus, numberOfGamesInARowToWin, "Win " + numberOfGamesInARowToWin + " Very Hard Games in a Row");
+        super(numberOfGamesInARowToWin, "Win " + numberOfGamesInARowToWin + " Very Hard Games in a Row");
     }
 
     @Override
@@ -51,11 +48,11 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
     }
 
     @Override
-    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         GameState gameState = event.getGameState();
 
         if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+            return false;     // Ignore exits from editor or similar
         }
 
         nextMapHasBeenGenerated = false;
@@ -63,13 +60,13 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
         final Player winnerOfTheGame = gameState.getWinner();
         if (winnerOfTheGame == null || winnerOfTheGame.getType() != Player.Type.LOCAL_PLAYER) {
             storeProgress(0);   // Lost or aborted a game, reset progress
-            return;
+            return true;
         }
 
         Intelligence aiLevel = gameState.getBotIntelligence();
         if (aiLevel != Intelligence.LEVEL_4) {
             storeProgress(0);   // Not a Very Hard game, reset progress
-            return;
+            return true;
         }
 
         int thisTimePlayerIndex = winnerOfTheGame.getPlayerIndex();
@@ -80,10 +77,11 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
         }
 
         storeProgress(getProgress() + 1);
+        return true;
     }
 
     @Override
-    public void onMapRegeneration(RegenerateMapEvent event) {
+    public boolean onMapRegeneration(RegenerateMapEvent event) {
         // First check whether this is a random map generation or whether it is a copied map, which is "illegal" for this achievement
         // The seed for a random map is based on the current time, so if the seed is for now, it is random.
         GameParameters gameParams = event.getGameParams();
@@ -91,7 +89,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
         long expectedSeed = System.currentTimeMillis();
         if (Math.abs(seed - expectedSeed) > 1000) {   // If the seed is more than 10 seconds in the past or future, it is not random
             storeProgress(0);
-            return;
+            return true;
         }
 
         // Check that the player did not change the color
@@ -115,6 +113,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
             nextMapHasBeenGenerated = true;
             storeProgress(getProgress());   // This is just for triggering the storage of the nextMapHasBeenGenerated value
         }
+        return true;
     }
 
     private final Json json = new Json();

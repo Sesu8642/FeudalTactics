@@ -1,24 +1,21 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import org.junit.jupiter.api.Test;
-
-import static org.mockito.Mockito.*;
 
 class PlayMoreThanNRoundsAchievementTest extends AbstractAchievementTest<PlayMoreThanNRoundsAchievement> {
 
     private static final int ROUND_COUNT = 50;
 
     @Override
-    protected PlayMoreThanNRoundsAchievement createAchievement(EventBus eventBus) {
-        return new PlayMoreThanNRoundsAchievement(eventBus, ROUND_COUNT);
+    protected PlayMoreThanNRoundsAchievement createAchievement() {
+        return new PlayMoreThanNRoundsAchievement(ROUND_COUNT);
     }
 
     @Override
-    protected PlayMoreThanNRoundsAchievement createAchievementWithDifferentParams(EventBus eventBus) {
-        return new PlayMoreThanNRoundsAchievement(eventBus, 100);
+    protected PlayMoreThanNRoundsAchievement createAchievementWithDifferentParams() {
+        return new PlayMoreThanNRoundsAchievement(100);
     }
 
     @Test

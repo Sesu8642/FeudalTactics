@@ -1,7 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 
 /**
@@ -11,8 +9,8 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
 
     private final Intelligence aiLevel;
 
-    public WinAgainstAiLevelAchievement(EventBus eventBus, Intelligence aiLevel) {
-        super(eventBus, 1, "Win Against AI Level " + aiLevel);  // TODO: localization
+    public WinAgainstAiLevelAchievement(Intelligence aiLevel) {
+        super(1, "Win Against AI Level " + aiLevel);  // TODO: localization
         this.aiLevel = aiLevel;
     }
 
@@ -27,10 +25,10 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
     }
 
     @Override
-    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
         if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+            return false;     // Ignore exits from editor or similar
         }
 
         final de.sesu8642.feudaltactics.lib.gamestate.Player winnerOfTheGame = gameState.getWinner();
@@ -38,6 +36,8 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
         if (winnerOfTheGame != null && winnerOfTheGame.getType() == de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER
             && gameState.getBotIntelligence() == aiLevel){
             storeProgress(1); // unlock
+            return true;
         }
+        return false;
     }
 }

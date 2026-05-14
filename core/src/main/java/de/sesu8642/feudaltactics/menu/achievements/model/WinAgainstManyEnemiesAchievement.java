@@ -1,7 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
-
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 
@@ -12,8 +10,8 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
 
     private final int enemyCount;
 
-    public WinAgainstManyEnemiesAchievement(EventBus eventBus, int enemyCount) {
-        super(eventBus, 1, "Win with " + enemyCount + " surviving enemies");
+    public WinAgainstManyEnemiesAchievement(int enemyCount) {
+        super(1, "Win with " + enemyCount + " surviving enemies");
         this.enemyCount = enemyCount;
     }
 
@@ -28,15 +26,15 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
     }
 
     @Override
-    public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
         if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+            return false;     // Ignore exits from editor or similar
         }
 
         final de.sesu8642.feudaltactics.lib.gamestate.Player winnerOfTheGame = gameState.getWinner();
         if (winnerOfTheGame == null || winnerOfTheGame.getType() != de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER) {
-            return;     // Player didn't win, so ignore
+            return false;     // Player didn't win, so ignore
         }
 
         long survivingEnemies = gameState.getPlayers().stream()
@@ -46,7 +44,9 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
 
         if (survivingEnemies >= enemyCount) {
             storeProgress(1); // unlock
+            return true;
         }
+        return false;
     }
 
     private static boolean isSurvivingPlayer(GameState gameState, Player player) {

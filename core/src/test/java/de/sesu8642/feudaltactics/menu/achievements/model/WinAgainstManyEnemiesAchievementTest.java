@@ -1,6 +1,5 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
@@ -14,13 +13,13 @@ class WinAgainstManyEnemiesAchievementTest extends AbstractAchievementTest<WinAg
     private static final int ENEMY_COUNT = 3;
 
     @Override
-    protected WinAgainstManyEnemiesAchievement createAchievement(EventBus eventBus) {
-        return new WinAgainstManyEnemiesAchievement(eventBus, ENEMY_COUNT);
+    protected WinAgainstManyEnemiesAchievement createAchievement() {
+        return new WinAgainstManyEnemiesAchievement(ENEMY_COUNT);
     }
 
     @Override
-    protected WinAgainstManyEnemiesAchievement createAchievementWithDifferentParams(EventBus eventBus) {
-        return new WinAgainstManyEnemiesAchievement(eventBus, 5);
+    protected WinAgainstManyEnemiesAchievement createAchievementWithDifferentParams() {
+        return new WinAgainstManyEnemiesAchievement(5);
     }
 
     @Test
