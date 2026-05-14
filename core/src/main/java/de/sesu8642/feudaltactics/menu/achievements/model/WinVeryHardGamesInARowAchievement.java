@@ -15,8 +15,8 @@ import lombok.Getter;
 
 /**
  * Achievement: Win a specified number of Very Hard games in a row without losing or aborting.
- * 
- * It implements AchievementNeedsFullStorage, as the two values nextMapHasBeenGenerated and currentStreakPlayerIndex must be persisted 
+ *
+ * It implements AchievementNeedsFullStorage, as the two values nextMapHasBeenGenerated and currentStreakPlayerIndex must be persisted
  * in order to properly track the progress of this achievement.
  */
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -102,12 +102,12 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
                 int playerIndex = player.getPlayerIndex();
                 if (currentStreakPlayerIndex != -1 && playerIndex != currentStreakPlayerIndex) {
                     storeProgress(0);   // Player changed color, reset progress
-                        // We don't need to store the streak color here, as it will be store when exiting this game 
+                        // We don't need to store the streak color here, as it will be store when exiting this game
                         // if the player wins and actually starts a streak
                     return;
                 }
             });
-        
+
         // Find whether this is the next game in the current streak or whether the player re-generated the map in between, and reset progress if it's the latter
         if (nextMapHasBeenGenerated) {
             storeProgress(0);   // Map was re-generated, reset progress
@@ -119,7 +119,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
 
     private final Json json = new Json();
 
-    private class SerializedData {
+    private static class SerializedData {
         public int currentStreakPlayerIndex;
         public boolean nextMapHasBeenGenerated;
     }
