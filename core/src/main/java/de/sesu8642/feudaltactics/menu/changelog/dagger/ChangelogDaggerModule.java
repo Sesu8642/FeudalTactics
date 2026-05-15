@@ -12,8 +12,7 @@ import dagger.Module;
 import dagger.Provides;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
-import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
-import de.sesu8642.feudaltactics.exceptions.InitializationException;
+import de.sesu8642.feudaltactics.gameconfig.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
@@ -23,6 +22,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import de.sesu8642.feudaltactics.menu.common.ui.SlideStage;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
+import de.sesu8642.feudaltactics.shared.exceptions.InitializationException;
 
 import javax.inject.Singleton;
 import java.io.IOException;

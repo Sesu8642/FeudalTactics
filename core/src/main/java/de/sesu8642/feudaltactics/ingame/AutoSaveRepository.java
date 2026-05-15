@@ -7,13 +7,13 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
-import de.sesu8642.feudaltactics.exceptions.SaveLoadingException;
 import de.sesu8642.feudaltactics.ingame.dagger.FullAutoSavePrefStore;
 import de.sesu8642.feudaltactics.ingame.dagger.IncrementalAutoSavePrefStore;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateSerializer;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
+import de.sesu8642.feudaltactics.shared.exceptions.SaveLoadingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

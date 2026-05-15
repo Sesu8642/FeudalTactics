@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics.menu.statistics.ui;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
@@ -12,6 +11,8 @@ import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.shared.events.SeedGeneratedEvent;
 
 import javax.inject.Inject;
 
@@ -37,7 +38,7 @@ public class StatisticsEventHandler {
         }
 
         final Intelligence aiDifficulty = gameState.getBotIntelligence();
-        HistoricGame.GameResult gameResult = evaluateGameResult(gameState);
+        final HistoricGame.GameResult gameResult = evaluateGameResult(gameState);
 
         statisticsDao.registerPlayedGame(aiDifficulty, gameResult);
         historyDao.registerPlayedGame(gameState, event.getGamePreferences(), gameResult);
@@ -45,7 +46,7 @@ public class StatisticsEventHandler {
 
     private GameResult evaluateGameResult(GameState gameState) {
         final Player winner = gameState.getWinner();
-        boolean localPlayerDefeated = gameState.getPlayers().stream()
+        final boolean localPlayerDefeated = gameState.getPlayers().stream()
             .anyMatch(player -> player.getType() == Type.LOCAL_PLAYER && player.isDefeated());
         if (localPlayerDefeated) {
             return GameResult.LOSS;
@@ -65,7 +66,7 @@ public class StatisticsEventHandler {
     }
 
     @Subscribe
-    public void handleSeedGenerated(de.sesu8642.feudaltactics.events.SeedGeneratedEvent event) {
+    public void handleSeedGenerated(SeedGeneratedEvent event) {
         statisticsDao.incrementSeedsGenerated();
     }
 }

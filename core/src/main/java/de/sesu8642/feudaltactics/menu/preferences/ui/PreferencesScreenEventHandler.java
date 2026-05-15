@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.menu.preferences.ui;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
+import de.sesu8642.feudaltactics.shared.events.MainPreferencesChangeEvent;
 
 import javax.inject.Inject;
 

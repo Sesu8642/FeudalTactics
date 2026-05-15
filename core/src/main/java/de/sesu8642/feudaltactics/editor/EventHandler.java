@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.editor;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
 
 import javax.inject.Inject;
 

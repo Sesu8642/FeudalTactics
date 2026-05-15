@@ -14,8 +14,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
-import de.sesu8642.feudaltactics.events.*;
-import de.sesu8642.feudaltactics.events.moves.*;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferencesDao;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
@@ -36,6 +34,8 @@ import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
+import de.sesu8642.feudaltactics.shared.events.*;
+import de.sesu8642.feudaltactics.shared.events.moves.*;
 import lombok.Setter;
 
 import javax.inject.Inject;

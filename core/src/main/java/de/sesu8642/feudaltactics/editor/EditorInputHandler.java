@@ -4,10 +4,10 @@ package de.sesu8642.feudaltactics.editor;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
-import de.sesu8642.feudaltactics.events.InitializeScenarioEvent;
-import de.sesu8642.feudaltactics.events.TapInputEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.HexMapHelper;
+import de.sesu8642.feudaltactics.shared.events.EditorHandContentUpdatedEvent;
+import de.sesu8642.feudaltactics.shared.events.InitializeScenarioEvent;
+import de.sesu8642.feudaltactics.shared.events.TapInputEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

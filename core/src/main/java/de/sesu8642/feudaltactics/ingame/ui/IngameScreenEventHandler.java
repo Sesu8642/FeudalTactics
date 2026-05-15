@@ -4,12 +4,12 @@ package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
-import de.sesu8642.feudaltactics.events.NewGamePreferencesChangedEvent;
-import de.sesu8642.feudaltactics.events.input.EscInputEvent;
-import de.sesu8642.feudaltactics.events.moves.GameStartEvent;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreen.IngameStages;
+import de.sesu8642.feudaltactics.shared.events.GameResumedEvent;
+import de.sesu8642.feudaltactics.shared.events.GameStateChangeEvent;
+import de.sesu8642.feudaltactics.shared.events.NewGamePreferencesChangedEvent;
+import de.sesu8642.feudaltactics.shared.events.input.EscInputEvent;
+import de.sesu8642.feudaltactics.shared.events.moves.GameStartEvent;
 
 import javax.inject.Inject;
 

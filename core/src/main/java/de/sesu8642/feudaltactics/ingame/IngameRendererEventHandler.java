@@ -3,11 +3,11 @@
 package de.sesu8642.feudaltactics.ingame;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.CenterMapEvent;
-import de.sesu8642.feudaltactics.events.FocusKingdomEvent;
-import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
+import de.sesu8642.feudaltactics.shared.events.CenterMapEvent;
+import de.sesu8642.feudaltactics.shared.events.FocusKingdomEvent;
+import de.sesu8642.feudaltactics.shared.events.GameStateChangeEvent;
 
 import javax.inject.Inject;
 

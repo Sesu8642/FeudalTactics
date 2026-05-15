@@ -6,13 +6,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.dagger.VersionProperty;
-import de.sesu8642.feudaltactics.events.GameResumedEvent;
-import de.sesu8642.feudaltactics.exceptions.InitializationException;
+import de.sesu8642.feudaltactics.gameconfig.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.changelog.GameVersionDao;
 import de.sesu8642.feudaltactics.menu.crashreporting.CrashReportDao;
 import de.sesu8642.feudaltactics.menu.preferences.NagPreferencesDao;
+import de.sesu8642.feudaltactics.shared.events.GameResumedEvent;
+import de.sesu8642.feudaltactics.shared.exceptions.InitializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

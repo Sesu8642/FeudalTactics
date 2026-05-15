@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics.lib.ingame;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
@@ -14,6 +13,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.ScenarioGameStateLoader;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.GameStateChangeEvent;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
