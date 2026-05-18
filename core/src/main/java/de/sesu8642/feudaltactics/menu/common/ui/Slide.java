@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.utils.Align;
 import lombok.Getter;
 
 import java.util.List;
@@ -35,7 +36,9 @@ public class Slide {
         // high
         table.defaults().pad(10);
         headlineLabel = new Label(headline, skin.get(SkinConstants.FONT_HEADLINE, LabelStyle.class));
-        table.add(headlineLabel);
+        headlineLabel.setWrap(true);
+        headlineLabel.setAlignment(Align.center);
+        table.add(headlineLabel).fillX();
         table.row();
     }
 
