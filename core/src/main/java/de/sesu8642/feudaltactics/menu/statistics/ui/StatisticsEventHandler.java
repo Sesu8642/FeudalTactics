@@ -6,6 +6,7 @@ import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
@@ -33,8 +34,10 @@ public class StatisticsEventHandler {
     @Subscribe
     public void handleGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
-        if (gameState == null) {
-            return;     // Ignore exits from editor or similar
+        if (gameState == null || gameState.getScenarioMap() != ScenarioMap.NONE) {
+            // Ignore exits from editor or similar and only record generated maps for now. We must treat ScenarioMaps
+            // differently.
+            return;
         }
 
         final Intelligence aiDifficulty = gameState.getBotIntelligence();

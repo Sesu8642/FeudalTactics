@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.JsonWriter;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
-import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame.GameResult;
 import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefStore;
 import jakarta.inject.Inject;
@@ -40,17 +39,14 @@ public class HistoryDao {
     }
 
     public void registerPlayedGame(GameState gameState, NewGamePreferences gamePreferences, GameResult gameResult) {
-        if (gameState == null || gameState.getScenarioMap() != ScenarioMap.NONE) {
-            return; // only record generated maps for now. We must treat ScenarioMaps differently.
-        }
-
-        Integer roundsPlayed;
+        final Integer roundsPlayed;
         switch (gameResult) {
             case WIN:
                 roundsPlayed = gameState.getWinningRound();
                 break;
             case LOSS:
-                Player humanPlayer = gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER).findAny().get();
+                final Player humanPlayer =
+                    gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER).findAny().get();
                 if (humanPlayer.isDefeated()) {
                     roundsPlayed = humanPlayer.getRoundOfDefeat();
                 } else {
