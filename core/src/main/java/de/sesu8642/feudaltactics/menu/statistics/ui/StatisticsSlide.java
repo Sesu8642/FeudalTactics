@@ -81,7 +81,7 @@ public class StatisticsSlide extends Slide {
         placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
             gamesWon.getTotalCount());
         final CountByAiLevel gamesLost = statistics.getGamesLost();
-        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_LOST),
             gamesLost.getTotalCount());
         final CountByAiLevel gamesAborted = statistics.getGamesAborted();
         placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_ABORTED),
