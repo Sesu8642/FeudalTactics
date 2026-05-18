@@ -3,10 +3,14 @@
 package de.sesu8642.feudaltactics.menu.achievements.ui;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
+import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
+
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,6 +26,8 @@ public class AchievementsScreen extends GameScreen {
                               AchievementsStage stage) {
         super(camera, viewport, stage);
         this.achievementsStage = stage;
+
+        registerEventListeners();
     }
 
     @Override
@@ -30,5 +36,14 @@ public class AchievementsScreen extends GameScreen {
         if (achievementsStage != null && achievementsStage.getAchievementsSlide() != null) {
             achievementsStage.getAchievementsSlide().renderAchievements();
         }
+    }
+
+    private void registerEventListeners() {
+        achievementsStage.getAchievementsSlide().getAchievementBoxes().forEach(achievementBox -> {
+            achievementBox.getAchievementWindow().addListener(new ExceptionLoggingClickListener(() -> {
+                Dialog achievementDetailsDialog = achievementBox.createAchievementDetailsDialog();
+                achievementDetailsDialog.show(achievementsStage);
+            }));
+        });
     }
 }
