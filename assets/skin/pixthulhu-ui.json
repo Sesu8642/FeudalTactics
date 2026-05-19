@@ -167,7 +167,7 @@ com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator: {
 	}
 	MenuHeading: {
 		font: FreeSansBold.ttf
-		size: 42
+		size: 48
 		mono: false
 		color: white
 		gamma: 1.8

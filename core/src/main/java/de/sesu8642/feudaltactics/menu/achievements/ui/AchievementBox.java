@@ -22,7 +22,7 @@ import lombok.Getter;
 
 /**
  * A UI element that shows the status of an achievement. It is used in the {@link AchievementsSlide} in a table.
- * If you tap on it, it shows a dialog with details. 
+ * If you tap on it, it shows a dialog with details.
  */
 public class AchievementBox {
 
