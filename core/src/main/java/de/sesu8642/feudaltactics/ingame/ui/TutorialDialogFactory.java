@@ -2,7 +2,6 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.google.common.collect.ImmutableList;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.lib.gamestate.Unit;
@@ -53,7 +52,7 @@ public class TutorialDialogFactory {
     /**
      * Creates the tutorial dialog for the given objective progress.
      */
-    public Dialog createDialog(int objectiveProgress) {
+    public FeudalTacticsDialog createDialog(int objectiveProgress) {
 
         final FeudalTacticsDialog dialog = dialogFactory.createDialog(result -> {
         });

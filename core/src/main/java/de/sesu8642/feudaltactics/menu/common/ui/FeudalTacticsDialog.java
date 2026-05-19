@@ -13,7 +13,7 @@ import java.util.List;
  * Parent class for all {@link Dialog}s in the game. Applies sane settings and
  * handles responsiveness.
  */
-public class FeudalTacticsDialog extends Dialog {
+public class FeudalTacticsDialog extends DialogWithButtonGroup {
 
     private static final float DIALOG_PADDING = 20;
     private static final float DIALOG_LABEL_MAX_WIDTH = Gdx.graphics.getDensity() * 1200;
@@ -48,19 +48,13 @@ public class FeudalTacticsDialog extends Dialog {
     @Override
     public FeudalTacticsDialog button(String text, Object param) {
         final TextButton button = ButtonFactory.createTextButton(text, skin);
-        return button(button, param);
+        button(button, param);
+        return this;
     }
 
     @Override
-    public FeudalTacticsDialog button(Button button, Object param) {
-        // pack the table so its width is calculated
-        getButtonTable().pack();
-        if (getButtonTable().getWidth() + button.getWidth() > Gdx.graphics.getWidth() - 2 * DIALOG_PADDING) {
-            // put button in second row
-            getButtonTable().row();
-        }
-        super.button(button, param);
-        return this;
+    public void hide() {
+        hide(null);
     }
 
     /**

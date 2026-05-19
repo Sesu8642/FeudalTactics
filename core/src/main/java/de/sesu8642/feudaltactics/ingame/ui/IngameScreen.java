@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton.ImageButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -26,10 +25,7 @@ import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
-import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
-import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
-import de.sesu8642.feudaltactics.menu.common.ui.Margin;
+import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -153,7 +149,7 @@ public class IngameScreen extends GameScreen {
         } else if (mainPrefsDao.getMainPreferences().isWarnAboutForgottenKingdoms()) {
             final Optional<Kingdom> forgottenKingdom = GameStateHelper.getFirstForgottenKingdom(cachedGameState);
             if (forgottenKingdom.isPresent()) {
-                final Dialog confirmDialog = dialogFactory.createConfirmDialog(
+                final FeudalTacticsDialog confirmDialog = dialogFactory.createConfirmDialog(
                     localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_FORGOTTEN_KINGDOMS_WARNING),
                     this::endHumanPlayerTurn, () -> {
                         final Kingdom kingdom = forgottenKingdom.get();
@@ -444,14 +440,14 @@ public class IngameScreen extends GameScreen {
         // exit button
         final List<TextButton> buttons = menuStage.getButtons();
         buttons.get(0).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog =
+            final FeudalTacticsDialog confirmDialog =
                 dialogFactory.createConfirmDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CONFIRM_LOST_PROGRESS),
                     this::exitToMenu);
             confirmDialog.show(menuStage);
         }));
         // retry button
         buttons.get(1).addListener(new ExceptionLoggingChangeListener(() -> {
-            final Dialog confirmDialog =
+            final FeudalTacticsDialog confirmDialog =
                 dialogFactory.createConfirmDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CONFIRM_LOST_PROGRESS),
                     this::resetGame);
             confirmDialog.show(menuStage);

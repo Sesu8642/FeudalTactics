@@ -5,7 +5,6 @@ package de.sesu8642.feudaltactics.ingame.ui;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
@@ -39,7 +38,7 @@ public class IngameScreenDialogHelper {
 
     void showGiveUpGameMessage(Stage stage, boolean win, int winningRound, ScenarioMap scenarioMap,
                                NewGamePreferences newGamePreferences, Runnable onExit, Runnable onRetry) {
-        final Dialog endDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -77,7 +76,7 @@ public class IngameScreenDialogHelper {
     void showAllEnemiesDefeatedMessage(Stage stage, boolean botsGaveUpPreviously, int winningRound,
                                        ScenarioMap scenarioMap, NewGamePreferences newGamePreferences,
                                        Runnable onExit, Runnable onRetry) {
-        final Dialog endDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -116,7 +115,7 @@ public class IngameScreenDialogHelper {
     void showPlayerDefeatedMessage(Stage stage, int currentRound, ScenarioMap scenarioMap,
                                    NewGamePreferences newGamePreferences,
                                    Runnable onExit, Runnable onRetry, Runnable onSpectate) {
-        final Dialog endDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -150,7 +149,7 @@ public class IngameScreenDialogHelper {
     void showEnemyWonMessage(Stage stage, int roundOfDefeat, ScenarioMap scenarioMap,
                              NewGamePreferences newGamePreferences,
                              Runnable onExit, Runnable onRetry) {
-        final Dialog endDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog endDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 1:
                     // exit button
@@ -179,12 +178,12 @@ public class IngameScreenDialogHelper {
 
 
     void showTutorialObjectiveMessage(Stage stage, int newProgress) {
-        final Dialog dialog = tutorialDialogFactory.createDialog(newProgress);
+        final FeudalTacticsDialog dialog = tutorialDialogFactory.createDialog(newProgress);
         dialog.show(stage);
     }
 
     void showCannotEndTurnMessage(Stage stage) {
-        final Dialog dialog =
+        final FeudalTacticsDialog dialog =
             dialogFactory.createInformationDialog(localizationManager.localizeText(TranslationKeys.DIALOG_TEXT_CANNOT_END_TURN), () -> {
             });
         dialog.show(stage);
@@ -212,7 +211,8 @@ public class IngameScreenDialogHelper {
         dialog.show(stage);
     }
 
-    void addShareOrCopyButtonToDialog(String preemble, Dialog endDialog, NewGamePreferences newGamePreferences,
+    void addShareOrCopyButtonToDialog(String preemble, FeudalTacticsDialog endDialog,
+                                      NewGamePreferences newGamePreferences,
                                       ScenarioMap scenarioMap) {
         if (scenarioMap != ScenarioMap.NONE) {
             // dont offer the option in the tutorial

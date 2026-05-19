@@ -5,7 +5,6 @@ package de.sesu8642.feudaltactics.menu.mainmenu.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
@@ -17,10 +16,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
-import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
-import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
-import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
-import de.sesu8642.feudaltactics.menu.common.ui.MenuStage;
+import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.NagPreferencesDao;
 import de.sesu8642.feudaltactics.shared.events.InitializeScenarioEvent;
 import de.sesu8642.feudaltactics.shared.events.moves.GameStartEvent;
@@ -128,7 +124,7 @@ public class MainMenuScreen extends GameScreen {
 
     private void showTutorialNag() {
         logger.debug("showing tutorial nag");
-        final Dialog tutorialNagDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog tutorialNagDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 0:
                     // no
@@ -152,7 +148,7 @@ public class MainMenuScreen extends GameScreen {
 
     private void showNewVersionDialog() {
         logger.debug("informing the user about the version upgrade");
-        final Dialog newVersionDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog newVersionDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 0:
                     // ok button
@@ -179,7 +175,7 @@ public class MainMenuScreen extends GameScreen {
             return;
         }
         logger.debug("informing the user about Android enshittification");
-        final Dialog newVersionDialog = dialogFactory.createDialog(result -> {
+        final FeudalTacticsDialog newVersionDialog = dialogFactory.createDialog(result -> {
             switch ((byte) result) {
                 case 0:
                     // ok button
