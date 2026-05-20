@@ -1,8 +1,8 @@
 package de.sesu8642.feudaltactics;
 
 import com.badlogic.gdx.Game;
-import de.sesu8642.feudaltactics.dagger.DaggerFeudalTacticsComponent;
-import de.sesu8642.feudaltactics.dagger.FeudalTacticsComponent;
+import de.sesu8642.feudaltactics.daggerconfig.DaggerFeudalTacticsComponent;
+import de.sesu8642.feudaltactics.daggerconfig.FeudalTacticsComponent;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
 

@@ -3,7 +3,6 @@
 package de.sesu8642.feudaltactics.menu.common.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
@@ -36,7 +35,6 @@ public class DialogFactory {
             @Override
             public void result(Object result) {
                 action.accept(result);
-                remove();
             }
 
         };
@@ -69,7 +67,6 @@ public class DialogFactory {
                 } else {
                     actionOnCancel.run();
                 }
-                remove();
             }
 
         };
@@ -93,7 +90,6 @@ public class DialogFactory {
             public void result(Object result) {
                 if (Boolean.TRUE == result) {
                     action.run();
-                    remove();
                 }
             }
 
@@ -103,14 +99,14 @@ public class DialogFactory {
     }
 
     /**
-     * See {@link #addCopyButtonToDialog(Supplier, Dialog, String)} with a default copyButtonText.
+     * See {@link #addCopyButtonToDialog(Supplier, FeudalTacticsDialog, String)} with a default copyButtonText.
      */
-    public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog) {
+    public void addCopyButtonToDialog(Supplier<String> textSupplier, FeudalTacticsDialog dialog) {
         final CopyButton copyButton = ButtonFactory.createCopyButton("Copy", skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
             () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in a way that doesn't cause the dialog to hide automatically
-        dialog.getButtonTable().add(copyButton);
+        dialog.getButtonGroup().addActor(copyButton);
     }
 
     /**
@@ -120,12 +116,13 @@ public class DialogFactory {
      * @param dialog         dialog to add the button to
      * @param copyButtonText label text for the button
      */
-    public void addCopyButtonToDialog(Supplier<String> textSupplier, Dialog dialog, String copyButtonText) {
+    public void addCopyButtonToDialog(Supplier<String> textSupplier, FeudalTacticsDialog dialog,
+                                      String copyButtonText) {
         final CopyButton copyButton = ButtonFactory.createCopyButton(copyButtonText, skin, true);
         copyButton.addListener(new ExceptionLoggingChangeListener(
             () -> Gdx.app.getClipboard().setContents(textSupplier.get())));
         // add in a way that doesn't cause the dialog to hide automatically
-        dialog.getButtonTable().add(copyButton);
+        dialog.getButtonGroup().addActor(copyButton);
     }
 
     /**
@@ -134,11 +131,11 @@ public class DialogFactory {
      * @param dialog     dialog to add the button to
      * @param buttonText label text for the button
      */
-    public void addNonClosingTextButtonToDialog(Dialog dialog, String buttonText, Runnable listener) {
+    public void addNonClosingTextButtonToDialog(FeudalTacticsDialog dialog, String buttonText, Runnable listener) {
         final TextButton button = ButtonFactory.createTextButton(buttonText, skin);
         button.addListener(new ExceptionLoggingChangeListener(listener));
         // add in a way that doesn't cause the dialog to hide automatically
-        dialog.getButtonTable().add(button);
+        dialog.getButtonGroup().addActor(button);
     }
 
 }

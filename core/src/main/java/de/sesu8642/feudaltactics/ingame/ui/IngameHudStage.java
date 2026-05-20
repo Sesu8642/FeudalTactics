@@ -122,12 +122,13 @@ public class IngameHudStage extends ResizableResettableStage {
         infoHexagonLabel.setFontScale(UiScalingConstants.HEXAGON_FONT_SCALING_FACTOR);
 
         infoTextLabel = new Label("", skin.get(SkinConstants.FONT_OVERLAY_WITH_BACKGROUND, LabelStyle.class));
+        infoTextLabel.setWrap(true);
 
         rootTable = new Table();
         rootTable.padTop(platformInsetsProvider.getInsets(Gdx.app).getTopInset());
         rootTable.setFillParent(true);
         rootTable.add(infoHexagonLabel).left().top().pad(10);
-        rootTable.add(infoTextLabel).left().top().pad(10).expandX();
+        rootTable.add(infoTextLabel).left().top().pad(10).expandX().fillX();
         rootTable.add(menuButton).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100).pad(10);
         rootTable.row();
         rootTable.add();

@@ -4,11 +4,11 @@ package de.sesu8642.feudaltactics.editor;
 
 import com.badlogic.gdx.math.Vector2;
 import com.google.common.eventbus.EventBus;
-import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.GameStateChangeEvent;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

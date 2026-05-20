@@ -5,13 +5,13 @@ package de.sesu8642.feudaltactics.ingame;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
-import de.sesu8642.feudaltactics.events.TapInputEvent;
-import de.sesu8642.feudaltactics.events.input.BackInputEvent;
-import de.sesu8642.feudaltactics.events.moves.*;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.ingame.GameController;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.shared.events.TapInputEvent;
+import de.sesu8642.feudaltactics.shared.events.input.BackInputEvent;
+import de.sesu8642.feudaltactics.shared.events.moves.*;
 import lombok.Synchronized;
 
 import javax.inject.Inject;

@@ -50,7 +50,7 @@ public class MapRenderer {
     private static final Color GRAVESTONE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.3F);
     private static final Color DARKENED_GRAVESTONE_INDICATOR_COLOR = new Color(GRAVESTONE_INDICATOR_COLOR).mul(0.5F,
         0.5F, 0.5F, 1);
-    private static final Color TREE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.5F);
+    private static final Color TREE_INDICATOR_COLOR = new Color(NORMAL_COLOR).sub(0, 0, 0, 0.6F);
     /**
      * If the stateTime reaches this value, it will be reduced by this value.
      * The reason is that the stateTime must stay relatively small because of float limitations.

@@ -11,8 +11,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ScreenNavigationController;
-import de.sesu8642.feudaltactics.events.EditorHandContentUpdatedEvent;
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameCamera;
 import de.sesu8642.feudaltactics.ingame.dagger.IngameRenderer;
 import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
@@ -24,6 +22,8 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
+import de.sesu8642.feudaltactics.shared.events.EditorHandContentUpdatedEvent;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

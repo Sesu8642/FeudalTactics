@@ -3,8 +3,8 @@
 package de.sesu8642.feudaltactics.ingame.ui;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.GameStateChangeEvent;
-import de.sesu8642.feudaltactics.events.input.EscInputEvent;
+import de.sesu8642.feudaltactics.shared.events.GameStateChangeEvent;
+import de.sesu8642.feudaltactics.shared.events.input.EscInputEvent;
 
 import javax.inject.Inject;
 

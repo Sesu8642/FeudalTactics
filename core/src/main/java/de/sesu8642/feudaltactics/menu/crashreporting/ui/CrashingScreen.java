@@ -3,7 +3,7 @@
 package de.sesu8642.feudaltactics.menu.crashreporting.ui;
 
 import com.badlogic.gdx.Screen;
-import de.sesu8642.feudaltactics.exceptions.FatalErrorException;
+import de.sesu8642.feudaltactics.menu.crashreporting.FatalErrorException;
 
 /**
  * Crashes the game when shown. Throwing something in the render method is the

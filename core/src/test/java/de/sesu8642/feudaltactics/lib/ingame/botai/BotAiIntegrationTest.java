@@ -7,12 +7,13 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.feudaltactics.ApplicationStub;
-import de.sesu8642.feudaltactics.events.BotTurnFinishedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.validation.GameStateValidator;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.shared.events.BotTurnFinishedEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +32,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
@@ -88,27 +90,6 @@ class BotAiIntegrationTest {
             result.add(Arguments.of(newArguments.toArray()));
         }
         return result;
-    }
-
-    static void assertIntegreKingdomTileLinks(GameState gameState) {
-        // the kingdom of each tile contains the tile
-        gameState.getMap().values().stream().filter(tile -> tile.getKingdom() != null)
-            .forEach(tile -> assertTrue(tile.getKingdom().getTiles().contains(tile)));
-        // every tile in a kingdom knows that it is part of that kingdom
-        for (Kingdom kingdom : gameState.getKingdoms()) {
-            kingdom.getTiles().forEach(tile -> {
-                assertSame(tile.getKingdom(), kingdom);
-            });
-        }
-    }
-
-    static void assertEveryKingdomHasExactlyOneCapital(GameState gameState) {
-        for (Kingdom kingdom : gameState.getKingdoms()) {
-            final long amountCapitals = kingdom.getTiles().stream().filter(
-                    tile -> tile.getContent() != null && Capital.class.isAssignableFrom(tile.getContent().getClass()))
-                .count();
-            assertEquals(1, amountCapitals);
-        }
     }
 
     @BeforeEach
@@ -195,10 +176,7 @@ class BotAiIntegrationTest {
                 return;
             }
             systemUnderTest.doTurn(gameState, botIntelligence);
-            if (gameState.getKingdoms().size() > 1) {
-                assertIntegreKingdomTileLinks(gameState);
-                assertEveryKingdomHasExactlyOneCapital(gameState);
-            }
+            assertTrue(GameStateValidator.isValidSingplayerGame(gameState));
             GameStateHelper.endTurn(gameState);
         }
     }

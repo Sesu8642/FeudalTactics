@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import dagger.Module;
 import dagger.Provides;
-import de.sesu8642.feudaltactics.dagger.PreferencesPrefixProperty;
+import de.sesu8642.feudaltactics.gameconfig.dagger.PreferencesPrefixProperty;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.menu.statistics.StatisticsDao;
 

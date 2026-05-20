@@ -3,9 +3,9 @@
 package de.sesu8642.feudaltactics.lib.ingame;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.*;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.lib.ingame.botai.BotAi;
+import de.sesu8642.feudaltactics.shared.events.*;
 
 import javax.inject.Inject;
 

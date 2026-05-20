@@ -51,7 +51,7 @@ public class StatisticsSlide extends Slide {
         statisticsTable.add(newLabel).left().fill().expandX().prefWidth(200);
 
         final Label valueLabel = new Label(Integer.toString(value), skin);
-        statisticsTable.add(valueLabel).colspan(2).center().fillX().expandX().padLeft(10);
+        statisticsTable.add(valueLabel).colspan(2).center().expandX().padLeft(10);
         statisticsTable.row();
         statisticsTable.add().height(20);
         statisticsTable.row();
@@ -81,7 +81,7 @@ public class StatisticsSlide extends Slide {
         placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
             gamesWon.getTotalCount());
         final CountByAiLevel gamesLost = statistics.getGamesLost();
-        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_WON),
+        placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_LOST),
             gamesLost.getTotalCount());
         final CountByAiLevel gamesAborted = statistics.getGamesAborted();
         placeIntegerWithLabel(localizationManager.localizeText(TranslationKeys.STATISTICS_PAGE_TOTAL_GAMES_ABORTED),

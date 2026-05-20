@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.collect.ImmutableList;
 import de.sesu8642.TranslationKeys;
-import de.sesu8642.feudaltactics.dagger.VersionProperty;
+import de.sesu8642.feudaltactics.gameconfig.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuBackgroundRenderer;
@@ -47,7 +47,7 @@ public class InformationMenuPage2Stage extends MenuStage {
         final Label bottomRightLabel = new Label(String.format("%s %s",
             localizationManager.localizeText(TranslationKeys.MENU_LABEL_VERSION), gameVersion),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        getBottomRightTable().add(bottomRightLabel);
+        getBottomTable().add(bottomRightLabel);
 
     }
 

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.google.common.eventbus.EventBus;
 import de.sesu8642.TranslationKeys;
-import de.sesu8642.feudaltactics.events.MainPreferencesChangeEvent;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
@@ -16,6 +15,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingChangeListener;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
+import de.sesu8642.feudaltactics.shared.events.MainPreferencesChangeEvent;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -80,7 +80,8 @@ public class PreferencesScreen extends GameScreen {
             }
 
             // Show bilingual restart prompt
-            final String oldLanguageText = localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_DIALOG_TEXT_RESTART_GAME);
+            final String oldLanguageText =
+                localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_DIALOG_TEXT_RESTART_GAME);
             final String newLanguageText = localizationManager.localizeTextInLanguage(selectedLanguage,
                 TranslationKeys.SETTINGS_PAGE_DIALOG_TEXT_RESTART_GAME);
 

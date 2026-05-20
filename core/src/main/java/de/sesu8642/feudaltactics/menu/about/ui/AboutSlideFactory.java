@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import de.sesu8642.TranslationKeys;
-import de.sesu8642.feudaltactics.dagger.VersionProperty;
+import de.sesu8642.feudaltactics.gameconfig.dagger.VersionProperty;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 

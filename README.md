@@ -37,21 +37,13 @@ This allows me to potentially release versions that contain propriatary librarie
 Why not just license contributions under MIT? All files somebody contributes to would be licensed under GPL-3.0-or-later __and__ MIT. While the MIT license is compatible with the GPL-3.0, it does add the additional requirement to include the MIT license text in the software. This would make it complicated if anyone wanted to use some file in a different project. With the multi-licensing, every file can simply be used under GPL-3.0-or-later.
 
 ## Contributing
-Before starting any work, please propose your changes in a GitHub issue.
-
-Before a pull request can be accepted, you must sign the [CLA](CLA.md) by adding your name to the table.
-
-All new displayable texts need to be translatable. Adding the English translation is required. Do not add translations in languages you don't speak very well. Any missing translations will be added by me.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Privacy
 
 No data is collected at all.
 See [privacy policy](https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/privacy_policy.txt). It is based
 on [the one from the Catima Website](https://github.com/CatimaLoyalty/Website/blob/98018f63d0f69331de70054db61c699b9c316c2c/_pages/privacy-policy.md).
-
-## Language Support
-The game is available ins several languages. See assets/i18n for the full list.
-See [this wiki page](../../wiki/Adding-a-new-Language) on how to add a language.
 
 ## Platforms
 - `core`: Main module with the application logic shared by all platforms.
