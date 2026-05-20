@@ -2,12 +2,13 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementNeedsFullStorage;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -48,7 +49,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
     }
 
     @Override
-    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         GameState gameState = event.getGameState();
 
         if (gameState == null) {

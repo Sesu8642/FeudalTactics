@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import lombok.Getter;
 
@@ -146,8 +147,8 @@ public class AchievementBox {
     /**
      * Shows a modal dialog with detailed information about the achievement.
      */
-    public Dialog createAchievementDetailsDialog() {
-        Dialog detailsDialog = dialogFactory.createDialog(result -> {
+    public FeudalTacticsDialog createAchievementDetailsDialog() {
+        FeudalTacticsDialog detailsDialog = dialogFactory.createDialog(result -> {
             // Dialog closed
         });
 

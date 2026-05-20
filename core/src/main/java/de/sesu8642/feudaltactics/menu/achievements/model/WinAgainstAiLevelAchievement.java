@@ -1,6 +1,7 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 /**
  * Achievement: Win a game against AI opponents of a specified level. It must be exactly that AI level, not higher.
@@ -25,7 +26,7 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
     }
 
     @Override
-    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
         if (gameState == null) {
             return false;     // Ignore exits from editor or similar

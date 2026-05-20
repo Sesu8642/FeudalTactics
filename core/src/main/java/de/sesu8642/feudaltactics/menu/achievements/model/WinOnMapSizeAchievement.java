@@ -2,7 +2,7 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;

@@ -3,8 +3,8 @@
 package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.google.common.eventbus.Subscribe;
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
 
 import javax.inject.Inject;
 

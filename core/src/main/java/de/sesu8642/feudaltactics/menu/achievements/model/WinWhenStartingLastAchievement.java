@@ -2,6 +2,7 @@ package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 /**
  * Achievement: Win a game against the very hard AI when starting last in the turn order
@@ -28,7 +29,7 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
     }
 
     @Override
-    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
         if (gameState == null) {
             return false;     // Ignore exits from editor or similar

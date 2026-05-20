@@ -1,6 +1,7 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -113,7 +114,7 @@ public abstract class AbstractAchievement {
      * 
      * Returns whether the achievement's state has changed (e.g. progress updated or achievement unlocked) and thus the achievement needs to be persisted.
      */
-    public boolean onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
+    public boolean onGameExited(GameExitedEvent event) {
         // No-op by default
         return false;
     }

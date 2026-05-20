@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuCamera;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
+import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 
 
@@ -41,7 +42,7 @@ public class AchievementsScreen extends GameScreen {
     private void registerEventListeners() {
         achievementsStage.getAchievementsSlide().getAchievementBoxes().forEach(achievementBox -> {
             achievementBox.getAchievementWindow().addListener(new ExceptionLoggingClickListener(() -> {
-                Dialog achievementDetailsDialog = achievementBox.createAchievementDetailsDialog();
+                FeudalTacticsDialog achievementDetailsDialog = achievementBox.createAchievementDetailsDialog();
                 achievementDetailsDialog.show(achievementsStage);
             }));
         });
