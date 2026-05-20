@@ -13,10 +13,10 @@ import javax.inject.Inject;
  */
 public class AchievementsEventHandler {
 
-    private final AchievementService achievementService;
+    private final AchievementsService achievementService;
 
     @Inject
-    public AchievementsEventHandler(AchievementService achievementService) {
+    public AchievementsEventHandler(AchievementsService achievementService) {
         this.achievementService = achievementService;
     }
 

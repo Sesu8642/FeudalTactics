@@ -7,7 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 
-import de.sesu8642.feudaltactics.menu.achievements.AchievementRepository;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementsRepository;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
@@ -31,7 +31,7 @@ public class AchievementsSlide extends Slide {
     private final List<@NonNull AchievementBox> achievementBoxes;
 
     @Inject
-    public AchievementsSlide(Skin skin, AchievementRepository achievementRepository, DialogFactory dialogFactory) {
+    public AchievementsSlide(Skin skin, AchievementsRepository achievementRepository, DialogFactory dialogFactory) {
         super(skin, "Achievements");
 
         achievementTileGroup = new HorizontalGroup();

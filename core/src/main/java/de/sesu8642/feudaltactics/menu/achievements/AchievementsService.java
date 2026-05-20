@@ -12,12 +12,12 @@ import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
  * Service for managing achievements, used to track and update player progress.
  */
 @Singleton
-public class AchievementService {
-    private final AchievementRepository achievementRepository;
+public class AchievementsService {
+    private final AchievementsRepository achievementRepository;
 
     @Inject
-    public AchievementService(
-        AchievementRepository achievementRepository) {
+    public AchievementsService(
+        AchievementsRepository achievementRepository) {
         this.achievementRepository = achievementRepository;
     }
 

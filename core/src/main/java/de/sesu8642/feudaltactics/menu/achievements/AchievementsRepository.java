@@ -15,10 +15,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Repository for storing achievements, used by AchievementService.
+ * Repository for storing achievements, used by AchievementsService.
  */
 @Singleton
-public class AchievementRepository {
+public class AchievementsRepository {
 
     /**
      * Name of the preferences store for achievements.
@@ -31,7 +31,7 @@ public class AchievementRepository {
     private final List<AbstractAchievement> achievements;
 
     @Inject
-    public AchievementRepository(
+    public AchievementsRepository(
             @AchievementsPrefStore Preferences achievementsPrefs,
             AutoSaveRepository autoSaveRepository,
             AchievementsFactory achievementsFactory) {
