@@ -4,7 +4,6 @@ package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.badlogic.gdx.Preferences;
 
-import dagger.Provides;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
