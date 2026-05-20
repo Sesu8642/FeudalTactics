@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
+import de.sesu8642.feudaltactics.menu.common.ui.BooleanSelectBox;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import lombok.Getter;
 
@@ -45,9 +46,10 @@ public class PreferencesSlide extends Slide {
 
         forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText(
                 TranslationKeys.SETTINGS_PAGE_LABEL_WARN_ABOUT_FORGOTTEN_KINGDOMS),
-            skin);
+            skin, localizationManager);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable,
-            localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_SHOW_ENEMY_TURNS), skin);
+            localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_SHOW_ENEMY_TURNS), skin,
+            localizationManager);
 
         languageSelectBox = placeStringSelectWithLabel(preferencesTable,
             localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_LANGUAGE), skin,
@@ -75,11 +77,14 @@ public class PreferencesSlide extends Slide {
         return newSelectBox;
     }
 
-    private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin) {
+    private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
+                                                           LocalizationManager localizationManager) {
         final Label newLabel = new Label(labelText, skin);
         newLabel.setWrap(true);
         preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
-        final SelectBox<Boolean> newSelectBox = new SelectBox<>(skin);
+        final SelectBox<Boolean> newSelectBox = new BooleanSelectBox(skin,
+            localizationManager.localizeText(TranslationKeys.BOOLEAN_COMBOBOX_OPTION_YES),
+            localizationManager.localizeText(TranslationKeys.BOOLEAN_COMBOBOX_OPTION_NO));
         newSelectBox.setItems(true, false);
         preferencesTable.add(newSelectBox).center().fillX().expandX();
         preferencesTable.row();
