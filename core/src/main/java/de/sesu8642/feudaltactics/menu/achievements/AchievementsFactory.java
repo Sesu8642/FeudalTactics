@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import dagger.Provides;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbortGameAchievement;
@@ -26,10 +27,10 @@ import de.sesu8642.feudaltactics.menu.achievements.model.WinWhenStartingLastAchi
  * Provides achievement classes, knows how to construct each individual achievement
  */
 @Singleton
-public class AchievementProvider {
-    
+public class AchievementsFactory {
+
     @Inject
-    public AchievementProvider() {
+    public AchievementsFactory() {
     }
 
     public List<AbstractAchievement> CreateAchievements() {
@@ -60,7 +61,7 @@ public class AchievementProvider {
         list.add(new WinAgainstAiLevelAchievement(Intelligence.LEVEL_4).setHistoricConnection(HistoricPersonOrEvent.FREDERICK_THE_GREAT));
         list.add(new WinWhenStartingLastAchievement().setHistoricConnection(HistoricPersonOrEvent.TOKUGAWA_IEYASU));
         list.add(new AbortGameAchievement().setHistoricConnection(HistoricPersonOrEvent.JOHN_THE_POSTHUMOUS));
-        
+
         return Collections.unmodifiableList(list);
     }
 }

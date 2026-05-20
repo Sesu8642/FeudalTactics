@@ -4,9 +4,13 @@ package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.badlogic.gdx.Preferences;
 
+import dagger.Provides;
 import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import lombok.Getter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -24,14 +28,21 @@ public class AchievementRepository {
 
     private final Preferences prefStore;
 
+    @Getter
+    private final List<AbstractAchievement> achievements;
+
     @Inject
     public AchievementRepository(
             @AchievementsPrefStore Preferences achievementsPrefs,
-            AutoSaveRepository autoSaveRepository) {
+            AutoSaveRepository autoSaveRepository,
+            AchievementsFactory achievementsFactory) {
         this.prefStore = achievementsPrefs;
+        this.achievements = LoadPersistedAchievements(achievementsFactory);
     }
 
-    public void LoadPersistedAchievements(Iterable<AbstractAchievement> achievements) {
+    private List<AbstractAchievement> LoadPersistedAchievements(AchievementsFactory achievementsFactory) {
+        List<AbstractAchievement> achievements = achievementsFactory.CreateAchievements();
+
         for (AbstractAchievement achievement : achievements) {
             achievement.setUnlocked(
                 prefStore.getBoolean("achievement-" + achievement.getId(), false));
@@ -44,6 +55,8 @@ public class AchievementRepository {
                 }
             }
         }
+
+        return achievements;
     }
 
     /**

@@ -2,14 +2,11 @@
 
 package de.sesu8642.feudaltactics.menu.achievements;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import lombok.Getter;
 
 /**
  * Service for managing achievements, used to track and update player progress.
@@ -18,24 +15,17 @@ import lombok.Getter;
 public class AchievementService {
     private final AchievementRepository achievementRepository;
 
-    @Getter
-    private final List<AbstractAchievement> achievements;
-
     @Inject
     public AchievementService(
-        AchievementRepository achievementRepository,
-        AchievementProvider achievementProvider) {
+        AchievementRepository achievementRepository) {
         this.achievementRepository = achievementRepository;
-        this.achievements = achievementProvider.CreateAchievements();
-
-        achievementRepository.LoadPersistedAchievements(achievements);
     }
 
     /**
      * Called when a game is exited. Called from AchievementsEventHandler and forwards the event to all achievements.
      */
     public void onGameExited(de.sesu8642.feudaltactics.events.GameExitedEvent event) {
-        for (AbstractAchievement achievement : achievements) {
+        for (AbstractAchievement achievement : achievementRepository.getAchievements()) {
             if (achievement.onGameExited(event)) {
                     storeAchievementProgress(achievement);
             }
@@ -46,7 +36,7 @@ public class AchievementService {
      * Called when the map is regenerated. Called from AchievementsEventHandler and forwards the event to all achievements.
      */
     public void onMapRegeneration(RegenerateMapEvent event) {
-        for (AbstractAchievement achievement : achievements) {
+        for (AbstractAchievement achievement : achievementRepository.getAchievements()) {
             if (achievement.onMapRegeneration(event)) {
                 storeAchievementProgress(achievement);
             }
