@@ -126,7 +126,17 @@ public class AchievementBox {
     }
 
      private Actor wrapInBorder(Actor innerContent) {
-        final Container<Actor> container = new Container<>(innerContent);
+        final Container<Actor> container = new Container<Actor>(innerContent) {
+            @Override
+            public float getPrefWidth() {
+                return ACHIEVEMENT_WINDOW_WIDTH;
+            }
+
+            @Override
+            public float getPrefHeight() {
+                return ACHIEVEMENT_WINDOW_HEIGHT;
+            }
+        };
         container.background(rowBorderDrawable);
         container.pad(3); // Border width
         container.fill();
