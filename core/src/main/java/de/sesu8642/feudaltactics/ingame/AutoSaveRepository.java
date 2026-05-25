@@ -11,6 +11,7 @@ import de.sesu8642.feudaltactics.ingame.dagger.FullAutoSavePrefStore;
 import de.sesu8642.feudaltactics.ingame.dagger.IncrementalAutoSavePrefStore;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
+import de.sesu8642.feudaltactics.lib.gamestate.GameStateJsonHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateSerializer;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.shared.exceptions.SaveLoadingException;
@@ -52,11 +53,9 @@ public class AutoSaveRepository {
 
     private final Preferences incrementalAutoSavePrefStore;
 
-    private final Json fullSaveJson = new Json(OutputType.json);
+    private final GameStateJsonHelper gameStateJsonHelper;
 
     private final Json incrementalSaveJson = new Json(OutputType.json);
-
-    private final JsonReader jsonReader = new JsonReader();
 
     private final ReentrantLock lock = new ReentrantLock(true);
 
@@ -66,12 +65,11 @@ public class AutoSaveRepository {
 
     @Inject
     public AutoSaveRepository(@FullAutoSavePrefStore Preferences fullAutoSavePrefStore,
-                              @IncrementalAutoSavePrefStore Preferences incrementalAutoSavePrefStore) {
+                              @IncrementalAutoSavePrefStore Preferences incrementalAutoSavePrefStore, GameStateJsonHelper gameStateJsonHelper) {
         this.fullAutoSavePrefStore = fullAutoSavePrefStore;
         this.incrementalAutoSavePrefStore = incrementalAutoSavePrefStore;
+        this.gameStateJsonHelper = gameStateJsonHelper;
 
-        fullSaveJson.setSerializer(GameState.class, new GameStateSerializer());
-        fullSaveJson.setIgnoreUnknownFields(true);
         incrementalSaveJson.setIgnoreUnknownFields(true);
         currentUndoDepth = incrementalAutoSavePrefStore.getInteger(CURRENT_UNDO_DEPTH_NAME, 0);
         idCounter = getLatestIncrementalSaveKey().map(Long::parseLong).orElse(0L);
@@ -85,7 +83,7 @@ public class AutoSaveRepository {
         try {
             logger.debug("autosaving full gamestate");
 
-            final String saveString = fullSaveJson.toJson(gameState, GameState.class);
+            final String saveString = gameStateJsonHelper.toJsonString(gameState);
             fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveString);
             fullAutoSavePrefStore.flush();
             incrementalAutoSavePrefStore.clear();
@@ -120,7 +118,7 @@ public class AutoSaveRepository {
                     incrementalSaves.subMap(incrementalSaves.firstKey(),
                         new ArrayList<>(incrementalSaves.keySet()).get(MAX_UNDOS + 1));
                 mergeIncrementalSavesIntoFull(fullSave, incrementalSavesToMerge.values());
-                final String saveStringFullSave = fullSaveJson.toJson(fullSave, GameState.class);
+                final String saveStringFullSave = gameStateJsonHelper.toJsonString(fullSave);
                 fullAutoSavePrefStore.putString(FULL_GAME_SAVE_KEY_NAME, saveStringFullSave);
                 fullAutoSavePrefStore.flush();
                 for (Long mergedIncrementKey : incrementalSavesToMerge.keySet()) {
@@ -169,8 +167,7 @@ public class AutoSaveRepository {
         }
         // cannot be empty if there is a save
         final String loadedString = fullAutoSavePrefStore.getString(FULL_GAME_SAVE_KEY_NAME);
-        final JsonValue loadedStateJsonValue = jsonReader.parse(loadedString);
-        return fullSaveJson.readValue(GameState.class, loadedStateJsonValue);
+        return gameStateJsonHelper.fromJson(loadedString);
     }
 
     private SortedMap<Long, PlayerMove> getIncrementalSavesInOrder() {

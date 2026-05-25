@@ -21,6 +21,7 @@ import de.sesu8642.feudaltactics.input.CombinedInputProcessor;
 import de.sesu8642.feudaltactics.input.FeudalTacticsGestureDetector;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import de.sesu8642.feudaltactics.lib.gamestate.Player.Type;
+import de.sesu8642.feudaltactics.lib.gamestate.validation.GameStateValidator;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
@@ -33,6 +34,7 @@ import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 import de.sesu8642.feudaltactics.shared.events.*;
 import de.sesu8642.feudaltactics.shared.events.moves.*;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,6 +45,7 @@ import java.util.stream.Stream;
 /**
  * {@link Screen} for playing a map.
  */
+@Slf4j
 @Singleton
 public class IngameScreen extends GameScreen {
 
@@ -59,6 +62,7 @@ public class IngameScreen extends GameScreen {
     private final InputValidationHelper inputValidationHelper;
     private final IngameScreenDialogHelper ingameScreenDialogHelper;
     private final TextureAtlasHelper textureAtlasHelper;
+    private final GameStateJsonHelper gameStateJsonHelper;
 
     private final ParameterInputStage parameterInputStage;
     private final PlatformInsetsProvider platformInsetsProvider;
@@ -103,7 +107,7 @@ public class IngameScreen extends GameScreen {
                         ScreenNavigationController screenNavigationController,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
-                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper,
+                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper, GameStateJsonHelper gameStateJsonHelper,
                         IngameHudStage ingameHudStage,
                         IngameMenuStage menuStage, ParameterInputStage parameterInputStage,
                         PlatformInsetsProvider platformInsetsProvider,
@@ -122,6 +126,7 @@ public class IngameScreen extends GameScreen {
         this.inputProcessor = inputProcessor;
         this.ingameScreenDialogHelper = ingameScreenDialogHelper;
         this.textureAtlasHelper = textureAtlasHelper;
+        this.gameStateJsonHelper = gameStateJsonHelper;
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
@@ -468,9 +473,17 @@ public class IngameScreen extends GameScreen {
 
         parameterInputStage.pasteButton.addListener(new ExceptionLoggingChangeListener(() -> {
             final String clipboardContents = Gdx.app.getClipboard().getContents();
-            if (clipboardContents != null) {
+            if (clipboardContents == null) {
+                return;
+            }
+            final String trimmedClipboardContents = clipboardContents.trim();
+            if (trimmedClipboardContents.startsWith("{")) {
+                // potential json -> try to parse into gameState
+                tryToLoadGameState(trimmedClipboardContents);
+            } else {
+                // assume game settings string
                 final NewGamePreferences pastedPreferences =
-                    NewGamePreferences.fromSharableString(clipboardContents, localizationManager);
+                    NewGamePreferences.fromSharableString(trimmedClipboardContents, localizationManager);
                 updateParameterInputsFromNewGamePrefs(pastedPreferences);
             }
         }));
@@ -480,7 +493,7 @@ public class IngameScreen extends GameScreen {
 
         Stream.of(parameterInputStage.seedTextField, parameterInputStage.randomButton, parameterInputStage.sizeSelect,
                 parameterInputStage.densitySelect, parameterInputStage.startingPositionSelect,
-                parameterInputStage.pasteButton, parameterInputStage.difficultySelect)
+                parameterInputStage.difficultySelect)
             .forEach(actor -> actor.addListener(new ExceptionLoggingChangeListener(() -> {
                 cachedNewGamePreferences.setSeed(parameterInputStage.getSeedParam());
                 cachedNewGamePreferences.setMapSize(parameterInputStage.getMapSizeParam());
@@ -498,6 +511,23 @@ public class IngameScreen extends GameScreen {
             .addListener(new ExceptionLoggingChangeListener(screenNavigationController::transitionToPlayMenuScreen));
         parameterInputStage.playButton
             .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new GameStartEvent())));
+    }
+
+    private void tryToLoadGameState(String clipboardContents) {
+        try {
+            GameState gameState = gameStateJsonHelper.fromJson(clipboardContents);
+            boolean isValid = GameStateValidator.isValidSingplayerGame(gameState);
+            if (isValid) {
+                eventBus.post(new GameStatePastedEvent(gameState));
+                eventBus.post(new GameStartEvent());
+            } else {
+                log.info("not loading the pasted game state because it's not valid");
+                // invalid game state, ignore
+            }
+        } catch (Exception e) {
+            // unable to parse or validate, don't change anything
+            log.info("unable to load or validate pasted game state", e);
+        }
     }
 
     private void addHudListeners() {

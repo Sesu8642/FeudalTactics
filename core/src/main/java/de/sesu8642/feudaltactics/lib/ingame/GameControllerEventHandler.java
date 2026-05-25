@@ -92,4 +92,14 @@ public class GameControllerEventHandler {
         gameController.initializeScenario(event.getBotIntelligence(), event.getScenarioMap());
     }
 
+    /**
+     * Event handler for game pasted events.
+     *
+     * @param event event to handle
+     */
+    @Subscribe
+    public void handleGamePasted(GameStatePastedEvent event) {
+        gameController.loadGameState(event.getGameState());
+    }
+
 }

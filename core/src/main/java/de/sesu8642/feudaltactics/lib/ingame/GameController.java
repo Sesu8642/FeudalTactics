@@ -117,6 +117,12 @@ public class GameController {
         postGameStateChangeEvent();
     }
 
+    public void loadGameState(GameState gameState) {
+        logger.info("loading game state");
+        this.gameState = gameState;
+        postGameStateChangeEvent();
+    }
+
     /**
      * Prints debug info about a tile.
      *
