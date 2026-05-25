@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate.validation;
 
+import com.badlogic.gdx.math.Vector2;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,7 @@ public final class GameStateValidator {
             && connectedTilesFormKingdom(gameState)
             && allTilesInAKingdomAreConnected(gameState)
             && tilesHaveBackLinksInTheirKingdoms(gameState)
+            && tileCoordinatesMatchMap(gameState)
             && mapIsNotTooLarge(gameState)
             && treesAreTheCorrectTypeBasedOnPosition(gameState)
             && capitalsAndCastlesAreOnlyInKingdoms(gameState);
@@ -300,6 +302,15 @@ public final class GameStateValidator {
         return true;
     }
 
+    private static boolean tileCoordinatesMatchMap(GameState gameState) {
+        for (Map.Entry<Vector2, HexTile> mapEntry : gameState.getMap().entrySet()) {
+            if (!mapEntry.getKey().equals(mapEntry.getValue().getPosition())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static boolean mapIsNotTooLarge(GameState gameState) {
         final boolean result = gameState.getMap().size() <= NewGamePreferences.MapSizes.XXLARGE.getAmountOfTiles();
         if (!result) {
@@ -363,7 +374,7 @@ public final class GameStateValidator {
 
     private static boolean hasOneHumanPlayer(GameState gameState) {
         final boolean result =
-            gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER).count() != 1;
+            gameState.getPlayers().stream().filter(player -> player.getType() == Player.Type.LOCAL_PLAYER).count() == 1;
         if (!result) {
             log.info("game state doesn't have exactly one human player");
         }
