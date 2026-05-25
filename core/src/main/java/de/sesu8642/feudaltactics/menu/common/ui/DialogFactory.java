@@ -3,10 +3,12 @@
 package de.sesu8642.feudaltactics.menu.common.ui;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -136,6 +138,20 @@ public class DialogFactory {
         button.addListener(new ExceptionLoggingChangeListener(listener));
         // add in a way that doesn't cause the dialog to hide automatically
         dialog.getButtonGroup().addActor(button);
+    }
+
+    /**
+     * Adds a select box input to an existing dialog.
+     *
+     * @param dialog         dialog to add the select box to
+     * @param selectBoxItems items to be selctable
+     * @return the newly created select box
+     */
+    public <T> SelectBox<T> addSelectBoxToDialog(FeudalTacticsDialog dialog, List<T> selectBoxItems) {
+        SelectBox<T> selectBox = new SelectBox<>(skin);
+        selectBox.setItems((T[]) selectBoxItems.toArray());
+        dialog.getContentTable().add(selectBox).left();
+        return selectBox;
     }
 
 }
