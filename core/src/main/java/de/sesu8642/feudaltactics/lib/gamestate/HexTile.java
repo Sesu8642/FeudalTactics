@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.lib.gamestate;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class HexTile implements Comparable<HexTile> {
     @Getter
     private Kingdom kingdom;
     @Getter
+    @Setter(onMethod_ = @VisibleForTesting)
     private Vector2 position;
     @Getter
     @Setter

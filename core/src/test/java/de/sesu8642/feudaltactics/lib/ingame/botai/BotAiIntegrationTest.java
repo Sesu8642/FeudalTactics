@@ -176,7 +176,7 @@ class BotAiIntegrationTest {
                 return;
             }
             systemUnderTest.doTurn(gameState, botIntelligence);
-            assertTrue(GameStateValidator.isValidSingplayerGame(gameState));
+            assertTrue(GameStateValidator.isValid(gameState));
             GameStateHelper.endTurn(gameState);
         }
     }

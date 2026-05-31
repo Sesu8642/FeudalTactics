@@ -35,21 +35,22 @@ public final class GameStateValidator {
             && heldObjectIsOnlyPresentWithActiveKingdom(gameState)
             && heldObjectIsAllowed(gameState)
             && roundIsValid(gameState)
-            && playerTurnIsValid(gameState)
             && gameStateHasValidNumberOfPlayers(gameState)
+            && playerTurnIsValid(gameState)
             && winnerIsAmongPlayers(gameState)
             && winnerAndWinningRoundArePresentTogether(gameState)
             && playersHaveProperIndexes(gameState)
             && onlyDefeatedPlayersHaveRoundOfDefeat(gameState)
             && kingdomsAreNotNull(gameState)
             && activeKingdomIsAmongKingdoms(gameState)
+            && activeKingdomBelongsToActivePlayer(gameState)
             && eachKingdomsHasValidSavings(gameState)
-            && eachKingdomHasOneCapital(gameState)
             && eachKingdomHasValidAmountOfTiles(gameState)
+            && eachKingdomHasOneCapital(gameState)
             && eachKingdomHasAPlayer(gameState)
+            && tilesHaveBackLinksInTheirKingdoms(gameState)
             && connectedTilesFormKingdom(gameState)
             && allTilesInAKingdomAreConnected(gameState)
-            && tilesHaveBackLinksInTheirKingdoms(gameState)
             && tileCoordinatesMatchMap(gameState)
             && mapIsNotTooLarge(gameState)
             && treesAreTheCorrectTypeBasedOnPosition(gameState)
@@ -128,20 +129,20 @@ public final class GameStateValidator {
         return result;
     }
 
-    private static boolean playerTurnIsValid(GameState gameState) {
-        final boolean result =
-            gameState.getPlayerTurn() >= 0 && gameState.getPlayerTurn() < gameState.getPlayers().size();
-        if (!result) {
-            log.info("game state has invalid player turn");
-        }
-        return result;
-    }
-
     private static boolean gameStateHasValidNumberOfPlayers(GameState gameState) {
         final boolean result =
             gameState.getPlayers() != null && gameState.getPlayers().size() >= 2 && gameState.getPlayers().size() <= 6;
         if (!result) {
             log.info("game state has invalid number of players");
+        }
+        return result;
+    }
+
+    private static boolean playerTurnIsValid(GameState gameState) {
+        final boolean result =
+            gameState.getPlayerTurn() >= 0 && gameState.getPlayerTurn() < gameState.getPlayers().size();
+        if (!result) {
+            log.info("game state has invalid player turn");
         }
         return result;
     }
@@ -176,11 +177,7 @@ public final class GameStateValidator {
             }
             expectedIndexes.remove(player.getPlayerIndex());
         }
-        final boolean noIndexLeftOver = expectedIndexes.isEmpty();
-        if (!noIndexLeftOver) {
-            log.info("player indices contain duplicate");
-        }
-        return noIndexLeftOver;
+        return true;
     }
 
     private static boolean onlyDefeatedPlayersHaveRoundOfDefeat(GameState gameState) {
@@ -215,10 +212,29 @@ public final class GameStateValidator {
         return result;
     }
 
+    private static boolean activeKingdomBelongsToActivePlayer(GameState gameState) {
+        final boolean result =
+            gameState.getActiveKingdom() == null || gameState.getActiveKingdom().getPlayer() == gameState.getActivePlayer();
+        if (!result) {
+            log.info("active kingdom does not belong to active player");
+        }
+        return result;
+    }
+
     private static boolean eachKingdomsHasValidSavings(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getSavings() < 0 || kingdom.getSavings() > BARELY_PLAUSIBLE_HIGH_INT) {
                 log.info("kingdom has invalid savings amount");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean eachKingdomHasValidAmountOfTiles(GameState gameState) {
+        for (Kingdom kingdom : gameState.getKingdoms()) {
+            if (kingdom.getTiles() == null || kingdom.getTiles().size() < 2 || kingdom.getTiles().size() > BARELY_PLAUSIBLE_HIGH_INT) {
+                log.info("kingdom has invalid number of tiles");
                 return false;
             }
         }
@@ -237,20 +253,20 @@ public final class GameStateValidator {
         return true;
     }
 
-    private static boolean eachKingdomHasValidAmountOfTiles(GameState gameState) {
+    private static boolean eachKingdomHasAPlayer(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
-            if (kingdom.getTiles() == null || kingdom.getTiles().size() < 2 || kingdom.getTiles().size() > BARELY_PLAUSIBLE_HIGH_INT) {
-                log.info("kingdom has invalid number of tiles");
+            if (kingdom.getPlayer() == null) {
+                log.info("kingdom has no player");
                 return false;
             }
         }
         return true;
     }
 
-    private static boolean eachKingdomHasAPlayer(GameState gameState) {
-        for (Kingdom kingdom : gameState.getKingdoms()) {
-            if (kingdom.getPlayer() == null) {
-                log.info("kingdom has no player");
+    private static boolean tilesHaveBackLinksInTheirKingdoms(GameState gameState) {
+        for (HexTile tile : gameState.getMap().values()) {
+            if (tile.getKingdom() != null && !tile.getKingdom().getTiles().contains(tile)) {
+                log.info("kingdom of a tile does not contain the tile");
                 return false;
             }
         }
@@ -286,16 +302,6 @@ public final class GameStateValidator {
             }
             if (seenTiles.size() != kingdom.getTiles().size()) {
                 log.info("not all tiles in a kingdom are connected");
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean tilesHaveBackLinksInTheirKingdoms(GameState gameState) {
-        for (HexTile tile : gameState.getMap().values()) {
-            if (tile.getKingdom() != null && !tile.getKingdom().getTiles().contains(tile)) {
-                log.info("kingdom of a tile does not contain the tile");
                 return false;
             }
         }
