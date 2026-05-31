@@ -4,15 +4,12 @@ package de.sesu8642.feudaltactics.ingame;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonWriter.OutputType;
 import de.sesu8642.feudaltactics.ingame.dagger.FullAutoSavePrefStore;
 import de.sesu8642.feudaltactics.ingame.dagger.IncrementalAutoSavePrefStore;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateJsonHelper;
-import de.sesu8642.feudaltactics.lib.gamestate.GameStateSerializer;
 import de.sesu8642.feudaltactics.lib.ingame.PlayerMove;
 import de.sesu8642.feudaltactics.shared.exceptions.SaveLoadingException;
 import org.slf4j.Logger;
@@ -65,7 +62,8 @@ public class AutoSaveRepository {
 
     @Inject
     public AutoSaveRepository(@FullAutoSavePrefStore Preferences fullAutoSavePrefStore,
-                              @IncrementalAutoSavePrefStore Preferences incrementalAutoSavePrefStore, GameStateJsonHelper gameStateJsonHelper) {
+                              @IncrementalAutoSavePrefStore Preferences incrementalAutoSavePrefStore,
+                              GameStateJsonHelper gameStateJsonHelper) {
         this.fullAutoSavePrefStore = fullAutoSavePrefStore;
         this.incrementalAutoSavePrefStore = incrementalAutoSavePrefStore;
         this.gameStateJsonHelper = gameStateJsonHelper;

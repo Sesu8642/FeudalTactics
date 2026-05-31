@@ -15,6 +15,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.GameStateHelper;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
+import de.sesu8642.feudaltactics.menu.statistics.GameHistory;
 import de.sesu8642.feudaltactics.menu.statistics.HistoricGame;
 import de.sesu8642.feudaltactics.menu.statistics.HistoryDao;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -27,6 +28,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.EnumMap;
+import java.util.List;
 
 import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.*;
 
@@ -272,9 +274,11 @@ public class HistorySlide extends Slide {
     public void refreshHistory() {
         historyTable.clear();
 
-        HistoricGame[] history = historyDao.getGameHistory();
+        final GameHistory history = historyDao.getGameHistory();
 
-        if (history.length == 0) {
+        List<HistoricGame> historicGames = history.getHistoricGames();
+
+        if (historicGames.isEmpty()) {
             final Label noHistoryLabel =
                 new Label(localizationManager.localizeText(TranslationKeys.HISTORY_PAGE_TEXT_NO_HISTORY), skin);
             noHistoryLabel.setWrap(true);
@@ -282,21 +286,23 @@ public class HistorySlide extends Slide {
             return;
         }
 
-        if (history.length > MAX_DISPLAYED_GAMES) {
+        final int historySize = historicGames.size();
+        if (historySize > MAX_DISPLAYED_GAMES) {
             Gdx.app.log("HistorySlide",
-                "Displaying only the most recent " + MAX_DISPLAYED_GAMES + " games out of " + history.length + " " +
+                "Displaying only the most recent " + MAX_DISPLAYED_GAMES + " games out of " + historySize + " " +
                     "total games.");
-            history = java.util.Arrays.copyOfRange(history, history.length - MAX_DISPLAYED_GAMES, history.length);
+
+            historicGames = historicGames.subList(historySize - MAX_DISPLAYED_GAMES, historySize);
         }
+
+        // Show most recent games first
+        historicGames.sort((g1, g2) -> Long.compare(g2.getTimestamp(), g1.getTimestamp()));
 
         // Group by LocalDate instead of millis math
         LocalDate lastDateHeading = null;
 
-        // Show most recent games first
-        for (int i = history.length - 1; i >= 0; i--) {
-            final HistoricGame game = history[i];
-
-            final LocalDate gameDate = Instant.ofEpochMilli(game.getTimestamp())
+        for (HistoricGame historicGame : historicGames) {
+            final LocalDate gameDate = Instant.ofEpochMilli(historicGame.getTimestamp())
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
 
@@ -309,7 +315,8 @@ public class HistorySlide extends Slide {
                 historyTable.add(dateHeading).colspan(4).left().padTop(10).padBottom(5);
             }
 
-            placeHistoryEntry(game);
+            placeHistoryEntry(historicGame);
         }
+
     }
 }
