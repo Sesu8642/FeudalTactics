@@ -46,6 +46,11 @@
         https://raw.githubusercontent.com/sesu8642/FeudalTactics/master/metadata/en-US/images/sevenInchScreenshots/3.png</image>
       <caption>In-game screenshot of a game after a few rounds</caption>
     </screenshot>
+    <screenshot>
+      <image>
+        https://raw.githubusercontent.com/sesu8642/FeudalTactics/master/metadata/en-US/images/sevenInchScreenshots/4.png</image>
+      <caption>In-game screenshot of the game history</caption>
+    </screenshot>
   </screenshots>
 
   <content_rating type="oars-1.1">
@@ -56,7 +61,10 @@
   <url type="bugtracker">https://github.com/Sesu8642/FeudalTactics/issues</url>
 
   <releases>
-      <release version="1.4.2" date="2025-10-16">
+    <release version="1.5.0" date="2026-06-04">
+      <url>https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/metadata/en-US/changelogs/15.txt</url>
+    </release>
+    <release version="1.4.2" date="2025-10-16">
       <url>https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/metadata/en-US/changelogs/14.txt</url>
     </release>
     <release version="1.4.1" date="2025-09-30">
