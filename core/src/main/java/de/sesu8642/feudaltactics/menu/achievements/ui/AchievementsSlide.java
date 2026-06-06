@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
-
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementsRepository;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -14,10 +14,9 @@ import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 /**
  * Represents the slide in the achievements screen.
@@ -31,7 +30,8 @@ public class AchievementsSlide extends Slide {
     private final List<@NonNull AchievementBox> achievementBoxes;
 
     @Inject
-    public AchievementsSlide(Skin skin, AchievementsRepository achievementRepository, DialogFactory dialogFactory) {
+    public AchievementsSlide(Skin skin, AchievementsRepository achievementRepository, DialogFactory dialogFactory,
+                             LocalizationManager localizationManager) {
         super(skin, "Achievements");
 
         achievementTileGroup = new HorizontalGroup();
@@ -40,10 +40,10 @@ public class AchievementsSlide extends Slide {
         achievementTileGroup.wrapSpace(10);
         achievementTileGroup.align(Align.center);
 
-        List<@NonNull AbstractAchievement> achievements = achievementRepository.getAchievements();
+        final List<@NonNull AbstractAchievement> achievements = achievementRepository.getAchievements();
         achievementBoxes = new java.util.ArrayList<>();
         for (AbstractAchievement achievement : achievements) {
-            achievementBoxes.add(new AchievementBox(skin, achievement, dialogFactory));
+            achievementBoxes.add(new AchievementBox(skin, achievement, dialogFactory, localizationManager));
         }
 
         renderAchievements();
@@ -58,7 +58,7 @@ public class AchievementsSlide extends Slide {
     public void renderAchievements() {
         achievementTileGroup.clearChildren();
         for (AchievementBox achievementBox : achievementBoxes) {
-            Actor achievementActor = achievementBox.displayAchievement();
+            final Actor achievementActor = achievementBox.displayAchievement();
             achievementTileGroup.addActor(achievementActor);
         }
     }

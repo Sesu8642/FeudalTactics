@@ -1,48 +1,38 @@
 package de.sesu8642.feudaltactics.menu.achievements;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.menu.achievements.model.*;
+import lombok.AllArgsConstructor;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
-import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
-import de.sesu8642.feudaltactics.menu.achievements.model.AbortGameAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.HistoricPersonOrEvent;
-import de.sesu8642.feudaltactics.menu.achievements.model.LoseAgainstWeakestAiAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.PlayMoreThanNRoundsAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstAiLevelAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinAgainstManyEnemiesAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinInNRoundsAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinNGamesAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinOnMapSizeAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinVeryHardGamesInARowAchievement;
-import de.sesu8642.feudaltactics.menu.achievements.model.WinWhenStartingLastAchievement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Provides achievement classes, knows how to construct each individual achievement
  */
 @Singleton
+@AllArgsConstructor(onConstructor_ = @Inject)
 public class AchievementsFactory {
 
-    @Inject
-    public AchievementsFactory() {
-    }
-
-    public List<AbstractAchievement> CreateAchievements() {
-        List<AbstractAchievement> list = new ArrayList<>();
+    public List<AbstractAchievement> createAchievements() {
+        final List<AbstractAchievement> list = new ArrayList<>();
         list.add(new WinNGamesAchievement(1));
         list.add(new WinNGamesAchievement(10));
-        list.add(new WinNGamesAchievement(50).setHistoricConnection(HistoricPersonOrEvent.CHARLEMAGNE));    // Charlemagne won many battles
+        // Charlemagne won many battles
+        list.add(new WinNGamesAchievement(50).setHistoricConnection(HistoricPersonOrEvent.CHARLEMAGNE));
         list.add(new WinInNRoundsAchievement(18));
         list.add(new WinInNRoundsAchievement(14));
-        list.add(new WinInNRoundsAchievement(12).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));    // Jeanne d'Arc won battles when she was very young
+        // Jeanne d'Arc won battles when she was very young
+        list.add(new WinInNRoundsAchievement(12).setHistoricConnection(HistoricPersonOrEvent.JEANNE_DARC));
         list.add(new PlayMoreThanNRoundsAchievement(30).setHistoricConnection(HistoricPersonOrEvent.THIRTY_YEARS_WAR));
-        list.add(new PlayMoreThanNRoundsAchievement(50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));    // The Hundred Years' War lasted very long obviously
-        list.add(new LoseAgainstWeakestAiAchievement().setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));    // The Walk to Canossa was a humiliation. And so is this achievement.
+        // The Hundred Years' War lasted very long obviously
+        list.add(new PlayMoreThanNRoundsAchievement(50).setHistoricConnection(HistoricPersonOrEvent.HUNDRED_YEARS_WAR));
+        // The Walk to Canossa was a humiliation. And so is this achievement.
+        list.add(new LoseAgainstWeakestAiAchievement().setHistoricConnection(HistoricPersonOrEvent.ROAD_TO_CANOSSA));
         list.add(new WinVeryHardGamesInARowAchievement(3));
         list.add(new WinVeryHardGamesInARowAchievement(10));
         list.add(new WinVeryHardGamesInARowAchievement(20).setHistoricConnection(HistoricPersonOrEvent.WILLIAM_THE_CONQUEROR));

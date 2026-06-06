@@ -1,12 +1,12 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievement> {
 
@@ -40,10 +40,10 @@ class WinNGamesAchievementTest extends AbstractAchievementTest<WinNGamesAchievem
 
     @Test
     void multipleWins_progressIncrementsEachTime() {
-        GameExitedEvent event = winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_2);
-        boolean result1 = achievement.onGameExited(event);
-        boolean result2 = achievement.onGameExited(event);
-        boolean result3 = achievement.onGameExited(event);
+        final GameExitedEvent event = winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_2);
+        final boolean result1 = achievement.onGameExited(event);
+        final boolean result2 = achievement.onGameExited(event);
+        final boolean result3 = achievement.onGameExited(event);
 
         assertEquals(3, achievement.getProgress());
         assertTrue(result1);

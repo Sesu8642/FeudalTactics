@@ -1,16 +1,14 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.ingame.GameParameters;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.Test;
 
 class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinVeryHardGamesInARowAchievement> {
 
@@ -68,7 +66,7 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
 
     @Test
     void copiedMapSeed_resetsProgress() {
-        long oldSeed = System.currentTimeMillis() - 100_000;
+        final long oldSeed = System.currentTimeMillis() - 100_000;
         achievement.onMapRegeneration(mapRegenEvent(oldSeed));
         verifyProgress(0);
     }
@@ -78,19 +76,19 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
         achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
 
         // Win resets the flag
-        boolean resExitedEvent = achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
+        final boolean resExitedEvent = achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
         assertTrue(resExitedEvent);
-        int progress = achievement.getProgress();
+        final int progress = achievement.getProgress();
         assertTrue(progress > 0);
 
         // Next generation should be treated as first again (progress preserved, not reset)
-        boolean resMapRegen2 = achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
+        final boolean resMapRegen2 = achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
         assertTrue(resMapRegen2);
         verifyProgress(progress);
     }
 
     private RegenerateMapEvent mapRegenEvent(long seed) {
-        GameParameters gp = new GameParameters(
+        final GameParameters gp = new GameParameters(
             0, // humanPlayerIndex, 0 is okay for the test
             seed,              // seed, just some number
             NewGamePreferences.MapSizes.MEDIUM.getAmountOfTiles(), // landMass

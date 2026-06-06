@@ -1,7 +1,7 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import org.junit.jupiter.api.Test;
 
 class PlayMoreThanNRoundsAchievementTest extends AbstractAchievementTest<PlayMoreThanNRoundsAchievement> {
@@ -37,7 +37,7 @@ class PlayMoreThanNRoundsAchievementTest extends AbstractAchievementTest<PlayMor
     }
 
     private GameExitedEvent eventWithRounds(int rounds) {
-        GameState gs = new GameState();
+        final GameState gs = new GameState();
         gs.setRound(rounds);
         return new GameExitedEvent(gs, null);
     }

@@ -1,9 +1,9 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Kingdom;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -52,22 +52,24 @@ class WinAgainstManyEnemiesAchievementTest extends AbstractAchievementTest<WinAg
         verifyProgress(1);
     }
 
-    /** Creates an event where local player wins and {@code survivingBots} bots have kingdoms. */
+    /**
+     * Creates an event where local player wins and {@code survivingBots} bots have kingdoms.
+     */
     private GameExitedEvent enemyWinEvent(int survivingBots) {
-        Player localPlayer = new Player(0, Player.Type.LOCAL_PLAYER);
-        Player[] allPlayers = new Player[TOTAL_PLAYERS];
-        Kingdom[] kingdoms = new Kingdom[survivingBots];
+        final Player localPlayer = new Player(0, Player.Type.LOCAL_PLAYER);
+        final Player[] allPlayers = new Player[TOTAL_PLAYERS];
+        final Kingdom[] kingdoms = new Kingdom[survivingBots];
 
         allPlayers[0] = localPlayer;
         for (int i = 1; i <= survivingBots; i++) {
             allPlayers[i] = new Player(i, Player.Type.LOCAL_BOT);
-            kingdoms[i-1] = new Kingdom(allPlayers[i]);
+            kingdoms[i - 1] = new Kingdom(allPlayers[i]);
         }
-        for (int j = survivingBots +1; j < TOTAL_PLAYERS; j++) {
+        for (int j = survivingBots + 1; j < TOTAL_PLAYERS; j++) {
             allPlayers[j] = new Player(j, Player.Type.LOCAL_BOT);
         }
 
-        GameState gs = new GameState();
+        final GameState gs = new GameState();
         gs.setWinner(localPlayer);
         gs.setPlayers(Arrays.asList(allPlayers));
         gs.setKingdoms(Arrays.asList(kingdoms));
