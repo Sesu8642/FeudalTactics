@@ -6,6 +6,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
+import lombok.RequiredArgsConstructor;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -15,14 +17,11 @@ import java.util.function.Supplier;
 /**
  * Factory for creating dialogs.
  */
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class DialogFactory {
 
     private final Skin skin;
-
-    @Inject
-    public DialogFactory(Skin skin) {
-        this.skin = skin;
-    }
+    private final PlatformInsetsProvider platformInsetsProvider;
 
     /**
      * Creates a new dialog. Text and buttons can be added to it after it is
@@ -147,8 +146,8 @@ public class DialogFactory {
      * @param selectBoxItems items to be selctable
      * @return the newly created select box
      */
-    public <T> SelectBox<T> addSelectBoxToDialog(FeudalTacticsDialog dialog, List<T> selectBoxItems) {
-        SelectBox<T> selectBox = new SelectBox<>(skin);
+    public <T> InsetsRespectingSelectBox<T> addSelectBoxToDialog(FeudalTacticsDialog dialog, List<T> selectBoxItems) {
+        InsetsRespectingSelectBox<T> selectBox = new InsetsRespectingSelectBox<>(skin, platformInsetsProvider);
         selectBox.setItems((T[]) selectBoxItems.toArray());
         dialog.getContentTable().add(selectBox).left();
         return selectBox;

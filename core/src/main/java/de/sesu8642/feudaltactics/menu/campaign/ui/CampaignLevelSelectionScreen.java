@@ -80,7 +80,7 @@ public class CampaignLevelSelectionScreen extends GameScreen {
                 dialog.text(scenarioMap.toString());
                 dialog.button("BACK", (byte) 0);
                 dialog.button("PLAY", (byte) 1);
-                SelectBox<String> difficultySelect = dialogFactory.addSelectBoxToDialog(dialog, localizationManager.localizeTextBatch(DIFFICULTIES_KEYS));
+                InsetsRespectingSelectBox<String> difficultySelect = dialogFactory.addSelectBoxToDialog(dialog, localizationManager.localizeTextBatch(DIFFICULTIES_KEYS));
                 difficultySelect.addListener(new ExceptionLoggingChangeListener(() -> selectedIntelligence = Intelligence.values()[difficultySelect.getSelectedIndex()]));
                 dialog.show(levelSelectionStage);
             }));

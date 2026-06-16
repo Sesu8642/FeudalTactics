@@ -18,6 +18,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.ButtonFactory;
+import de.sesu8642.feudaltactics.menu.common.ui.InsetsRespectingSelectBox;
 import de.sesu8642.feudaltactics.menu.common.ui.ResizableResettableStage;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
@@ -47,10 +48,10 @@ public class ParameterInputStage extends ResizableResettableStage {
     private final PlatformInsetsProvider platformInsetsProvider;
     private final Skin skin;
     private final LocalizationManager localizationManager;
-    SelectBox<String> startingPositionSelect;
-    SelectBox<String> sizeSelect;
-    SelectBox<String> densitySelect;
-    SelectBox<String> difficultySelect;
+    InsetsRespectingSelectBox<String> startingPositionSelect;
+    InsetsRespectingSelectBox<String> sizeSelect;
+    InsetsRespectingSelectBox<String> densitySelect;
+    InsetsRespectingSelectBox<String> difficultySelect;
     ImageButton randomButton;
     ImageTextButton copyButton;
     ImageButton pasteButton;
@@ -83,7 +84,7 @@ public class ParameterInputStage extends ResizableResettableStage {
         final Label startingPositionLabel =
             new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_STARTING_POSITION),
                 skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        startingPositionSelect = new SelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT);
+        startingPositionSelect = new InsetsRespectingSelectBox<>(skin, SkinConstants.SELECT_BOX_STYLE_COLOR_SELECT, platformInsetsProvider);
 
         updateNumberOfStartingPositions(MapRenderer.PLAYER_COLOR_PALETTE.size());
 
@@ -91,17 +92,17 @@ public class ParameterInputStage extends ResizableResettableStage {
             new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_CPU_DIFFICULTY),
                 skin.get(SkinConstants.FONT_OVERLAY,
                     LabelStyle.class));
-        difficultySelect = new SelectBox<>(skin);
+        difficultySelect = new InsetsRespectingSelectBox<>(skin, platformInsetsProvider);
         difficultySelect.setItems(localizationManager.localizeTextBatch(DIFFICULTIES_KEYS).toArray(new String[0]));
 
         final Label sizeLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_SIZE),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        sizeSelect = new SelectBox<>(skin);
+        sizeSelect = new InsetsRespectingSelectBox<>(skin, platformInsetsProvider);
         sizeSelect.setItems(localizationManager.localizeTextBatch(MAP_SIZES_KEYS).toArray(new String[0]));
 
         final Label densityLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_MAP_DENSITY),
             skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        densitySelect = new SelectBox<>(skin);
+        densitySelect = new InsetsRespectingSelectBox<>(skin, platformInsetsProvider);
         densitySelect.setItems(localizationManager.localizeTextBatch(DENSITIES_KEYS).toArray(new String[0]));
 
         final Label seedLabel = new Label(localizationManager.localizeText(TranslationKeys.GAME_DETAILS_SEED),
