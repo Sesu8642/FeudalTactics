@@ -24,9 +24,9 @@ import java.util.List;
 public class AchievementBox {
 
     /* Width of a single achievement box */
-    private final static float ACHIEVEMENT_WINDOW_WIDTH = 300f;
+    private static final float ACHIEVEMENT_WINDOW_WIDTH = 300f;
     /* Height of a single achievement box */
-    private final static float ACHIEVEMENT_WINDOW_HEIGHT = 200f;
+    private static final float ACHIEVEMENT_WINDOW_HEIGHT = 200f;
     private final Skin skin;
     private final AbstractAchievement achievement;
     private final DialogFactory dialogFactory;
@@ -60,7 +60,9 @@ public class AchievementBox {
      * as it may change based on the achievement's state (unlocked vs locked).
      */
     private Window createAchievementWindow() {
-        final Window achievementWindow = new Window(localizationManager.localizeText(achievement.getNameKey()), skin);
+        final Window achievementWindow =
+            new Window(localizationManager.localizeText(achievement.getNameTranslationKey(),
+                achievement.getNameTranslationParameters().toArray()), skin);
 
         // The user shall not move around the achievement boxes. They align themselves
         achievementWindow.setMovable(false);
@@ -150,7 +152,8 @@ public class AchievementBox {
         });
 
         final LabelStyle baseStyle = skin.get(SkinConstants.FONT_MENU_HEADING, LabelStyle.class);
-        final Label titleLabel = new Label(localizationManager.localizeText(achievement.getNameKey()),
+        final Label titleLabel = new Label(localizationManager.localizeText(achievement.getNameTranslationKey(),
+            achievement.getNameTranslationParameters().toArray()),
             new LabelStyle(baseStyle));
         detailsDialog.text(titleLabel);
         detailsDialog.getContentTable().row();
@@ -175,8 +178,15 @@ public class AchievementBox {
     private String getTranslatedDescription() {
         final List<String> descriptionParagraphKeys = achievement.getDescriptionParagraphKeys();
         final StringBuilder descriptionTextBuilder = new StringBuilder();
+        boolean isBaseDescription = true;
         for (String descriptionParagraphKey : descriptionParagraphKeys) {
-            descriptionTextBuilder.append(localizationManager.localizeText(descriptionParagraphKey));
+            if (isBaseDescription) {
+                descriptionTextBuilder.append(localizationManager.localizeText(descriptionParagraphKey,
+                    achievement.getBaseDescriptionTranslationParameters().toArray()));
+                isBaseDescription = false;
+            } else {
+                descriptionTextBuilder.append(localizationManager.localizeText(descriptionParagraphKey));
+            }
             if (!descriptionParagraphKey.equals(descriptionParagraphKeys.get(descriptionParagraphKeys.size() - 1))) {
                 // if not the last paragraph, add line break
                 descriptionTextBuilder.append("\n\n");

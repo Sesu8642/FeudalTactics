@@ -1,20 +1,24 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 /**
- * Achievement: Win a game in a specified number of rounds or less. The AI level must be Very Strong, the map size must be at least Medium.
+ * Achievement: Win a game in a specified number of rounds or less. The AI level must be Very Strong, the map size
+ * must be at least Medium.
  */
 public class WinInNRoundsAchievement extends AbstractAchievement {
 
     private final int rounds;
 
     public WinInNRoundsAchievement(int rounds) {
-        super(1, "Win in " + rounds + " Rounds");
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_IN_N_ROUNDS_NAME, ImmutableList.of(String.valueOf(rounds)),
+            TranslationKeys.ACHIEVEMENT_WIN_IN_N_ROUNDS_DESCRIPTION, ImmutableList.of(String.valueOf(rounds)));
         this.rounds = rounds;
     }
 
@@ -24,29 +28,24 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
     }
 
     @Override
-    public String getBaseDescription() {
-        return "Win a game in " + rounds + " rounds or less. The AI level must be Very Strong, the map size must be at least Medium.";
-    }
-
-    @Override
     public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
         if (gameState == null) {
             return false;     // Ignore exits from editor or similar
-        }   
-    
+        }
+
         final Player winnerOfTheGame = gameState.getWinner();
 
         if (winnerOfTheGame == null || winnerOfTheGame.getType() != Player.Type.LOCAL_PLAYER) {
             return false;     // Player didn't win, so ignore
         }
 
-        Intelligence aiLevel = gameState.getBotIntelligence();
+        final Intelligence aiLevel = gameState.getBotIntelligence();
         if (aiLevel != Intelligence.LEVEL_4) {
             return false;    // Not a Very Hard game, ignore
         }
 
-        NewGamePreferences gamePreferences = event.getGamePreferences();
+        final NewGamePreferences gamePreferences = event.getGamePreferences();
         if (gamePreferences.getMapSize().getAmountOfTiles() < NewGamePreferences.MapSizes.MEDIUM.getAmountOfTiles()) {
             return false;    // Map size is too small, ignore
         }

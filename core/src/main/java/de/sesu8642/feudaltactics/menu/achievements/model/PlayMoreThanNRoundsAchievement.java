@@ -1,5 +1,7 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 /**
@@ -9,19 +11,18 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
 
     private final int roundCount;
 
+    // TODO: how to insert the rowCount later
     public PlayMoreThanNRoundsAchievement(int roundCount) {
-        super(1, "Win using more than " + roundCount + " rounds");
+        super(1, TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_NAME,
+            ImmutableList.of(String.valueOf(roundCount)),
+            TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_DESCRIPTION,
+            ImmutableList.of(String.valueOf(roundCount)));
         this.roundCount = roundCount;
     }
 
     @Override
     public boolean isSecret() {
         return true;
-    }
-
-    @Override
-    public String getBaseDescription() {
-        return "Win a game that lasts at least " + roundCount + " rounds.";
     }
 
     @Override
@@ -36,7 +37,7 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
             return false;     // Ignore exits from editor or similar
         }
 
-        if ( gameState.getRound() >= roundCount) {
+        if (gameState.getRound() >= roundCount) {
             storeProgress(1); // unlock
             return true;
         }

@@ -5,6 +5,7 @@ import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -19,11 +20,17 @@ import java.util.List;
  */
 @Accessors(chain = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@RequiredArgsConstructor
 public abstract class AbstractAchievement {
     @Getter
     @EqualsAndHashCode.Include
     private final int goal;
-    private final String baseName;
+    private final String nameTranslationKey;
+    private final List<String> nameTranslationParameters;
+    @Getter
+    private final String baseDescriptionTranslationKey;
+    @Getter
+    private final List<String> baseDescriptionTranslationParameters;
     /**
      * Indicates whether the achievement is unlocked = player has achieved it.
      */
@@ -45,9 +52,11 @@ public abstract class AbstractAchievement {
     @EqualsAndHashCode.Include
     private int progress = 0;
 
-    protected AbstractAchievement(int goal, String name) {
-        this.goal = goal;
-        baseName = name;
+    /**
+     * Constructor for achievements that don't have any parameters in the name or description translations.
+     */
+    protected AbstractAchievement(int goal, String nameTranslationKey, String baseDescriptionTranslationKey) {
+        this(goal, nameTranslationKey, ImmutableList.of(), baseDescriptionTranslationKey, ImmutableList.of());
     }
 
     /**
@@ -59,17 +68,27 @@ public abstract class AbstractAchievement {
     public abstract String getId();
 
     /**
-     * Name of the achievement. It displays in the overview and also in the details window.
+     * Name translation key of the achievement. It displays in the overview and also in the details window.
      */
-    public String getNameKey() {
+    public String getNameTranslationKey() {
         if (historicConnection != null) {
             return historicConnection.getNameTranslationKey();
         } else {
-            return baseName;
+            return nameTranslationKey;
         }
     }
 
-    protected abstract String getBaseDescription();
+    /**
+     * Parameters for the name translation of the achievement.
+     */
+    public List<String> getNameTranslationParameters() {
+        if (historicConnection != null) {
+            // historic connections don't have parameters (so far)
+            return ImmutableList.of();
+        } else {
+            return nameTranslationParameters;
+        }
+    }
 
     /**
      * Keys of the description paragraphs for the achievement. In the achievements menu, it displays when
@@ -82,9 +101,10 @@ public abstract class AbstractAchievement {
                 return ImmutableList.of(historicConnection.getDescriptionTranslationKey(), "This achievement is still" +
                     " secret. Unlock it to see the full description.");
             }
-            return ImmutableList.of(historicConnection.getDescriptionTranslationKey(), getBaseDescription());
+            return ImmutableList.of(historicConnection.getDescriptionTranslationKey(),
+                getBaseDescriptionTranslationKey());
         } else {
-            return ImmutableList.of(getBaseDescription());
+            return ImmutableList.of(getBaseDescriptionTranslationKey());
         }
     }
 

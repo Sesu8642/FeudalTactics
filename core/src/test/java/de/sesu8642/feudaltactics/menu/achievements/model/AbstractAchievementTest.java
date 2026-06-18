@@ -130,13 +130,13 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
 
     @Test
     void descriptionKey_isNotNull() {
-        final String desc = achievement.getBaseDescription();
+        final String desc = achievement.getBaseDescriptionTranslationKey();
         assertNotNull(desc);
     }
 
     @Test
     void nameKey_isNotNull() {
-        final String name = achievement.getNameKey();
+        final String name = achievement.getNameTranslationKey();
         assertNotNull(name);
     }
 

@@ -1,24 +1,30 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 /**
- * Achievement: Win a game where your enemies surrender -- and there are still a specified number of or more different enemies with surviving kingdoms.
+ * Achievement: Win a game where your enemies surrender -- and there are still a specified number of or more
+ * different enemies with surviving kingdoms.
  */
 public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
 
     private final int enemyCount;
 
     public WinAgainstManyEnemiesAchievement(int enemyCount) {
-        super(1, "Win with " + enemyCount + " surviving enemies");
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_AGAINST_MANY_ENEMIES_NAME,
+            ImmutableList.of(String.valueOf(enemyCount)),
+            TranslationKeys.ACHIEVEMENT_WIN_AGAINST_MANY_ENEMIES_DESCRIPTION,
+            ImmutableList.of(String.valueOf(enemyCount)));
         this.enemyCount = enemyCount;
     }
 
-    @Override
-    public String getBaseDescription() {
-        return "Win a game where your enemies surrender -- and there are still " + enemyCount + " or more different enemies with surviving kingdoms.";
+    private static boolean isSurvivingPlayer(GameState gameState, Player player) {
+        return gameState.getKingdoms().stream()
+            .anyMatch(kingdom -> kingdom.getPlayer() == player);
     }
 
     @Override
@@ -38,7 +44,7 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
             return false;     // Player didn't win, so ignore
         }
 
-        long survivingEnemies = gameState.getPlayers().stream()
+        final long survivingEnemies = gameState.getPlayers().stream()
             .filter(player -> player.getType() != de.sesu8642.feudaltactics.lib.gamestate.Player.Type.LOCAL_PLAYER)
             .filter(player -> isSurvivingPlayer(gameState, player))
             .count();
@@ -48,10 +54,5 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
             return true;
         }
         return false;
-    }
-
-    private static boolean isSurvivingPlayer(GameState gameState, Player player) {
-        return gameState.getKingdoms().stream()
-            .anyMatch(kingdom -> kingdom.getPlayer() == player);
     }
 }

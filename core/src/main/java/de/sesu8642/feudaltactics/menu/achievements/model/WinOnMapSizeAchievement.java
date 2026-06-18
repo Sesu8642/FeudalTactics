@@ -2,20 +2,25 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
+import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 
 /**
- * Achievement: Win a game on a specified map size, either by defeating your enemies or them giving up. Any difficulty is allowed.
+ * Achievement: Win a game on a specified map size, either by defeating your enemies or them giving up. Any
+ * difficulty is allowed.
  */
 public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 
     public WinOnMapSizeAchievement(NewGamePreferences.MapSizes mapSize) {
-        super(1, "Win on a " + mapSize.name().toLowerCase() + " map");
+        // TODO: map size needs to be translated
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()),
+            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()));
 
         this.mapSize = mapSize;
     }
@@ -23,11 +28,6 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     @Override
     public String getId() {
         return "win-" + mapSize.name().toLowerCase();
-    }
-
-    @Override
-    public String getBaseDescription() {
-        return "Win a game on a " + mapSize.name().toLowerCase() + " map, either by defeating your enemies or them giving up. Any difficulty is allowed.";
     }
 
     @Override
@@ -40,7 +40,7 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
         final Player winnerOfTheGame = gameState.getWinner();
 
         if (winnerOfTheGame != null && winnerOfTheGame.getType() == Player.Type.LOCAL_PLAYER) {
-            NewGamePreferences gamePreferences = event.getGamePreferences();
+            final NewGamePreferences gamePreferences = event.getGamePreferences();
             if (gamePreferences.getMapSize() == mapSize) {
                 storeProgress(1);   // unlock
                 return true;
