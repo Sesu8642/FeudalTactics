@@ -61,6 +61,9 @@
   <url type="bugtracker">https://github.com/Sesu8642/FeudalTactics/issues</url>
 
   <releases>
+    <release version="1.5.1" date="2026-06-18">
+      <url>https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/metadata/en-US/changelogs/16.txt</url>
+    </release>
     <release version="1.5.0" date="2026-06-04">
       <url>https://raw.githubusercontent.com/Sesu8642/FeudalTactics/master/metadata/en-US/changelogs/15.txt</url>
     </release>
