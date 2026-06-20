@@ -1,12 +1,11 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
 import com.google.common.collect.ImmutableList;
+import de.sesu8642.TranslationKeys;
+import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -27,9 +26,7 @@ public abstract class AbstractAchievement {
     private final int goal;
     private final String nameTranslationKey;
     private final List<String> nameTranslationParameters;
-    @Getter
     private final String baseDescriptionTranslationKey;
-    @Getter
     private final List<String> baseDescriptionTranslationParameters;
     /**
      * Indicates whether the achievement is unlocked = player has achieved it.
@@ -68,44 +65,44 @@ public abstract class AbstractAchievement {
     public abstract String getId();
 
     /**
-     * Name translation key of the achievement. It displays in the overview and also in the details window.
+     * Returns the translated name for the achievement.
+     * It displays in the overview and also in the details window.
      */
-    public String getNameTranslationKey() {
-        if (historicConnection != null) {
-            return historicConnection.getNameTranslationKey();
-        } else {
-            return nameTranslationKey;
-        }
-    }
-
-    /**
-     * Parameters for the name translation of the achievement.
-     */
-    public List<String> getNameTranslationParameters() {
+    public String getTranslatedName(LocalizationManager localizationManager) {
         if (historicConnection != null) {
             // historic connections don't have parameters (so far)
-            return ImmutableList.of();
+            return localizationManager.localizeText(historicConnection.getNameTranslationKey());
         } else {
-            return nameTranslationParameters;
+            return localizationManager.localizeText(nameTranslationKey, nameTranslationParameters.toArray());
         }
     }
 
     /**
-     * Keys of the description paragraphs for the achievement. In the achievements menu, it displays when
-     * tapping/clicking on the achievement in
-     * a window with details.
+     * Returns the full, translated description for the achievement including progress information.
+     * In the achievements menu, it displays when tapping/clicking on the achievement in a window with details.
      */
-    public List<String> getDescriptionParagraphKeys() {
+    public String getTranslatedDescription(LocalizationManager localizationManager) {
+        final StringBuilder descriptionTextBuilder = new StringBuilder();
         if (historicConnection != null) {
+            descriptionTextBuilder.append(localizationManager.localizeText(historicConnection.getDescriptionTranslationKey()));
+            descriptionTextBuilder.append("\n\n");
             if (isSecret() && !unlocked) {
-                return ImmutableList.of(historicConnection.getDescriptionTranslationKey(), "This achievement is still" +
-                    " secret. Unlock it to see the full description.");
+                descriptionTextBuilder.append(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_DESCRIPTION_IS_SECRET));
+            } else {
+                descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, baseDescriptionTranslationParameters.toArray()));
             }
-            return ImmutableList.of(historicConnection.getDescriptionTranslationKey(),
-                getBaseDescriptionTranslationKey());
         } else {
-            return ImmutableList.of(getBaseDescriptionTranslationKey());
+            descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, baseDescriptionTranslationParameters.toArray()));
         }
+        descriptionTextBuilder.append("\n\n");
+
+        if (unlocked) {
+            descriptionTextBuilder.append(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_DESCRIPTION_IS_UNLOCKED));
+        } else {
+            descriptionTextBuilder.append(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_DESCRIPTION_PROGRESS, progress, goal));
+        }
+
+        return descriptionTextBuilder.toString();
     }
 
     /**

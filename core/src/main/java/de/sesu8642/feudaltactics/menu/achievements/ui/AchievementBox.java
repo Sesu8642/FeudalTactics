@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
@@ -61,8 +62,7 @@ public class AchievementBox {
      */
     private Window createAchievementWindow() {
         final Window achievementWindow =
-            new Window(localizationManager.localizeText(achievement.getNameTranslationKey(),
-                achievement.getNameTranslationParameters().toArray()), skin);
+            new Window(achievement.getTranslatedName(localizationManager), skin);
 
         // The user shall not move around the achievement boxes. They align themselves
         achievementWindow.setMovable(false);
@@ -108,7 +108,7 @@ public class AchievementBox {
         if (achievement.isUnlocked()) {
             achievementWindow.background(achievementBackgroundUnlockedDrawable);
 
-            final Label progressLabel = new Label("Unlocked", skin);
+            final Label progressLabel = new Label(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_SUMMARY_IS_UNLOCKED), skin);
             achievementWindow.add(progressLabel).row();
         } else {
             achievementWindow.background(achievementBackgroundLockedDrawable);
@@ -152,46 +152,16 @@ public class AchievementBox {
         });
 
         final LabelStyle baseStyle = skin.get(SkinConstants.FONT_MENU_HEADING, LabelStyle.class);
-        final Label titleLabel = new Label(localizationManager.localizeText(achievement.getNameTranslationKey(),
-            achievement.getNameTranslationParameters().toArray()),
+        final Label titleLabel = new Label(achievement.getTranslatedName(localizationManager),
             new LabelStyle(baseStyle));
         detailsDialog.text(titleLabel);
         detailsDialog.getContentTable().row();
-        final String description = getTranslatedDescription();
+        final String description = achievement.getTranslatedDescription(localizationManager);
         detailsDialog.text(description);
-        detailsDialog.getContentTable().row();
 
-        // Show progress information
-        final String progressText;
-        if (achievement.isUnlocked()) {
-            progressText = "Status: Unlocked";
-        } else {
-            progressText = String.format("Progress: %d / %d", achievement.getProgress(), achievement.getGoal());
-        }
-        detailsDialog.text(progressText);
-
-        detailsDialog.button("Close", true);
+        detailsDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), true);
 
         return detailsDialog;
     }
 
-    private String getTranslatedDescription() {
-        final List<String> descriptionParagraphKeys = achievement.getDescriptionParagraphKeys();
-        final StringBuilder descriptionTextBuilder = new StringBuilder();
-        boolean isBaseDescription = true;
-        for (String descriptionParagraphKey : descriptionParagraphKeys) {
-            if (isBaseDescription) {
-                descriptionTextBuilder.append(localizationManager.localizeText(descriptionParagraphKey,
-                    achievement.getBaseDescriptionTranslationParameters().toArray()));
-                isBaseDescription = false;
-            } else {
-                descriptionTextBuilder.append(localizationManager.localizeText(descriptionParagraphKey));
-            }
-            if (!descriptionParagraphKey.equals(descriptionParagraphKeys.get(descriptionParagraphKeys.size() - 1))) {
-                // if not the last paragraph, add line break
-                descriptionTextBuilder.append("\n\n");
-            }
-        }
-        return descriptionTextBuilder.toString();
-    }
 }
