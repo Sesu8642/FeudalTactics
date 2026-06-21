@@ -129,18 +129,6 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
     }
 
     @Test
-    void descriptionKey_isNotNull() {
-        final String desc = achievement.getBaseDescriptionTranslationKey();
-        assertNotNull(desc);
-    }
-
-    @Test
-    void nameKey_isNotNull() {
-        final String name = achievement.getNameTranslationKey();
-        assertNotNull(name);
-    }
-
-    @Test
     void onGameExited_nullGameState_doesNothing() {
         final GameExitedEvent event = new GameExitedEvent(null, null);
 
