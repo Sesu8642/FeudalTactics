@@ -35,7 +35,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
         super(numberOfGamesInARowToWin, TranslationKeys.ACHIEVEMENT_WIN_VERY_HARD_GAMES_IN_A_ROW_NAME,
             ImmutableList.of(String.valueOf(numberOfGamesInARowToWin)),
             TranslationKeys.ACHIEVEMENT_WIN_VERY_HARD_GAMES_IN_A_ROW_DESCRIPTION,
-            ImmutableList.of(String.valueOf(numberOfGamesInARowToWin)));
+            ImmutableList.of(String.valueOf(numberOfGamesInARowToWin)), false);
     }
 
     @Override

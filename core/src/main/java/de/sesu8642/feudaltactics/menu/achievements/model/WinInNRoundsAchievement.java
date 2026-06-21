@@ -18,7 +18,7 @@ public class WinInNRoundsAchievement extends AbstractAchievement {
 
     public WinInNRoundsAchievement(int rounds) {
         super(1, TranslationKeys.ACHIEVEMENT_WIN_IN_N_ROUNDS_NAME, ImmutableList.of(String.valueOf(rounds)),
-            TranslationKeys.ACHIEVEMENT_WIN_IN_N_ROUNDS_DESCRIPTION, ImmutableList.of(String.valueOf(rounds)));
+            TranslationKeys.ACHIEVEMENT_WIN_IN_N_ROUNDS_DESCRIPTION, ImmutableList.of(String.valueOf(rounds)), false);
         this.rounds = rounds;
     }
 

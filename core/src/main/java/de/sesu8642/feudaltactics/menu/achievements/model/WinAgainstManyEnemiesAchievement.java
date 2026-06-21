@@ -18,7 +18,7 @@ public class WinAgainstManyEnemiesAchievement extends AbstractAchievement {
         super(1, TranslationKeys.ACHIEVEMENT_WIN_AGAINST_MANY_ENEMIES_NAME,
             ImmutableList.of(String.valueOf(enemyCount)),
             TranslationKeys.ACHIEVEMENT_WIN_AGAINST_MANY_ENEMIES_DESCRIPTION,
-            ImmutableList.of(String.valueOf(enemyCount)));
+            ImmutableList.of(String.valueOf(enemyCount)), false);
         this.enemyCount = enemyCount;
     }
 

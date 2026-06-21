@@ -20,7 +20,7 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     public WinOnMapSizeAchievement(NewGamePreferences.MapSizes mapSize) {
         // TODO: map size needs to be translated
         super(1, TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()),
-            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()));
+            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()), false);
 
         this.mapSize = mapSize;
     }

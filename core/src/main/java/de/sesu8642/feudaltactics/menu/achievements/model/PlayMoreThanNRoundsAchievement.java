@@ -16,7 +16,7 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
         super(1, TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_NAME,
             ImmutableList.of(String.valueOf(roundCount)),
             TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_DESCRIPTION,
-            ImmutableList.of(String.valueOf(roundCount)));
+            ImmutableList.of(String.valueOf(roundCount)), false);
         this.roundCount = roundCount;
     }
 

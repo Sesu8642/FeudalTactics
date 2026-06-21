@@ -5,7 +5,10 @@ import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -28,6 +31,7 @@ public abstract class AbstractAchievement {
     private final List<String> nameTranslationParameters;
     private final String baseDescriptionTranslationKey;
     private final List<String> baseDescriptionTranslationParameters;
+    private final boolean parametersAreTranslationKeys;
     /**
      * Indicates whether the achievement is unlocked = player has achieved it.
      */
@@ -53,7 +57,7 @@ public abstract class AbstractAchievement {
      * Constructor for achievements that don't have any parameters in the name or description translations.
      */
     protected AbstractAchievement(int goal, String nameTranslationKey, String baseDescriptionTranslationKey) {
-        this(goal, nameTranslationKey, ImmutableList.of(), baseDescriptionTranslationKey, ImmutableList.of());
+        this(goal, nameTranslationKey, ImmutableList.of(), baseDescriptionTranslationKey, ImmutableList.of(), false);
     }
 
     /**
@@ -73,8 +77,15 @@ public abstract class AbstractAchievement {
             // historic connections don't have parameters (so far)
             return localizationManager.localizeText(historicConnection.getNameTranslationKey());
         } else {
-            return localizationManager.localizeText(nameTranslationKey, nameTranslationParameters.toArray());
+            return localizationManager.localizeText(nameTranslationKey, getNameTranslationParameterArray(localizationManager));
         }
+    }
+
+    private Object[] getNameTranslationParameterArray(LocalizationManager localizationManager) {
+        if (parametersAreTranslationKeys) {
+            return nameTranslationParameters.stream().map(localizationManager::localizeText).toArray(String[]::new);
+        }
+        return nameTranslationParameters.toArray(new String[0]);
     }
 
     /**
@@ -89,10 +100,10 @@ public abstract class AbstractAchievement {
             if (isSecret() && !unlocked) {
                 descriptionTextBuilder.append(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_DESCRIPTION_IS_SECRET));
             } else {
-                descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, baseDescriptionTranslationParameters.toArray()));
+                descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, getBaseDescriptionTranslationParameterArray(localizationManager)));
             }
         } else {
-            descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, baseDescriptionTranslationParameters.toArray()));
+            descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, getBaseDescriptionTranslationParameterArray(localizationManager)));
         }
         descriptionTextBuilder.append("\n\n");
 
@@ -103,6 +114,13 @@ public abstract class AbstractAchievement {
         }
 
         return descriptionTextBuilder.toString();
+    }
+
+    private Object[] getBaseDescriptionTranslationParameterArray(LocalizationManager localizationManager) {
+        if (parametersAreTranslationKeys) {
+            return baseDescriptionTranslationParameters.stream().map(localizationManager::localizeText).toArray(String[]::new);
+        }
+        return baseDescriptionTranslationParameters.toArray(new String[0]);
     }
 
     /**
