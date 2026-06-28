@@ -33,8 +33,8 @@ public class NewGamePreferences {
     private static final List<String> MAP_SIZES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_SIZE_SMALL,
         TranslationKeys.GAME_PARAMETER_SIZE_MEDIUM, TranslationKeys.GAME_PARAMETER_SIZE_LARGE,
         TranslationKeys.GAME_PARAMETER_SIZE_XLARGE, TranslationKeys.GAME_PARAMETER_SIZE_XXLARGE);
-    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_DENSE,
-        TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE);
+    private static final List<String> DENSITIES_KEYS = ImmutableList.of(TranslationKeys.GAME_PARAMETER_DENSITY_LOOSE,
+        TranslationKeys.GAME_PARAMETER_DENSITY_MEDIUM, TranslationKeys.GAME_PARAMETER_DENSITY_DENSE);
 
     @Getter
     @Setter
