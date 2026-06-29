@@ -134,7 +134,7 @@ public class IngameScreenDialogHelper {
             }
         });
         endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_EXIT), (byte) 1);
-        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_REPLAY), (byte) 2);
+        endDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_RETRY), (byte) 2);
         final String sharingPreemble = localizationManager.localizeText(TranslationKeys.SHARING_PREEMBLE_DEFEAT,
             currentRound);
         addShareOrCopyButtonToDialog(sharingPreemble, endDialog, newGamePreferences, scenarioMap);
