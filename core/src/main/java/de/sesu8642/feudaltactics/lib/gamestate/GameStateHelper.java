@@ -285,11 +285,7 @@ public class GameStateHelper {
 
     private static void createMoney(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
-            int savings = Math.min(kingdom.getTiles().size() * 5, 20);
-            // players other than the first one will earn some money once their turn starts
-            if (gameState.getActivePlayer() != kingdom.getPlayer()) {
-                savings -= getKingdomIncome(kingdom);
-            }
+            final int savings = Math.min(kingdom.getTiles().size() * 5, 20);
             kingdom.setSavings(savings);
         }
     }
@@ -720,7 +716,10 @@ public class GameStateHelper {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             // update savings
             if (kingdom.getPlayer() == gameState.getActivePlayer()) {
-                kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
+                // no income in the first round, as the savings are already set as desired
+                if (gameState.getRound() != 1) {
+                    kingdom.setSavings(kingdom.getSavings() + getKingdomIncome(kingdom));
+                }
                 if (kingdom.getSavings() < getKingdomSalaries(gameState, kingdom)) {
                     // kill all units if they cannot get paid
                     for (HexTile tile : kingdom.getTiles()) {

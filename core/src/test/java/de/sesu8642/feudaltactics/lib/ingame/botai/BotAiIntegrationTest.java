@@ -162,7 +162,8 @@ class BotAiIntegrationTest {
             GameStateHelper.endTurn(gameState);
         }
         assertEquals(expectedHashes, actualHashes, "GameState hashes are not as expected. This means that either " +
-            "there was a code change and the hashes need to be updated or there is some inconsistency across devices.");
+            "there was a code change and the hashes need to be updated or there is some inconsistency across devices." +
+            " If this is tolerable, change the expected hashes to: " + actualHashes);
     }
 
     @ParameterizedTest
