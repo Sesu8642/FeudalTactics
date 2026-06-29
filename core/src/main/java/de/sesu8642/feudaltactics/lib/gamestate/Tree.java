@@ -2,10 +2,13 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.ToString;
+
 /**
  * Map object representing a tree. A tree prevent the tile it stands on from
  * generating income. Trees have a chance to spread to neighboring tiles.
  **/
+@ToString
 public class Tree implements TileContent, Blocking {
 
     private static final int STRENGTH = 0;
@@ -18,11 +21,6 @@ public class Tree implements TileContent, Blocking {
     @Override
     public Tree getCopy() {
         return new Tree();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName();
     }
 
     @Override

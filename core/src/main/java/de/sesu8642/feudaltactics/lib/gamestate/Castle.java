@@ -2,9 +2,12 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.ToString;
+
 /**
  * Map object representing a castle. Castles are defensive structures.
  **/
+@ToString
 public class Castle implements TileContent {
 
     public static final int COST = 15;
@@ -18,11 +21,6 @@ public class Castle implements TileContent {
     @Override
     public Castle getCopy() {
         return new Castle();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName();
     }
 
     @Override

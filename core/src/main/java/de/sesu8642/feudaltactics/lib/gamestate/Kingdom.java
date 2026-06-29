@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Objects;
 /**
  * Group of connected tiles that belong to the same player.
  **/
+@ToString
 @NoArgsConstructor
 public class Kingdom {
 
@@ -20,6 +22,7 @@ public class Kingdom {
     // because the tiles can change
     @Getter
     @Setter
+    @ToString.Exclude
     private List<HexTile> tiles = new ArrayList<>();
     @Getter
     @Setter
@@ -63,11 +66,5 @@ public class Kingdom {
             && tiles.size() == other.tiles.size() && tiles.containsAll(other.tiles)
             && wasActiveInCurrentTurn == other.wasActiveInCurrentTurn;
     }
-
-    @Override
-    public String toString() {
-        return String.format("Kingdom [tiles=%s, player=%s, savings=%s, doneMoving=%s, wasActiveInCurrentTurn=%s]",
-            tiles.stream().map(HexTile::getPosition), player, savings, doneMoving, wasActiveInCurrentTurn);
-    }
-
+    
 }

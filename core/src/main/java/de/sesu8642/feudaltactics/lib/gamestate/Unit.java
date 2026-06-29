@@ -4,6 +4,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import java.util.Objects;
  * need to be paid a salary every turn. There are several tiers of units with
  * different strength levels and salaries.
  **/
+@ToString
 public class Unit implements TileContent {
 
     public static final int COST = 10;
@@ -43,13 +45,7 @@ public class Unit implements TileContent {
         newUnit.setCanAct(canAct);
         return newUnit;
     }
-
-    @Override
-    public String toString() {
-        final String superStr = super.toString();
-        return superStr + ", Type: " + unitType.toString() + ", CanAct: " + canAct;
-    }
-
+    
     @Override
     public int hashCode() {
         // calculating with enum strings because the hashcode must be consistent across runs

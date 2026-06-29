@@ -2,11 +2,14 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.ToString;
+
 /**
  * Map object representing a palm tree. A palm tree prevents the tile it stands
  * on from generating income. Palm trees spawn on coast tiles and spread to
  * neighboring coast tiles on every turn.
  **/
+@ToString
 public class PalmTree implements TileContent, Blocking {
 
     private static final int STRENGTH = 0;
@@ -19,11 +22,6 @@ public class PalmTree implements TileContent, Blocking {
     @Override
     public PalmTree getCopy() {
         return new PalmTree();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName();
     }
 
     @Override

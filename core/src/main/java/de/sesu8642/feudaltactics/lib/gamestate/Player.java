@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.lib.gamestate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
  * A human or bot player participating in a game.
  **/
 @NoArgsConstructor
+@ToString
 public class Player {
 
     @Getter
@@ -74,16 +76,7 @@ public class Player {
         // calculating with enum strings because the hashcode must be consistent across runs
         return Objects.hash(playerIndex, type.toString(), roundOfDefeat);
     }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-            "playerIndex=" + playerIndex +
-            ", type=" + type +
-            ", roundOfDefeat=" + roundOfDefeat +
-            '}';
-    }
-
+    
     /**
      * Type of a player.
      **/

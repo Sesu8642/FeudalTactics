@@ -2,11 +2,14 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.ToString;
+
 /**
  * Map object representing a gravestone. A gravestone spawns when a unit dies
  * because it cannot be paid. After one turn, a gravestone will turn into a
  * tree.
  **/
+@ToString
 public class Gravestone implements TileContent, Blocking {
 
     private static final int STRENGTH = 0;
@@ -19,11 +22,6 @@ public class Gravestone implements TileContent, Blocking {
     @Override
     public Gravestone getCopy() {
         return new Gravestone();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getName();
     }
 
     @Override
