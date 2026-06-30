@@ -1006,17 +1006,17 @@ public class GameStateHelper {
     public static Optional<Kingdom> getFirstForgottenKingdom(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
-                // can buy castle or any unit that is more expensive
-                if (InputValidationHelper.checkBuyObject(gameState, gameState.getActivePlayer(), Castle.class)) {
+                // can afford castle
+                if (kingdom.getSavings() >= Castle.COST) {
                     return Optional.of(kingdom);
                 }
-                // has unit stronger than peasant
                 boolean hasPeasant = false;
                 boolean hasTree = false;
                 for (HexTile tile : kingdom.getTiles()) {
                     if (tile.getContent() != null
                         && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
                         if (tile.getContent().getStrength() > 1) {
+                            // has unit stronger than peasant
                             return Optional.of(kingdom);
                         } else if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
                             hasPeasant = true;

@@ -307,7 +307,6 @@ public class InputValidationHelper {
      *
      * @param gameState game state of the current game
      * @param player    player attempting the action
-     * @param cost      cost of the object
      * @return whether the action is allowed
      */
     public static boolean checkBuyObject(GameState gameState, Player player, Class<?> targetClass) {
