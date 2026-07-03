@@ -1,0 +1,44 @@
+package de.sesu8642.feudaltactics.menu.achievements.model;
+
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
+import org.junit.jupiter.api.Test;
+
+class PlayMoreThanNRoundsAchievementTest extends AbstractAchievementTest<PlayMoreThanNRoundsAchievement> {
+
+    private static final int ROUND_COUNT = 50;
+
+    @Override
+    protected PlayMoreThanNRoundsAchievement createAchievement() {
+        return new PlayMoreThanNRoundsAchievement(ROUND_COUNT);
+    }
+
+    @Override
+    protected PlayMoreThanNRoundsAchievement createAchievementWithDifferentParams() {
+        return new PlayMoreThanNRoundsAchievement(100);
+    }
+
+    @Test
+    void belowThreshold_doesNotUnlock() {
+        achievement.onGameExited(eventWithRounds(ROUND_COUNT - 1));
+        verifyNoProgress();
+    }
+
+    @Test
+    void atThreshold_unlocks() {
+        achievement.onGameExited(eventWithRounds(ROUND_COUNT));
+        verifyProgress(1);
+    }
+
+    @Test
+    void aboveThreshold_unlocks() {
+        achievement.onGameExited(eventWithRounds(ROUND_COUNT + 10));
+        verifyProgress(1);
+    }
+
+    private GameExitedEvent eventWithRounds(int rounds) {
+        final GameState gs = new GameState();
+        gs.setRound(rounds);
+        return new GameExitedEvent(gs, null);
+    }
+}

@@ -14,7 +14,7 @@ import java.util.Map;
 public class MockPreferences implements Preferences {
     private final Map<String, Object> values = new HashMap<>();
 
-    MockPreferences() {
+    public MockPreferences() {
     }
 
     @Override
