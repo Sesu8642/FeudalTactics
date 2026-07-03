@@ -63,16 +63,6 @@ public class GameControllerEventHandler {
     }
 
     /**
-     * Event handler for bot speed change events.
-     *
-     * @param event event to handle
-     */
-    @Subscribe
-    public void handleBotTurnSpeedChanged(BotTurnSpeedChangedEvent event) {
-        botAi.setCurrentSpeed(event.getSpeed());
-    }
-
-    /**
      * Event handler for bot turn skip events.
      *
      * @param event event to handle

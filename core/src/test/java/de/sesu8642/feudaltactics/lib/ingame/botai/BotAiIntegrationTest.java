@@ -51,7 +51,7 @@ class BotAiIntegrationTest {
     MainPreferencesDao prefsDaoStub;
 
     // do not wait in tests
-    MainGamePreferences stubPreferences = new MainGamePreferences(false, false,
+    MainGamePreferences stubPreferences = new MainGamePreferences(false, false, Speed.NORMAL,
         SupportedLanguage.AUTO);
 
     @InjectMocks

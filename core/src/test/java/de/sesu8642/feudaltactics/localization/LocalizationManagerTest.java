@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.I18NBundle;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.FilesStub;
 import de.sesu8642.feudaltactics.ResourceNameReader;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import org.junit.jupiter.api.BeforeAll;
@@ -47,7 +48,7 @@ class LocalizationManagerTest {
     void autoLanguageAccordingToSystem() {
         // returning the AUTO setting here to have the locale detected according to the system settings
         when(mainPreferencesDaoMock.getMainPreferences()).thenReturn(new MainGamePreferences(false, false,
-            SupportedLanguage.AUTO));
+            Speed.NORMAL, SupportedLanguage.AUTO));
 
         try (MockedStatic<I18NBundle> bundle = mockStatic(I18NBundle.class)) {
 
@@ -64,7 +65,7 @@ class LocalizationManagerTest {
     @Test
     void missingTranslationFallsBackToEnglish() {
         when(mainPreferencesDaoMock.getMainPreferences()).thenReturn(new MainGamePreferences(false, false,
-            SupportedLanguage.fromLanguageTag("de")));
+            Speed.NORMAL, SupportedLanguage.fromLanguageTag("de")));
         final I18NBundle bundleWithKeyMissing = Mockito.mock(I18NBundle.class);
         when(bundleWithKeyMissing.format(any())).thenThrow(MissingResourceException.class);
         final I18NBundle bundleWithKeyPresent = Mockito.mock(I18NBundle.class);
@@ -87,7 +88,7 @@ class LocalizationManagerTest {
     @Test
     void missingPropertyHasFallbackString() {
         when(mainPreferencesDaoMock.getMainPreferences()).thenReturn(new MainGamePreferences(false, false,
-            SupportedLanguage.fromLanguageTag("de")));
+            Speed.NORMAL, SupportedLanguage.fromLanguageTag("de")));
         final I18NBundle bundleWithMissingKey = Mockito.mock(I18NBundle.class);
         when(bundleWithMissingKey.format(any())).thenThrow(MissingResourceException.class);
         try (MockedStatic<I18NBundle> bundle = mockStatic(I18NBundle.class)) {

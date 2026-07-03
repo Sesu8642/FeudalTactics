@@ -27,6 +27,7 @@ import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
+import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
 import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
@@ -65,7 +66,6 @@ public class IngameScreen extends GameScreen {
     private final GameStateJsonHelper gameStateJsonHelper;
 
     private final ParameterInputStage parameterInputStage;
-    private final PlatformInsetsProvider platformInsetsProvider;
     private final IngameHudStage ingameHudStage;
     private final IngameMenuStage menuStage;
 
@@ -94,8 +94,6 @@ public class IngameScreen extends GameScreen {
      * Whether local player has elected to spectate the bots after being defeated.
      */
     private boolean isSpectateMode = false;
-    // current speed that the enemy turns are displayed in
-    private Speed currentBotSpeed = Speed.NORMAL;
 
     /**
      * Constructor.
@@ -130,10 +128,10 @@ public class IngameScreen extends GameScreen {
         this.ingameHudStage = ingameHudStage;
         this.menuStage = menuStage;
         this.parameterInputStage = parameterInputStage;
-        this.platformInsetsProvider = platformInsetsProvider;
         this.localizationManager = localizationManager;
         // load before adding the listeners because they will trigger persisting the preferences on each update
         loadNewGameParameterValues();
+        updateEnemyTurnSpeedButton();
         addIngameMenuListeners();
         addParameterInputListeners();
         addHudListeners();
@@ -551,35 +549,46 @@ public class IngameScreen extends GameScreen {
                 cachedNewGamePreferences)));
 
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
-            // determine the next speed level with overflow, skipping Speed.INSTANT which is
-            // used for the other button
-            final int currentSpeedIndex = currentBotSpeed.ordinal();
+            // determine the next speed level with overflow
+            Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
+            final int currentSpeedIndex = enemyTurnSpeed.ordinal();
             int nextSpeedIndex = currentSpeedIndex + 1;
             if (nextSpeedIndex >= Speed.values().length) {
                 nextSpeedIndex = 0;
             }
-            currentBotSpeed = Speed.values()[nextSpeedIndex];
-            eventBus.post(new BotTurnSpeedChangedEvent(currentBotSpeed));
-            ImageButtonStyle newStyle = null;
-            switch (nextSpeedIndex) {
-                case 0:
-                    newStyle = ingameHudStage.halfSpeedButtonStyle;
-                    break;
-                case 1:
-                    newStyle = ingameHudStage.regularSpeedButtonStyle;
-                    break;
-                case 2:
-                    newStyle = ingameHudStage.doubleSpeedButtonStyle;
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown speed index " + currentSpeedIndex);
-            }
-            ingameHudStage.speedButton.setStyle(newStyle);
+            sendEventOnEnemyTurnSpeedChanged(Speed.values()[nextSpeedIndex]);
+            updateEnemyTurnSpeedButton();
         }));
 
         ingameHudStage.skipButton
             .addListener(new ExceptionLoggingChangeListener(() -> eventBus.post(new BotTurnSkippedEvent())));
 
+    }
+
+    private void updateEnemyTurnSpeedButton() {
+        Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
+        ImageButtonStyle newStyle;
+        switch (enemyTurnSpeed) {
+            case HALF:
+                newStyle = ingameHudStage.halfSpeedButtonStyle;
+                break;
+            case NORMAL:
+                newStyle = ingameHudStage.regularSpeedButtonStyle;
+                break;
+            case TIMES_TWO:
+                newStyle = ingameHudStage.doubleSpeedButtonStyle;
+                break;
+            default:
+                throw new IllegalStateException("Unknown enemy turn speed " + enemyTurnSpeed);
+        }
+        ingameHudStage.speedButton.setStyle(newStyle);
+    }
+
+    private void sendEventOnEnemyTurnSpeedChanged(Speed enemyTurnSpeed) {
+        MainGamePreferences newPreferences = MainGamePreferences.copyOf(mainPrefsDao.getMainPreferences());
+        newPreferences.setEnemyTurnSpeed(enemyTurnSpeed);
+        eventBus.post(new MainPreferencesChangeEvent(newPreferences));
+        log.debug("Enemy turn speed set to " + enemyTurnSpeed);
     }
 
     private void loadNewGameParameterValues() {

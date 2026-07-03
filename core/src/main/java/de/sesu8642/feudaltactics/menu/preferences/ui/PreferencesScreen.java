@@ -62,6 +62,7 @@ public class PreferencesScreen extends GameScreen {
             new MainGamePreferences(
                 preferencesStage.preferencesSlide.getForgottenKingdomSelectBox().getSelected(),
                 preferencesStage.preferencesSlide.getShowEnemyTurnsSelectBox().getSelected(),
+                mainPrefsDao.getMainPreferences().getEnemyTurnSpeed(),
                 localizationManager.getSupportedLanguages().get(preferencesStage.preferencesSlide.getLanguageSelectBox().getSelectedIndex()))));
     }
 

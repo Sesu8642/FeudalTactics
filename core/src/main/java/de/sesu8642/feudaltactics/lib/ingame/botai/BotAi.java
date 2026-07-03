@@ -31,12 +31,6 @@ public class BotAi {
     private final MainPreferencesDao mainPrefsDao;
 
     /**
-     * Current speed.
-     */
-    @Getter
-    private Speed currentSpeed = Speed.NORMAL;
-
-    /**
      * Whether to skip displaying the current turn.
      */
     @Getter
@@ -126,7 +120,7 @@ public class BotAi {
             return;
         }
         eventBus.post(new GameStateChangeEvent(GameStateHelper.getCopy(gameState)));
-        Thread.sleep(currentSpeed.tickDelayMs);
+        Thread.sleep(mainPrefsDao.getMainPreferences().getEnemyTurnSpeed().tickDelayMs);
     }
 
     private void pickUpAllAvailableUnits(Kingdom kingdom, PickedUpUnits pickedUpUnits) {
@@ -704,10 +698,4 @@ public class BotAi {
         }
         return false;
     }
-
-    public void setCurrentSpeed(Speed currentSpeed) {
-        this.currentSpeed = currentSpeed;
-        logger.debug("Bot turn speed set to " + currentSpeed);
-    }
-
 }
