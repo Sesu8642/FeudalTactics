@@ -32,8 +32,8 @@ android {
   defaultConfig {
     applicationId 'de.sesu8642.feudaltactics'
     minSdkVersion 24
-    versionCode 16
-    versionName "1.5.1"
+    versionCode 17
+    versionName "1.5.2"
     targetSdkVersion 36
   }
   compileOptions {
