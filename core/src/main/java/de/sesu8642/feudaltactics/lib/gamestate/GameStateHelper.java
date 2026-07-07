@@ -1006,46 +1006,60 @@ public class GameStateHelper {
     public static Optional<Kingdom> getFirstForgottenKingdom(GameState gameState) {
         for (Kingdom kingdom : gameState.getKingdoms()) {
             if (kingdom.getPlayer() == gameState.getActivePlayer() && !kingdom.isWasActiveInCurrentTurn()) {
-                // can afford castle
-                if (kingdom.getSavings() >= Castle.COST) {
-                    return Optional.of(kingdom);
-                }
-                boolean hasPeasant = false;
-                boolean hasTree = false;
+                boolean hasRemovableTileContent = false;
+                boolean hasEmptyTile = false;
+                int sumOfUnitStrength = 0;
                 for (HexTile tile : kingdom.getTiles()) {
-                    if (tile.getContent() != null
-                        && ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
-                        if (tile.getContent().getStrength() > 1) {
-                            // has unit stronger than peasant
-                            return Optional.of(kingdom);
-                        } else if (((Unit) tile.getContent()).getUnitType() == UnitTypes.PEASANT) {
-                            hasPeasant = true;
-                        }
-                    } else if (tile.getContent() != null
-                        && (ClassReflection.isAssignableFrom(Tree.class, tile.getContent().getClass())
-                        || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass()))) {
-                        hasTree = true;
+                    if (tile.getContent() == null) {
+                        hasEmptyTile = true;
+                    } else if (ClassReflection.isAssignableFrom(Unit.class, tile.getContent().getClass())) {
+                        sumOfUnitStrength += tile.getContent().getStrength();
+                    } else if (!hasRemovableTileContent && (ClassReflection.isAssignableFrom(Tree.class,
+                        tile.getContent().getClass())
+                        || ClassReflection.isAssignableFrom(PalmTree.class, tile.getContent().getClass())
+                        || ClassReflection.isAssignableFrom(Gravestone.class, tile.getContent().getClass()))) {
+                        hasRemovableTileContent = true;
                     }
                 }
-                final boolean canBuyPeasant = kingdom.getSavings() >= Unit.COST;
-                // has or can get peasant that can conquer something or destroy tree
-                if (hasPeasant || canBuyPeasant) {
-                    if (hasTree) {
-                        return Optional.of(kingdom);
-                    }
-                    // there is a neighbor tile which can be conquered by the peasant
-                    for (HexTile tile : kingdom.getTiles()) {
-                        for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
-                            if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()
-                                && getProtectionLevel(gameState, neighborTile) == 0) {
-                                return Optional.of(kingdom);
-                            }
-                        }
-                    }
+                final int numberOfPeasantsThatCanBeAfforded = kingdom.getSavings() / Unit.COST;
+                int sumOfTotalPossibleUnitStrength =
+                    sumOfUnitStrength + (numberOfPeasantsThatCanBeAfforded * UnitTypes.PEASANT.strength());
+                // cannot practically make a stronger unit than baron
+                sumOfTotalPossibleUnitStrength = Math.min(sumOfTotalPossibleUnitStrength,
+                    UnitTypes.strongest().strength());
+                final boolean canAffordCastle = kingdom.getSavings() >= Castle.COST;
+                if (wasKingdomPotentiallyForgotten(gameState, kingdom, canAffordCastle, hasEmptyTile,
+                    hasRemovableTileContent,
+                    sumOfTotalPossibleUnitStrength)) {
+                    return Optional.of(kingdom);
                 }
             }
         }
         return Optional.empty();
+    }
+
+    private static boolean wasKingdomPotentiallyForgotten(GameState gameState, Kingdom kingdom, boolean canAffordCastle,
+                                                          boolean hasEmptyTile, boolean hasTree,
+                                                          int sumOfTotalPossibleUnitStrength) {
+        if (canAffordCastle && hasEmptyTile) {
+            return true;
+        }
+        // has or can get unit that can conquer something or destroy tree
+        if (sumOfTotalPossibleUnitStrength > 0) {
+            if (hasTree) {
+                return true;
+            }
+            // there is a neighbor tile which can be conquered by some unit
+            for (HexTile tile : kingdom.getTiles()) {
+                for (HexTile neighborTile : HexMapHelper.getNeighborTiles(gameState.getMap(), tile)) {
+                    if (neighborTile != null && neighborTile.getKingdom() != tile.getKingdom()
+                        && getProtectionLevel(gameState, neighborTile) < sumOfTotalPossibleUnitStrength) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
