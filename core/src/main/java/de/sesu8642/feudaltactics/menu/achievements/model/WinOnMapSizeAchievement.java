@@ -18,11 +18,48 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 
     public WinOnMapSizeAchievement(NewGamePreferences.MapSizes mapSize) {
-        // TODO: map size needs to be translated
-        super(1, TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()),
-            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME, ImmutableList.of(mapSize.name().toLowerCase()), false);
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME,
+            ImmutableList.of(mapSizeToNameTranslationParameter(mapSize)),
+            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME,
+            ImmutableList.of(mapSizeToNameDescriptionParameter(mapSize)), true);
 
         this.mapSize = mapSize;
+    }
+
+    private static String mapSizeToNameTranslationParameter(MapSizes mapSize) {
+        switch (mapSize) {
+            case SMALL:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_SMALL;
+            case MEDIUM:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_MEDIUM;
+            case LARGE:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_LARGE;
+            case XLARGE:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_XLARGE;
+            case XXLARGE:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_XXLARGE;
+            default:
+                throw new IllegalStateException("Unknown map size " + mapSize);
+
+        }
+    }
+
+    private static String mapSizeToNameDescriptionParameter(MapSizes mapSize) {
+        switch (mapSize) {
+            case SMALL:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_DESCRIPTION_PARAM_SIZE_SMALL;
+            case MEDIUM:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_DESCRIPTION_PARAM_SIZE_MEDIUM;
+            case LARGE:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_DESCRIPTION_PARAM_SIZE_LARGE;
+            case XLARGE:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_DESCRIPTION_PARAM_SIZE_XLARGE;
+            case XXLARGE:
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_DESCRIPTION_PARAM_SIZE_XXLARGE;
+            default:
+                throw new IllegalStateException("Unknown map size " + mapSize);
+
+        }
     }
 
     @Override
