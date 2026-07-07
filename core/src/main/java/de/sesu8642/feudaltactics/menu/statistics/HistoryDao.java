@@ -13,7 +13,6 @@ import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefStore;
 import jakarta.inject.Inject;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,7 +70,7 @@ public class HistoryDao {
                 gameHistoryList.size());
         }
 
-        persistHistory(new GameHistory(gameHistoryList));
+        persistHistory(new GameHistory(gameHistoryList.toArray(new HistoricGame[0])));
     }
 
     private void persistHistory(GameHistory gameHistory) {
@@ -88,7 +87,7 @@ public class HistoryDao {
     public GameHistory getGameHistory() {
         final String jsonData = prefStore.getString(GAME_HISTORY_NAME, "");
         if (jsonData.isEmpty()) {
-            return new GameHistory(new ArrayList<>());
+            return new GameHistory();
         }
 
         return json.fromJson(GameHistory.class, jsonData);

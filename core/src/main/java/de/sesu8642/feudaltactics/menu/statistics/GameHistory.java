@@ -6,7 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Contains multiple historic games. This class is used as a wrapper for persisting the game history, because json
@@ -17,6 +19,18 @@ import java.util.List;
 @AllArgsConstructor
 public class GameHistory {
 
-    private List<HistoricGame> historicGames;
+    /**
+     * This field was previously a list but that caused crashes on some devices when trying to parse from JSON: "com
+     * .badlogic.gdx.utils.SerializationException: Class cannot be created (missing no-arg constructor): java.util
+     * .ArrayList$SubList"
+     */
+    private HistoricGame[] historicGames = {};
+
+    /**
+     * Returning a list for better usability.
+     */
+    public List<HistoricGame> getHistoricGames() {
+        return Arrays.stream(historicGames).collect(Collectors.toList());
+    }
 
 }
