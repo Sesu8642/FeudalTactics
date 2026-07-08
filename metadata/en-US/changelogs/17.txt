@@ -5,4 +5,5 @@ Bugfix release:
 - fix confusing button caption
 - fix kingdoms sometimes having negative savings
 - fix and improve forgotten kingdom detection logic
+- fix crash on game end on some devices
 - save the enemy turn speed across game restarts
