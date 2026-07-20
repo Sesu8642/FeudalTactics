@@ -27,7 +27,7 @@ public class EditorScreenEventHandler {
      */
     @Subscribe
     public void handleEscInput(EscInputEvent event) {
-        //editorScreen.togglePause();
+        editorScreen.togglePause();
     }
 
     /**

@@ -26,7 +26,6 @@ public class EditorController {
     private final Logger logger = LoggerFactory.getLogger(getClass().getName());
 
     private final EventBus eventBus;
-    private final AutoSaveRepository autoSaveRepo;
     private final ScenarioGameStateLoader scenarioGameStateLoader;
     @Getter
     private GameState gameState;
@@ -43,7 +42,6 @@ public class EditorController {
     public EditorController(EventBus eventBus, AutoSaveRepository autoSaveRepo,
                             ScenarioGameStateLoader scenarioGameStateLoader) {
         this.eventBus = eventBus;
-        this.autoSaveRepo = autoSaveRepo;
         this.scenarioGameStateLoader = scenarioGameStateLoader;
         gameState = new GameState();
     }
@@ -83,7 +81,11 @@ public class EditorController {
             }
         }
         eventBus.post(new GameStateChangeEvent(gameState));
-        autoSaveRepo.autoSaveFullGameState(gameState);
+    }
+
+    public void loadGameState(GameState gameState) {
+        this.gameState = gameState;
+        eventBus.post(new GameStateChangeEvent(gameState));
     }
 
     public void updateHandContent(TileContent heldTileContent, Integer heldTilePlayerIndex) {
