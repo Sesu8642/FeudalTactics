@@ -13,8 +13,8 @@ public final class SkinConstants {
     public static final String FONT_SMALLER_TEXT = "smallerText";
     public static final String FONT_DEFAULT_TEXT = "text";
     public static final String FONT_OVERLAY = "overlay";
+    public static final String FONT_DIALOG_HEADLINE = "dialog_headline";
     public static final String FONT_OVERLAY_WITH_BACKGROUND = "overlay_w_bg";
-    public static final String FONT_MENU_HEADING = "menu_heading";
     public static final String FONT_HEXAGON = "bestagon";
     public static final String COLOR_HIGHLIGHT2 = "highlight2";
     public static final String COLOR_DISABLED = "disabled";

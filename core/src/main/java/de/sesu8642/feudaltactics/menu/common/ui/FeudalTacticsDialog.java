@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -32,17 +33,16 @@ public class FeudalTacticsDialog extends DialogWithButtonGroup {
         pad(DIALOG_PADDING);
     }
 
+    /**
+     * Adds a headline with the given text to the dialog.
+     */
+    public FeudalTacticsDialog headline(String text) {
+        return addLabel(text, SkinConstants.FONT_DIALOG_HEADLINE);
+    }
+
     @Override
     public FeudalTacticsDialog text(String text) {
-        final Label responsiveLabel = new Label(text, skin.get(SkinConstants.FONT_OVERLAY, LabelStyle.class));
-        final LabelStyle style = new LabelStyle(responsiveLabel.getStyle());
-        responsiveLabel.setStyle(style);
-
-        responsiveLabel.setWrap(true);
-        getContentTable().add(responsiveLabel)
-            .width(Math.min(DIALOG_LABEL_MAX_WIDTH, Gdx.graphics.getWidth() - 2 * DIALOG_PADDING));
-        getContentTable().row();
-        return this;
+        return addLabel(text, SkinConstants.FONT_OVERLAY);
     }
 
     @Override
@@ -115,6 +115,16 @@ public class FeudalTacticsDialog extends DialogWithButtonGroup {
     public FeudalTacticsDialog addSpriteImage(Sprite sprite) {
         final Image image = new Image(sprite);
         getContentTable().add(image).size(Value.percentWidth(0.2F, getContentTable()));
+        getContentTable().row();
+        return this;
+    }
+
+    private @NonNull FeudalTacticsDialog addLabel(String text, String labelStyleName) {
+        final Label responsiveLabel = new Label(text, skin.get(labelStyleName, LabelStyle.class));
+
+        responsiveLabel.setWrap(true);
+        getContentTable().add(responsiveLabel)
+            .width(Math.min(DIALOG_LABEL_MAX_WIDTH, Gdx.graphics.getWidth() - 2 * DIALOG_PADDING));
         getContentTable().row();
         return this;
     }

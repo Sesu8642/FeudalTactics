@@ -43,7 +43,7 @@ public class AchievementsSlide extends Slide {
         final List<@NonNull AbstractAchievement> achievements = achievementRepository.getAchievements();
         achievementBoxes = new java.util.ArrayList<>();
         for (AbstractAchievement achievement : achievements) {
-            achievementBoxes.add(new AchievementBox(skin, achievement, dialogFactory, localizationManager));
+            achievementBoxes.add(new AchievementBox(skin, achievement, localizationManager));
         }
 
         renderAchievements();

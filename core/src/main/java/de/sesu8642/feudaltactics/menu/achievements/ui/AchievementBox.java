@@ -5,18 +5,13 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
-import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * A UI element that shows the status of an achievement. It is used in the {@link AchievementsSlide} in a table.
@@ -29,8 +24,8 @@ public class AchievementBox {
     /* Height of a single achievement box */
     private static final float ACHIEVEMENT_WINDOW_HEIGHT = 200f;
     private final Skin skin;
+    @Getter
     private final AbstractAchievement achievement;
-    private final DialogFactory dialogFactory;
     private final LocalizationManager localizationManager;
     private final Drawable achievementBackgroundLockedDrawable;
     private final Drawable achievementBackgroundUnlockedDrawable;
@@ -41,12 +36,10 @@ public class AchievementBox {
     public AchievementBox(
         Skin skin,
         AbstractAchievement achievement,
-        DialogFactory dialogFactory,
         LocalizationManager localizationManager) {
 
         this.skin = skin;
         this.achievement = achievement;
-        this.dialogFactory = dialogFactory;
         this.localizationManager = localizationManager;
 
         achievementBackgroundLockedDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.GRAY);
@@ -108,7 +101,8 @@ public class AchievementBox {
         if (achievement.isUnlocked()) {
             achievementWindow.background(achievementBackgroundUnlockedDrawable);
 
-            final Label progressLabel = new Label(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_SUMMARY_IS_UNLOCKED), skin);
+            final Label progressLabel =
+                new Label(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_SUMMARY_IS_UNLOCKED), skin);
             achievementWindow.add(progressLabel).row();
         } else {
             achievementWindow.background(achievementBackgroundLockedDrawable);
@@ -141,27 +135,6 @@ public class AchievementBox {
         container.pad(3); // Border width
         container.fill();
         return container;
-    }
-
-    /**
-     * Shows a modal dialog with detailed information about the achievement.
-     */
-    public FeudalTacticsDialog createAchievementDetailsDialog() {
-        final FeudalTacticsDialog detailsDialog = dialogFactory.createDialog(result -> {
-            // Dialog closed
-        });
-
-        final LabelStyle baseStyle = skin.get(SkinConstants.FONT_MENU_HEADING, LabelStyle.class);
-        final Label titleLabel = new Label(achievement.getTranslatedName(localizationManager),
-            new LabelStyle(baseStyle));
-        detailsDialog.text(titleLabel);
-        detailsDialog.getContentTable().row();
-        final String description = achievement.getTranslatedDescription(localizationManager);
-        detailsDialog.text(description);
-
-        detailsDialog.button(localizationManager.localizeText(TranslationKeys.BUTTON_DIALOG_OK), true);
-
-        return detailsDialog;
     }
 
 }

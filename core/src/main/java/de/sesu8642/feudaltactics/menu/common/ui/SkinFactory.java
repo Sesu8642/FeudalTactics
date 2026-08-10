@@ -47,6 +47,11 @@ public final class SkinFactory {
         final Label.LabelStyle headlineLabelStyle = skin.get(SkinConstants.FONT_HEADLINE, Label.LabelStyle.class);
         headlineLabelStyle.font = fonts.get(SkinConstants.FONT_HEADLINE);
 
+        // dialog headline label
+        final Label.LabelStyle dialogHeadlineLabelStyle = skin.get(SkinConstants.FONT_DIALOG_HEADLINE,
+            Label.LabelStyle.class);
+        dialogHeadlineLabelStyle.font = fonts.get(SkinConstants.FONT_DIALOG_HEADLINE);
+
         // button texts
         final TextButton.TextButtonStyle buttonStyle = skin.get(SkinConstants.DEFAULT_NAME,
             TextButton.TextButtonStyle.class);
@@ -131,6 +136,7 @@ public final class SkinFactory {
 
         final Map<String, BitmapFont> result = new HashMap<>();
         result.put(SkinConstants.FONT_HEADLINE, createHeadlineFont(boldFontGenerator, neededCharacters));
+        result.put(SkinConstants.FONT_DIALOG_HEADLINE, createDialogHeadlineFont(boldFontGenerator, neededCharacters));
         result.put(SkinConstants.FONT_BUTTON, createButtonFont(boldFontGenerator, neededCharacters));
         result.put(SkinConstants.FONT_OVERLAY, createOverlayFont(regularFontGenerator, neededCharacters));
         result.put(SkinConstants.FONT_DEFAULT_TEXT, createTextFont(regularFontGenerator, neededCharacters));
@@ -144,6 +150,14 @@ public final class SkinFactory {
     private static BitmapFont createHeadlineFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 70);
+        fontParameters.characters = neededCharacters;
+        return fontGenerator.generateFont(fontParameters);
+    }
+
+    private static BitmapFont createDialogHeadlineFont(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
+        final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
+        fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 70);
+        fontParameters.borderWidth = Gdx.graphics.getDensity() * 3 * TEXT_SCALING_FACTOR;
         fontParameters.characters = neededCharacters;
         return fontGenerator.generateFont(fontParameters);
     }

@@ -77,7 +77,29 @@ public class DialogFactory {
     }
 
     /**
-     * Creates a new dialog with a given message and action that is executed on confirmation.
+     * Creates a new dialog with a given message and action that is executed on confirmation. Headline and text can
+     * be added to it after it is created.
+     *
+     * @param action action to execute on confirmation
+     * @return new dialog
+     */
+    public FeudalTacticsDialog createInformationDialog(Runnable action) {
+        final FeudalTacticsDialog dialog = new FeudalTacticsDialog(skin) {
+
+            @Override
+            public void result(Object result) {
+                if (Boolean.TRUE == result) {
+                    action.run();
+                }
+            }
+
+        };
+        dialog.button("OK", true);
+        return dialog;
+    }
+
+    /**
+     * Creates a new dialog with a given action that is executed on confirmation.
      *
      * @param message message to display in the dialog
      * @param action  action to execute on confirmation
