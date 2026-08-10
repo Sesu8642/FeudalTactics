@@ -123,7 +123,7 @@ public abstract class AbstractAchievement {
         if (parametersAreTranslationKeys) {
             return baseDescriptionTranslationParameters.stream().map(key -> localizationManager.localizeText(String.valueOf(key))).toArray(String[]::new);
         }
-        return baseDescriptionTranslationParameters.toArray(new String[0]);
+        return baseDescriptionTranslationParameters.toArray(new Object[0]);
     }
 
     /**
