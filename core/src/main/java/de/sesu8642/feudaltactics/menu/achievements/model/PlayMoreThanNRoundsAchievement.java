@@ -11,12 +11,9 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
 
     private final int roundCount;
 
-    // TODO: how to insert the rowCount later
     public PlayMoreThanNRoundsAchievement(int roundCount) {
-        super(1, TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_NAME,
-            ImmutableList.of(String.valueOf(roundCount)),
-            TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_DESCRIPTION,
-            ImmutableList.of(String.valueOf(roundCount)), false);
+        super(1, TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_TITLE, ImmutableList.of(roundCount),
+            TranslationKeys.ACHIEVEMENT_PLAY_MORE_THAN_N_ROUNDS_DESCRIPTION, ImmutableList.of(roundCount), false);
         this.roundCount = roundCount;
     }
 

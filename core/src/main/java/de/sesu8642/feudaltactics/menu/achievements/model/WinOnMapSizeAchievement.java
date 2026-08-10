@@ -18,9 +18,9 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     private final MapSizes mapSize;
 
     public WinOnMapSizeAchievement(NewGamePreferences.MapSizes mapSize) {
-        super(1, TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME,
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE,
             ImmutableList.of(mapSizeToNameTranslationParameter(mapSize)),
-            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME,
+            TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE,
             ImmutableList.of(mapSizeToNameDescriptionParameter(mapSize)), true);
 
         this.mapSize = mapSize;
@@ -29,15 +29,15 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     private static String mapSizeToNameTranslationParameter(MapSizes mapSize) {
         switch (mapSize) {
             case SMALL:
-                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_SMALL;
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE_PARAM_SIZE_SMALL;
             case MEDIUM:
-                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_MEDIUM;
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE_PARAM_SIZE_MEDIUM;
             case LARGE:
-                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_LARGE;
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE_PARAM_SIZE_LARGE;
             case XLARGE:
-                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_XLARGE;
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE_PARAM_SIZE_XLARGE;
             case XXLARGE:
-                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_NAME_PARAM_SIZE_XXLARGE;
+                return TranslationKeys.ACHIEVEMENT_WIN_ON_MAP_SIZE_TITLE_PARAM_SIZE_XXLARGE;
             default:
                 throw new IllegalStateException("Unknown map size " + mapSize);
 

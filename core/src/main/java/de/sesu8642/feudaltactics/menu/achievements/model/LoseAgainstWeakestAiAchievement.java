@@ -12,7 +12,7 @@ import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 public class LoseAgainstWeakestAiAchievement extends AbstractAchievement {
 
     public LoseAgainstWeakestAiAchievement() {
-        super(1, TranslationKeys.ACHIEVEMENT_LOSE_AGAINST_WEAKEST_AI_NAME,
+        super(1, TranslationKeys.ACHIEVEMENT_LOSE_AGAINST_WEAKEST_AI_TITLE,
             TranslationKeys.ACHIEVEMENT_LOSE_AGAINST_WEAKEST_AI_DESCRIPTION);
     }
 

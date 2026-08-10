@@ -17,23 +17,23 @@ public class WinAgainstAiLevelAchievement extends AbstractAchievement {
     private final Intelligence botIntelligence;
 
     public WinAgainstAiLevelAchievement(Intelligence botIntelligence) {
-        super(1, TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_NAME,
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_TITLE,
             ImmutableList.of(botIntelligenceToNameTranslationParameter(botIntelligence)),
             TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_DESCRIPTION,
             ImmutableList.of(botIntelligenceToDescriptionTranslationParameter(botIntelligence)), true);
         this.botIntelligence = botIntelligence;
     }
 
-    private static  String botIntelligenceToNameTranslationParameter(Intelligence botIntelligence) {
+    private static String botIntelligenceToNameTranslationParameter(Intelligence botIntelligence) {
         switch (botIntelligence) {
             case LEVEL_1:
-                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_NAME_PARAM_DIFFICULTY_EASY;
+                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_TITLE_PARAM_DIFFICULTY_EASY;
             case LEVEL_2:
-                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_NAME_PARAM_DIFFICULTY_MEDIUM;
+                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_TITLE_PARAM_DIFFICULTY_MEDIUM;
             case LEVEL_3:
-                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_NAME_PARAM_DIFFICULTY_HARD;
+                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_TITLE_PARAM_DIFFICULTY_HARD;
             case LEVEL_4:
-                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_NAME_PARAM_DIFFICULTY_VERY_HARD;
+                return TranslationKeys.ACHIEVEMENT_WIN_AGAINST_AI_LEVEL_TITLE_PARAM_DIFFICULTY_VERY_HARD;
             default:
                 throw new IllegalStateException("Unknown bot intelligence " + botIntelligence);
 

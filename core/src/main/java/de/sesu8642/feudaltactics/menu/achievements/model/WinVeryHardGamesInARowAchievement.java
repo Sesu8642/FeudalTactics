@@ -32,7 +32,7 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
     private int currentStreakPlayerIndex;
 
     public WinVeryHardGamesInARowAchievement(int numberOfGamesInARowToWin) {
-        super(numberOfGamesInARowToWin, TranslationKeys.ACHIEVEMENT_WIN_VERY_HARD_GAMES_IN_A_ROW_NAME,
+        super(numberOfGamesInARowToWin, TranslationKeys.ACHIEVEMENT_WIN_VERY_HARD_GAMES_IN_A_ROW_TITLE,
             ImmutableList.of(String.valueOf(numberOfGamesInARowToWin)),
             TranslationKeys.ACHIEVEMENT_WIN_VERY_HARD_GAMES_IN_A_ROW_DESCRIPTION,
             ImmutableList.of(String.valueOf(numberOfGamesInARowToWin)), false);

@@ -11,7 +11,7 @@ import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 public class WinWhenStartingLastAchievement extends AbstractAchievement {
 
     public WinWhenStartingLastAchievement() {
-        super(1, TranslationKeys.ACHIEVEMENT_WIN_WHEN_STARTING_LAST_NAME,
+        super(1, TranslationKeys.ACHIEVEMENT_WIN_WHEN_STARTING_LAST_TITLE,
             TranslationKeys.ACHIEVEMENT_WIN_WHEN_STARTING_LAST_DESCRIPTION);
     }
 
@@ -24,7 +24,7 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
     public String getId() {
         return "win-when-starting-last";
     }
-    
+
     @Override
     public boolean onGameExited(GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();

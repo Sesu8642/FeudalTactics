@@ -11,7 +11,7 @@ import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 public class AbortGameAchievement extends AbstractAchievement {
 
     public AbortGameAchievement() {
-        super(1, TranslationKeys.ACHIEVEMENT_ABORT_GAME_NAME, TranslationKeys.ACHIEVEMENT_ABORT_GAME_DESCRIPTION);
+        super(1, TranslationKeys.ACHIEVEMENT_ABORT_GAME_TITLE, TranslationKeys.ACHIEVEMENT_ABORT_GAME_DESCRIPTION);
     }
 
     @Override

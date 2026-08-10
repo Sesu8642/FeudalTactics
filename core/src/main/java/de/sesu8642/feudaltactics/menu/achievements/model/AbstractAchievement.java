@@ -28,9 +28,9 @@ public abstract class AbstractAchievement {
     @EqualsAndHashCode.Include
     private final int goal;
     private final String nameTranslationKey;
-    private final List<String> nameTranslationParameters;
+    private final List<Object> nameTranslationParameters;
     private final String baseDescriptionTranslationKey;
-    private final List<String> baseDescriptionTranslationParameters;
+    private final List<Object> baseDescriptionTranslationParameters;
     private final boolean parametersAreTranslationKeys;
     /**
      * Indicates whether the achievement is unlocked = player has achieved it.
@@ -77,15 +77,16 @@ public abstract class AbstractAchievement {
             // historic connections don't have parameters (so far)
             return localizationManager.localizeText(historicConnection.getNameTranslationKey());
         } else {
-            return localizationManager.localizeText(nameTranslationKey, getNameTranslationParameterArray(localizationManager));
+            return localizationManager.localizeText(nameTranslationKey,
+                getNameTranslationParameterArray(localizationManager));
         }
     }
 
     private Object[] getNameTranslationParameterArray(LocalizationManager localizationManager) {
         if (parametersAreTranslationKeys) {
-            return nameTranslationParameters.stream().map(localizationManager::localizeText).toArray(String[]::new);
+            return nameTranslationParameters.stream().map(key -> localizationManager.localizeText(String.valueOf(key))).toArray(String[]::new);
         }
-        return nameTranslationParameters.toArray(new String[0]);
+        return nameTranslationParameters.toArray(new Object[0]);
     }
 
     /**
@@ -100,10 +101,12 @@ public abstract class AbstractAchievement {
             if (isSecret() && !unlocked) {
                 descriptionTextBuilder.append(localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_DESCRIPTION_IS_SECRET));
             } else {
-                descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, getBaseDescriptionTranslationParameterArray(localizationManager)));
+                descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey,
+                    getBaseDescriptionTranslationParameterArray(localizationManager)));
             }
         } else {
-            descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey, getBaseDescriptionTranslationParameterArray(localizationManager)));
+            descriptionTextBuilder.append(localizationManager.localizeText(baseDescriptionTranslationKey,
+                getBaseDescriptionTranslationParameterArray(localizationManager)));
         }
         descriptionTextBuilder.append("\n\n");
 
@@ -118,7 +121,7 @@ public abstract class AbstractAchievement {
 
     private Object[] getBaseDescriptionTranslationParameterArray(LocalizationManager localizationManager) {
         if (parametersAreTranslationKeys) {
-            return baseDescriptionTranslationParameters.stream().map(localizationManager::localizeText).toArray(String[]::new);
+            return baseDescriptionTranslationParameters.stream().map(key -> localizationManager.localizeText(String.valueOf(key))).toArray(String[]::new);
         }
         return baseDescriptionTranslationParameters.toArray(new String[0]);
     }

@@ -13,8 +13,8 @@ import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 public class WinNGamesAchievement extends AbstractAchievement {
 
     public WinNGamesAchievement(int gamesToWin) {
-        super(gamesToWin, TranslationKeys.ACHIEVEMENT_WIN_N_GAMES_NAME, ImmutableList.of(String.valueOf(gamesToWin)),
-            TranslationKeys.ACHIEVEMENT_WIN_N_GAMES_DESCRIPTION, ImmutableList.of(String.valueOf(gamesToWin)), false);
+        super(gamesToWin, TranslationKeys.ACHIEVEMENT_WIN_N_GAMES_TITLE, ImmutableList.of(gamesToWin),
+            TranslationKeys.ACHIEVEMENT_WIN_N_GAMES_DESCRIPTION, ImmutableList.of(gamesToWin), false);
     }
 
     @Override
