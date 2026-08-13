@@ -7,9 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
-import de.sesu8642.feudaltactics.menu.achievements.AchievementsRepository;
+import de.sesu8642.feudaltactics.menu.achievements.AchievementsService;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import lombok.Getter;
 import lombok.NonNull;
@@ -30,8 +29,9 @@ public class AchievementsSlide extends Slide {
     private final List<@NonNull AchievementBox> achievementBoxes;
 
     @Inject
-    public AchievementsSlide(Skin skin, AchievementsRepository achievementRepository, DialogFactory dialogFactory,
+    public AchievementsSlide(Skin skin, AchievementsService achievementsService,
                              LocalizationManager localizationManager) {
+        // TODO: translate
         super(skin, "Achievements");
 
         achievementTileGroup = new HorizontalGroup();
@@ -40,7 +40,7 @@ public class AchievementsSlide extends Slide {
         achievementTileGroup.wrapSpace(10);
         achievementTileGroup.align(Align.center);
 
-        final List<@NonNull AbstractAchievement> achievements = achievementRepository.getAchievements();
+        final List<@NonNull AbstractAchievement> achievements = achievementsService.getAchievements();
         achievementBoxes = new java.util.ArrayList<>();
         for (AbstractAchievement achievement : achievements) {
             achievementBoxes.add(new AchievementBox(skin, achievement, localizationManager));

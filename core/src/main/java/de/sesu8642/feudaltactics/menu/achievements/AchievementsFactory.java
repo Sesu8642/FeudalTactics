@@ -3,9 +3,9 @@ package de.sesu8642.feudaltactics.menu.achievements;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences.MapSizes;
 import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.menu.achievements.model.*;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,10 +15,14 @@ import java.util.List;
  * Provides achievement classes, knows how to construct each individual achievement
  */
 @Singleton
-@AllArgsConstructor(onConstructor_ = @Inject)
-public class AchievementsFactory {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class AchievementsFactory {
 
-    public List<AbstractAchievement> createAchievements() {
+    /**
+     * @return List of all the game's achievements. They do not contain any of the persistent information like the
+     * current progress to unlock them.
+     */
+    public static List<AbstractAchievement> createAchievementSkeletons() {
         final List<AbstractAchievement> list = new ArrayList<>();
         list.add(new WinNGamesAchievement(1));
         list.add(new WinNGamesAchievement(10));

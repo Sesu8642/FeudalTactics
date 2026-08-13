@@ -3,10 +3,8 @@
 package de.sesu8642.feudaltactics.menu.achievements;
 
 import com.badlogic.gdx.Preferences;
-import de.sesu8642.feudaltactics.ingame.AutoSaveRepository;
 import de.sesu8642.feudaltactics.menu.achievements.dagger.AchievementsPrefStore;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
-import lombok.Getter;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,22 +23,15 @@ public class AchievementsRepository {
 
     private final Preferences prefStore;
 
-    @Getter
-    private final List<AbstractAchievement> achievements;
-
     @Inject
     public AchievementsRepository(
-        @AchievementsPrefStore Preferences achievementsPrefs,
-        AutoSaveRepository autoSaveRepository,
-        AchievementsFactory achievementsFactory) {
+        @AchievementsPrefStore Preferences achievementsPrefs) {
         prefStore = achievementsPrefs;
-        achievements = LoadPersistedAchievements(achievementsFactory);
     }
 
-    private List<AbstractAchievement> LoadPersistedAchievements(AchievementsFactory achievementsFactory) {
-        final List<AbstractAchievement> achievements = achievementsFactory.createAchievements();
-
-        for (AbstractAchievement achievement : achievements) {
+    public List<AbstractAchievement> loadPersistedAchievements() {
+        final List<AbstractAchievement> achievementSkeletons = AchievementsFactory.createAchievementSkeletons();
+        for (AbstractAchievement achievement : achievementSkeletons) {
             achievement.setUnlocked(
                 prefStore.getBoolean("achievement-" + achievement.getId(), false));
             achievement.setProgress(
@@ -53,7 +44,7 @@ public class AchievementsRepository {
             }
         }
 
-        return achievements;
+        return achievementSkeletons;
     }
 
     /**
