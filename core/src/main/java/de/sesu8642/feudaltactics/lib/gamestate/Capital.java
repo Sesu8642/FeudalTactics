@@ -2,10 +2,13 @@
 
 package de.sesu8642.feudaltactics.lib.gamestate;
 
+import lombok.ToString;
+
 /**
  * Map object representing the capital of a kingdom. If the capital is
  * destroyed, the kingdom's money is lost.
  **/
+@ToString
 public class Capital implements TileContent {
 
     public static final int STRENGTH = 1;
@@ -19,12 +22,7 @@ public class Capital implements TileContent {
     public Capital getCopy() {
         return new Capital();
     }
-
-    @Override
-    public String toString() {
-        return getClass().getName();
-    }
-
+    
     @Override
     public int hashCode() {
         return 0;

@@ -13,6 +13,7 @@ import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
 import de.sesu8642.feudaltactics.menu.common.ui.MapPreviewFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.MapPreviewWidget;
 import de.sesu8642.feudaltactics.menu.common.ui.SkinConstants;
+import lombok.Getter;
 
 import static de.sesu8642.feudaltactics.menu.common.ui.UiScalingConstants.UI_SCALING_FACTOR;
 
@@ -26,7 +27,10 @@ public class ScenarioMapPreviewTile extends Container<Actor> {
     private final Drawable borderDrawable;
     private final Drawable backgroundDrawable;
     private MapPreviewWidget mapPreviewWidget;
-
+    @Getter
+    private final ScenarioMap scenarioMap;
+    @Getter
+    private final boolean unlocked;
 
     /**
      * Constructor.
@@ -34,6 +38,8 @@ public class ScenarioMapPreviewTile extends Container<Actor> {
     public ScenarioMapPreviewTile(ScenarioMap scenarioMap, ScenarioGameStateLoader scenarioGameStateLoader,
                                   MapPreviewFactory mapPreviewFactory, boolean unlocked, Medals bestMedal,
                                   int displayIndex, Skin skin) {
+        this.scenarioMap = scenarioMap;
+        this.unlocked = unlocked;
         final GameState gameState = scenarioGameStateLoader.loadScenarioGameState(scenarioMap);
         borderDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, Color.BLACK);
         backgroundDrawable = skin.newDrawable(SkinConstants.DRAWABLE_WHITE, skin.getColor(SkinConstants.COLOR_FIELD));

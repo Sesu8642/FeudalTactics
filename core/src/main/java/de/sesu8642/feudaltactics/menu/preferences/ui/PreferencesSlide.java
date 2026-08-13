@@ -10,7 +10,9 @@ import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.common.ui.BooleanSelectBox;
+import de.sesu8642.feudaltactics.menu.common.ui.InsetsRespectingSelectBox;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
+import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import lombok.Getter;
 
 import javax.inject.Inject;
@@ -27,11 +29,11 @@ import javax.inject.Singleton;
 public class PreferencesSlide extends Slide {
 
     @Getter
-    private final SelectBox<Boolean> forgottenKingdomSelectBox;
+    private final InsetsRespectingSelectBox<Boolean> forgottenKingdomSelectBox;
     @Getter
-    private final SelectBox<Boolean> showEnemyTurnsSelectBox;
+    private final InsetsRespectingSelectBox<Boolean> showEnemyTurnsSelectBox;
     @Getter
-    private final SelectBox<String> languageSelectBox;
+    private final InsetsRespectingSelectBox<String> languageSelectBox;
 
     /**
      * Constructor.
@@ -39,21 +41,22 @@ public class PreferencesSlide extends Slide {
      * @param skin game skin
      */
     @Inject
-    public PreferencesSlide(Skin skin, LocalizationManager localizationManager) {
+    public PreferencesSlide(Skin skin, LocalizationManager localizationManager, PlatformInsetsProvider platformInsetsProvider) {
         super(skin, localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_HEADLINE));
 
         final Table preferencesTable = new Table();
 
         forgottenKingdomSelectBox = placeBooleanSelectWithLabel(preferencesTable, localizationManager.localizeText(
                 TranslationKeys.SETTINGS_PAGE_LABEL_WARN_ABOUT_FORGOTTEN_KINGDOMS),
-            skin, localizationManager);
+            skin, localizationManager, platformInsetsProvider);
         showEnemyTurnsSelectBox = placeBooleanSelectWithLabel(preferencesTable,
             localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_SHOW_ENEMY_TURNS), skin,
-            localizationManager);
+            localizationManager, platformInsetsProvider);
 
+        String[] supportedLanguages = localizationManager.getSupportedLanguages().stream().map(SupportedLanguage::getDisplayName).toArray(String[]::new);
         languageSelectBox = placeStringSelectWithLabel(preferencesTable,
             localizationManager.localizeText(TranslationKeys.SETTINGS_PAGE_LABEL_LANGUAGE), skin,
-            localizationManager.getSupportedLanguages().stream().map(SupportedLanguage::getDisplayName).toArray(String[]::new));
+            platformInsetsProvider, supportedLanguages);
 
         // add a row to fill the rest of the space in order for the other options to be
         // at the top of the page
@@ -63,12 +66,12 @@ public class PreferencesSlide extends Slide {
         getTable().add(preferencesTable).fill().expand();
     }
 
-    private SelectBox<String> placeStringSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
-                                                         String[] options) {
+    private InsetsRespectingSelectBox<String> placeStringSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
+                                                                         PlatformInsetsProvider platformInsetsProvider, String[] options) {
         final Label newLabel = new Label(labelText, skin);
         newLabel.setWrap(true);
         preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
-        final SelectBox<String> newSelectBox = new SelectBox<>(skin);
+        final InsetsRespectingSelectBox<String> newSelectBox = new InsetsRespectingSelectBox<>(skin, platformInsetsProvider);
         newSelectBox.setItems(options);
         preferencesTable.add(newSelectBox).center().fillX().expandX();
         preferencesTable.row();
@@ -77,14 +80,14 @@ public class PreferencesSlide extends Slide {
         return newSelectBox;
     }
 
-    private SelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
-                                                           LocalizationManager localizationManager) {
+    private InsetsRespectingSelectBox<Boolean> placeBooleanSelectWithLabel(Table preferencesTable, String labelText, Skin skin,
+                                                           LocalizationManager localizationManager, PlatformInsetsProvider platformInsetsProvider) {
         final Label newLabel = new Label(labelText, skin);
         newLabel.setWrap(true);
         preferencesTable.add(newLabel).left().fill().expandX().prefWidth(200);
-        final SelectBox<Boolean> newSelectBox = new BooleanSelectBox(skin,
+        final BooleanSelectBox newSelectBox = new BooleanSelectBox(skin,
             localizationManager.localizeText(TranslationKeys.BOOLEAN_COMBOBOX_OPTION_YES),
-            localizationManager.localizeText(TranslationKeys.BOOLEAN_COMBOBOX_OPTION_NO));
+            localizationManager.localizeText(TranslationKeys.BOOLEAN_COMBOBOX_OPTION_NO), platformInsetsProvider);
         newSelectBox.setItems(true, false);
         preferencesTable.add(newSelectBox).center().fillX().expandX();
         preferencesTable.row();

@@ -5,11 +5,12 @@ package de.sesu8642.feudaltactics;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.google.common.eventbus.EventBus;
+import de.sesu8642.feudaltactics.editor.EditorControllerEventHandler;
 import de.sesu8642.feudaltactics.editor.EditorInputHandler;
-import de.sesu8642.feudaltactics.editor.EventHandler;
 import de.sesu8642.feudaltactics.ingame.IngameRendererEventHandler;
 import de.sesu8642.feudaltactics.ingame.LocalIngameInputHandler;
 import de.sesu8642.feudaltactics.ingame.ui.EditorScreen;
+import de.sesu8642.feudaltactics.ingame.ui.EditorScreenEventHandler;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreen;
 import de.sesu8642.feudaltactics.ingame.ui.IngameScreenEventHandler;
 import de.sesu8642.feudaltactics.lib.ingame.GameControllerEventHandler;
@@ -64,7 +65,8 @@ public class ScreenNavigationController {
     private final Provider<CampaignLevelSelectionScreen> campaignLevelSelectionScreenProvider;
 
     private final GameControllerEventHandler gameLogicEventHandler;
-    private final EventHandler editorEventHandler;
+    private final EditorControllerEventHandler editorControllerEventHandler;
+    private final Provider<EditorScreenEventHandler> editorScreenEventHandlerProvider;
     private final IngameRendererEventHandler rendererEventHandler;
     private final Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider;
     private final Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider;
@@ -95,7 +97,8 @@ public class ScreenNavigationController {
         Provider<CrashReportScreen> crashReportScreenProvider,
         Provider<CampaignLevelSelectionScreen> campaignLevelSelectionScreenProvider,
         GameControllerEventHandler gameLogicEventHandler,
-        EventHandler editorEventHandler,
+        EditorControllerEventHandler editorControllerEventHandler,
+        Provider<EditorScreenEventHandler> editorScreenEventHandlerProvider,
         IngameRendererEventHandler rendererEventHandler,
         Provider<IngameScreenEventHandler> ingameScreenEventHandlerProvider,
         Provider<PreferencesScreenEventHandler> preferencesScreenEventHandlerProvider,
@@ -121,7 +124,8 @@ public class ScreenNavigationController {
         this.crashReportScreenProvider = crashReportScreenProvider;
         this.campaignLevelSelectionScreenProvider = campaignLevelSelectionScreenProvider;
         this.gameLogicEventHandler = gameLogicEventHandler;
-        this.editorEventHandler = editorEventHandler;
+        this.editorControllerEventHandler = editorControllerEventHandler;
+        this.editorScreenEventHandlerProvider = editorScreenEventHandlerProvider;
         this.rendererEventHandler = rendererEventHandler;
         this.ingameScreenEventHandlerProvider = ingameScreenEventHandlerProvider;
         this.preferencesScreenEventHandlerProvider = preferencesScreenEventHandlerProvider;
@@ -191,8 +195,8 @@ public class ScreenNavigationController {
     public void transitionToIngameScreen() {
         changeScreen(ingameScreenProvider.get());
         Stream.of(localIngameInputHandler, gameLogicEventHandler,
-                ingameScreenEventHandlerProvider.get(), rendererEventHandler,
-                statisticsEventHandler, achievementsEventHandler)
+                ingameScreenEventHandlerProvider.get(), rendererEventHandler, statisticsEventHandler,
+                preferencesScreenEventHandlerProvider.get(), achievementsEventHandler)
             .forEach(eventBus::register);
     }
 
@@ -201,7 +205,7 @@ public class ScreenNavigationController {
      */
     public void transitionToEditorScreen() {
         changeScreen(editorScreenProvider.get());
-        Stream.of(editorInputHandler, editorEventHandler,
+        Stream.of(editorInputHandler, editorControllerEventHandler, editorScreenEventHandlerProvider.get(),
                 editorScreenProvider.get(), rendererEventHandler)
             .forEach(eventBus::register);
     }
@@ -266,7 +270,10 @@ public class ScreenNavigationController {
 
     private void unregisterAllEventHandlers() {
         Stream.of(localIngameInputHandler, gameLogicEventHandler, ingameScreenEventHandlerProvider.get(),
-            rendererEventHandler, preferencesScreenEventHandlerProvider.get(), achievementsEventHandler, statisticsEventHandler).forEach(object -> {
+            rendererEventHandler, preferencesScreenEventHandlerProvider.get(), achievementsEventHandler,
+            statisticsEventHandler, editorInputHandler, editorControllerEventHandler,
+            editorScreenEventHandlerProvider.get(),
+            editorScreenProvider.get()).forEach(object -> {
             try {
                 eventBus.unregister(object);
             } catch (IllegalArgumentException e) {

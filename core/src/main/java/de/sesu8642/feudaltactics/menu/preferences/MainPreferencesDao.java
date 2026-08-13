@@ -3,6 +3,7 @@
 package de.sesu8642.feudaltactics.menu.preferences;
 
 import com.badlogic.gdx.Preferences;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
 import de.sesu8642.feudaltactics.menu.preferences.dagger.GamePrefsPrefStore;
 
@@ -18,6 +19,7 @@ public class MainPreferencesDao {
     public static final String MAIN_PREFERENCES_NAME = "gamePreferences";
     private static final String WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME = "warnAboutForgottenKingdoms";
     private static final String SHOW_ENEMY_TURNS_NAME = "showEnemyTurns";
+    private static final String ENEMY_TURN_SPEED_NAME = "enemyTurnSpeed";
     private static final String LANGUAGE_NAME = "language";
 
     private final Preferences prefStore;
@@ -35,6 +37,7 @@ public class MainPreferencesDao {
     public void saveMainPreferences(MainGamePreferences prefs) {
         prefStore.putBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, prefs.isWarnAboutForgottenKingdoms());
         prefStore.putBoolean(SHOW_ENEMY_TURNS_NAME, prefs.isShowEnemyTurns());
+        prefStore.putString(ENEMY_TURN_SPEED_NAME, prefs.getEnemyTurnSpeed().name());
         if (prefs.getLanguage() == SupportedLanguage.AUTO) {
             prefStore.remove(LANGUAGE_NAME);
         } else {
@@ -51,9 +54,10 @@ public class MainPreferencesDao {
     public MainGamePreferences getMainPreferences() {
         final boolean warnAboutForgottenKingdoms = prefStore.getBoolean(WARN_ABOUT_FORGOTTEN_KINGDOMS_NAME, true);
         final boolean showEnemyTurns = prefStore.getBoolean(SHOW_ENEMY_TURNS_NAME, true);
+        final Speed enemyTurnSpeed = Speed.valueOf(prefStore.getString(ENEMY_TURN_SPEED_NAME, Speed.NORMAL.name()));
         final String languageTag = prefStore.getString(LANGUAGE_NAME);
         final SupportedLanguage language = !languageTag.isEmpty() ? SupportedLanguage.fromLanguageTag(languageTag) :
             SupportedLanguage.AUTO;
-        return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns, language);
+        return new MainGamePreferences(warnAboutForgottenKingdoms, showEnemyTurns, enemyTurnSpeed, language);
     }
 }

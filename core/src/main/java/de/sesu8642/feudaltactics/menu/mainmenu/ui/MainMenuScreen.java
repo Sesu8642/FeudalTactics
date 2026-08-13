@@ -19,6 +19,7 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.NagPreferencesDao;
 import de.sesu8642.feudaltactics.shared.events.InitializeScenarioEvent;
+import de.sesu8642.feudaltactics.shared.events.RegenerateMapEvent;
 import de.sesu8642.feudaltactics.shared.events.moves.GameStartEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,7 @@ public class MainMenuScreen extends GameScreen {
             // level editor
             buttons.get(++i).addListener(new ExceptionLoggingChangeListener(() -> {
                 screenNavigationController.transitionToEditorScreen();
-                eventBus.post(new InitializeScenarioEvent(Intelligence.LEVEL_1, ScenarioMap.TUTORIAL));
+                eventBus.post(new RegenerateMapEvent(null));
             }));
         }
         // preferences button

@@ -1,0 +1,9 @@
+Feudal Tactics 1.5.2
+
+Bugfix release:
+- fix mixed up map densities in shared texts
+- fix confusing button caption
+- fix kingdoms sometimes having negative savings
+- fix and improve forgotten kingdom detection logic
+- fix crash on game end on some devices
+- save the enemy turn speed across game restarts

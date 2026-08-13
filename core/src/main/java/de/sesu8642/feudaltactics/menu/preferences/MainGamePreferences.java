@@ -2,42 +2,42 @@
 
 package de.sesu8642.feudaltactics.menu.preferences;
 
+import de.sesu8642.feudaltactics.lib.ingame.botai.Speed;
 import de.sesu8642.feudaltactics.localization.SupportedLanguage;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Value object: main preferences.
  */
-@EqualsAndHashCode
+@Data
+@AllArgsConstructor
 public class MainGamePreferences {
 
-    @Getter
-    @Setter
+    /**
+     * Whether to display a warning about a potentially forgotten kingdom when ending the turn.
+     */
     private boolean warnAboutForgottenKingdoms;
-    @Getter
-    @Setter
+
+    /**
+     * Whether to visualize the enemies doing their turns.
+     */
     private boolean showEnemyTurns;
-    @Getter
-    @Setter
+
+    /**
+     * Speed multiplier for visualized enemy turns. Only relevant if {@link MainGamePreferences#showEnemyTurns} is true.
+     */
+    private Speed enemyTurnSpeed;
+
+    /**
+     * Language for the UI.
+     */
     private SupportedLanguage language;
 
     /**
-     * Constructor.
-     *
-     * @param warnAboutForgottenKingdoms whether to display a warning about a
-     *                                   potentially forgotten kingdom when ending
-     *                                   the turn.
-     * @param showEnemyTurns             whether to visualize the enemies doing
-     *                                   their turns
-     * @param language                   language for the UI
+     * Returns a copy of the given preferences.
      */
-    public MainGamePreferences(boolean warnAboutForgottenKingdoms, boolean showEnemyTurns,
-                               SupportedLanguage language) {
-        this.warnAboutForgottenKingdoms = warnAboutForgottenKingdoms;
-        this.showEnemyTurns = showEnemyTurns;
-        this.language = language;
+    public static MainGamePreferences copyOf(MainGamePreferences original) {
+        return new MainGamePreferences(original.warnAboutForgottenKingdoms, original.showEnemyTurns, original.enemyTurnSpeed, original.language);
     }
 
 }

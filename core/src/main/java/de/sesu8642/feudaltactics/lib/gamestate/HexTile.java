@@ -3,9 +3,11 @@
 package de.sesu8642.feudaltactics.lib.gamestate;
 
 import com.badlogic.gdx.math.Vector2;
+import com.google.common.annotations.VisibleForTesting;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +16,7 @@ import java.util.Objects;
  * A tile of land on the map.
  **/
 @NoArgsConstructor
+@ToString
 public class HexTile implements Comparable<HexTile> {
 
     @Getter
@@ -25,9 +28,11 @@ public class HexTile implements Comparable<HexTile> {
     @Getter
     private Kingdom kingdom;
     @Getter
+    @Setter(onMethod_ = @VisibleForTesting)
     private Vector2 position;
     @Getter
     @Setter
+    @ToString.Exclude
     private List<HexTile> cachedNeighborTiles;
 
     public HexTile(Player player, Vector2 position) {
@@ -76,11 +81,6 @@ public class HexTile implements Comparable<HexTile> {
             result = Float.compare(getPosition().y, o.getPosition().y);
         }
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("HexTile [player=%s, content=%s, position=%s]", player, content, position);
     }
 
 }

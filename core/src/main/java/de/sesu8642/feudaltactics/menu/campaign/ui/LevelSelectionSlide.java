@@ -14,6 +14,8 @@ import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 
 
 // TODO: check this
@@ -31,6 +33,7 @@ public class LevelSelectionSlide extends Slide {
     public static final float TILE_SPACING = Gdx.graphics.getDensity() * 40;
     final TextArea textArea;
     final EvenlySpacedHorizontalGroup levelTileGroup;
+    final List<ScenarioMapPreviewTile> scenarioMapPreviewTiles = new ArrayList<>();
 
     /**
      * Constructor.
@@ -55,6 +58,7 @@ public class LevelSelectionSlide extends Slide {
                 scenarioMapPreviewTileFactory.createScenarioMapPreviewTile(ScenarioMap.TUTORIAL, i < 5,
                     Medals.values()[Math.min(i, Medals.values().length - 1)], i + 1);
             scenarioMapPreviewTile.setWidth(PREVIEW_TILE_SIZE);
+            scenarioMapPreviewTiles.add(scenarioMapPreviewTile);
             levelTileGroup.addActor(scenarioMapPreviewTile);
         }
 

@@ -1,0 +1,4 @@
+Feudal Tactics 1.5.1
+
+Bugfix release:
+- fix dropdown options sometimes being unreachable

@@ -51,7 +51,7 @@ class BotAiIntegrationTest {
     MainPreferencesDao prefsDaoStub;
 
     // do not wait in tests
-    MainGamePreferences stubPreferences = new MainGamePreferences(false, false,
+    MainGamePreferences stubPreferences = new MainGamePreferences(false, false, Speed.NORMAL,
         SupportedLanguage.AUTO);
 
     @InjectMocks
@@ -162,7 +162,8 @@ class BotAiIntegrationTest {
             GameStateHelper.endTurn(gameState);
         }
         assertEquals(expectedHashes, actualHashes, "GameState hashes are not as expected. This means that either " +
-            "there was a code change and the hashes need to be updated or there is some inconsistency across devices.");
+            "there was a code change and the hashes need to be updated or there is some inconsistency across devices." +
+            " If this is tolerable, change the expected hashes to: " + actualHashes);
     }
 
     @ParameterizedTest
@@ -176,7 +177,7 @@ class BotAiIntegrationTest {
                 return;
             }
             systemUnderTest.doTurn(gameState, botIntelligence);
-            assertTrue(GameStateValidator.isValidSingplayerGame(gameState));
+            assertTrue(GameStateValidator.isValid(gameState));
             GameStateHelper.endTurn(gameState);
         }
     }

@@ -13,8 +13,6 @@ import de.sesu8642.feudaltactics.menu.statistics.dagger.HistoryPrefStore;
 import jakarta.inject.Inject;
 
 import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,6 +34,7 @@ public class HistoryDao {
     public HistoryDao(@HistoryPrefStore Preferences historyPrefs) {
         prefStore = historyPrefs;
         json.setOutputType(JsonWriter.OutputType.json);
+        json.setElementType(GameHistory.class, "historicGames", HistoricGame.class);
     }
 
     public void registerPlayedGame(GameState gameState, NewGamePreferences gamePreferences, GameResult gameResult) {
@@ -63,7 +62,7 @@ public class HistoryDao {
         final HistoricGame historicGame = new HistoricGame(gamePreferences, gameResult, roundsPlayed,
             System.currentTimeMillis());
 
-        List<HistoricGame> gameHistoryList = new ArrayList<>(Arrays.asList(getGameHistory()));
+        List<HistoricGame> gameHistoryList = getGameHistory().getHistoricGames();
         gameHistoryList.add(historicGame);
 
         if (gameHistoryList.size() > MAX_STORED_GAMES) {
@@ -71,11 +70,11 @@ public class HistoryDao {
                 gameHistoryList.size());
         }
 
-        persistHistory(gameHistoryList);
+        persistHistory(new GameHistory(gameHistoryList.toArray(new HistoricGame[0])));
     }
 
-    private void persistHistory(List<HistoricGame> gameHistoryList) {
-        final String jsonData = json.toJson(gameHistoryList);
+    private void persistHistory(GameHistory gameHistory) {
+        final String jsonData = json.toJson(gameHistory);
         prefStore.putString(GAME_HISTORY_NAME, jsonData);
         prefStore.flush();
     }
@@ -85,12 +84,12 @@ public class HistoryDao {
      *
      * @return the loaded GameHistory, with the oldest game at index 0 and the most recent game at the last index.
      */
-    public HistoricGame[] getGameHistory() {
+    public GameHistory getGameHistory() {
         final String jsonData = prefStore.getString(GAME_HISTORY_NAME, "");
         if (jsonData.isEmpty()) {
-            return new HistoricGame[0];
+            return new GameHistory();
         }
 
-        return json.fromJson(HistoricGame[].class, jsonData);
+        return json.fromJson(GameHistory.class, jsonData);
     }
 }
