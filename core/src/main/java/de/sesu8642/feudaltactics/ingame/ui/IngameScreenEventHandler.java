@@ -71,7 +71,8 @@ public class IngameScreenEventHandler {
      */
     @Subscribe
     public void handleGameStateChange(GameStateChangeEvent event) {
-        ingameScreen.handleGameStateChange(event.getGameState());
+        // need to do this in postRunnable because the LibGDX UI related classes are not thread safe
+        Gdx.app.postRunnable(() -> ingameScreen.handleGameStateChange(event.getGameState()));
     }
 
     /**

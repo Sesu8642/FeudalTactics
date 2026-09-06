@@ -2,6 +2,7 @@
 
 package de.sesu8642.feudaltactics.ingame.ui;
 
+import com.badlogic.gdx.Gdx;
 import com.google.common.eventbus.Subscribe;
 import de.sesu8642.feudaltactics.shared.events.GameStateChangeEvent;
 import de.sesu8642.feudaltactics.shared.events.input.EscInputEvent;
@@ -37,7 +38,7 @@ public class EditorScreenEventHandler {
      */
     @Subscribe
     public void handleGameStateChange(GameStateChangeEvent event) {
-        editorScreen.handleGameStateChange(event.getGameState());
+        Gdx.app.postRunnable(() -> editorScreen.handleGameStateChange(event.getGameState()));
     }
 
 }
