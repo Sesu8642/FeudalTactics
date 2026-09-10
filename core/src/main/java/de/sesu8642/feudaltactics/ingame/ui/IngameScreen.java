@@ -191,7 +191,8 @@ public class IngameScreen extends GameScreen {
             eventBus.post(new GameStartEvent());
             activateStage(IngameStages.HUD);
         }
-        centerMap();
+        // needs to be run in postRunnable because the new gameState will arrive via an event that is also handled within postRunnable only
+        Gdx.app.postRunnable(this::centerMap);
     }
 
     private void exitToMenu() {
