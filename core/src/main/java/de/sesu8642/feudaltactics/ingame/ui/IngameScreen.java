@@ -105,8 +105,7 @@ public class IngameScreen extends GameScreen {
                         ScreenNavigationController screenNavigationController,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
-                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper,
-                        GameStateJsonHelper gameStateJsonHelper,
+                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper, GameStateJsonHelper gameStateJsonHelper,
                         IngameHudStage ingameHudStage,
                         IngameMenuStage menuStage, ParameterInputStage parameterInputStage,
                         PlatformInsetsProvider platformInsetsProvider,
@@ -240,7 +239,7 @@ public class IngameScreen extends GameScreen {
         } else {
             hudStageInfoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_ENEMY_TURN);
             if (!ingameHudStage.isEnemyTurnButtonsShown()) {
-                ingameHudStage.showEnemyTurnButtons();
+                Gdx.app.postRunnable(ingameHudStage::showEnemyTurnButtons);
             }
         }
         ingameHudStage.infoTextLabel.setText(hudStageInfoText);
@@ -277,7 +276,7 @@ public class IngameScreen extends GameScreen {
         }
         // buttons
         if (ingameHudStage.isEnemyTurnButtonsShown()) {
-            ingameHudStage.showPlayerTurnButtons();
+            Gdx.app.postRunnable(ingameHudStage::showPlayerTurnButtons);
         }
         final Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
         if (playerOptional.isPresent()) {
@@ -299,29 +298,29 @@ public class IngameScreen extends GameScreen {
         if (newGameState.getPlayers().stream().filter(player -> !player.isDefeated()).count() == 1) {
             if (localPlayer.isDefeated()) {
                 // Game is over; player lost
-                ingameScreenDialogHelper.showEnemyWonMessage(ingameHudStage,
+                Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showEnemyWonMessage(ingameHudStage,
                     cachedGameState.getActivePlayer().getRoundOfDefeat(), cachedGameState.getScenarioMap(),
-                    cachedNewGamePreferences, this::exitToMenu, this::resetGame);
+                    cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             } else {
                 // Game is over; player won
                 final boolean botsGaveUpPreviously =
                     cachedGameState.getWinner() != null
                         && cachedGameState.getWinner().getType() == Type.LOCAL_PLAYER;
-                ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
+                Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showAllEnemiesDefeatedMessage(ingameHudStage,
                     botsGaveUpPreviously, getEarliestRoundOfGameEnd(cachedGameState),
-                    cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame);
+                    cachedGameState.getScenarioMap(), cachedNewGamePreferences, this::exitToMenu, this::resetGame));
             }
         } else if (localPlayer.isDefeated() && !isSpectateMode) {
             // Local player lost but game isn't over; offer a spectate option
-            ingameScreenDialogHelper.showPlayerDefeatedMessage(ingameHudStage,
+            Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showPlayerDefeatedMessage(ingameHudStage,
                 cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
-                this::exitToMenu, this::resetGame, () -> isSpectateMode = true);
+                this::exitToMenu, this::resetGame, () -> isSpectateMode = true));
         } else if (winnerChanged && !isSpectateMode) {
             // winner changed
             final boolean humanWins = newGameState.getWinner().getType() == Type.LOCAL_PLAYER;
-            ingameScreenDialogHelper.showGiveUpGameMessage(ingameHudStage, humanWins,
+            Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGiveUpGameMessage(ingameHudStage, humanWins,
                 cachedGameState.getWinningRound(), cachedGameState.getScenarioMap(), cachedNewGamePreferences,
-                this::exitToMenu, this::resetGame);
+                this::exitToMenu, this::resetGame));
         }
     }
 
@@ -427,7 +426,6 @@ public class IngameScreen extends GameScreen {
         getViewport().apply();
         mapRenderer.render();
         ingameCamera.update();
-        // TODO: drawing causes exceptions!
         getActiveStage().draw();
         getActiveStage().act();
     }
@@ -516,8 +514,8 @@ public class IngameScreen extends GameScreen {
 
     private void tryToLoadGameState(String clipboardContents) {
         try {
-            final GameState gameState = gameStateJsonHelper.fromJson(clipboardContents);
-            final boolean isValid = GameStateValidator.isValidSingplayerGame(gameState);
+            GameState gameState = gameStateJsonHelper.fromJson(clipboardContents);
+            boolean isValid = GameStateValidator.isValidSingplayerGame(gameState);
             if (isValid) {
                 eventBus.post(new GameStatePastedEvent(gameState));
                 eventBus.post(new GameStartEvent());
@@ -553,7 +551,7 @@ public class IngameScreen extends GameScreen {
 
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow
-            final Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
+            Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
             final int currentSpeedIndex = enemyTurnSpeed.ordinal();
             int nextSpeedIndex = currentSpeedIndex + 1;
             if (nextSpeedIndex >= Speed.values().length) {
@@ -569,8 +567,8 @@ public class IngameScreen extends GameScreen {
     }
 
     private void updateEnemyTurnSpeedButton() {
-        final Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
-        final ImageButtonStyle newStyle;
+        Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
+        ImageButtonStyle newStyle;
         switch (enemyTurnSpeed) {
             case HALF:
                 newStyle = ingameHudStage.halfSpeedButtonStyle;
@@ -588,7 +586,7 @@ public class IngameScreen extends GameScreen {
     }
 
     private void sendEventOnEnemyTurnSpeedChanged(Speed enemyTurnSpeed) {
-        final MainGamePreferences newPreferences = MainGamePreferences.copyOf(mainPrefsDao.getMainPreferences());
+        MainGamePreferences newPreferences = MainGamePreferences.copyOf(mainPrefsDao.getMainPreferences());
         newPreferences.setEnemyTurnSpeed(enemyTurnSpeed);
         eventBus.post(new MainPreferencesChangeEvent(newPreferences));
         log.debug("Enemy turn speed set to " + enemyTurnSpeed);
