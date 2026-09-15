@@ -29,7 +29,6 @@ import de.sesu8642.feudaltactics.menu.common.dagger.MenuViewport;
 import de.sesu8642.feudaltactics.menu.common.ui.*;
 import de.sesu8642.feudaltactics.menu.preferences.MainGamePreferences;
 import de.sesu8642.feudaltactics.menu.preferences.MainPreferencesDao;
-import de.sesu8642.feudaltactics.platformspecific.PlatformInsetsProvider;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 import de.sesu8642.feudaltactics.shared.events.*;
@@ -105,10 +104,10 @@ public class IngameScreen extends GameScreen {
                         ScreenNavigationController screenNavigationController,
                         CombinedInputProcessor inputProcessor, FeudalTacticsGestureDetector gestureDetector,
                         InputValidationHelper inputValidationHelper, InputMultiplexer inputMultiplexer,
-                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper, GameStateJsonHelper gameStateJsonHelper,
+                        IngameScreenDialogHelper ingameScreenDialogHelper, TextureAtlasHelper textureAtlasHelper,
+                        GameStateJsonHelper gameStateJsonHelper,
                         IngameHudStage ingameHudStage,
                         IngameMenuStage menuStage, ParameterInputStage parameterInputStage,
-                        PlatformInsetsProvider platformInsetsProvider,
                         LocalizationManager localizationManager) {
         super(ingameCamera, viewport, ingameHudStage);
         this.mainPrefsDao = mainPrefsDao;
@@ -190,8 +189,7 @@ public class IngameScreen extends GameScreen {
             eventBus.post(new GameStartEvent());
             activateStage(IngameStages.HUD);
         }
-        // needs to be run in postRunnable because the new gameState will arrive via an event that is also handled within postRunnable only
-        Gdx.app.postRunnable(this::centerMap);
+        centerMap();
     }
 
     private void exitToMenu() {
@@ -213,85 +211,101 @@ public class IngameScreen extends GameScreen {
      * @param newGameState new game state
      */
     public void handleGameStateChange(GameState newGameState) {
-        final boolean isLocalPlayerTurnNew = newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
-        final boolean humanPlayerTurnJustStarted = !isLocalPlayerTurn && isLocalPlayerTurnNew;
-        isLocalPlayerTurn = isLocalPlayerTurnNew;
-        final boolean winnerChanged =
-            newGameState.getWinner() != null
-                && winnerBeforeBotTurnPlayerIndex != newGameState.getWinner().getPlayerIndex();
-
-        final boolean objectiveProgressed = cachedGameState != null
-            && newGameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
-
         cachedGameState = newGameState;
-        // update the UI
-        // hand content
-        if (newGameState.getHeldObject() != null) {
-            ingameHudStage.updateHandContent(textureAtlasHelper.createSpriteForTileContent(newGameState.getHeldObject()));
-        } else {
-            ingameHudStage.updateHandContent(null);
+        // read the previous isLocalPlayerTurn state before updating it
+        final boolean humanPlayerTurnJustStarted =
+            !isLocalPlayerTurn && newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
+        isLocalPlayerTurn = newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
+
+        updateHandContentInUi(newGameState);
+        updateHudInfoTextInUi(newGameState);
+
+        updateButtons(newGameState);
+        checkAndHandlePlayerTurnStart(newGameState, humanPlayerTurnJustStarted);
+
+
+        parameterInputStage.updateSeed(newGameState.getSeed());
+        checkAndHandleChangedObjective(newGameState);
+    }
+
+    private void checkAndHandlePlayerTurnStart(GameState newGameState, boolean humanPlayerTurnJustStarted) {
+        final boolean winnerChanged =
+            newGameState.getWinner() != null && winnerBeforeBotTurnPlayerIndex != newGameState.getWinner().getPlayerIndex();
+        if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER && humanPlayerTurnJustStarted) {
+            displayMessagesOnPlayerTurnStart(winnerChanged, newGameState, newGameState.getActivePlayer());
         }
-        // seed
-        String hudStageInfoText = "";
+    }
+
+    private void updateButtons(GameState newGameState) {
         if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
-            hudStageInfoText = handleGameStateChangeHumanPlayerTurn(humanPlayerTurnJustStarted, winnerChanged,
-                newGameState);
+            if (ingameHudStage.isEnemyTurnButtonsShown()) {
+                Gdx.app.postRunnable(ingameHudStage::showPlayerTurnButtons);
+            }
+            final Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
+            if (playerOptional.isPresent()) {
+                final Player player = playerOptional.get();
+                final boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player,
+                    PlayerMove.undoLastMove());
+                final boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
+                final boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
+                final boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
+                ingameHudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
+            }
         } else {
-            hudStageInfoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_ENEMY_TURN);
             if (!ingameHudStage.isEnemyTurnButtonsShown()) {
                 Gdx.app.postRunnable(ingameHudStage::showEnemyTurnButtons);
             }
         }
-        ingameHudStage.infoTextLabel.setText(hudStageInfoText);
-        ingameHudStage.infoHexagonLabel.setText(String.format("[#%s]h",
-            MapRenderer.PLAYER_COLOR_PALETTE.get(newGameState.getActivePlayer().getPlayerIndex())));
-        parameterInputStage.updateSeed(newGameState.getSeed());
+    }
 
+    private void checkAndHandleChangedObjective(GameState newGameState) {
+        final boolean objectiveProgressed = cachedGameState != null
+            && newGameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
         if (objectiveProgressed) {
-            ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage, cachedGameState.getRound(),
-                cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(), cachedNewGamePreferences);
+            Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage,
+                cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(),
+                cachedNewGamePreferences));
         }
     }
 
-    private String handleGameStateChangeHumanPlayerTurn(boolean humanPlayerTurnJustStarted, boolean winnerChanged,
-                                                        GameState newGameState) {
-        String infoText = "";
-        final Player localPlayer = newGameState.getActivePlayer();
-        // info text
-        final Kingdom kingdom = newGameState.getActiveKingdom();
-        if (kingdom != null) {
-            final int income = GameStateHelper.getKingdomIncome(kingdom);
-            final int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
-            final int budgetBalance = income - salaries;
-            final int savings = kingdom.getSavings();
-            final String budgetBalanceText = budgetBalance < 0 ? String.valueOf(budgetBalance) : "+" + budgetBalance;
-            if (savings + budgetBalance < 0) {
-                // warn the user with red text
-                infoText += "[RED]";
+    private void updateHudInfoTextInUi(GameState newGameState) {
+        String hudStageInfoText = "";
+        if (newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER) {
+            final Kingdom kingdom = newGameState.getActiveKingdom();
+            if (kingdom != null) {
+                final int income = GameStateHelper.getKingdomIncome(kingdom);
+                final int salaries = GameStateHelper.getKingdomSalaries(newGameState, kingdom);
+                final int budgetBalance = income - salaries;
+                final int savings = kingdom.getSavings();
+                final String budgetBalanceText = budgetBalance < 0 ? String.valueOf(budgetBalance) :
+                    "+" + budgetBalance;
+                if (savings + budgetBalance < 0) {
+                    // warn the user with red text
+                    hudStageInfoText += "[RED]";
+                }
+                hudStageInfoText += localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_SAVINGS_INFO,
+                    savings,
+                    budgetBalanceText);
+            } else {
+                hudStageInfoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_SELECT_KINGDOM);
             }
-            infoText += localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_SAVINGS_INFO, savings,
-                budgetBalanceText);
         } else {
-            infoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_SELECT_KINGDOM);
+            hudStageInfoText = localizationManager.localizeText(TranslationKeys.HUD_STATUS_TEXT_ENEMY_TURN);
         }
-        // buttons
-        if (ingameHudStage.isEnemyTurnButtonsShown()) {
-            Gdx.app.postRunnable(ingameHudStage::showPlayerTurnButtons);
+        final String finalHudStageInfoText = hudStageInfoText;
+        Gdx.app.postRunnable(() -> {
+            ingameHudStage.infoTextLabel.setText(finalHudStageInfoText);
+            ingameHudStage.infoHexagonLabel.setText(String.format("[#%s]h",
+                MapRenderer.PLAYER_COLOR_PALETTE.get(newGameState.getActivePlayer().getPlayerIndex())));
+        });
+    }
+
+    private void updateHandContentInUi(GameState newGameState) {
+        if (newGameState.getHeldObject() != null) {
+            Gdx.app.postRunnable(() -> ingameHudStage.updateHandContent(textureAtlasHelper.createSpriteForTileContent(newGameState.getHeldObject())));
+        } else {
+            Gdx.app.postRunnable(() -> ingameHudStage.updateHandContent(null));
         }
-        final Optional<Player> playerOptional = GameStateHelper.determineActingLocalPlayer(newGameState);
-        if (playerOptional.isPresent()) {
-            final Player player = playerOptional.get();
-            final boolean canUndo = inputValidationHelper.checkPlayerMove(newGameState, player,
-                PlayerMove.undoLastMove());
-            final boolean canBuyPeasant = InputValidationHelper.checkBuyObject(newGameState, player, Unit.class);
-            final boolean canBuyCastle = InputValidationHelper.checkBuyObject(newGameState, player, Castle.class);
-            final boolean canEndTurn = InputValidationHelper.checkEndTurn(newGameState, player);
-            ingameHudStage.setActiveTurnButtonEnabledStatus(canUndo, canBuyPeasant, canBuyCastle, canEndTurn);
-        }
-        if (humanPlayerTurnJustStarted) {
-            displayMessagesOnPlayerTurnStart(winnerChanged, newGameState, localPlayer);
-        }
-        return infoText;
     }
 
     private void displayMessagesOnPlayerTurnStart(boolean winnerChanged, GameState newGameState, Player localPlayer) {
@@ -514,8 +528,8 @@ public class IngameScreen extends GameScreen {
 
     private void tryToLoadGameState(String clipboardContents) {
         try {
-            GameState gameState = gameStateJsonHelper.fromJson(clipboardContents);
-            boolean isValid = GameStateValidator.isValidSingplayerGame(gameState);
+            final GameState gameState = gameStateJsonHelper.fromJson(clipboardContents);
+            final boolean isValid = GameStateValidator.isValidSingplayerGame(gameState);
             if (isValid) {
                 eventBus.post(new GameStatePastedEvent(gameState));
                 eventBus.post(new GameStartEvent());
@@ -551,7 +565,7 @@ public class IngameScreen extends GameScreen {
 
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow
-            Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
+            final Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
             final int currentSpeedIndex = enemyTurnSpeed.ordinal();
             int nextSpeedIndex = currentSpeedIndex + 1;
             if (nextSpeedIndex >= Speed.values().length) {
@@ -567,8 +581,8 @@ public class IngameScreen extends GameScreen {
     }
 
     private void updateEnemyTurnSpeedButton() {
-        Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
-        ImageButtonStyle newStyle;
+        final Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
+        final ImageButtonStyle newStyle;
         switch (enemyTurnSpeed) {
             case HALF:
                 newStyle = ingameHudStage.halfSpeedButtonStyle;
@@ -586,7 +600,7 @@ public class IngameScreen extends GameScreen {
     }
 
     private void sendEventOnEnemyTurnSpeedChanged(Speed enemyTurnSpeed) {
-        MainGamePreferences newPreferences = MainGamePreferences.copyOf(mainPrefsDao.getMainPreferences());
+        final MainGamePreferences newPreferences = MainGamePreferences.copyOf(mainPrefsDao.getMainPreferences());
         newPreferences.setEnemyTurnSpeed(enemyTurnSpeed);
         eventBus.post(new MainPreferencesChangeEvent(newPreferences));
         log.debug("Enemy turn speed set to " + enemyTurnSpeed);
