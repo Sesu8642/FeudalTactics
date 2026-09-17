@@ -211,7 +211,12 @@ public class IngameScreen extends GameScreen {
      * @param newGameState new game state
      */
     public void handleGameStateChange(GameState newGameState) {
+
+        // determine the objective progress before overriding the cached game state
+        final boolean objectiveProgressed =
+            cachedGameState != null && newGameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
         cachedGameState = newGameState;
+
         // read the previous isLocalPlayerTurn state before updating it
         final boolean humanPlayerTurnJustStarted =
             !isLocalPlayerTurn && newGameState.getActivePlayer().getType() == Type.LOCAL_PLAYER;
@@ -219,13 +224,10 @@ public class IngameScreen extends GameScreen {
 
         updateHandContentInUi(newGameState);
         updateHudInfoTextInUi(newGameState);
-
         updateButtons(newGameState);
         checkAndHandlePlayerTurnStart(newGameState, humanPlayerTurnJustStarted);
-
-
-        parameterInputStage.updateSeed(newGameState.getSeed());
-        checkAndHandleChangedObjective(newGameState);
+        Gdx.app.postRunnable(() -> parameterInputStage.updateSeed(newGameState.getSeed()));
+        checkAndHandleChangedObjective(objectiveProgressed);
     }
 
     private void checkAndHandlePlayerTurnStart(GameState newGameState, boolean humanPlayerTurnJustStarted) {
@@ -258,9 +260,7 @@ public class IngameScreen extends GameScreen {
         }
     }
 
-    private void checkAndHandleChangedObjective(GameState newGameState) {
-        final boolean objectiveProgressed = cachedGameState != null
-            && newGameState.getObjectiveProgress() > cachedGameState.getObjectiveProgress();
+    private void checkAndHandleChangedObjective(boolean objectiveProgressed) {
         if (objectiveProgressed) {
             Gdx.app.postRunnable(() -> ingameScreenDialogHelper.showGameOrObjectiveInfo(ingameHudStage,
                 cachedGameState.getRound(), cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(),
