@@ -52,6 +52,10 @@ public final class SkinFactory {
             Label.LabelStyle.class);
         dialogHeadlineLabelStyle.font = fonts.get(SkinConstants.FONT_DIALOG_HEADLINE);
 
+        // h2
+        final Label.LabelStyle h2LabelStyle = skin.get(SkinConstants.FONT_H2, Label.LabelStyle.class);
+        h2LabelStyle.font = fonts.get(SkinConstants.FONT_H2);
+
         // button texts
         final TextButton.TextButtonStyle buttonStyle = skin.get(SkinConstants.DEFAULT_NAME,
             TextButton.TextButtonStyle.class);
@@ -136,6 +140,7 @@ public final class SkinFactory {
 
         final Map<String, BitmapFont> result = new HashMap<>();
         result.put(SkinConstants.FONT_HEADLINE, createHeadlineFont(boldFontGenerator, neededCharacters));
+        result.put(SkinConstants.FONT_H2, createH2Font(boldFontGenerator, neededCharacters));
         result.put(SkinConstants.FONT_DIALOG_HEADLINE, createDialogHeadlineFont(boldFontGenerator, neededCharacters));
         result.put(SkinConstants.FONT_BUTTON, createButtonFont(boldFontGenerator, neededCharacters));
         result.put(SkinConstants.FONT_OVERLAY, createOverlayFont(regularFontGenerator, neededCharacters));
@@ -151,6 +156,14 @@ public final class SkinFactory {
         final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
         fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 70);
         fontParameters.characters = neededCharacters;
+        return fontGenerator.generateFont(fontParameters);
+    }
+
+    private static BitmapFont createH2Font(FreeTypeFontGenerator fontGenerator, String neededCharacters) {
+        final FreeTypeFontParameter fontParameters = new FreeTypeFontParameter();
+        fontParameters.size = (int) (Gdx.graphics.getDensity() * TEXT_SCALING_FACTOR * 52);
+        fontParameters.characters = neededCharacters;
+        fontParameters.color = Color.BLACK;
         return fontGenerator.generateFont(fontParameters);
     }
 

@@ -12,6 +12,7 @@ import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.ExceptionLoggingClickListener;
 import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,6 +20,7 @@ import javax.inject.Singleton;
 /**
  * Represents the UI screen for displaying achievements.
  */
+@Slf4j
 @Singleton
 public class AchievementsScreen extends GameScreen {
     private final AchievementsStage achievementsStage;
@@ -40,15 +42,14 @@ public class AchievementsScreen extends GameScreen {
     @Override
     public void show() {
         super.show();
-        if (achievementsStage != null && achievementsStage.getAchievementsSlide() != null) {
-            achievementsStage.getAchievementsSlide().renderAchievements();
-        }
+        achievementsStage.getAchievementsSlide().updateAchievementData();
     }
 
     private void registerEventListeners() {
-        achievementsStage.getAchievementsSlide().getAchievementBoxes().forEach(achievementBox ->
-            achievementBox.getAchievementWindow().addListener(new ExceptionLoggingClickListener(() -> {
-                final AbstractAchievement achievement = achievementBox.getAchievement();
+        achievementsStage.getAchievementsSlide().getAchievementTiles().forEach(achievementTile ->
+            achievementTile.addListener(new ExceptionLoggingClickListener(() -> {
+                log.debug("clicked achievement tile: {}", achievementTile.getAchievement().getId());
+                final AbstractAchievement achievement = achievementTile.getAchievement();
                 final FeudalTacticsDialog achievementDetailsDialog = dialogFactory.createInformationDialog(() -> {
                 });
                 achievementDetailsDialog.headline(achievement.getTranslatedName(localizationManager));

@@ -1383,7 +1383,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "./FeudalTacticsSkin_data/lock.png"
+			file: ./FeudalTacticsSkin_data/lock.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -1403,7 +1403,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "./FeudalTacticsSkin_data/trophy.png"
+			file: ./FeudalTacticsSkin_data/trophy.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -1423,7 +1423,7 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: "./FeudalTacticsSkin_data/medal.png"
+			file: ./FeudalTacticsSkin_data/medal.png
 			bgColor: {
 				r: 1
 				g: 1
@@ -1440,6 +1440,26 @@ atlasData: {
 			tenPatchData: null
 			tvgData: null
 			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: ./FeudalTacticsSkin_data/progress-bar-horizontal-knob.png
+			bgColor: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			tint: null
+			tintName: lime
+			name: progress-bar-horizontal-knob-green
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TINTED_FROM_COLOR_DATA
 			hidden: false
 		}
 	]
@@ -1571,6 +1591,16 @@ jsonData: {
 		{
 			class: com.ray3k.skincomposer.data.ColorData
 			color: {
+				r: 0.19607843
+				g: 0.8039216
+				b: 0.19607843
+				a: 1
+			}
+			name: lime
+		}
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
 				r: 1
 				g: 0
 				b: 0
@@ -1652,7 +1682,7 @@ jsonData: {
 		{
 			class: com.ray3k.skincomposer.data.FreeTypeFontData
 			name: DialogHeadline
-			file: "./FeudalTacticsSkin_data/FreeSansBold.ttf"
+			file: ./FeudalTacticsSkin_data/FreeSansBold.ttf
 			previewTTF: Pacifico-Regular
 			useCustomSerializer: true
 			size: 48
@@ -1671,6 +1701,35 @@ jsonData: {
 			spaceX: 0
 			spaceY: 0
 			characters:  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+			kerning: true
+			flip: false
+			genMipMaps: false
+			minFilter: Nearest
+			magFilter: Nearest
+			incremental: false
+		}
+		{
+			class: com.ray3k.skincomposer.data.FreeTypeFontData
+			name: H2
+			file: "./FeudalTacticsSkin_data/FreeSansBold.ttf"
+			previewTTF: Pacifico-Regular
+			useCustomSerializer: true
+			size: 36
+			mono: false
+			hinting: AutoMedium
+			color: black
+			gamma: 1.8
+			renderCount: 1
+			borderWidth: 0
+			borderColor: null
+			borderStraight: false
+			borderGamma: 1.8
+			shadowOffsetX: 0
+			shadowOffsetY: 0
+			shadowColor: null
+			spaceX: 0
+			spaceY: 0
+			characters: " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789()[]{}%&$§!?=+-.,:;_/\\*~#\"'"
 			kerning: true
 			flip: false
 			genMipMaps: false
@@ -4051,6 +4110,33 @@ jsonData: {
 				deletable: true
 				parent: null
 			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: h2
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: H2
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.Window: [
 			{
@@ -4349,6 +4435,63 @@ jsonData: {
 				deletable: true
 				parent: null
 			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: achievement-progress
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.ProgressBar
+				properties: {
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: false
+						value: progress-bar-horizontal
+					}
+					disabledBackground: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledBackground
+						optional: true
+						value: null
+					}
+					knob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knob
+						optional: true
+						value: null
+					}
+					disabledKnob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnob
+						optional: true
+						value: null
+					}
+					knobBefore: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knobBefore
+						optional: true
+						value: progress-bar-horizontal-knob-green
+					}
+					disabledKnobBefore: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnobBefore
+						optional: true
+						value: null
+					}
+					knobAfter: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: knobAfter
+						optional: true
+						value: null
+					}
+					disabledKnobAfter: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: disabledKnobAfter
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.TextTooltip: [
 			{
@@ -4450,53 +4593,6 @@ jsonData: {
 						name: messageFontColor
 						optional: true
 						value: null
-					}
-				}
-				deletable: false
-				parent: null
-			}
-		]
-		com.badlogic.gdx.scenes.scene2d.ui.ScrollPane: [
-			{
-				class: com.ray3k.skincomposer.data.StyleData
-				name: default
-				clazz: com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
-				properties: {
-					background: {
-						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-						name: background
-						optional: true
-						value: null
-					}
-					corner: {
-						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-						name: corner
-						optional: true
-						value: null
-					}
-					hScroll: {
-						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-						name: hScroll
-						optional: true
-						value: scrollbar-horizontal
-					}
-					hScrollKnob: {
-						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-						name: hScrollKnob
-						optional: true
-						value: scrollbar-horizontal-knob
-					}
-					vScroll: {
-						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-						name: vScroll
-						optional: true
-						value: scrollbar-vertical
-					}
-					vScrollKnob: {
-						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
-						name: vScrollKnob
-						optional: true
-						value: scrollbar-vertical-knob
 					}
 				}
 				deletable: false
@@ -4634,6 +4730,53 @@ jsonData: {
 						name: checkedOffsetY
 						optional: true
 						value: 0
+					}
+				}
+				deletable: false
+				parent: null
+			}
+		]
+		com.badlogic.gdx.scenes.scene2d.ui.ScrollPane: [
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: default
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
+				properties: {
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+					corner: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: corner
+						optional: true
+						value: null
+					}
+					hScroll: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: hScroll
+						optional: true
+						value: scrollbar-horizontal
+					}
+					hScrollKnob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: hScrollKnob
+						optional: true
+						value: scrollbar-horizontal-knob
+					}
+					vScroll: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: vScroll
+						optional: true
+						value: scrollbar-vertical
+					}
+					vScrollKnob: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: vScrollKnob
+						optional: true
+						value: scrollbar-vertical-knob
 					}
 				}
 				deletable: false

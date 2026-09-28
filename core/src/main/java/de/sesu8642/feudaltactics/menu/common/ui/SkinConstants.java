@@ -9,6 +9,7 @@ public final class SkinConstants {
 
     public static final String DEFAULT_NAME = "default";
     public static final String FONT_HEADLINE = "headline";
+    public static final String FONT_H2 = "h2";
     public static final String FONT_BUTTON = "button";
     public static final String FONT_SMALLER_TEXT = "smallerText";
     public static final String FONT_DEFAULT_TEXT = "text";
@@ -16,6 +17,7 @@ public final class SkinConstants {
     public static final String FONT_DIALOG_HEADLINE = "dialog_headline";
     public static final String FONT_OVERLAY_WITH_BACKGROUND = "overlay_w_bg";
     public static final String FONT_HEXAGON = "bestagon";
+    public static final String COLOR_HIGHLIGHT = "highlight";
     public static final String COLOR_HIGHLIGHT2 = "highlight2";
     public static final String COLOR_DISABLED = "disabled";
     public static final String COLOR_BACKGROUND = "background";
@@ -53,6 +55,7 @@ public final class SkinConstants {
     public static final String SPRITE_HAND = "hand";
     public static final String SPRITE_HAND_THUMB = "hand_thumb";
     public static final String SELECT_BOX_STYLE_COLOR_SELECT = "colorselect";
+    public static final String PROGRESS_BAR_STYLE_ACHIEVEMENT = "achievement-progress";
 
     private SkinConstants() {
         // prevent instantiation

@@ -2,19 +2,19 @@
 
 package de.sesu8642.feudaltactics.menu.achievements.ui;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementsService;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
+import de.sesu8642.feudaltactics.menu.common.ui.EvenlySpacedHorizontalGroup;
 import de.sesu8642.feudaltactics.menu.common.ui.Slide;
 import lombok.Getter;
-import lombok.NonNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,10 +23,13 @@ import java.util.List;
 @Singleton
 public class AchievementsSlide extends Slide {
 
-    private final HorizontalGroup achievementTileGroup;
+    /**
+     * Minimum horizontal space between tiles.
+     */
+    public static final float TILE_SPACING = Gdx.graphics.getDensity() * 40;
 
     @Getter
-    private final List<@NonNull AchievementBox> achievementBoxes;
+    private final List<AchievementTile> achievementTiles = new ArrayList<>();
 
     @Inject
     public AchievementsSlide(Skin skin, AchievementsService achievementsService,
@@ -34,19 +37,20 @@ public class AchievementsSlide extends Slide {
         // TODO: translate
         super(skin, "Achievements");
 
-        achievementTileGroup = new HorizontalGroup();
+        final EvenlySpacedHorizontalGroup achievementTileGroup =
+            new EvenlySpacedHorizontalGroup(AchievementTile.ACHIEVEMENT_TILE_WIDTH);
         achievementTileGroup.wrap();
-        achievementTileGroup.space(10);
-        achievementTileGroup.wrapSpace(10);
+        achievementTileGroup.rowLeft();
+        achievementTileGroup.space(TILE_SPACING);
+        achievementTileGroup.wrapSpace(TILE_SPACING);
         achievementTileGroup.align(Align.center);
 
-        final List<@NonNull AbstractAchievement> achievements = achievementsService.getAchievements();
-        achievementBoxes = new java.util.ArrayList<>();
+        final List<AbstractAchievement> achievements = achievementsService.getAchievements();
         for (AbstractAchievement achievement : achievements) {
-            achievementBoxes.add(new AchievementBox(skin, achievement, localizationManager));
+            final AchievementTile achievementTile = new AchievementTile(achievement, skin, localizationManager);
+            achievementTiles.add(achievementTile);
+            achievementTileGroup.addActor(achievementTile);
         }
-
-        renderAchievements();
 
         getTable().add(achievementTileGroup).fill().expand();
     }
@@ -55,11 +59,9 @@ public class AchievementsSlide extends Slide {
      * Refresh the achievement tiles from the current service state.
      * Call this when the screen becomes visible to update the UI.
      */
-    public void renderAchievements() {
-        achievementTileGroup.clearChildren();
-        for (AchievementBox achievementBox : achievementBoxes) {
-            final Actor achievementActor = achievementBox.displayAchievement();
-            achievementTileGroup.addActor(achievementActor);
+    public void updateAchievementData() {
+        for (AchievementTile achievementTile : achievementTiles) {
+            achievementTile.updateData();
         }
     }
 }
