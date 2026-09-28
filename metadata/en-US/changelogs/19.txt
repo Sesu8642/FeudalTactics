@@ -1,0 +1,4 @@
+Feudal Tactics 1.5.4
+
+Bugfix release:
+- fix crash when resetting a game

@@ -73,7 +73,7 @@ public class LocalizationManager {
      * @param key  the key for the desired string
      * @param args the arguments to be replaced in the string associated to the given key.
      */
-    public String localizeText(String key, Object... args) {
+    public synchronized String localizeText(String key, Object... args) {
         try {
             return currentLanguageI18NBundle.format(key, args);
         } catch (MissingResourceException e) {

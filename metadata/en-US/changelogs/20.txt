@@ -1,0 +1,4 @@
+Feudal Tactics 1.5.5
+
+Bugfix release:
+- fix map not being centered when re-generated

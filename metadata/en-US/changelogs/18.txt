@@ -1,0 +1,4 @@
+Feudal Tactics 1.5.3
+
+Bugfix release:
+- improve stability
