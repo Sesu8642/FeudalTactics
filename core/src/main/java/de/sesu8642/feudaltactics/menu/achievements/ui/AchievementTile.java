@@ -103,10 +103,6 @@ public class AchievementTile extends Container<Actor> {
             progressText = achievement.getProgress() + " / " + achievement.getGoal();
         }
         progressBarLabel.setText(progressText);
-        if (achievement.isUnlocked() && achievement.getProgress() == 0) {
-            // TODO bug: after a restart, the progress is not loaded for unlocked achievements
-            log.debug("RIP");
-        }
         progressBar.setValue(achievement.getProgress());
     }
 

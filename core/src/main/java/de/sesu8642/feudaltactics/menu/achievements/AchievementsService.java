@@ -51,10 +51,10 @@ public class AchievementsService {
     }
 
     private void storeAchievementProgress(AbstractAchievement achievement) {
+        achievementRepository.storeProgress(achievement.getId(), achievement.getProgress());
         if (achievement.isUnlocked()) {
             achievementRepository.unlockAchievement(achievement.getId());
         } else {
-            achievementRepository.storeProgress(achievement.getId(), achievement.getProgress());
             if (achievement instanceof AchievementNeedsFullStorage) {
                 achievementRepository.storeFullAchievementData(achievement.getId(),
                     ((AchievementNeedsFullStorage) achievement).serializeToJson());
