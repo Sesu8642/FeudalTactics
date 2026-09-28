@@ -5,6 +5,7 @@ package de.sesu8642.feudaltactics.menu.achievements.ui;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
+import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.achievements.AchievementsService;
 import de.sesu8642.feudaltactics.menu.achievements.model.AbstractAchievement;
@@ -34,8 +35,7 @@ public class AchievementsSlide extends Slide {
     @Inject
     public AchievementsSlide(Skin skin, AchievementsService achievementsService,
                              LocalizationManager localizationManager) {
-        // TODO: translate
-        super(skin, "Achievements");
+        super(skin, localizationManager.localizeText(TranslationKeys.ACHIEVEMENTS_PAGE_HEADLINE));
 
         final EvenlySpacedHorizontalGroup achievementTileGroup =
             new EvenlySpacedHorizontalGroup(AchievementTile.ACHIEVEMENT_TILE_WIDTH);
