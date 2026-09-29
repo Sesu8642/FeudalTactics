@@ -28,9 +28,6 @@ public class WinWhenStartingLastAchievement extends AbstractAchievement {
     @Override
     public boolean onGameExited(GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
-        if (gameState == null) {
-            return false;     // Ignore exits from editor or similar
-        }
 
         final de.sesu8642.feudaltactics.lib.gamestate.Player winnerOfTheGame = gameState.getWinner();
 

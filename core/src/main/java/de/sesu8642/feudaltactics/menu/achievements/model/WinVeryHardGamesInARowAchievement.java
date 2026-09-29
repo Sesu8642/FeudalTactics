@@ -47,10 +47,6 @@ public class WinVeryHardGamesInARowAchievement extends AbstractAchievement imple
     public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
 
-        if (gameState == null) {
-            return false;     // Ignore exits from editor or similar
-        }
-
         nextMapHasBeenGenerated = false;
 
         final Player winnerOfTheGame = gameState.getWinner();

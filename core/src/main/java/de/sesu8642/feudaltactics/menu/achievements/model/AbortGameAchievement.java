@@ -27,9 +27,6 @@ public class AbortGameAchievement extends AbstractAchievement {
     @Override
     public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
-        if (gameState == null) {
-            return false;     // Ignore exits from editor or similar
-        }
 
         if (gameState.getRound() > 1) {
             return false;     // Not an abort in the first round, ignore

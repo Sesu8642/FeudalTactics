@@ -70,9 +70,6 @@ public class WinOnMapSizeAchievement extends AbstractAchievement {
     @Override
     public boolean onGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
-        if (gameState == null) {
-            return false;     // Ignore exits from editor or similar
-        }
 
         final Player winnerOfTheGame = gameState.getWinner();
 

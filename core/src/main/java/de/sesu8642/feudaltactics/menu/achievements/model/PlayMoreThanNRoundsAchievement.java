@@ -30,9 +30,6 @@ public class PlayMoreThanNRoundsAchievement extends AbstractAchievement {
     @Override
     public boolean onGameExited(GameExitedEvent event) {
         final de.sesu8642.feudaltactics.lib.gamestate.GameState gameState = event.getGameState();
-        if (gameState == null) {
-            return false;     // Ignore exits from editor or similar
-        }
 
         if (gameState.getRound() >= roundCount) {
             storeProgress(1); // unlock

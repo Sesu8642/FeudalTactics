@@ -34,9 +34,8 @@ public class StatisticsEventHandler {
     @Subscribe
     public void handleGameExited(GameExitedEvent event) {
         final GameState gameState = event.getGameState();
-        if (gameState == null || gameState.getScenarioMap() != ScenarioMap.NONE) {
-            // Ignore exits from editor or similar and only record generated maps for now. We must treat ScenarioMaps
-            // differently.
+        if (gameState.getScenarioMap() != ScenarioMap.NONE) {
+            // only record generated maps for now. We must treat ScenarioMaps differently.
             return;
         }
 
