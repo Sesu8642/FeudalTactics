@@ -76,7 +76,8 @@ class WinVeryHardGamesInARowAchievementTest extends AbstractAchievementTest<WinV
         achievement.onMapRegeneration(mapRegenEvent(System.currentTimeMillis()));
 
         // Win resets the flag
-        final boolean resExitedEvent = achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER, Intelligence.LEVEL_4));
+        final boolean resExitedEvent = achievement.onGameExited(winEvent(Player.Type.LOCAL_PLAYER,
+            Intelligence.LEVEL_4));
         assertTrue(resExitedEvent);
         final int progress = achievement.getProgress();
         assertTrue(progress > 0);

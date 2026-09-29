@@ -31,7 +31,7 @@ public class AchievementsStage extends SlideStage {
                              @MenuViewport Viewport viewport, PlatformInsetsProvider platformInsetsProvider,
                              @MenuCamera OrthographicCamera camera,
                              Skin skin, ScreenNavigationController screenNavigationController,
-                            LocalizationManager localizationManager) {
+                             LocalizationManager localizationManager) {
         super(viewport, Collections.singletonList(achievementsSlide), platformInsetsProvider,
             screenNavigationController::transitionToMainMenuScreen, camera, skin, localizationManager);
         this.achievementsSlide = achievementsSlide;

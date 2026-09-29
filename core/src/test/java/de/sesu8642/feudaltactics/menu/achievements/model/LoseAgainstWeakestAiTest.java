@@ -1,7 +1,7 @@
 package de.sesu8642.feudaltactics.menu.achievements.model;
 
-import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import de.sesu8642.feudaltactics.lib.gamestate.Player;
+import de.sesu8642.feudaltactics.lib.ingame.botai.Intelligence;
 import org.junit.jupiter.api.Test;
 
 class LoseAgainstWeakestAiTest extends AbstractAchievementTest<LoseAgainstWeakestAiAchievement> {

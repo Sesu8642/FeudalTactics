@@ -29,7 +29,8 @@ import javax.inject.Singleton;
  **/
 @Component(modules = {MainDaggerModule.class, ConfigDaggerModule.class, CrashReportingDaggerModule.class,
     EditorDaggerModule.class, IngameDaggerModule.class, MenuDaggerModule.class, AboutDaggerModule.class,
-    AchievementsDaggerModule.class, ChangelogDaggerModule.class, InformationMenuDaggerModule.class, PrefsDaggerModule.class,
+    AchievementsDaggerModule.class, ChangelogDaggerModule.class, InformationMenuDaggerModule.class,
+    PrefsDaggerModule.class,
     StatisticsDaggerModule.class, RendererDaggerModule.class})
 @Singleton
 public interface FeudalTacticsComponent {

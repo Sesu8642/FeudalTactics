@@ -21,7 +21,8 @@ public class AchievementsEventHandler {
     }
 
     /**
-     * Handles the GameExitedEvent by forwarding it to the achievement service, which will then forward it to all achievements.
+     * Handles the GameExitedEvent by forwarding it to the achievement service, which will then forward it to all
+     * achievements.
      */
     @Subscribe
     public void handleGameExited(GameExitedEvent event) {
@@ -29,8 +30,9 @@ public class AchievementsEventHandler {
     }
 
     /**
-    * Handles the RegenerateMapEvent by forwarding it to the achievement service, which will then forward it to all achievements.
-    */
+     * Handles the RegenerateMapEvent by forwarding it to the achievement service, which will then forward it to all
+     * achievements.
+     */
     @Subscribe
     public void handleMapRegeneration(RegenerateMapEvent event) {
         achievementService.onMapRegeneration(event);
