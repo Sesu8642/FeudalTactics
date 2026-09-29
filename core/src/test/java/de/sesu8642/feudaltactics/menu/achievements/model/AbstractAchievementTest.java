@@ -71,8 +71,8 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
         final Player winner = new Player(0, Player.Type.LOCAL_PLAYER);
         final Player[] players = new Player[TOTAL_PLAYERS];
         for (int i = 0; i < TOTAL_PLAYERS; i++) {
-            players[i] = i == startingPosition ? new Player(i, Player.Type.LOCAL_PLAYER) : new Player(i,
-                Player.Type.LOCAL_BOT);
+            final Player.Type playerType = i == startingPosition ? Player.Type.LOCAL_PLAYER : Player.Type.LOCAL_BOT;
+            players[i] = new Player(i, playerType);
         }
 
         final GameState gs = new GameState();
