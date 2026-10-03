@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.google.common.collect.ImmutableList;
 import de.sesu8642.feudaltactics.lib.gamestate.GameState;
 import de.sesu8642.feudaltactics.lib.gamestate.HexMapHelper;
@@ -38,6 +39,7 @@ public class MapRenderer {
     public static final List<Color> PLAYER_COLOR_PALETTE = ImmutableList.of(new Color(0.2F, 0.45F, 0.8F, 1),
         new Color(0.75F, 0.5F, 0F, 1), new Color(1F, 0.67F, 0.67F, 1), new Color(1F, 1F, 0F, 1),
         new Color(1F, 1F, 1F, 1), new Color(0F, 1F, 0F, 1));
+    public static final List<Color> DARKENED_PLAYER_COLOR_PALETTE = PLAYER_COLOR_PALETTE.stream().map(color -> new Color(color).mul(0.5F, 0.5F, 0.5F, 1)).collect(Collectors.toList());
 
     // offset for drawing the tile contents
     private static final float TILE_CONTENT_OFFSET_X = 0.0F;
@@ -60,10 +62,6 @@ public class MapRenderer {
      */
     private static final float STATE_TIME_THRESHOLD = 24 * 60 * 60f;
 
-    /**
-     * Map of sprite names and their animations. Functions as cache to avoid
-     * frequent lookups.
-     */
     private final ShapeRenderer shapeRenderer;
     private final OrthographicCamera camera;
     private final SpriteBatch spriteBatch;
@@ -233,15 +231,7 @@ public class MapRenderer {
 
     private void drawTiles() {
         for (ItemsToBeRendered.DrawTile tile : itemsToBeRendered.getTiles().values()) {
-            final Color color = new Color(tile.color);
-            // darken tile
-            if (tile.darken) {
-                color.mul(0.5F, 0.5F, 0.5F, 1);
-            }
-            spriteBatch.setColor(color);
-            spriteBatch.draw(textureAtlasHelper.getTileRegion(), tile.mapCoords.x - HEXTILE_WIDTH / 2,
-                tile.mapCoords.y - HEXTILE_HEIGHT / 2,
-                HEXTILE_WIDTH, HEXTILE_HEIGHT);
+            tile.image.draw(spriteBatch, 1F);
         }
     }
 

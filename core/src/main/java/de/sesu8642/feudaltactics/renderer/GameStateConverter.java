@@ -3,6 +3,9 @@
 package de.sesu8642.feudaltactics.renderer;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import de.sesu8642.feudaltactics.lib.gamestate.*;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +56,19 @@ public class GameStateConverter {
         }
     }
 
-    private static ItemsToBeRendered.DrawTile createDrawTile(Vector2 mapCoords, HexTile tile) {
+    private ItemsToBeRendered.DrawTile createDrawTile(Vector2 mapCoords, HexTile tile, boolean darken) {
         final ItemsToBeRendered.DrawTile drawTile = new ItemsToBeRendered.DrawTile();
         drawTile.mapCoords = mapCoords;
-        drawTile.color = PLAYER_COLOR_PALETTE.get(tile.getPlayer().getPlayerIndex());
+        Image tileImage = new Image();
+        if (darken) {
+            tileImage.setColor(DARKENED_PLAYER_COLOR_PALETTE.get(tile.getPlayer().getPlayerIndex()));
+        } else {
+            tileImage.setColor(PLAYER_COLOR_PALETTE.get(tile.getPlayer().getPlayerIndex()));
+        }
+        tileImage.setDrawable(new SpriteDrawable(textureAtlasHelper.getTileSprite()));
+        tileImage.setPosition(mapCoords.x - HEXTILE_WIDTH / 2, mapCoords.y - HEXTILE_HEIGHT / 2);
+        tileImage.setSize(HEXTILE_WIDTH, HEXTILE_HEIGHT);
+        drawTile.image = tileImage;
         return drawTile;
     }
 
@@ -93,7 +105,7 @@ public class GameStateConverter {
     }
 
     private static void createProtectionIndicators(GameState gameState, HexTile tile, ItemsToBeRendered result,
-                                                   Vector2 mapCoords, ItemsToBeRendered.DrawTile drawTile) {
+                                                   Vector2 mapCoords, ItemsToBeRendered.DrawTile drawTile, boolean isTileDarkened) {
         if (shouldTileHaveProtectionIndicators(gameState, tile)) {
             // create protection indicators
             final int protectionLevel = GameStateHelper.getProtectionLevel(gameState, tile);
@@ -101,38 +113,38 @@ public class GameStateConverter {
                 case 4:
                     result.getShields().put(new Vector2(mapCoords.x - 2 * SHIELD_SIZE,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     result.getShields().put(new Vector2(mapCoords.x - SHIELD_SIZE,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     result.getShields().put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     result.getShields().put(new Vector2(mapCoords.x + SHIELD_SIZE,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     break;
                 case 3:
                     result.getShields().put(new Vector2(mapCoords.x - SHIELD_SIZE * 1.5F,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     result.getShields().put(new Vector2(mapCoords.x - SHIELD_SIZE / 2,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     result.getShields().put(new Vector2(mapCoords.x + SHIELD_SIZE / 2,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     break;
                 case 2:
                     result.getShields().put(new Vector2(mapCoords.x - SHIELD_SIZE,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     result.getShields().put(new Vector2(mapCoords.x, mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     break;
                 case 1:
                     result.getShields().put(new Vector2(mapCoords.x - SHIELD_SIZE / 2,
                             mapCoords.y - SHIELD_SIZE / 2),
-                        drawTile.darken);
+                        isTileDarkened);
                     break;
                 case 0:
                     break;
@@ -147,8 +159,8 @@ public class GameStateConverter {
     }
 
     private static boolean shouldTileContentBeDarkened(GameState gameState, HexTile tile,
-                                                       ItemsToBeRendered.DrawTile drawTile, TileContent tileContent) {
-        return drawTile.darken
+                                                       ItemsToBeRendered.DrawTile drawTile, TileContent tileContent, boolean isTileDarkened) {
+        return isTileDarkened
             // darken own units that have already acted
             || (tile.getPlayer() == gameState.getActivePlayer() && gameState.getHeldObject() == null
             && tile.getContent() != null
@@ -189,51 +201,51 @@ public class GameStateConverter {
         final Vector2 mapCoords = getMapCoordinatesFromHexCoordinates(hexCoords);
         final HexTile tile = hexTileEntry.getValue();
 
-        final ItemsToBeRendered.DrawTile drawTile = createDrawTile(mapCoords, tile);
-        determineBeachesOnTileEdges(gameState, tile, drawTile);
-
+        boolean darken = false;
         if (isTileInActiveKingdom(gameState, tile)) {
             createWhiteLinesAroundTile(gameState, tile, mapCoords, result);
-            drawTile.darken = shouldTileInActiveKingdomBeDarkened(gameState, tile);
+            darken = shouldTileInActiveKingdomBeDarkened(gameState, tile);
         } else if (gameState.getHeldObject() != null) {
             // red lines for indicating if able to conquer
             if (InputValidationHelper.checkConquer(gameState, gameState.getActivePlayer(), tile)) {
                 createRedLinesAroundTile(gameState, tile, mapCoords, result);
             } else {
                 // darken non-conquerable tiles
-                drawTile.darken = true;
+                darken = true;
             }
         } else if (gameState.getActivePlayer().getType() == Player.Type.LOCAL_BOT
             && gameState.getActiveKingdom() != null) {
             // darken non-active kingdom tiles during bot turns
-            drawTile.darken = true;
+            darken = true;
         }
+        final ItemsToBeRendered.DrawTile drawTile = createDrawTile(mapCoords, tile, darken);
+        determineBeachesOnTileEdges(gameState, tile, drawTile);
         result.getTiles().put(tile.getPosition(), drawTile);
 
-        createTileContents(gameState, tile, drawTile, result, mapCoords);
+        createTileContents(gameState, tile, drawTile, result, mapCoords, darken);
 
         createTreeSpreadIndicator(gameState, tile, mapCoords, hexCoordinatesOakTreesWillSpreadTo,
             result.getSemitransparentOakTrees());
         createTreeSpreadIndicator(gameState, tile, mapCoords, hexCoordinatesPalmTreesWillSpreadTo,
             result.getSemitransparentPalmTrees());
 
-        createProtectionIndicators(gameState, tile, result, mapCoords, drawTile);
+        createProtectionIndicators(gameState, tile, result, mapCoords, drawTile, darken);
     }
 
     private void createTileContents(GameState gameState, HexTile tile, ItemsToBeRendered.DrawTile drawTile,
-                                    ItemsToBeRendered result, Vector2 mapCoords) {
+                                    ItemsToBeRendered result, Vector2 mapCoords, boolean isTileDarkened) {
         // create content (units etc)
         final TileContent tileContent = tile.getContent();
         if (tileContent != null) {
             final boolean animate = shouldTileContentBeAnimated(gameState, tile, tileContent);
             if (animate) {
-                createAnimatedTileContent(drawTile, result, mapCoords, tileContent);
+                createAnimatedTileContent(drawTile, result, mapCoords, tileContent, isTileDarkened);
             } else {
-                createNonAnimatedTileContent(gameState, tile, drawTile, result, mapCoords, tileContent);
+                createNonAnimatedTileContent(gameState, tile, drawTile, result, mapCoords, tileContent, isTileDarkened);
             }
             if (isUnitAboutToDie(gameState, tile, tileContent)) {
                 result.semitransparentGraveStones.put(new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
-                    mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS), drawTile.darken);
+                    mapCoords.y - HexMapHelper.HEX_OUTER_RADIUS), isTileDarkened);
             }
         }
     }
@@ -261,8 +273,8 @@ public class GameStateConverter {
     }
 
     private void createNonAnimatedTileContent(GameState gameState, HexTile tile, ItemsToBeRendered.DrawTile drawTile,
-                                              ItemsToBeRendered result, Vector2 mapCoords, TileContent tileContent) {
-        if (shouldTileContentBeDarkened(gameState, tile, drawTile, tileContent)) {
+                                              ItemsToBeRendered result, Vector2 mapCoords, TileContent tileContent, boolean isTileDarkened) {
+        if (shouldTileContentBeDarkened(gameState, tile, drawTile, tileContent, isTileDarkened)) {
             // darkened content
             result.getDarkenedNonAnimatedContents().put(
                 new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,
@@ -277,8 +289,8 @@ public class GameStateConverter {
     }
 
     private void createAnimatedTileContent(ItemsToBeRendered.DrawTile drawTile, ItemsToBeRendered result,
-                                           Vector2 mapCoords, TileContent tileContent) {
-        if (drawTile.darken) {
+                                           Vector2 mapCoords, TileContent tileContent, boolean isTileDarkened) {
+        if (isTileDarkened) {
             // darkened content
             result.getDarkenedAnimatedContents().put(
                 new Vector2(mapCoords.x - HexMapHelper.HEX_OUTER_RADIUS,

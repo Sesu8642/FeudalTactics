@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -56,8 +57,7 @@ public class ItemsToBeRendered {
 
     static class DrawTile {
         Vector2 mapCoords;
-        Color color;
-        boolean darken = false;
+        Image image;
         boolean topLeftBeach = false;
         boolean topBeach = false;
         boolean topRightBeach = false;
