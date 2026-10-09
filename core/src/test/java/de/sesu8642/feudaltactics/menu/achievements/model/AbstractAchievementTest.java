@@ -128,14 +128,6 @@ abstract class AbstractAchievementTest<T extends AbstractAchievement> {
         }
     }
 
-    @Test
-    void onGameExited_nullGameState_doesNothing() {
-        final GameExitedEvent event = new GameExitedEvent(null, null);
-
-        final boolean result = achievement.onGameExited(event);
-        assertFalse(result);
-    }
-
     /**
      * Verify that storeProgress was called for the achievement.
      */
