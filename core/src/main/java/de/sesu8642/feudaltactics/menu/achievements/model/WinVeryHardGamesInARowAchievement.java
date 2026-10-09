@@ -24,6 +24,10 @@ import lombok.Getter;
 public class WinVeryHardGamesInARowAchievement extends AbstractAchievement implements AchievementNeedsFullStorage {
 
     private final Json json = new Json();
+    /**
+     * Whether the next map to be played has already been generated and therefore seen by the player. Must be persisted
+     * as generating a new map once is necessary but generating another should break the streak.
+     */
     @Getter
     @EqualsAndHashCode.Include
     private boolean nextMapHasBeenGenerated;
