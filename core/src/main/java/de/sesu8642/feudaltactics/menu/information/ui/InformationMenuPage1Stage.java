@@ -31,8 +31,8 @@ import java.util.List;
 public class InformationMenuPage1Stage extends MenuStage {
 
     private static final List<String> BUTTON_TEXTS_KEYS = ImmutableList.of(TranslationKeys.MENU_BUTTON_ABOUT,
-        TranslationKeys.MENU_BUTTON_REPORT_CRASH
-        , TranslationKeys.MENU_BUTTON_GAME_HISTORY, TranslationKeys.MENU_BUTTON_PAGE_2,
+        TranslationKeys.MENU_BUTTON_REPORT_CRASH, TranslationKeys.MENU_BUTTON_ACHIEVEMENTS,
+        TranslationKeys.MENU_BUTTON_GAME_HISTORY, TranslationKeys.MENU_BUTTON_PAGE_2,
         TranslationKeys.MENU_BUTTON_BACK);
 
     /**

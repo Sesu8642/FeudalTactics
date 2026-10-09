@@ -26,7 +26,6 @@ import de.sesu8642.feudaltactics.menu.common.ui.GameScreen;
 import de.sesu8642.feudaltactics.renderer.MapRenderer;
 import de.sesu8642.feudaltactics.renderer.TextureAtlasHelper;
 import de.sesu8642.feudaltactics.shared.events.EditorHandContentUpdatedEvent;
-import de.sesu8642.feudaltactics.shared.events.GameExitedEvent;
 import de.sesu8642.feudaltactics.shared.events.GameStatePastedEvent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,7 +101,6 @@ public class EditorScreen extends GameScreen {
     }
 
     private void exitToMenu() {
-        eventBus.post(new GameExitedEvent(null, null));   // Passing null makes sure no statistics are recorded
         screenNavigationController.transitionToMainMenuScreen();
         clearCache();
     }
