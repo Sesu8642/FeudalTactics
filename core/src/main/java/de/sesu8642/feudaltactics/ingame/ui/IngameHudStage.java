@@ -44,6 +44,7 @@ public class IngameHudStage extends ResizableResettableStage {
     ImageButton skipButton;
     ImageButton menuButton;
     ImageButton infoButton;
+    ImageButton statisticsButton;
     ImageButtonStyle halfSpeedButtonStyle;
     ImageButtonStyle regularSpeedButtonStyle;
     ImageButtonStyle doubleSpeedButtonStyle;
@@ -81,6 +82,10 @@ public class IngameHudStage extends ResizableResettableStage {
         infoButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_INFO, skin);
         infoButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
         infoButton.getImageCell().expand().fill();
+
+        statisticsButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_INFO, skin);
+        statisticsButton.getImage().setColor(skin.getColor(SkinConstants.COLOR_HIGHLIGHT2));
+        statisticsButton.getImageCell().expand().fill();
 
         // buttons visible during the local player turn
         undoButton = ButtonFactory.createImageButton(SkinConstants.BUTTON_UNDO, skin);
@@ -134,6 +139,10 @@ public class IngameHudStage extends ResizableResettableStage {
         rootTable.add();
         rootTable.add();
         rootTable.add(infoButton).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100).pad(10);
+        rootTable.row();
+        rootTable.add();
+        rootTable.add();
+        rootTable.add(statisticsButton).right().size(Gdx.graphics.getDensity() * UiScalingConstants.UI_SCALING_FACTOR * 100).pad(10);
         rootTable.row();
         rootTable.add();
         rootTable.add();

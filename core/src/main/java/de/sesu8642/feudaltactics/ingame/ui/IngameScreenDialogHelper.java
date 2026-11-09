@@ -7,11 +7,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import de.sesu8642.TranslationKeys;
 import de.sesu8642.feudaltactics.ingame.NewGamePreferences;
+import de.sesu8642.feudaltactics.lib.gamestate.GameState;
+import de.sesu8642.feudaltactics.lib.gamestate.HexTile;
+import de.sesu8642.feudaltactics.lib.gamestate.Player;
 import de.sesu8642.feudaltactics.lib.gamestate.ScenarioMap;
+import de.sesu8642.feudaltactics.lib.gamestate.Unit;
+
 import de.sesu8642.feudaltactics.localization.LocalizationManager;
 import de.sesu8642.feudaltactics.menu.common.ui.DialogFactory;
 import de.sesu8642.feudaltactics.menu.common.ui.FeudalTacticsDialog;
 import de.sesu8642.feudaltactics.platformspecific.PlatformSharing;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -176,6 +187,66 @@ public class IngameScreenDialogHelper {
         endDialog.show(stage);
     }
 
+
+    void showIngameLeaderboard(Stage stage, GameState gameState) {
+        final Map<Integer, Player> playersByIndex = new HashMap<>();
+        final Map<Integer, Integer> claimedTilesByPlayer = new HashMap<>();
+        final Map<Integer, Integer> armyStrengthByPlayer = new HashMap<>();
+
+        for (Player player : gameState.getPlayers()) {
+            playersByIndex.put(player.getPlayerIndex(), player);
+            claimedTilesByPlayer.put(player.getPlayerIndex(), 0);
+            armyStrengthByPlayer.put(player.getPlayerIndex(), 0);
+        }
+
+        for (HexTile tile : gameState.getMap().values()) {
+            final Player owner = tile.getPlayer();
+            if (owner == null || !playersByIndex.containsKey(owner.getPlayerIndex())) {
+                continue;
+            }
+
+            final int playerIndex = owner.getPlayerIndex();
+            claimedTilesByPlayer.put(playerIndex, claimedTilesByPlayer.get(playerIndex) + 1);
+            if (tile.getContent() instanceof Unit) {
+                armyStrengthByPlayer.put(playerIndex,
+                    armyStrengthByPlayer.get(playerIndex) + tile.getContent().getStrength());
+            }
+        }
+
+        final List<Player> rankedPlayers = new ArrayList<>(gameState.getPlayers());
+        rankedPlayers.sort(Comparator
+            .comparingInt((Player player) -> claimedTilesByPlayer.get(player.getPlayerIndex())).reversed()
+            .thenComparing(Comparator.comparingInt(
+                (Player player) -> armyStrengthByPlayer.get(player.getPlayerIndex())).reversed())
+            .thenComparingInt(Player::getPlayerIndex));
+
+        final FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(() -> { });
+        dialog.headline(localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_HEADLINE));
+        dialog.text(localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_ROUND, gameState.getRound())
+            + "\n");
+        final List<List<String>> rows = new ArrayList<>();
+        rows.add(List.of(
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_PLAYER),
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_CLAIMED_TILES),
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_ARMY_STRENGTH),
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_STATUS)));
+        int rank = 1;
+        for (Player player : rankedPlayers) {
+            final int playerIndex = player.getPlayerIndex();
+            final String playerName = player.getType() == Player.Type.LOCAL_PLAYER
+                ? localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_PLAYER_YOU)
+                : localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_PLAYER_NUMBER, playerIndex + 1);
+            final String status = player.isDefeated()
+                ? localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_STATUS_DEFEATED)
+                : localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_STATUS_ACTIVE);
+            rows.add(List.of(
+                localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_PLAYER_RANK, rank++, playerName),
+                String.valueOf(claimedTilesByPlayer.get(playerIndex)),
+                String.valueOf(armyStrengthByPlayer.get(playerIndex)), status));
+        }
+        dialog.addTable(rows);
+        dialog.show(stage);
+    }
 
     void showTutorialObjectiveMessage(Stage stage, int newProgress) {
         final FeudalTacticsDialog dialog = tutorialDialogFactory.createDialog(newProgress);

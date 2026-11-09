@@ -563,6 +563,9 @@ public class IngameScreen extends GameScreen {
                 cachedGameState.getScenarioMap(), cachedGameState.getObjectiveProgress(),
                 cachedNewGamePreferences)));
 
+        ingameHudStage.statisticsButton.addListener(new ExceptionLoggingChangeListener(() ->
+            ingameScreenDialogHelper.showIngameLeaderboard(ingameHudStage, cachedGameState)));
+
         ingameHudStage.speedButton.addListener(new ExceptionLoggingChangeListener(() -> {
             // determine the next speed level with overflow
             final Speed enemyTurnSpeed = mainPrefsDao.getMainPreferences().getEnemyTurnSpeed();
