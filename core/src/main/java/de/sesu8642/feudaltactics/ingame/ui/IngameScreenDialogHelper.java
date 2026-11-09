@@ -221,17 +221,26 @@ public class IngameScreenDialogHelper {
             .thenComparingInt(Player::getPlayerIndex));
 
         final FeudalTacticsDialog dialog = dialogFactory.createInformationDialog(() -> { });
-        dialog.headline("Leaderboard");
-        dialog.text("Round " + gameState.getRound() + "\n");
+        dialog.headline(localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_HEADLINE));
+        dialog.text(localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_ROUND, gameState.getRound())
+            + "\n");
         final List<List<String>> rows = new ArrayList<>();
-        rows.add(List.of("Player", "Claimed tiles", "Army strength", "Status"));
+        rows.add(List.of(
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_PLAYER),
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_CLAIMED_TILES),
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_ARMY_STRENGTH),
+            localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_COLUMN_STATUS)));
         int rank = 1;
         for (Player player : rankedPlayers) {
             final int playerIndex = player.getPlayerIndex();
             final String playerName = player.getType() == Player.Type.LOCAL_PLAYER
-                ? "You" : "Player " + (playerIndex + 1);
-            final String status = player.isDefeated() ? "Defeated" : "Active";
-            rows.add(List.of(rank++ + ". " + playerName,
+                ? localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_PLAYER_YOU)
+                : localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_PLAYER_NUMBER, playerIndex + 1);
+            final String status = player.isDefeated()
+                ? localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_STATUS_DEFEATED)
+                : localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_STATUS_ACTIVE);
+            rows.add(List.of(
+                localizationManager.localizeText(TranslationKeys.INGAME_LEADERBOARD_PLAYER_RANK, rank++, playerName),
                 String.valueOf(claimedTilesByPlayer.get(playerIndex)),
                 String.valueOf(armyStrengthByPlayer.get(playerIndex)), status));
         }
